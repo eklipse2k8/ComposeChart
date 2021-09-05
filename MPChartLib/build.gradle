@@ -1,16 +1,17 @@
-apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
+plugins {
+    id('com.android.library')
+    id('kotlin-android')
+    id('kotlin-parcelize')
+}
 
-group='com.github.philjay'
+group = 'com.github.philjay'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 31
+    buildToolsVersion '31.0.0 rc3'
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 28
-        versionCode 3
-        versionName '3.1.0'
+        targetSdkVersion 31
     }
     buildTypes {
         release {
@@ -24,8 +25,10 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.annotation:annotation:1.0.0'
-    testImplementation 'junit:junit:4.12'
+    implementation 'androidx.annotation:annotation:1.2.0'
+    testImplementation 'junit:junit:4.13.2'
+    implementation "androidx.core:core-ktx:1.6.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 task sourcesJar(type: Jar) {
@@ -35,7 +38,7 @@ task sourcesJar(type: Jar) {
 
 task javadoc(type: Javadoc) {
     options.charSet = 'UTF-8'
-    failOnError  false
+    failOnError false
     source = android.sourceSets.main.java.sourceFiles
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
 }
@@ -48,4 +51,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
     archives sourcesJar
     archives javadocJar
+}
+repositories {
+    mavenCentral()
 }
