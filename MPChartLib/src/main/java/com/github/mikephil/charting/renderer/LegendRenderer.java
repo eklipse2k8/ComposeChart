@@ -344,8 +344,8 @@ public class LegendRenderer extends Renderer {
                 for (int i = 0, count = entries.length; i < count; i++) {
 
                     LegendEntry e = entries[i];
-                    boolean drawingForm = e.form != Legend.LegendForm.NONE;
-                    float formSize = Float.isNaN(e.formSize) ? defaultFormSize : Utils.convertDpToPixel(e.formSize);
+                    boolean drawingForm = e.getForm() != Legend.LegendForm.NONE;
+                    float formSize = Float.isNaN(e.getFormSize()) ? defaultFormSize : Utils.convertDpToPixel(e.getFormSize());
 
                     if (i < calculatedLabelBreakPoints.size() && calculatedLabelBreakPoints.get(i)) {
                         posX = originPosX;
@@ -361,7 +361,7 @@ public class LegendRenderer extends Renderer {
                         lineIndex++;
                     }
 
-                    boolean isStacked = e.label == null; // grouped forms have null labels
+                    boolean isStacked = e.getLabel() == null; // grouped forms have null labels
 
                     if (drawingForm) {
                         if (direction == Legend.LegendDirection.RIGHT_TO_LEFT)
@@ -381,7 +381,7 @@ public class LegendRenderer extends Renderer {
                         if (direction == Legend.LegendDirection.RIGHT_TO_LEFT)
                             posX -= calculatedLabelSizes.get(i).width;
 
-                        drawLabel(c, posX, posY + labelLineHeight, e.label);
+                        drawLabel(c, posX, posY + labelLineHeight, e.getLabel());
 
                         if (direction == Legend.LegendDirection.LEFT_TO_RIGHT)
                             posX += calculatedLabelSizes.get(i).width;
@@ -425,8 +425,8 @@ public class LegendRenderer extends Renderer {
                 for (int i = 0; i < entries.length; i++) {
 
                     LegendEntry e = entries[i];
-                    boolean drawingForm = e.form != Legend.LegendForm.NONE;
-                    float formSize = Float.isNaN(e.formSize) ? defaultFormSize : Utils.convertDpToPixel(e.formSize);
+                    boolean drawingForm = e.getForm() != Legend.LegendForm.NONE;
+                    float formSize = Float.isNaN(e.getFormSize()) ? defaultFormSize : Utils.convertDpToPixel(e.getFormSize());
 
                     float posX = originPosX;
 
@@ -442,7 +442,7 @@ public class LegendRenderer extends Renderer {
                             posX += formSize;
                     }
 
-                    if (e.label != null) {
+                    if (e.getLabel() != null) {
 
                         if (drawingForm && !wasStacked)
                             posX += direction == Legend.LegendDirection.LEFT_TO_RIGHT ? formToTextSpace
@@ -451,13 +451,13 @@ public class LegendRenderer extends Renderer {
                             posX = originPosX;
 
                         if (direction == Legend.LegendDirection.RIGHT_TO_LEFT)
-                            posX -= Utils.calcTextWidth(mLegendLabelPaint, e.label);
+                            posX -= Utils.calcTextWidth(mLegendLabelPaint, e.getLabel());
 
                         if (!wasStacked) {
-                            drawLabel(c, posX, posY + labelLineHeight, e.label);
+                            drawLabel(c, posX, posY + labelLineHeight, e.getLabel());
                         } else {
                             posY += labelLineHeight + labelLineSpacing;
-                            drawLabel(c, posX, posY + labelLineHeight, e.label);
+                            drawLabel(c, posX, posY + labelLineHeight, e.getLabel());
                         }
 
                         // make a step down
@@ -493,23 +493,23 @@ public class LegendRenderer extends Renderer {
             LegendEntry entry,
             Legend legend) {
 
-        if (entry.formColor == ColorTemplate.COLOR_SKIP ||
-                entry.formColor == ColorTemplate.COLOR_NONE ||
-                entry.formColor == 0)
+        if (entry.getFormColor() == ColorTemplate.COLOR_SKIP ||
+                entry.getFormColor() == ColorTemplate.COLOR_NONE ||
+                entry.getFormColor() == 0)
             return;
 
         int restoreCount = c.save();
 
-        Legend.LegendForm form = entry.form;
+        Legend.LegendForm form = entry.getForm();
         if (form == Legend.LegendForm.DEFAULT)
             form = legend.getForm();
 
-        mLegendFormPaint.setColor(entry.formColor);
+        mLegendFormPaint.setColor(entry.getFormColor());
 
         final float formSize = Utils.convertDpToPixel(
-                Float.isNaN(entry.formSize)
+                Float.isNaN(entry.getFormSize())
                         ? legend.getFormSize()
-                        : entry.formSize);
+                        : entry.getFormSize());
         final float half = formSize / 2f;
 
         switch (form) {
@@ -532,15 +532,14 @@ public class LegendRenderer extends Renderer {
                 c.drawRect(x, y - half, x + formSize, y + half, mLegendFormPaint);
                 break;
 
-            case LINE:
-            {
+            case LINE: {
                 final float formLineWidth = Utils.convertDpToPixel(
-                        Float.isNaN(entry.formLineWidth)
+                        Float.isNaN(entry.getFormLineWidth())
                                 ? legend.getFormLineWidth()
-                                : entry.formLineWidth);
-                final DashPathEffect formLineDashEffect = entry.formLineDashEffect == null
+                                : entry.getFormLineWidth());
+                final DashPathEffect formLineDashEffect = entry.getFormLineDashEffect() == null
                         ? legend.getFormLineDashEffect()
-                        : entry.formLineDashEffect;
+                        : entry.getFormLineDashEffect();
                 mLegendFormPaint.setStyle(Paint.Style.STROKE);
                 mLegendFormPaint.setStrokeWidth(formLineWidth);
                 mLegendFormPaint.setPathEffect(formLineDashEffect);
@@ -550,7 +549,7 @@ public class LegendRenderer extends Renderer {
                 mLineFormPath.lineTo(x + formSize, y);
                 c.drawPath(mLineFormPath, mLegendFormPaint);
             }
-                break;
+            break;
         }
 
         c.restoreToCount(restoreCount);

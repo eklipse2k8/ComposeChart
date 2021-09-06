@@ -75,10 +75,10 @@ open class BarHighlighter(chart: BarDataProvider) : ChartHighlighter<BarDataProv
    * @param value
    * @return
    */
-  protected fun getClosestStackIndex(ranges: Array<Range>?, value: Float): Int {
+  private fun getClosestStackIndex(ranges: Array<Range>?, value: Float): Int {
     if (ranges == null || ranges.isEmpty()) return 0
     for ((stackIndex, range) in ranges.withIndex()) {
-      if (range.contains(value)) return stackIndex else stackIndex
+      if (range.contains(value)) return stackIndex
     }
     val length = max(ranges.size - 1, 0)
     return if (value > ranges[length].to) length else 0
