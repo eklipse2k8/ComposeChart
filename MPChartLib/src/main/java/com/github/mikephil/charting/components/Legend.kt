@@ -270,7 +270,7 @@ class Legend() : ComponentBase() {
    * @param p the paint object used for rendering the text
    * @return
    */
-  private fun getMaximumEntryWidth(p: Paint?): Float {
+  private fun getMaximumEntryWidth(p: Paint): Float {
     var max = 0f
     var maxFormSize = 0f
     val formToTextSpace = Utils.convertDpToPixel(formToTextSpace)
@@ -292,7 +292,7 @@ class Legend() : ComponentBase() {
    * @param p the paint object used for rendering the text
    * @return
    */
-  private fun getMaximumEntryHeight(p: Paint?): Float {
+  private fun getMaximumEntryHeight(p: Paint): Float {
     var max = 0f
     for (entry in entries) {
       val label = entry.label ?: continue
@@ -408,7 +408,7 @@ class Legend() : ComponentBase() {
    *
    * @param labelpaint
    */
-  fun calculateDimensions(labelpaint: Paint?, viewPortHandler: ViewPortHandler) {
+  fun calculateDimensions(labelpaint: Paint, viewPortHandler: ViewPortHandler) {
     val defaultFormSize = Utils.convertDpToPixel(formSize)
     val stackSpace = Utils.convertDpToPixel(stackSpace)
     val formToTextSpace = Utils.convertDpToPixel(formToTextSpace)
