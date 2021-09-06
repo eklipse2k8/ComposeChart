@@ -33,7 +33,7 @@ open class Fill {
   protected var mDrawable: Drawable? = null
 
   lateinit var gradientColors: IntArray
-  lateinit var gradientPositions: FloatArray
+  var gradientPositions: FloatArray? = null
 
   /** transparency used for filling */
   private var mAlpha = 255
