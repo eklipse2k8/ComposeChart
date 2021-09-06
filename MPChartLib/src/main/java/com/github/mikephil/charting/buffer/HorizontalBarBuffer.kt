@@ -36,7 +36,7 @@ class HorizontalBarBuffer(size: Int, dataSetCount: Int, containsStacks: Boolean)
       } else {
         var posY = 0f
         var negY = -e.negativeSum
-        var yStart = 0f
+        var yStart: Float
 
         // fill the stack
         for (k in vals.indices) {
