@@ -94,7 +94,7 @@ public class CandleDataSet extends LineScatterCandleRadarDataSet<CandleEntry> im
         candleDataSet.mShowCandleBar = mShowCandleBar;
         candleDataSet.mBarSpace = mBarSpace;
         candleDataSet.mShadowColorSameAsCandle = mShadowColorSameAsCandle;
-        candleDataSet.mHighLightColor = mHighLightColor;
+        candleDataSet.highLightColor = highLightColor;
         candleDataSet.mIncreasingPaintStyle = mIncreasingPaintStyle;
         candleDataSet.mDecreasingPaintStyle = mDecreasingPaintStyle;
         candleDataSet.mNeutralColor = mNeutralColor;
@@ -106,11 +106,11 @@ public class CandleDataSet extends LineScatterCandleRadarDataSet<CandleEntry> im
     @Override
     protected void calcMinMax(CandleEntry e) {
 
-        if (e.getLow() < mYMin)
-            mYMin = e.getLow();
+        if (e.getLow() < yMin)
+            yMin = e.getLow();
 
-        if (e.getHigh() > mYMax)
-            mYMax = e.getHigh();
+        if (e.getHigh() > yMax)
+            yMax = e.getHigh();
 
         calcMinMaxX(e);
     }
@@ -118,17 +118,17 @@ public class CandleDataSet extends LineScatterCandleRadarDataSet<CandleEntry> im
     @Override
     protected void calcMinMaxY(CandleEntry e) {
 
-        if (e.getHigh() < mYMin)
-            mYMin = e.getHigh();
+        if (e.getHigh() < yMin)
+            yMin = e.getHigh();
 
-        if (e.getHigh() > mYMax)
-            mYMax = e.getHigh();
+        if (e.getHigh() > yMax)
+            yMax = e.getHigh();
 
-        if (e.getLow() < mYMin)
-            mYMin = e.getLow();
+        if (e.getLow() < yMin)
+            yMin = e.getLow();
 
-        if (e.getLow() > mYMax)
-            mYMax = e.getLow();
+        if (e.getLow() > yMax)
+            yMax = e.getLow();
     }
 
     /**

@@ -54,6 +54,6 @@ interface ChartInterface {
   val centerOffsets: MPPointF?
   val contentRect: RectF?
   val defaultValueFormatter: IValueFormatter?
-  val data: ChartData<*>?
+  val data: ChartData<*, *>?
   val maxVisibleCount: Int
 }

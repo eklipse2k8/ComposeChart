@@ -13,7 +13,7 @@ class HorizontalBarHighlighter(chart: BarDataProvider) : BarHighlighter(chart) {
     val barData = mChart.barData
     val pos = getValsForTouch(y, x)
     val high = getHighlightForX(pos.y.toFloat(), y, x) ?: return null
-    val set = barData.getDataSetByIndex(high.dataSetIndex)
+    val set = barData.getDataSetByIndex(high.dataSetIndex) ?: return null
     if (set.isStacked) {
       return getStackedHighlight(high, set, pos.y.toFloat(), pos.x.toFloat())
     }
@@ -22,21 +22,19 @@ class HorizontalBarHighlighter(chart: BarDataProvider) : BarHighlighter(chart) {
   }
 
   override fun buildHighlights(
-      set: IDataSet<*>,
-      dataSetIndex: Int,
-      xVal: Float,
-      rounding: Rounding?
-  ): List<Highlight>? {
+    set: IDataSet<*>,
+    dataSetIndex: Int,
+    xVal: Float,
+    rounding: Rounding
+  ): List<Highlight> {
     val highlights = ArrayList<Highlight>()
     var entries = set.getEntriesForXValue(xVal)
-    if (entries.size == 0) {
+    if (entries.isEmpty()) {
       // Try to find closest x-value and take all entries for that x-value
       val closest = set.getEntryForXValue(xVal, Float.NaN, rounding)
-      if (closest != null) {
-        entries = set.getEntriesForXValue(closest.x)
-      }
+      entries = set.getEntriesForXValue(closest.x)
     }
-    if (entries.size == 0) return highlights
+    if (entries.isEmpty()) return highlights
     for (e in entries) {
       val pixels = mChart.getTransformer(set.axisDependency).getPixelForValues(e.y, e.x)
       highlights.add(

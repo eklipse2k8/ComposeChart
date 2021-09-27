@@ -46,7 +46,7 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
     public BarDataSet(List<BarEntry> yVals, String label) {
         super(yVals, label);
 
-        mHighLightColor = Color.rgb(0, 0, 0);
+        highLightColor = Color.rgb(0, 0, 0);
 
         calcStackSize(yVals);
         calcEntryCountIncludingStacks(yVals);
@@ -174,18 +174,18 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
 
             if (e.getYVals() == null) {
 
-                if (e.getY() < mYMin)
-                    mYMin = e.getY();
+                if (e.getY() < yMin)
+                    yMin = e.getY();
 
-                if (e.getY() > mYMax)
-                    mYMax = e.getY();
+                if (e.getY() > yMax)
+                    yMax = e.getY();
             } else {
 
-                if (-e.getNegativeSum() < mYMin)
-                    mYMin = -e.getNegativeSum();
+                if (-e.getNegativeSum() < yMin)
+                    yMin = -e.getNegativeSum();
 
-                if (e.getPositiveSum() > mYMax)
-                    mYMax = e.getPositiveSum();
+                if (e.getPositiveSum() > yMax)
+                    yMax = e.getPositiveSum();
             }
 
             calcMinMaxX(e);

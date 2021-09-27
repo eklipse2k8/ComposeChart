@@ -9,5 +9,5 @@ interface BarLineScatterCandleBubbleDataProvider : ChartInterface {
   fun isInverted(axis: AxisDependency?): Boolean
   val lowestVisibleX: Float
   val highestVisibleX: Float
-  override val data: BarLineScatterCandleBubbleData<*>?
+  override val data: BarLineScatterCandleBubbleData?
 }

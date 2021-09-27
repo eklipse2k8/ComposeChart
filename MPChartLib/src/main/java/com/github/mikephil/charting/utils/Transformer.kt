@@ -356,7 +356,7 @@ open class Transformer(@JvmField protected var mViewPortHandler: ViewPortHandler
    * @return
    */
   fun getValuesByTouchPoint(x: Float, y: Float): MPPointD {
-    val result = MPPointD.getInstance(0.0, 0.0)
+    val result = MPPointD(0.0, 0.0)
     getValuesByTouchPoint(x, y, result)
     return result
   }
@@ -383,7 +383,7 @@ open class Transformer(@JvmField protected var mViewPortHandler: ViewPortHandler
     pointValuesToPixel(ptsBuffer)
     val xPx = ptsBuffer[0].toDouble()
     val yPx = ptsBuffer[1].toDouble()
-    return MPPointD.getInstance(xPx, yPx)
+    return MPPointD(xPx, yPx)
   }
 
   private val mMBuffer1 = Matrix()

@@ -20,10 +20,7 @@ import android.view.ViewConfiguration
 import com.github.mikephil.charting.formatter.DefaultValueFormatter
 import com.github.mikephil.charting.formatter.IValueFormatter
 import kotlin.jvm.JvmOverloads
-import kotlin.math.ceil
-import kotlin.math.log10
-import kotlin.math.pow
-import kotlin.math.roundToLong
+import kotlin.math.*
 
 /**
  * Utilities class that has some helper methods. Needs to be initialized by calling Utils.init(...)
@@ -185,7 +182,7 @@ object Utils {
    */
   @JvmStatic
   fun calcTextSize(paint: Paint, demoText: String): FSize {
-    val result = FSize.getInstance(0f, 0f)
+    val result = FSize(0f, 0f)
     calcTextSize(paint, demoText, result)
     return result
   }
@@ -200,12 +197,11 @@ object Utils {
    * @param demoText
    * @param outputFSize An output variable, modified by the function.
    */
-  fun calcTextSize(paint: Paint, demoText: String, outputFSize: FSize) {
+  fun calcTextSize(paint: Paint, demoText: String, outputFSize: FSize): FSize {
     val r = mCalcTextSizeRect
     r[0, 0, 0] = 0
     paint.getTextBounds(demoText, 0, demoText.length, r)
-    outputFSize.width = r.width().toFloat()
-    outputFSize.height = r.height().toFloat()
+    return FSize(r.width().toFloat(), r.height().toFloat())
   }
 
   /** Math.pow(...) is very expensive, so avoid calling it and create it yourself. */
@@ -213,8 +209,7 @@ object Utils {
       intArrayOf(1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000)
 
   /// - returns: The default value formatter used for all chart components that needs a default
-  @JvmStatic
-  val defaultValueFormatter = generateDefaultValueFormatter()
+  @JvmStatic val defaultValueFormatter = generateDefaultValueFormatter()
 
   private fun generateDefaultValueFormatter(): IValueFormatter {
     return DefaultValueFormatter(1)
@@ -383,23 +378,12 @@ object Utils {
     }
   }
 
-  /**
-   * Replacement for the Math.nextUp(...) method that is only available in HONEYCOMB and higher.
-   * Dat's some seeeeek sheeet.
-   *
-   * @param d
-   * @return
-   */
+  @Deprecated(
+      "Use native kotlin version",
+      ReplaceWith("value.nextUp()", "kotlin.math.nextUp"),
+  )
   @JvmStatic
-  fun nextUp(d: Double): Double {
-    var d = d
-    return if (d == Double.POSITIVE_INFINITY) d
-    else {
-      d += 0.0
-      java.lang.Double.longBitsToDouble(
-          java.lang.Double.doubleToRawLongBits(d) + if (d >= 0.0) +1L else -1L)
-    }
-  }
+  fun nextUp(value: Double) = value.nextUp()
 
   /**
    * Returns a recyclable MPPointF instance. Calculates the position around a center point,
@@ -410,21 +394,17 @@ object Utils {
    * @param angle in degrees, converted to radians internally
    * @return
    */
-  fun getPosition(center: MPPointF, dist: Float, angle: Float): MPPointF {
-    val p = MPPointF.getInstance(0f, 0f)
-    getPosition(center, dist, angle, p)
-    return p
-  }
+  fun getPosition(center: MPPointF, dist: Float, angle: Float) =
+      MPPointF(0f, 0f).also { getPosition(center, dist, angle, it) }
 
   @JvmStatic
   fun getPosition(center: MPPointF, dist: Float, angle: Float, outputPoint: MPPointF) {
-    outputPoint.x = (center.x + dist * Math.cos(Math.toRadians(angle.toDouble()))).toFloat()
-    outputPoint.y = (center.y + dist * Math.sin(Math.toRadians(angle.toDouble()))).toFloat()
+    outputPoint.x = (center.x + dist * cos(Math.toRadians(angle.toDouble()))).toFloat()
+    outputPoint.y = (center.y + dist * sin(Math.toRadians(angle.toDouble()))).toFloat()
   }
 
   @JvmStatic
   fun velocityTrackerPointerUpCleanUpIfNecessary(ev: MotionEvent, tracker: VelocityTracker) {
-
     // Check the dot product of current velocities.
     // If the pointer that left was opposing another velocity vector, clear.
     tracker.computeCurrentVelocity(1000, maximumFlingVelocity.toFloat())
@@ -460,8 +440,7 @@ object Utils {
   @JvmStatic
   @SuppressLint("NewApi")
   fun postInvalidateOnAnimation(view: View) {
-    if (Build.VERSION.SDK_INT >= 16) view.postInvalidateOnAnimation()
-    else view.postInvalidateDelayed(10)
+    view.postInvalidateOnAnimation()
   }
 
   /** returns an angle between 0.f < 360.f (not less than zero, less than 360) */
@@ -475,7 +454,7 @@ object Utils {
   private val mDrawableBoundsCache = Rect()
   @JvmStatic
   fun drawImage(canvas: Canvas, drawable: Drawable, x: Int, y: Int, width: Int, height: Int) {
-    val drawOffset = MPPointF.getInstance()
+    val drawOffset = MPPointF()
     drawOffset.x = (x - width / 2).toFloat()
     drawOffset.y = (y - height / 2).toFloat()
     drawable.copyBounds(mDrawableBoundsCache)
@@ -534,7 +513,6 @@ object Utils {
                 mDrawTextRectBuffer.width().toFloat(), lineHeight, angleDegrees)
         translateX -= rotatedSize.width * (anchor.x - 0.5f)
         translateY -= rotatedSize.height * (anchor.y - 0.5f)
-        FSize.recycleInstance(rotatedSize)
       }
       c.save()
       c.translate(translateX, translateY)
@@ -564,10 +542,9 @@ object Utils {
   ) {
     var drawOffsetX = 0f
     var drawOffsetY = 0f
-    val drawWidth: Float
     val drawHeight: Float
     val lineHeight = paint.getFontMetrics(mFontMetricsBuffer)
-    drawWidth = textLayout.width.toFloat()
+    val drawWidth: Float = textLayout.width.toFloat()
     drawHeight = textLayout.lineCount * lineHeight
 
     // Android sometimes has pre-padding
@@ -594,7 +571,6 @@ object Utils {
         val rotatedSize = getSizeOfRotatedRectangleByDegrees(drawWidth, drawHeight, angleDegrees)
         translateX -= rotatedSize.width * (anchor.x - 0.5f)
         translateY -= rotatedSize.height * (anchor.y - 0.5f)
-        FSize.recycleInstance(rotatedSize)
       }
       c.save()
       c.translate(translateX, translateY)
@@ -633,7 +609,7 @@ object Utils {
             0,
             text.length,
             paint,
-            Math.max(Math.ceil(constrainedToSize.width.toDouble()), 1.0).toInt(),
+            ceil(constrainedToSize.width).coerceAtLeast(1f).toInt(),
             Layout.Alignment.ALIGN_NORMAL,
             1f,
             0f,
@@ -695,11 +671,9 @@ object Utils {
       rectangleHeight: Float,
       radians: Float
   ): FSize {
-    return FSize.getInstance(
-        Math.abs(rectangleWidth * Math.cos(radians.toDouble()).toFloat()) +
-            Math.abs(rectangleHeight * Math.sin(radians.toDouble()).toFloat()),
-        Math.abs(rectangleWidth * Math.sin(radians.toDouble()).toFloat()) +
-            Math.abs(rectangleHeight * Math.cos(radians.toDouble()).toFloat()))
+    return FSize(
+        abs(rectangleWidth * cos(radians)) + abs(rectangleHeight * sin(radians)),
+        abs(rectangleWidth * sin(radians)) + abs(rectangleHeight * cos(radians)))
   }
 
   @JvmStatic

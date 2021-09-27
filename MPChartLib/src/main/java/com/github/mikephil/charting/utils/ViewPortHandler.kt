@@ -146,7 +146,7 @@ open class ViewPortHandler
   }
 
   val contentCenter: MPPointF
-    get() = MPPointF.getInstance(contentRect.centerX(), contentRect.centerY())
+    get() = MPPointF(contentRect.centerX(), contentRect.centerY())
 
   /**
    * Returns the smallest extension of the content rect (width or height).

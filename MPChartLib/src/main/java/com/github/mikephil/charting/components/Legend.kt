@@ -7,6 +7,7 @@ import com.github.mikephil.charting.utils.FSize
 import com.github.mikephil.charting.utils.Utils
 import com.github.mikephil.charting.utils.ViewPortHandler
 import java.util.ArrayList
+import kotlin.math.max
 
 /**
  * Class representing the legend of the chart. The legend will contain one entry per color and
@@ -446,7 +447,7 @@ class Legend() : ComponentBase() {
             // make a step to the left
             if (drawingForm && !wasStacked) width += formToTextSpace
             else if (wasStacked) {
-              maxWidth = Math.max(maxWidth, width)
+              maxWidth = max(maxWidth, width)
               maxHeight += labelLineHeight + yEntrySpace
               width = 0f
               wasStacked = false
@@ -458,7 +459,7 @@ class Legend() : ComponentBase() {
             width += formSize
             if (i < entryCount - 1) width += stackSpace
           }
-          maxWidth = Math.max(maxWidth, width)
+          maxWidth = max(maxWidth, width)
           i++
         }
         mNeededWidth = maxWidth
@@ -501,7 +502,7 @@ class Legend() : ComponentBase() {
             requiredWidth += if (drawingForm) formToTextSpace + formSize else 0f
             requiredWidth += mCalculatedLabelSizes[i].width
           } else {
-            mCalculatedLabelSizes.add(FSize.getInstance(0f, 0f))
+            mCalculatedLabelSizes.add(FSize(0f, 0f))
             requiredWidth += if (drawingForm) formSize else 0f
             if (stackedStartIndex == -1) {
               // mark this index as we might want to break here later
@@ -521,8 +522,8 @@ class Legend() : ComponentBase() {
             } else { // It doesn't fit, we need to wrap a line
 
               // Add current line size to array
-              mCalculatedLineSizes.add(FSize.getInstance(currentLineWidth, labelLineHeight))
-              maxLineWidth = Math.max(maxLineWidth, currentLineWidth)
+              mCalculatedLineSizes.add(FSize(currentLineWidth, labelLineHeight))
+              maxLineWidth = max(maxLineWidth, currentLineWidth)
 
               // Start a new line
               mCalculatedLabelBreakPoints[if (stackedStartIndex > -1) stackedStartIndex else i] =
@@ -531,8 +532,8 @@ class Legend() : ComponentBase() {
             }
             if (i == entryCount - 1) {
               // Add last line size to array
-              mCalculatedLineSizes.add(FSize.getInstance(currentLineWidth, labelLineHeight))
-              maxLineWidth = Math.max(maxLineWidth, currentLineWidth)
+              mCalculatedLineSizes.add(FSize(currentLineWidth, labelLineHeight))
+              maxLineWidth = max(maxLineWidth, currentLineWidth)
             }
           }
           stackedStartIndex = if (label != null) -1 else stackedStartIndex
