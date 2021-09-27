@@ -29,14 +29,12 @@ class HorizontalBarHighlighter(chart: BarDataProvider) : BarHighlighter(chart) {
   ): List<Highlight>? {
     val highlights = ArrayList<Highlight>()
     var entries = set.getEntriesForXValue(xVal)
-    if (entries.size == 0) {
+    if (entries?.size == 0) {
       // Try to find closest x-value and take all entries for that x-value
       val closest = set.getEntryForXValue(xVal, Float.NaN, rounding)
-      if (closest != null) {
-        entries = set.getEntriesForXValue(closest.x)
-      }
+      entries = set.getEntriesForXValue(closest.x)
     }
-    if (entries.size == 0) return highlights
+    if (entries.isNullOrEmpty()) return highlights
     for (e in entries) {
       val pixels = mChart.getTransformer(set.axisDependency).getPixelForValues(e.y, e.x)
       highlights.add(
