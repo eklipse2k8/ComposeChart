@@ -49,7 +49,7 @@ open class BarHighlighter(chart: BarDataProvider) : ChartHighlighter<BarDataProv
       if (ranges.isNotEmpty()) {
         val stackIndex = getClosestStackIndex(ranges, yVal)
         val pixels = mChart.getTransformer(set.axisDependency)
-          .getPixelForValues(high.x, ranges[stackIndex].to)
+          .getPixelForValues(high.x, ranges[stackIndex]?.to!!)
         val stackedHigh = Highlight(
           entry.x,
           entry.y,
@@ -75,13 +75,13 @@ open class BarHighlighter(chart: BarDataProvider) : ChartHighlighter<BarDataProv
    * @param value
    * @return
    */
-  private fun getClosestStackIndex(ranges: Array<Range>?, value: Float): Int {
-    if (ranges == null || ranges.isEmpty()) return 0
+  private fun getClosestStackIndex(ranges: Array<Range?>, value: Float): Int {
+    if (ranges.isEmpty()) return 0
     for ((stackIndex, range) in ranges.withIndex()) {
-      if (range.contains(value)) return stackIndex
+      if (range?.contains(value) == true) return stackIndex
     }
     val length = max(ranges.size - 1, 0)
-    return if (value > ranges[length].to) length else 0
+    return if (value > ranges[length]?.to!!) length else 0
   }
 
   override fun getDistance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
