@@ -13,7 +13,7 @@ import com.github.mikephil.charting.utils.ViewPortHandler
 open class YAxisRenderer(
     viewPortHandler: ViewPortHandler,
     @JvmField protected var mYAxis: YAxis,
-    trans: Transformer
+    trans: Transformer?
 ) : AxisRenderer(viewPortHandler, trans, mYAxis) {
   @JvmField protected var mZeroLinePaint: Paint? = null
 
@@ -203,7 +203,7 @@ open class YAxisRenderer(
 
   @JvmField protected var mRenderLimitLines = Path()
 
-  @JvmField protected var mRenderLimitLinesBuffer = FloatArray(2)
+  protected open var mRenderLimitLinesBuffer = FloatArray(2)
 
   @JvmField protected var mLimitLineClippingRect = RectF()
 
