@@ -124,7 +124,7 @@ class BubbleChartRenderer(
           if (dataSet.isDrawValuesEnabled) {
             drawValue(
                 c,
-                dataSet.valueFormatter,
+                dataSet.valueFormatter!!,
                 entry.size,
                 entry,
                 i,

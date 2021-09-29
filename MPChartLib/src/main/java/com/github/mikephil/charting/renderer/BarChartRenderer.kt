@@ -163,8 +163,8 @@ open class BarChartRenderer(
     if (isDrawingValuesAllowed(mChart)) {
       val dataSets = mChart.barData.dataSets
       val valueOffsetPlus = Utils.convertDpToPixel(4.5f)
-      var posOffset = 0f
-      var negOffset = 0f
+      var posOffset: Float
+      var negOffset: Float
       val drawValueAboveBar = mChart.isDrawValueAboveBarEnabled
       for (i in 0 until mChart.barData.dataSetCount) {
         val dataSet = dataSets[i]
@@ -207,7 +207,7 @@ open class BarChartRenderer(
             if (dataSet.isDrawValuesEnabled) {
               drawValue(
                   c,
-                  dataSet.valueFormatter,
+                  dataSet.valueFormatter!!,
                   `val`,
                   entry,
                   i,
@@ -252,7 +252,7 @@ open class BarChartRenderer(
               if (dataSet.isDrawValuesEnabled) {
                 drawValue(
                     c,
-                    dataSet.valueFormatter,
+                    dataSet.valueFormatter!!,
                     entry.y,
                     entry,
                     i,
@@ -308,7 +308,7 @@ open class BarChartRenderer(
                   continue
                 }
                 if (dataSet.isDrawValuesEnabled) {
-                  drawValue(c, dataSet.valueFormatter, vals[k / 2], entry, i, x, y, color)
+                  drawValue(c, dataSet.valueFormatter!!, vals[k / 2], entry, i, x, y, color)
                 }
                 if (entry.icon != null && dataSet.isDrawIconsEnabled) {
                   val icon = entry.icon

@@ -196,7 +196,7 @@ class CandleStickChartRenderer(
           if (dataSet.isDrawValuesEnabled) {
             drawValue(
                 c,
-                dataSet.valueFormatter,
+                dataSet.valueFormatter!!,
                 entry.high,
                 entry,
                 i,
