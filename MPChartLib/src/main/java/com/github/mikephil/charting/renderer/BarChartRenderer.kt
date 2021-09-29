@@ -13,8 +13,8 @@ import com.github.mikephil.charting.utils.*
 
 open class BarChartRenderer(
     @JvmField var mChart: BarDataProvider,
-    animator: ChartAnimator?,
-    viewPortHandler: ViewPortHandler?
+    animator: ChartAnimator,
+    viewPortHandler: ViewPortHandler
 ) : BarLineScatterCandleBubbleRenderer(animator, viewPortHandler) {
   /** the rect object that is used for drawing the bars */
   @JvmField protected var mBarRect = RectF()
@@ -342,7 +342,7 @@ open class BarChartRenderer(
       val trans = mChart.getTransformer(set.axisDependency)
       mHighlightPaint.color = set.highLightColor
       mHighlightPaint.alpha = set.highLightAlpha
-      val isStack = if (high.stackIndex >= 0 && e.isStacked) true else false
+      val isStack = high.stackIndex >= 0 && e.isStacked
       val y1: Float
       val y2: Float
       if (isStack) {
