@@ -1,71 +1,56 @@
+package com.github.mikephil.charting.renderer
 
-package com.github.mikephil.charting.renderer;
+import android.graphics.Canvas
+import com.github.mikephil.charting.charts.RadarChart
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.utils.MPPointF
+import com.github.mikephil.charting.utils.Utils
+import com.github.mikephil.charting.utils.ViewPortHandler
 
-import android.graphics.Canvas;
-import android.graphics.PointF;
+class XAxisRendererRadarChart(
+    viewPortHandler: ViewPortHandler,
+    xAxis: XAxis,
+    private val mChart: RadarChart
+) : XAxisRenderer(viewPortHandler, xAxis, null) {
 
-import com.github.mikephil.charting.charts.RadarChart;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.utils.MPPointF;
-import com.github.mikephil.charting.utils.Utils;
-import com.github.mikephil.charting.utils.ViewPortHandler;
+  override fun renderAxisLabels(c: Canvas?) {
+    if (!mXAxis.isEnabled || !mXAxis.isDrawLabelsEnabled) return
+    val labelRotationAngleDegrees = mXAxis.labelRotationAngle
+    val drawLabelAnchor = MPPointF.getInstance(0.5f, 0.25f)
+    mAxisLabelPaint.typeface = mXAxis.typeface
+    mAxisLabelPaint.textSize = mXAxis.textSize
+    mAxisLabelPaint.color = mXAxis.textColor
+    val sliceangle = mChart.sliceAngle
 
-public class XAxisRendererRadarChart extends XAxisRenderer {
-
-    private RadarChart mChart;
-
-    public XAxisRendererRadarChart(ViewPortHandler viewPortHandler, XAxis xAxis, RadarChart chart) {
-        super(viewPortHandler, xAxis, null);
-
-        mChart = chart;
+    // calculate the factor that is needed for transforming the value to
+    // pixels
+    val factor = mChart.factor
+    val center = mChart.centerOffsets
+    val pOut = MPPointF.getInstance(0f, 0f)
+    for (i in 0 until mChart.data?.maxEntryCountSet?.entryCount!!) {
+      val label = mXAxis.valueFormatter!!.getFormattedValue(i.toFloat(), mXAxis)
+      val angle = (sliceangle * i + mChart.rotationAngle) % 360f
+      Utils.getPosition(
+          center, mChart.yRange * factor + mXAxis.mLabelRotatedWidth / 2f, angle, pOut)
+      drawLabel(
+          c,
+          label,
+          pOut.x,
+          pOut.y - mXAxis.mLabelRotatedHeight / 2f,
+          drawLabelAnchor,
+          labelRotationAngleDegrees)
     }
+    MPPointF.recycleInstance(center)
+    MPPointF.recycleInstance(pOut)
+    MPPointF.recycleInstance(drawLabelAnchor)
+  }
 
-    @Override
-    public void renderAxisLabels(Canvas c) {
-
-        if (!mXAxis.isEnabled() || !mXAxis.isDrawLabelsEnabled())
-            return;
-
-        final float labelRotationAngleDegrees = mXAxis.getLabelRotationAngle();
-        final MPPointF drawLabelAnchor = MPPointF.getInstance(0.5f, 0.25f);
-
-        mAxisLabelPaint.setTypeface(mXAxis.getTypeface());
-        mAxisLabelPaint.setTextSize(mXAxis.getTextSize());
-        mAxisLabelPaint.setColor(mXAxis.getTextColor());
-
-        float sliceangle = mChart.getSliceAngle();
-
-        // calculate the factor that is needed for transforming the value to
-        // pixels
-        float factor = mChart.getFactor();
-
-        MPPointF center = mChart.getCenterOffsets();
-        MPPointF pOut = MPPointF.getInstance(0,0);
-        for (int i = 0; i < mChart.getData().getMaxEntryCountSet().getEntryCount(); i++) {
-
-            String label = mXAxis.getValueFormatter().getFormattedValue(i, mXAxis);
-
-            float angle = (sliceangle * i + mChart.getRotationAngle()) % 360f;
-
-            Utils.getPosition(center, mChart.getYRange() * factor
-                    + mXAxis.mLabelRotatedWidth / 2f, angle, pOut);
-
-            drawLabel(c, label, pOut.x, pOut.y - mXAxis.mLabelRotatedHeight / 2.f,
-                    drawLabelAnchor, labelRotationAngleDegrees);
-        }
-
-        MPPointF.recycleInstance(center);
-        MPPointF.recycleInstance(pOut);
-        MPPointF.recycleInstance(drawLabelAnchor);
-    }
-
-	/**
-	 * XAxis LimitLines on RadarChart not yet supported.
-	 *
-	 * @param c
-	 */
-	@Override
-	public void renderLimitLines(Canvas c) {
-		// this space intentionally left blank
-	}
+  /**
+   * XAxis LimitLines on RadarChart not yet supported.
+   *
+   * @param c
+   */
+  override fun renderLimitLines(c: Canvas?) {
+    // this space intentionally left blank
+  }
 }

@@ -12,7 +12,7 @@ import kotlin.math.roundToInt
 open class XAxisRenderer(
     viewPortHandler: ViewPortHandler,
     @JvmField protected var mXAxis: XAxis,
-    trans: Transformer
+    trans: Transformer?
 ) : AxisRenderer(viewPortHandler, trans, mXAxis) {
   private fun setupGridPaint() {
     mGridPaint!!.color = mXAxis.gridColor
@@ -21,16 +21,17 @@ open class XAxisRenderer(
   }
 
   override fun computeAxis(min: Float, max: Float, inverted: Boolean) {
+    if (mTrans == null) return
     // calculate the starting and entry point of the y-labels (depending on
     // zoom / contentrect bounds)
     var min = min
     var max = max
     if (mViewPortHandler.contentWidth() > 10 && !mViewPortHandler.isFullyZoomedOutX) {
       val p1 =
-          mTrans.getValuesByTouchPoint(
+          mTrans!!.getValuesByTouchPoint(
               mViewPortHandler.contentLeft(), mViewPortHandler.contentTop())
       val p2 =
-          mTrans.getValuesByTouchPoint(
+          mTrans!!.getValuesByTouchPoint(
               mViewPortHandler.contentRight(), mViewPortHandler.contentTop())
       if (inverted) {
         min = p2.x.toFloat()
@@ -150,7 +151,7 @@ open class XAxisRenderer(
         i += 2
       }
     }
-    mTrans.pointValuesToPixel(positions)
+    mTrans?.pointValuesToPixel(positions)
     var i = 0
     while (i < positions.size) {
       var x = positions[i]
@@ -208,7 +209,7 @@ open class XAxisRenderer(
         i += 2
       }
     }
-    mTrans.pointValuesToPixel(positions)
+    mTrans?.pointValuesToPixel(positions)
     setupGridPaint()
     val gridLinePath = mRenderGridLinesPath
     gridLinePath.reset()
@@ -270,7 +271,7 @@ open class XAxisRenderer(
       c.clipRect(mLimitLineClippingRect)
       position[0] = l.limit
       position[1] = 0f
-      mTrans.pointValuesToPixel(position)
+      mTrans?.pointValuesToPixel(position)
       renderLimitLineLine(c, l, position)
       renderLimitLineLabel(c, l, position, 2f + l.yOffset)
       c.restoreToCount(clipRestoreCount)

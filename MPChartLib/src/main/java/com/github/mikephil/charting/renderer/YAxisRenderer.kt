@@ -169,7 +169,7 @@ open class YAxisRenderer(
         positions[i + 1] = mYAxis.mEntries[i / 2]
         i += 2
       }
-      mTrans.pointValuesToPixel(positions)
+      mTrans?.pointValuesToPixel(positions)
       return positions
     }
 
@@ -185,7 +185,10 @@ open class YAxisRenderer(
     c.clipRect(mZeroLineClippingRect)
 
     // draw zero line
-    val pos = mTrans.getPixelForValues(0f, 0f)
+    if (mTrans == null) {
+      return
+    }
+    val pos = mTrans!!.getPixelForValues(0f, 0f)
     mZeroLinePaint!!.color = mYAxis.zeroLineColor
     mZeroLinePaint!!.strokeWidth = mYAxis.zeroLineWidth
     val zeroLinePath = mDrawZeroLinePath
@@ -229,7 +232,7 @@ open class YAxisRenderer(
       mLimitLinePaint!!.strokeWidth = l.lineWidth
       mLimitLinePaint!!.pathEffect = l.dashPathEffect
       pts[1] = l.limit
-      mTrans.pointValuesToPixel(pts)
+      mTrans?.pointValuesToPixel(pts)
       limitLinePath.moveTo(mViewPortHandler.contentLeft(), pts[1])
       limitLinePath.lineTo(mViewPortHandler.contentRight(), pts[1])
       c.drawPath(limitLinePath, mLimitLinePaint!!)

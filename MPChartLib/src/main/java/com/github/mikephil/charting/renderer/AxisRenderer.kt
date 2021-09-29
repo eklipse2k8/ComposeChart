@@ -8,9 +8,7 @@ import com.github.mikephil.charting.utils.MPPointD
 import com.github.mikephil.charting.utils.Transformer
 import com.github.mikephil.charting.utils.Utils
 import com.github.mikephil.charting.utils.ViewPortHandler
-import kotlin.math.floor
-import kotlin.math.log10
-import kotlin.math.pow
+import kotlin.math.*
 
 /**
  * Baseclass of all axis renderers.
@@ -20,13 +18,13 @@ import kotlin.math.pow
 abstract class AxisRenderer(
     viewPortHandler: ViewPortHandler,
     /** transformer to transform values to screen pixels and return */
-    transformer: Transformer,
+    transformer: Transformer?,
     /** base axis this axis renderer works with */
     @JvmField protected var mAxis: AxisBase
 ) : Renderer(viewPortHandler) {
 
   /** transformer to transform values to screen pixels and return */
-  @JvmField protected var mTrans: Transformer = transformer
+  @JvmField protected var mTrans: Transformer? = transformer
 
   /** paint object for the grid lines */
   @JvmField protected var mGridPaint: Paint? = null
@@ -52,17 +50,17 @@ abstract class AxisRenderer(
    * - the maximum value in the data object for this axis
    */
   open fun computeAxis(min: Float, max: Float, inverted: Boolean) {
-
+    if (mTrans == null) return
     // calculate the starting and entry point of the y-labels (depending on
     // zoom / contentrect bounds)
     var min = min
     var max = max
     if (mViewPortHandler.contentWidth() > 10 && !mViewPortHandler.isFullyZoomedOutY) {
       val p1 =
-          mTrans.getValuesByTouchPoint(
+          mTrans!!.getValuesByTouchPoint(
               mViewPortHandler.contentLeft(), mViewPortHandler.contentTop())
       val p2 =
-          mTrans.getValuesByTouchPoint(
+          mTrans!!.getValuesByTouchPoint(
               mViewPortHandler.contentLeft(), mViewPortHandler.contentBottom())
       if (!inverted) {
         min = p2.y.toFloat()
@@ -84,8 +82,8 @@ abstract class AxisRenderer(
    */
   protected open fun computeAxisValues(min: Float, max: Float) {
     val labelCount = mAxis.labelCount
-    val range = Math.abs(max - min).toDouble()
-    if (labelCount == 0 || range <= 0 || java.lang.Double.isInfinite(range)) {
+    val range = abs(max - min).toDouble()
+    if (labelCount == 0 || range <= 0 || range.isInfinite()) {
       mAxis.mEntries = floatArrayOf()
       mAxis.mCenteredEntries = floatArrayOf()
       mAxis.mEntryCount = 0
@@ -129,11 +127,11 @@ abstract class AxisRenderer(
 
       // no forced count
     } else {
-      var first = if (interval == 0.0) 0.0 else Math.ceil(min / interval) * interval
+      var first = if (interval == 0.0) 0.0 else ceil(min / interval) * interval
       if (mAxis.isCenterAxisLabelsEnabled) {
         first -= interval
       }
-      val last = if (interval == 0.0) 0.0 else Utils.nextUp(Math.floor(max / interval) * interval)
+      val last = if (interval == 0.0) 0.0 else Utils.nextUp(floor(max / interval) * interval)
       var f: Double
       if (interval != 0.0 && last != first) {
         f = first
@@ -150,7 +148,7 @@ abstract class AxisRenderer(
         mAxis.mEntries = FloatArray(n)
       }
       f = first
-      var i: Int = 0
+      var i = 0
       while (i < n) {
         if (f == 0.0) // Fix for negative zero case (Where value == -0.0, and 0.0 == -0.0)
          f = 0.0
@@ -162,7 +160,7 @@ abstract class AxisRenderer(
 
     // set decimals
     if (interval < 1) {
-      mAxis.mDecimals = Math.ceil(-Math.log10(interval)).toInt()
+      mAxis.mDecimals = ceil(-log10(interval)).toInt()
     } else {
       mAxis.mDecimals = 0
     }
