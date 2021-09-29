@@ -103,7 +103,7 @@ public class PiePolylineChartActivity extends DemoBase implements OnSeekBarChang
         seekBarX.setProgress(4);
         seekBarY.setProgress(100);
 
-        chart.animateY(1400, Easing.EaseInOutQuad);
+        chart.animateY(1400, Easing.INSTANCE.getEaseInOutQuad());
         // chart.spin(2000, 0, 360);
 
         Legend l = chart.getLegend();
@@ -256,7 +256,7 @@ public class PiePolylineChartActivity extends DemoBase implements OnSeekBarChang
                 break;
             }
             case R.id.actionToggleSpin: {
-                chart.spin(1000, chart.getRotationAngle(), chart.getRotationAngle() + 360, Easing.EaseInOutCubic);
+                chart.spin(1000, chart.getRotationAngle(), chart.getRotationAngle() + 360, Easing.INSTANCE.getEaseInOutCubic());
                 break;
             }
             case R.id.actionSave: {

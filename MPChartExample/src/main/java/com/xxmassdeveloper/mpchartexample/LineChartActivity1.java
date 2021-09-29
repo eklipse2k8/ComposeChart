@@ -398,7 +398,7 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
                 break;
             }
             case R.id.animateY: {
-                chart.animateY(2000, Easing.EaseInCubic);
+                chart.animateY(2000, Easing.INSTANCE.getEaseInOutCubic());
                 break;
             }
             case R.id.animateXY: {

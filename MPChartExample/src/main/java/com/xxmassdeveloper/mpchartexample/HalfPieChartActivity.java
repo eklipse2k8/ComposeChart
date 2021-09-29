@@ -73,7 +73,7 @@ public class HalfPieChartActivity extends DemoBase {
 
         setData(4, 100);
 
-        chart.animateY(1400, Easing.EaseInOutQuad);
+        chart.animateY(1400, Easing.INSTANCE.getEaseInOutQuad());
 
         Legend l = chart.getLegend();
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
