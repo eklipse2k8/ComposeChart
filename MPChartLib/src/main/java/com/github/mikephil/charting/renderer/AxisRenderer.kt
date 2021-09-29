@@ -1,293 +1,224 @@
+package com.github.mikephil.charting.renderer
 
-package com.github.mikephil.charting.renderer;
-
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
-
-import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.utils.MPPointD;
-import com.github.mikephil.charting.utils.Transformer;
-import com.github.mikephil.charting.utils.Utils;
-import com.github.mikephil.charting.utils.ViewPortHandler;
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import com.github.mikephil.charting.components.AxisBase
+import com.github.mikephil.charting.utils.MPPointD
+import com.github.mikephil.charting.utils.Transformer
+import com.github.mikephil.charting.utils.Utils
+import com.github.mikephil.charting.utils.ViewPortHandler
+import kotlin.math.floor
+import kotlin.math.log10
+import kotlin.math.pow
 
 /**
  * Baseclass of all axis renderers.
  *
  * @author Philipp Jahoda
  */
-public abstract class AxisRenderer extends Renderer {
-
-    /** base axis this axis renderer works with */
-    protected AxisBase mAxis;
-
+abstract class AxisRenderer(
+    viewPortHandler: ViewPortHandler,
     /** transformer to transform values to screen pixels and return */
-    protected Transformer mTrans;
+    transformer: Transformer,
+    /** base axis this axis renderer works with */
+    @JvmField protected var mAxis: AxisBase
+) : Renderer(viewPortHandler) {
 
-    /**
-     * paint object for the grid lines
-     */
-    protected Paint mGridPaint;
+  /** transformer to transform values to screen pixels and return */
+  @JvmField protected var mTrans: Transformer = transformer
 
-    /**
-     * paint for the x-label values
-     */
-    protected Paint mAxisLabelPaint;
+  /** paint object for the grid lines */
+  @JvmField protected var mGridPaint: Paint? = null
 
-    /**
-     * paint for the line surrounding the chart
-     */
-    protected Paint mAxisLinePaint;
+  /** paint for the x-label values */
+  @JvmField protected var mAxisLabelPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    /**
-     * paint used for the limit lines
-     */
-    protected Paint mLimitLinePaint;
+  /** paint for the line surrounding the chart */
+  @JvmField protected var mAxisLinePaint: Paint? = null
 
-    public AxisRenderer(ViewPortHandler viewPortHandler, Transformer trans, AxisBase axis) {
-        super(viewPortHandler);
+  /** paint used for the limit lines */
+  @JvmField protected var mLimitLinePaint: Paint? = null
 
-        this.mTrans = trans;
-        this.mAxis = axis;
+  /** Returns the Paint object used for drawing the axis (labels). */
+  val paintAxisLabels = mAxisLabelPaint
 
-        if(mViewPortHandler != null) {
+  /**
+   * Computes the axis values.
+   *
+   * @param min
+   * - the minimum value in the data object for this axis
+   * @param max
+   * - the maximum value in the data object for this axis
+   */
+  open fun computeAxis(min: Float, max: Float, inverted: Boolean) {
 
-            mAxisLabelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    // calculate the starting and entry point of the y-labels (depending on
+    // zoom / contentrect bounds)
+    var min = min
+    var max = max
+    if (mViewPortHandler.contentWidth() > 10 && !mViewPortHandler.isFullyZoomedOutY) {
+      val p1 =
+          mTrans.getValuesByTouchPoint(
+              mViewPortHandler.contentLeft(), mViewPortHandler.contentTop())
+      val p2 =
+          mTrans.getValuesByTouchPoint(
+              mViewPortHandler.contentLeft(), mViewPortHandler.contentBottom())
+      if (!inverted) {
+        min = p2.y.toFloat()
+        max = p1.y.toFloat()
+      } else {
+        min = p1.y.toFloat()
+        max = p2.y.toFloat()
+      }
+      MPPointD.recycleInstance(p1)
+      MPPointD.recycleInstance(p2)
+    }
+    computeAxisValues(min, max)
+  }
 
-            mGridPaint = new Paint();
-            mGridPaint.setColor(Color.GRAY);
-            mGridPaint.setStrokeWidth(1f);
-            mGridPaint.setStyle(Style.STROKE);
-            mGridPaint.setAlpha(90);
-
-            mAxisLinePaint = new Paint();
-            mAxisLinePaint.setColor(Color.BLACK);
-            mAxisLinePaint.setStrokeWidth(1f);
-            mAxisLinePaint.setStyle(Style.STROKE);
-
-            mLimitLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            mLimitLinePaint.setStyle(Paint.Style.STROKE);
-        }
+  /**
+   * Sets up the axis values. Computes the desired number of labels between the two given extremes.
+   *
+   * @return
+   */
+  protected open fun computeAxisValues(min: Float, max: Float) {
+    val labelCount = mAxis.labelCount
+    val range = Math.abs(max - min).toDouble()
+    if (labelCount == 0 || range <= 0 || java.lang.Double.isInfinite(range)) {
+      mAxis.mEntries = floatArrayOf()
+      mAxis.mCenteredEntries = floatArrayOf()
+      mAxis.mEntryCount = 0
+      return
     }
 
-    /**
-     * Returns the Paint object used for drawing the axis (labels).
-     *
-     * @return
-     */
-    public Paint getPaintAxisLabels() {
-        return mAxisLabelPaint;
+    // Find out how much spacing (in y value space) between axis values
+    val rawInterval = range / labelCount
+    var interval = Utils.roundToNextSignificant(rawInterval).toDouble()
+
+    // If granularity is enabled, then do not allow the interval to go below specified granularity.
+    // This is used to avoid repeated values when rounding values for display.
+    if (mAxis.isGranularityEnabled)
+        interval = if (interval < mAxis.granularity) mAxis.granularity.toDouble() else interval
+
+    // Normalize interval
+    val intervalMagnitude = Utils.roundToNextSignificant(10.0.pow(log10(interval))).toDouble()
+    val intervalSigDigit = (interval / intervalMagnitude).toInt()
+    if (intervalSigDigit > 5) {
+      // Use one order of magnitude higher, to avoid intervals like 0.9 or 90
+      // if it's 0.0 after floor(), we use the old value
+      interval =
+          if (floor(10.0 * intervalMagnitude) == 0.0) interval else floor(10.0 * intervalMagnitude)
+    }
+    var n = if (mAxis.isCenterAxisLabelsEnabled) 1 else 0
+
+    // force label count
+    if (mAxis.isForceLabelsEnabled) {
+      interval = (range.toFloat() / (labelCount - 1).toFloat()).toDouble()
+      mAxis.mEntryCount = labelCount
+      if (mAxis.mEntries.size < labelCount) {
+        // Ensure stops contains at least numStops elements.
+        mAxis.mEntries = FloatArray(labelCount)
+      }
+      var v = min
+      for (i in 0 until labelCount) {
+        mAxis.mEntries[i] = v
+        v += interval.toFloat()
+      }
+      n = labelCount
+
+      // no forced count
+    } else {
+      var first = if (interval == 0.0) 0.0 else Math.ceil(min / interval) * interval
+      if (mAxis.isCenterAxisLabelsEnabled) {
+        first -= interval
+      }
+      val last = if (interval == 0.0) 0.0 else Utils.nextUp(Math.floor(max / interval) * interval)
+      var f: Double
+      if (interval != 0.0 && last != first) {
+        f = first
+        while (f <= last) {
+          ++n
+          f += interval
+        }
+      } else if (last == first && n == 0) {
+        n = 1
+      }
+      mAxis.mEntryCount = n
+      if (mAxis.mEntries.size < n) {
+        // Ensure stops contains at least numStops elements.
+        mAxis.mEntries = FloatArray(n)
+      }
+      f = first
+      var i: Int = 0
+      while (i < n) {
+        if (f == 0.0) // Fix for negative zero case (Where value == -0.0, and 0.0 == -0.0)
+         f = 0.0
+        mAxis.mEntries[i] = f.toFloat()
+        f += interval
+        ++i
+      }
     }
 
-    /**
-     * Returns the Paint object that is used for drawing the grid-lines of the
-     * axis.
-     *
-     * @return
-     */
-    public Paint getPaintGrid() {
-        return mGridPaint;
+    // set decimals
+    if (interval < 1) {
+      mAxis.mDecimals = Math.ceil(-Math.log10(interval)).toInt()
+    } else {
+      mAxis.mDecimals = 0
     }
-
-    /**
-     * Returns the Paint object that is used for drawing the axis-line that goes
-     * alongside the axis.
-     *
-     * @return
-     */
-    public Paint getPaintAxisLine() {
-        return mAxisLinePaint;
+    if (mAxis.isCenterAxisLabelsEnabled) {
+      if (mAxis.mCenteredEntries.size < n) {
+        mAxis.mCenteredEntries = FloatArray(n)
+      }
+      val offset = interval.toFloat() / 2f
+      for (i in 0 until n) {
+        mAxis.mCenteredEntries[i] = mAxis.mEntries[i] + offset
+      }
     }
+  }
 
-    /**
-     * Returns the Transformer object used for transforming the axis values.
-     *
-     * @return
-     */
-    public Transformer getTransformer() {
-        return mTrans;
-    }
+  /**
+   * Draws the axis labels to the screen.
+   *
+   * @param c
+   */
+  abstract fun renderAxisLabels(c: Canvas?)
 
-    /**
-     * Computes the axis values.
-     *
-     * @param min - the minimum value in the data object for this axis
-     * @param max - the maximum value in the data object for this axis
-     */
-    public void computeAxis(float min, float max, boolean inverted) {
+  /**
+   * Draws the grid lines belonging to the axis.
+   *
+   * @param c
+   */
+  abstract fun renderGridLines(c: Canvas?)
 
-        // calculate the starting and entry point of the y-labels (depending on
-        // zoom / contentrect bounds)
-        if (mViewPortHandler != null && mViewPortHandler.contentWidth() > 10 && !mViewPortHandler.isFullyZoomedOutY()) {
+  /**
+   * Draws the line that goes alongside the axis.
+   *
+   * @param c
+   */
+  abstract fun renderAxisLine(c: Canvas?)
 
-            MPPointD p1 = mTrans.getValuesByTouchPoint(mViewPortHandler.contentLeft(), mViewPortHandler.contentTop());
-            MPPointD p2 = mTrans.getValuesByTouchPoint(mViewPortHandler.contentLeft(), mViewPortHandler.contentBottom());
+  /**
+   * Draws the LimitLines associated with this axis to the screen.
+   *
+   * @param c
+   */
+  abstract fun renderLimitLines(c: Canvas?)
 
-            if (!inverted) {
-
-                min = (float) p2.y;
-                max = (float) p1.y;
-            } else {
-
-                min = (float) p1.y;
-                max = (float) p2.y;
-            }
-
-            MPPointD.recycleInstance(p1);
-            MPPointD.recycleInstance(p2);
+  init {
+    mGridPaint =
+        Paint().apply {
+          color = Color.GRAY
+          strokeWidth = 1f
+          style = Paint.Style.STROKE
+          alpha = 90
         }
-
-        computeAxisValues(min, max);
-    }
-
-    /**
-     * Sets up the axis values. Computes the desired number of labels between the two given extremes.
-     *
-     * @return
-     */
-    protected void computeAxisValues(float min, float max) {
-
-        float yMin = min;
-        float yMax = max;
-
-        int labelCount = mAxis.getLabelCount();
-        double range = Math.abs(yMax - yMin);
-
-        if (labelCount == 0 || range <= 0 || Double.isInfinite(range)) {
-            mAxis.mEntries = new float[]{};
-            mAxis.mCenteredEntries = new float[]{};
-            mAxis.mEntryCount = 0;
-            return;
+    mAxisLinePaint =
+        Paint().apply {
+          color = Color.BLACK
+          strokeWidth = 1f
+          style = Paint.Style.STROKE
         }
-
-        // Find out how much spacing (in y value space) between axis values
-        double rawInterval = range / labelCount;
-        double interval = Utils.roundToNextSignificant(rawInterval);
-
-        // If granularity is enabled, then do not allow the interval to go below specified granularity.
-        // This is used to avoid repeated values when rounding values for display.
-        if (mAxis.isGranularityEnabled())
-            interval = interval < mAxis.getGranularity() ? mAxis.getGranularity() : interval;
-
-        // Normalize interval
-        double intervalMagnitude = Utils.roundToNextSignificant(Math.pow(10, (int) Math.log10(interval)));
-        int intervalSigDigit = (int) (interval / intervalMagnitude);
-        if (intervalSigDigit > 5) {
-            // Use one order of magnitude higher, to avoid intervals like 0.9 or 90
-            // if it's 0.0 after floor(), we use the old value
-            interval = Math.floor(10.0 * intervalMagnitude) == 0.0
-                    ? interval
-                    : Math.floor(10.0 * intervalMagnitude);
-
-        }
-
-        int n = mAxis.isCenterAxisLabelsEnabled() ? 1 : 0;
-
-        // force label count
-        if (mAxis.isForceLabelsEnabled()) {
-
-            interval = (float) range / (float) (labelCount - 1);
-            mAxis.mEntryCount = labelCount;
-
-            if (mAxis.mEntries.length < labelCount) {
-                // Ensure stops contains at least numStops elements.
-                mAxis.mEntries = new float[labelCount];
-            }
-
-            float v = min;
-
-            for (int i = 0; i < labelCount; i++) {
-                mAxis.mEntries[i] = v;
-                v += interval;
-            }
-
-            n = labelCount;
-
-            // no forced count
-        } else {
-
-            double first = interval == 0.0 ? 0.0 : Math.ceil(yMin / interval) * interval;
-            if(mAxis.isCenterAxisLabelsEnabled()) {
-                first -= interval;
-            }
-
-            double last = interval == 0.0 ? 0.0 : Utils.nextUp(Math.floor(yMax / interval) * interval);
-
-            double f;
-            int i;
-
-            if (interval != 0.0 && last != first) {
-                for (f = first; f <= last; f += interval) {
-                    ++n;
-                }
-            }
-            else if (last == first && n == 0) {
-                n = 1;
-            }
-
-            mAxis.mEntryCount = n;
-
-            if (mAxis.mEntries.length < n) {
-                // Ensure stops contains at least numStops elements.
-                mAxis.mEntries = new float[n];
-            }
-
-            for (f = first, i = 0; i < n; f += interval, ++i) {
-
-                if (f == 0.0) // Fix for negative zero case (Where value == -0.0, and 0.0 == -0.0)
-                    f = 0.0;
-
-                mAxis.mEntries[i] = (float) f;
-            }
-        }
-
-        // set decimals
-        if (interval < 1) {
-            mAxis.mDecimals = (int) Math.ceil(-Math.log10(interval));
-        } else {
-            mAxis.mDecimals = 0;
-        }
-
-        if (mAxis.isCenterAxisLabelsEnabled()) {
-
-            if (mAxis.mCenteredEntries.length < n) {
-                mAxis.mCenteredEntries = new float[n];
-            }
-
-            float offset = (float)interval / 2f;
-
-            for (int i = 0; i < n; i++) {
-                mAxis.mCenteredEntries[i] = mAxis.mEntries[i] + offset;
-            }
-        }
-    }
-
-    /**
-     * Draws the axis labels to the screen.
-     *
-     * @param c
-     */
-    public abstract void renderAxisLabels(Canvas c);
-
-    /**
-     * Draws the grid lines belonging to the axis.
-     *
-     * @param c
-     */
-    public abstract void renderGridLines(Canvas c);
-
-    /**
-     * Draws the line that goes alongside the axis.
-     *
-     * @param c
-     */
-    public abstract void renderAxisLine(Canvas c);
-
-    /**
-     * Draws the LimitLines associated with this axis to the screen.
-     *
-     * @param c
-     */
-    public abstract void renderLimitLines(Canvas c);
+    mLimitLinePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
+  }
 }

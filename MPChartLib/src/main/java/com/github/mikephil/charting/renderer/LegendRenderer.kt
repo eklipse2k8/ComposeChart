@@ -20,7 +20,7 @@ import java.util.*
 import kotlin.math.min
 
 class LegendRenderer(
-    viewPortHandler: ViewPortHandler?,
+    viewPortHandler: ViewPortHandler,
     /** the legend object this renderer renders */
     var mLegend: Legend
 ) : Renderer(viewPortHandler) {
