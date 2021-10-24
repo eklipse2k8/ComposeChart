@@ -130,8 +130,8 @@ public abstract class SimpleFragment extends Fragment {
     protected LineData generateLineData() {
 
         ArrayList<ILineDataSet> sets = new ArrayList<>();
-        LineDataSet ds1 = new LineDataSet(FileUtils.loadEntriesFromAssets(context.getAssets(), "sine.txt"), "Sine function");
-        LineDataSet ds2 = new LineDataSet(FileUtils.loadEntriesFromAssets(context.getAssets(), "cosine.txt"), "Cosine function");
+        LineDataSet ds1 = new LineDataSet(FileUtils.INSTANCE.loadEntriesFromAssets(context.getAssets(), "sine.txt"), "Sine function");
+        LineDataSet ds2 = new LineDataSet(FileUtils.INSTANCE.loadEntriesFromAssets(context.getAssets(), "cosine.txt"), "Cosine function");
 
         ds1.setLineWidth(2f);
         ds2.setLineWidth(2f);
@@ -155,10 +155,10 @@ public abstract class SimpleFragment extends Fragment {
 
         ArrayList<ILineDataSet> sets = new ArrayList<>();
 
-        LineDataSet ds1 = new LineDataSet(FileUtils.loadEntriesFromAssets(context.getAssets(), "n.txt"), "O(n)");
-        LineDataSet ds2 = new LineDataSet(FileUtils.loadEntriesFromAssets(context.getAssets(), "nlogn.txt"), "O(nlogn)");
-        LineDataSet ds3 = new LineDataSet(FileUtils.loadEntriesFromAssets(context.getAssets(), "square.txt"), "O(n\u00B2)");
-        LineDataSet ds4 = new LineDataSet(FileUtils.loadEntriesFromAssets(context.getAssets(), "three.txt"), "O(n\u00B3)");
+        LineDataSet ds1 = new LineDataSet(FileUtils.INSTANCE.loadEntriesFromAssets(context.getAssets(), "n.txt"), "O(n)");
+        LineDataSet ds2 = new LineDataSet(FileUtils.INSTANCE.loadEntriesFromAssets(context.getAssets(), "nlogn.txt"), "O(nlogn)");
+        LineDataSet ds3 = new LineDataSet(FileUtils.INSTANCE.loadEntriesFromAssets(context.getAssets(), "square.txt"), "O(n\u00B2)");
+        LineDataSet ds4 = new LineDataSet(FileUtils.INSTANCE.loadEntriesFromAssets(context.getAssets(), "three.txt"), "O(n\u00B3)");
 
         ds1.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
         ds2.setColor(ColorTemplate.VORDIPLOM_COLORS[1]);

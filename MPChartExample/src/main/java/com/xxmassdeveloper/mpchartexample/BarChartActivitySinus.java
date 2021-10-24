@@ -47,7 +47,7 @@ public class BarChartActivitySinus extends DemoBase implements OnSeekBarChangeLi
 
         setTitle("BarChartActivitySinus");
 
-        data = FileUtils.loadBarEntriesFromAssets(getAssets(), "othersine.txt");
+        data = FileUtils.INSTANCE.loadBarEntriesFromAssets(getAssets(), "othersine.txt");
 
         tvX = findViewById(R.id.tvValueCount);
 
