@@ -4,7 +4,8 @@ import android.graphics.drawable.Drawable
 import android.os.Parcel
 import android.os.ParcelFormatException
 import android.os.Parcelable
-import com.github.mikephil.charting.utils.Utils
+import com.github.mikephil.charting.utils.Utils.FLOAT_EPSILON
+import kotlin.math.abs
 
 /**
  * Class representing one entry in the chart. Might contain multiple values. Might only contain a
@@ -12,73 +13,24 @@ import com.github.mikephil.charting.utils.Utils
  *
  * @author Philipp Jahoda
  */
-open class Entry : BaseEntry, Parcelable {
-  /**
-   * Returns the x-value of this Entry object.
-   *
-   * @return
-   */
-  /**
-   * Sets the x-value of this Entry object.
-   *
-   * @param x
-   */
-  /** the x value */
-  open var x = 0f
-
-  constructor()
-
-  /**
-   * A Entry represents one single entry in the chart.
-   *
-   * @param x the x value
-   * @param y the y value (the actual value of the entry)
-   */
-  constructor(x: Float, y: Float) : super(y) {
-    this.x = x
-  }
-
-  /**
-   * A Entry represents one single entry in the chart.
-   *
-   * @param x the x value
-   * @param y the y value (the actual value of the entry)
-   * @param data Spot for additional data this Entry represents.
-   */
-  constructor(x: Float, y: Float, data: Any?) : super(y, data) {
-    this.x = x
-  }
-
-  /**
-   * A Entry represents one single entry in the chart.
-   *
-   * @param x the x value
-   * @param y the y value (the actual value of the entry)
-   * @param icon icon image
-   */
-  constructor(x: Float, y: Float, icon: Drawable?) : super(y, icon) {
-    this.x = x
-  }
-
-  /**
-   * A Entry represents one single entry in the chart.
-   *
-   * @param x the x value
-   * @param y the y value (the actual value of the entry)
-   * @param icon icon image
-   * @param data Spot for additional data this Entry represents.
-   */
-  constructor(x: Float, y: Float, icon: Drawable?, data: Any?) : super(y, icon, data) {
-    this.x = x
-  }
+open class Entry(
+    /** the x value */
+    open var x: Float,
+    /** the y value */
+    override var y: Float,
+    /** optional icon image */
+    override var icon: Drawable? = null,
+    /** optional spot for additional data this Entry represents */
+    override var data: Any? = null,
+) : BaseEntry(y = y, icon = icon, data = data), Parcelable {
 
   /**
    * returns an exact copy of the entry
    *
    * @return
    */
-  open fun copy(): Entry? {
-    return Entry(x, y, data)
+  open fun copy(): Entry {
+    return Entry(x, y, data = data, icon = icon)
   }
 
   /**
@@ -91,8 +43,8 @@ open class Entry : BaseEntry, Parcelable {
   fun equalTo(e: Entry?): Boolean {
     if (e == null) return false
     if (e.data !== this.data) return false
-    if (Math.abs(e.x - x) > Utils.FLOAT_EPSILON) return false
-    return Math.abs(e.y - y) <= Utils.FLOAT_EPSILON
+    if (abs(e.x - x) > FLOAT_EPSILON) return false
+    return abs(e.y - y) <= FLOAT_EPSILON
   }
 
   /** returns a string representation of the entry containing x-index and value */
@@ -119,13 +71,18 @@ open class Entry : BaseEntry, Parcelable {
     }
   }
 
-  protected constructor(`in`: Parcel) {
-    x = `in`.readFloat()
-    y = `in`.readFloat()
-    if (`in`.readInt() == 1) {
-      this.data = `in`.readParcelable(Any::class.java.classLoader)
-    }
-  }
+  protected constructor(
+      input: Parcel
+  ) : this(
+      x = input.readFloat(),
+      y = input.readFloat(),
+      data =
+          if (input.readInt() == 1) {
+            input.readParcelable(Any::class.java.classLoader)
+          } else {
+            null
+          },
+  )
 
   companion object CREATOR : Parcelable.Creator<Entry> {
     override fun createFromParcel(parcel: Parcel): Entry {

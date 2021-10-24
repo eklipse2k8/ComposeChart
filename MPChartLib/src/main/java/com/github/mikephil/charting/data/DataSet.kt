@@ -37,8 +37,8 @@ abstract class DataSet<E : Entry>(
     yMin = Float.MAX_VALUE
     xMax = -Float.MAX_VALUE
     xMin = Float.MAX_VALUE
-    if (mEntries == null || mEntries!!.isEmpty()) return
-    for (e in mEntries!!) {
+    if (mEntries.isEmpty()) return
+    for (e in mEntries) {
       calcMinMax(e)
     }
   }
@@ -46,14 +46,13 @@ abstract class DataSet<E : Entry>(
   override fun calcMinMaxY(fromX: Float, toX: Float) {
     yMax = -Float.MAX_VALUE
     yMin = Float.MAX_VALUE
-    if (mEntries == null || mEntries!!.isEmpty()) return
+    if (mEntries.isEmpty()) return
     val indexFrom = getEntryIndex(fromX, Float.NaN, Rounding.DOWN)
     val indexTo = getEntryIndex(toX, Float.NaN, Rounding.UP)
     if (indexTo < indexFrom) return
     for (i in indexFrom..indexTo) {
-
       // only recalculate y
-      calcMinMaxY(mEntries!![i])
+      calcMinMaxY(mEntries[i])
     }
   }
 
@@ -69,17 +68,17 @@ abstract class DataSet<E : Entry>(
   }
 
   protected fun calcMinMaxX(e: E) {
-    if (e!!.x < xMin) xMin = e.x
+    if (e.x < xMin) xMin = e.x
     if (e.x > xMax) xMax = e.x
   }
 
   protected open fun calcMinMaxY(e: E) {
-    if (e!!.y < yMin) yMin = e.y
+    if (e.y < yMin) yMin = e.y
     if (e.y > yMax) yMax = e.y
   }
 
   override val entryCount: Int
-    get() = mEntries!!.size
+    get() = mEntries.size
 
   /**
    * This method is deprecated. Use getEntries() instead.
@@ -87,17 +86,10 @@ abstract class DataSet<E : Entry>(
    * @return
    */
   @get:Deprecated("")
-  val values: List<E>?
+  val values: List<E>
     get() = mEntries
   /**
    * Returns the array of entries that this DataSet represents.
-   *
-   * @return
-   */
-  /**
-   * Sets the array of entries that this DataSet represents, and calls notifyDataSetChanged()
-   *
-   * @return
    */
   var entries: MutableList<E>
     get() = mEntries
@@ -108,8 +100,6 @@ abstract class DataSet<E : Entry>(
 
   /**
    * This method is deprecated. Use setEntries(...) instead.
-   *
-   * @param values
    */
   @Deprecated("")
   fun setValues(values: MutableList<E>) {

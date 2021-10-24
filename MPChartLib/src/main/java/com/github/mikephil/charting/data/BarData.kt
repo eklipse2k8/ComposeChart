@@ -8,16 +8,13 @@ import java.lang.RuntimeException
  *
  * @author Philipp Jahoda
  */
-class BarData : BarLineScatterCandleBubbleData {
+class BarData : BarLineScatterCandleBubbleData<BarLineScatterCandleBubbleDataSet<BarEntry>> {
   /**
-   * Sets the width each bar should have on the x-axis (in values, not pixels).
-   * Default 0.85f
+   * Sets the width each bar should have on the x-axis (in values, not pixels). Default 0.85f
    *
    * @param mBarWidth
    */
-  /**
-   * the width of the bars on the x-axis, in values (not pixels)
-   */
+  /** the width of the bars on the x-axis, in values (not pixels) */
   var barWidth = 0.85f
 
   constructor() : super()
@@ -25,14 +22,16 @@ class BarData : BarLineScatterCandleBubbleData {
   constructor(dataSets: MutableList<IBarDataSet>) : super(dataSets)
 
   /**
-   * Groups all BarDataSet objects this data object holds together by modifying the x-value of their entries.
-   * Previously set x-values of entries will be overwritten. Leaves space between bars and groups as specified
-   * by the parameters.
-   * Do not forget to call notifyDataSetChanged() on your BarChart object after calling this method.
+   * Groups all BarDataSet objects this data object holds together by modifying the x-value of their
+   * entries. Previously set x-values of entries will be overwritten. Leaves space between bars and
+   * groups as specified by the parameters. Do not forget to call notifyDataSetChanged() on your
+   * BarChart object after calling this method.
    *
-   * @param fromX      the starting point on the x-axis where the grouping should begin
-   * @param groupSpace the space between groups of bars in values (not pixels) e.g. 0.8f for bar width 1f
-   * @param barSpace   the space between individual bars in values (not pixels) e.g. 0.1f for bar width 1f
+   * @param fromX the starting point on the x-axis where the grouping should begin
+   * @param groupSpace the space between groups of bars in values (not pixels) e.g. 0.8f for bar
+   * width 1f
+   * @param barSpace the space between individual bars in values (not pixels) e.g. 0.1f for bar
+   * width 1f
    */
   fun groupBars(fromX: Float, groupSpace: Float, barSpace: Float) {
     var fromX = fromX
@@ -75,7 +74,8 @@ class BarData : BarLineScatterCandleBubbleData {
   }
 
   /**
-   * In case of grouped bars, this method returns the space an individual group of bar needs on the x-axis.
+   * In case of grouped bars, this method returns the space an individual group of bar needs on the
+   * x-axis.
    *
    * @param groupSpace
    * @param barSpace
