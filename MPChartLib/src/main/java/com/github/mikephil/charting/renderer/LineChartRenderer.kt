@@ -10,7 +10,6 @@ import com.github.mikephil.charting.interfaces.datasets.IDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.utils.*
 import java.lang.ref.WeakReference
-import java.util.HashMap
 import kotlin.math.max
 
 class LineChartRenderer(
@@ -170,6 +169,7 @@ class LineChartRenderer(
       trans: Transformer,
       bounds: XBounds
   ) {
+    if (c == null) return
     val fillMin = dataSet?.fillFormatter?.getFillLinePosition(dataSet, mChart) ?: return
     spline.lineTo(dataSet.getEntryForIndex(bounds.min + bounds.range).x, fillMin)
     spline.lineTo(dataSet.getEntryForIndex(bounds.min).x, fillMin)
@@ -312,6 +312,7 @@ class LineChartRenderer(
       trans: Transformer,
       bounds: XBounds
   ) {
+    if (c == null) return
     val filled = mGenerateFilledPathBuffer
     val startingIndex = bounds.min
     val endingIndex = bounds.range + bounds.min
