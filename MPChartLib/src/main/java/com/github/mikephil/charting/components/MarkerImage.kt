@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.os.Build
 import com.github.mikephil.charting.charts.Chart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
@@ -18,10 +19,16 @@ import java.lang.ref.WeakReference
  * @author Philipp Jahoda
  */
 class MarkerImage(mContext: Context, drawableResourceId: Int) : IMarker {
-  var mDrawable: Drawable = mContext.resources.getDrawable(drawableResourceId, null)
+  var mDrawable: Drawable =
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        mContext.resources.getDrawable(drawableResourceId, null)
+      } else {
+        mContext.resources.getDrawable(drawableResourceId)
+      }
   private var mOffset: MPPointF = MPPointF()
   private val mOffset2 = MPPointF()
   private var mWeakChart: WeakReference<Chart<*>>? = null
+  private var mSize: FSize? = FSize()
   private val mDrawableBoundsCache = Rect()
 
   fun setOffset(offsetX: Float, offsetY: Float) {
@@ -35,7 +42,14 @@ class MarkerImage(mContext: Context, drawableResourceId: Int) : IMarker {
       mOffset = offset
     }
 
-  var size: FSize = FSize(Float.NaN, Float.NaN)
+  var size: FSize?
+    get() = mSize
+    set(size) {
+      mSize = size
+      if (mSize == null) {
+        mSize = FSize()
+      }
+    }
 
   fun setChartView(chart: Chart<*>) {
     mWeakChart = WeakReference(chart)
@@ -49,12 +63,12 @@ class MarkerImage(mContext: Context, drawableResourceId: Int) : IMarker {
     mOffset2.x = offset.x
     mOffset2.y = offset.y
     val chart = chartView
-    var width = size.width
-    var height = size.height
-    if (width.isNaN()) {
+    var width = mSize!!.width
+    var height = mSize!!.height
+    if (width == 0f) {
       width = mDrawable.intrinsicWidth.toFloat()
     }
-    if (height.isNaN()) {
+    if (height == 0f) {
       height = mDrawable.intrinsicWidth.toFloat()
     }
     if (posX + mOffset2.x < 0) {
@@ -74,12 +88,12 @@ class MarkerImage(mContext: Context, drawableResourceId: Int) : IMarker {
 
   override fun draw(canvas: Canvas?, posX: Float, posY: Float) {
     val offset = getOffsetForDrawingAtPoint(posX, posY)
-    var width = size.width
-    var height = size.height
-    if (width.isNaN()) {
+    var width = mSize!!.width
+    var height = mSize!!.height
+    if (width == 0f) {
       width = mDrawable.intrinsicWidth.toFloat()
     }
-    if (height.isNaN()) {
+    if (height == 0f) {
       height = mDrawable.intrinsicHeight.toFloat()
     }
     mDrawable.copyBounds(mDrawableBoundsCache)

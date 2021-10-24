@@ -2,23 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.xxmassdeveloper.mpchartexample">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:dataExtractionRules="@xml/data_extraction_rules">
+        android:theme="@style/AppTheme">
         <activity
             android:name="com.xxmassdeveloper.mpchartexample.notimportant.MainActivity"
-            android:exported="true"
-            android:label="@string/app_name">
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -26,7 +23,7 @@
         <activity android:name="LineChartActivity2" />
         <activity android:name="LineChartTime" />
         <activity android:name="BarChartActivity" />
-        <activity android:name="HorizontalBarChartActivity" />
+		<activity android:name="HorizontalBarChartActivity" />
         <activity android:name="HorizontalBarNegativeChartActivity" />
         <activity android:name="PieChartActivity" />
         <activity android:name="PiePolylineChartActivity" />

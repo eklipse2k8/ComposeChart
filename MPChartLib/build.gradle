@@ -10,7 +10,7 @@ android {
     compileSdkVersion 31
     buildToolsVersion '31.0.0 rc3'
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 14
         targetSdkVersion 31
     }
     buildTypes {

@@ -50,7 +50,7 @@ class Description : ComponentBase() {
    */
   fun setPosition(x: Float, y: Float) {
     if (position == null) {
-      position = MPPointF(x, y)
+      position = MPPointF.getInstance(x, y)
     } else {
       position!!.x = x
       position!!.y = y

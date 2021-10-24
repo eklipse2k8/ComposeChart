@@ -18,7 +18,7 @@ class CombinedHighlighter(chart: CombinedDataProvider, @NonNull barChart: BarDat
     mHighlightBuffer.clear()
     val dataObjects = mChart.combinedData.allData
     for (i in dataObjects.indices) {
-      val dataObject = dataObjects[i]
+      val dataObject: ChartData<*> = dataObjects[i]
 
       // in case of BarData, let the BarHighlighter take over
       if (dataObject is BarData) {
@@ -31,7 +31,7 @@ class CombinedHighlighter(chart: CombinedDataProvider, @NonNull barChart: BarDat
         var j = 0
         val dataSetCount = dataObject.dataSetCount
         while (j < dataSetCount) {
-          val dataSet = dataObjects[i].getDataSetByIndex(j) ?: continue
+          val dataSet: IDataSet<*> = dataObjects[i].getDataSetByIndex(j)
 
           // don't include datasets that cannot be highlighted
           if (!dataSet.isHighlightEnabled) {
@@ -39,7 +39,7 @@ class CombinedHighlighter(chart: CombinedDataProvider, @NonNull barChart: BarDat
             continue
           }
           val highs = buildHighlights(dataSet, j, xVal, DataSet.Rounding.CLOSEST)
-          for (high in highs) {
+          for (high in highs!!) {
             high.dataIndex = i
             mHighlightBuffer.add(high)
           }
