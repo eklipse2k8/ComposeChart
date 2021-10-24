@@ -2,8 +2,8 @@ package com.github.mikephil.charting.buffer
 
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 
-class HorizontalBarBuffer(size: Int, dataSetCount: Int, containsStacks: Boolean) :
-    BarBuffer(size, dataSetCount, containsStacks) {
+class HorizontalBarBuffer(size: Int, containsStacks: Boolean) : BarBuffer(size, containsStacks) {
+
   override fun feed(data: IBarDataSet) {
     val size = data.entryCount * phaseX
     val barWidthHalf = mBarWidth / 2f

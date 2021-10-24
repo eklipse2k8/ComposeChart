@@ -1,16 +1,19 @@
 package com.github.mikephil.charting.buffer
 
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
+import kotlin.math.abs
 
-open class BarBuffer(size: Int, dataSetCount: Int, containsStacks: Boolean) :
-    AbstractBuffer<IBarDataSet>(size) {
-  protected var mDataSetIndex = 0
-  protected var mDataSetCount = dataSetCount
+open class BarBuffer(size: Int, containsStacks: Boolean) : AbstractBuffer<IBarDataSet>(size) {
+
+  private var mDataSetIndex = 0
+
   @JvmField protected var mContainsStacks = containsStacks
+
   @JvmField protected var mInverted = false
 
   /** width of the bar on the x-axis, in values (not pixels) */
   @JvmField protected var mBarWidth = 1f
+
   fun setBarWidth(barWidth: Float) {
     mBarWidth = barWidth
   }
@@ -77,8 +80,8 @@ open class BarBuffer(size: Int, dataSetCount: Int, containsStacks: Boolean) :
             posY = yStart
           } else {
             y = negY
-            yStart = negY + Math.abs(value)
-            negY += Math.abs(value)
+            yStart = negY + abs(value)
+            negY += abs(value)
           }
           val left = x - barWidthHalf
           val right = x + barWidthHalf
