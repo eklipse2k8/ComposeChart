@@ -147,7 +147,7 @@ public class PiePolylineChartActivity extends DemoBase implements OnSeekBarChang
         for (int c : ColorTemplate.PASTEL_COLORS)
             colors.add(c);
 
-        colors.add(ColorTemplate.getHoloBlue());
+        colors.add(ColorTemplate.INSTANCE.getHoloBlue());
 
         dataSet.setColors(colors);
         //dataSet.setSelectionShift(0f);
@@ -293,7 +293,7 @@ public class PiePolylineChartActivity extends DemoBase implements OnSeekBarChang
         s.setSpan(new ForegroundColorSpan(Color.GRAY), 14, s.length() - 15, 0);
         s.setSpan(new RelativeSizeSpan(.65f), 14, s.length() - 15, 0);
         s.setSpan(new StyleSpan(Typeface.ITALIC), s.length() - 14, s.length(), 0);
-        s.setSpan(new ForegroundColorSpan(ColorTemplate.getHoloBlue()), s.length() - 14, s.length(), 0);
+        s.setSpan(new ForegroundColorSpan(ColorTemplate.INSTANCE.getHoloBlue()), s.length() - 14, s.length(), 0);
         return s;
     }
 

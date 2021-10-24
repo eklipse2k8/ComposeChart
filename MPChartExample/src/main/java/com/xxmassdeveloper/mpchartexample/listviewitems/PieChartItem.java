@@ -95,7 +95,7 @@ public class PieChartItem extends ChartItem {
         s.setSpan(new RelativeSizeSpan(.9f), 14, 25, 0);
         s.setSpan(new ForegroundColorSpan(Color.GRAY), 14, 25, 0);
         s.setSpan(new RelativeSizeSpan(1.4f), 25, s.length(), 0);
-        s.setSpan(new ForegroundColorSpan(ColorTemplate.getHoloBlue()), 25, s.length(), 0);
+        s.setSpan(new ForegroundColorSpan(ColorTemplate.INSTANCE.getHoloBlue()), 25, s.length(), 0);
         return s;
     }
 

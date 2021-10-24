@@ -9,7 +9,6 @@ import com.github.mikephil.charting.formatter.IFillFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.github.mikephil.charting.utils.Utils
-import java.util.ArrayList
 
 class LineDataSet(yVals: List<Entry>, label: String?) :
     LineRadarDataSet<Entry>(yVals, label), ILineDataSet {
@@ -202,7 +201,7 @@ class LineDataSet(yVals: List<Entry>, label: String?) :
    * @param colors
    */
   fun setCircleColors(vararg colors: Int) {
-    mCircleColors = ColorTemplate.createColors(colors)
+    mCircleColors = ColorTemplate.createColors(colors).toMutableList()
   }
 
   /**

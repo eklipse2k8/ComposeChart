@@ -117,7 +117,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
 
         YAxis leftAxis = chart.getAxisLeft();
         leftAxis.setTypeface(tfLight);
-        leftAxis.setTextColor(ColorTemplate.getHoloBlue());
+        leftAxis.setTextColor(ColorTemplate.INSTANCE.getHoloBlue());
         leftAxis.setAxisMaximum(200f);
         leftAxis.setAxisMinimum(0f);
         leftAxis.setDrawGridLines(true);
@@ -173,12 +173,12 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
             set1 = new LineDataSet(values1, "DataSet 1");
 
             set1.setAxisDependency(AxisDependency.LEFT);
-            set1.setColor(ColorTemplate.getHoloBlue());
+            set1.setColor(ColorTemplate.INSTANCE.getHoloBlue());
             set1.setCircleColor(Color.WHITE);
             set1.setLineWidth(2f);
             set1.setCircleRadius(3f);
             set1.setFillAlpha(65);
-            set1.setFillColor(ColorTemplate.getHoloBlue());
+            set1.setFillColor(ColorTemplate.INSTANCE.getHoloBlue());
             set1.setHighLightColor(Color.rgb(244, 117, 117));
             set1.setDrawCircleHole(false);
             //set1.setFillFormatter(new MyFillFormatter(0f));
@@ -206,7 +206,7 @@ public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListe
             set3.setLineWidth(2f);
             set3.setCircleRadius(3f);
             set3.setFillAlpha(65);
-            set3.setFillColor(ColorTemplate.colorWithAlpha(Color.YELLOW, 200));
+            set3.setFillColor(ColorTemplate.INSTANCE.colorWithAlpha(Color.YELLOW, 200));
             set3.setDrawCircleHole(false);
             set3.setHighLightColor(Color.rgb(244, 117, 117));
 
