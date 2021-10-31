@@ -7,10 +7,7 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.utils.MPPointF
 import com.github.mikephil.charting.utils.Utils
 import com.github.mikephil.charting.utils.ViewPortHandler
-import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.log10
-import kotlin.math.pow
+import kotlin.math.*
 
 class YAxisRendererRadarChart(
     viewPortHandler: ViewPortHandler,
@@ -69,7 +66,7 @@ class YAxisRendererRadarChart(
       if (centeringEnabled) {
         first -= interval
       }
-      val last = if (interval == 0.0) 0.0 else Utils.nextUp(floor(max / interval) * interval)
+      val last = if (interval == 0.0) 0.0 else (floor(max / interval) * interval).nextUp()
       var f: Double
       if (interval != 0.0) {
         f = first

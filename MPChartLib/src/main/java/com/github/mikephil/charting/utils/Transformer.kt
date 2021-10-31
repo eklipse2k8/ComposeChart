@@ -2,35 +2,31 @@ package com.github.mikephil.charting.utils
 
 import android.graphics.Matrix
 import android.graphics.Path
-import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet
-import com.github.mikephil.charting.interfaces.datasets.IBubbleDataSet
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
-import com.github.mikephil.charting.interfaces.datasets.ICandleDataSet
 import android.graphics.RectF
 import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.interfaces.datasets.IBubbleDataSet
+import com.github.mikephil.charting.interfaces.datasets.ICandleDataSet
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet
 
 /**
- * Transformer class that contains all matrices and is responsible for
- * transforming values into pixels on the screen and backwards.
+ * Transformer class that contains all matrices and is responsible for transforming values into
+ * pixels on the screen and backwards.
  *
  * @author Philipp Jahoda
  */
 open class Transformer(@JvmField protected var viewPortHandler: ViewPortHandler) {
-  /**
-   * matrix to map the values to the screen pixels
-   */
+  /** matrix to map the values to the screen pixels */
   var valueMatrix = Matrix()
     protected set
 
-  /**
-   * matrix for handling the different offsets of the chart
-   */
+  /** matrix for handling the different offsets of the chart */
   var offsetMatrix = Matrix()
     protected set
 
   /**
-   * Prepares the matrix that transforms values to pixels. Calculates the
-   * scale factors from the charts size and offsets.
+   * Prepares the matrix that transforms values to pixels. Calculates the scale factors from the
+   * charts size and offsets.
    *
    * @param xChartMin
    * @param deltaX
@@ -38,14 +34,8 @@ open class Transformer(@JvmField protected var viewPortHandler: ViewPortHandler)
    * @param yChartMin
    */
   fun prepareMatrixValuePx(xChartMin: Float, deltaX: Float, deltaY: Float, yChartMin: Float) {
-    var scaleX = (viewPortHandler.contentWidth() / deltaX)
-    var scaleY = (viewPortHandler.contentHeight() / deltaY)
-    if (java.lang.Float.isInfinite(scaleX)) {
-      scaleX = 0f
-    }
-    if (java.lang.Float.isInfinite(scaleY)) {
-      scaleY = 0f
-    }
+    val scaleX = (viewPortHandler.contentWidth() / deltaX).safeguard()
+    val scaleY = (viewPortHandler.contentHeight() / deltaY).safeguard()
 
     // setup all matrices
     valueMatrix.reset()
@@ -62,28 +52,31 @@ open class Transformer(@JvmField protected var viewPortHandler: ViewPortHandler)
     offsetMatrix.reset()
 
     // offset.postTranslate(mOffsetLeft, getHeight() - mOffsetBottom);
-    if (!inverted) offsetMatrix.postTranslate(
-      viewPortHandler.offsetLeft(),
-      viewPortHandler.chartHeight - viewPortHandler.offsetBottom()
-    ) else {
-      offsetMatrix
-        .setTranslate(viewPortHandler.offsetLeft(), -viewPortHandler.offsetTop())
+    if (!inverted)
+        offsetMatrix.postTranslate(
+            viewPortHandler.offsetLeft(),
+            viewPortHandler.chartHeight - viewPortHandler.offsetBottom())
+    else {
+      offsetMatrix.setTranslate(viewPortHandler.offsetLeft(), -viewPortHandler.offsetTop())
       offsetMatrix.postScale(1.0f, -1.0f)
     }
   }
 
-  protected var valuePointsForGenerateTransformedValuesScatter = FloatArray(1)
+  private var valuePointsForGenerateTransformedValuesScatter = FloatArray(1)
 
   /**
-   * Transforms an List of Entry into a float array containing the x and
-   * y values transformed with all matrices for the SCATTERCHART.
+   * Transforms an List of Entry into a float array containing the x and y values transformed with
+   * all matrices for the SCATTERCHART.
    *
    * @param data
    * @return
    */
   fun generateTransformedValuesScatter(
-    data: IScatterDataSet, phaseX: Float,
-    phaseY: Float, from: Int, to: Int
+      data: IScatterDataSet,
+      phaseX: Float,
+      phaseY: Float,
+      from: Int,
+      to: Int
   ): FloatArray {
     val count = ((to - from) * phaseX + 1).toInt() * 2
     if (valuePointsForGenerateTransformedValuesScatter.size != count) {
@@ -106,20 +99,20 @@ open class Transformer(@JvmField protected var viewPortHandler: ViewPortHandler)
     return valuePoints
   }
 
-  protected var valuePointsForGenerateTransformedValuesBubble = FloatArray(1)
+  private var valuePointsForGenerateTransformedValuesBubble = FloatArray(1)
 
   /**
-   * Transforms an List of Entry into a float array containing the x and
-   * y values transformed with all matrices for the BUBBLECHART.
+   * Transforms an List of Entry into a float array containing the x and y values transformed with
+   * all matrices for the BUBBLECHART.
    *
    * @param data
    * @return
    */
   fun generateTransformedValuesBubble(
-    data: IBubbleDataSet,
-    phaseY: Float,
-    from: Int,
-    to: Int
+      data: IBubbleDataSet,
+      phaseY: Float,
+      from: Int,
+      to: Int
   ): FloatArray {
     val count = (to - from + 1) * 2 // (int) Math.ceil((to - from) * phaseX) * 2;
     if (valuePointsForGenerateTransformedValuesBubble.size != count) {
@@ -142,19 +135,21 @@ open class Transformer(@JvmField protected var viewPortHandler: ViewPortHandler)
     return valuePoints
   }
 
-  protected var valuePointsForGenerateTransformedValuesLine = FloatArray(1)
+  private var valuePointsForGenerateTransformedValuesLine = FloatArray(1)
 
   /**
-   * Transforms an List of Entry into a float array containing the x and
-   * y values transformed with all matrices for the LINECHART.
+   * Transforms an List of Entry into a float array containing the x and y values transformed with
+   * all matrices for the LINECHART.
    *
    * @param data
    * @return
    */
   fun generateTransformedValuesLine(
-    data: ILineDataSet,
-    phaseX: Float, phaseY: Float,
-    min: Int, max: Int
+      data: ILineDataSet,
+      phaseX: Float,
+      phaseY: Float,
+      min: Int,
+      max: Int
   ): FloatArray {
     val count = (((max - min) * phaseX).toInt() + 1) * 2
     if (valuePointsForGenerateTransformedValuesLine.size != count) {
@@ -177,18 +172,21 @@ open class Transformer(@JvmField protected var viewPortHandler: ViewPortHandler)
     return valuePoints
   }
 
-  protected var valuePointsForGenerateTransformedValuesCandle = FloatArray(1)
+  private var valuePointsForGenerateTransformedValuesCandle = FloatArray(1)
 
   /**
-   * Transforms an List of Entry into a float array containing the x and
-   * y values transformed with all matrices for the CANDLESTICKCHART.
+   * Transforms an List of Entry into a float array containing the x and y values transformed with
+   * all matrices for the CANDLESTICKCHART.
    *
    * @param data
    * @return
    */
   fun generateTransformedValuesCandle(
-    data: ICandleDataSet,
-    phaseX: Float, phaseY: Float, from: Int, to: Int
+      data: ICandleDataSet,
+      phaseX: Float,
+      phaseY: Float,
+      from: Int,
+      to: Int
   ): FloatArray {
     val count = ((to - from) * phaseX + 1).toInt() * 2
     if (valuePointsForGenerateTransformedValuesCandle.size != count) {
@@ -212,8 +210,7 @@ open class Transformer(@JvmField protected var viewPortHandler: ViewPortHandler)
   }
 
   /**
-   * transform a path with all the given matrices VERY IMPORTANT: keep order
-   * to value-touch-offset
+   * transform a path with all the given matrices VERY IMPORTANT: keep order to value-touch-offset
    *
    * @param path
    */
@@ -235,8 +232,8 @@ open class Transformer(@JvmField protected var viewPortHandler: ViewPortHandler)
   }
 
   /**
-   * Transform an array of points with all matrices. VERY IMPORTANT: Keep
-   * matrix order "value-touch-offset" when transforming.
+   * Transform an array of points with all matrices. VERY IMPORTANT: Keep matrix order
+   * "value-touch-offset" when transforming.
    *
    * @param pts
    */
@@ -323,8 +320,8 @@ open class Transformer(@JvmField protected var viewPortHandler: ViewPortHandler)
   protected var mPixelToValueMatrixBuffer = Matrix()
 
   /**
-   * Transforms the given array of touch positions (pixels) (x, y, x, y, ...)
-   * into values on the chart.
+   * Transforms the given array of touch positions (pixels) (x, y, x, y, ...) into values on the
+   * chart.
    *
    * @param pixels
    */
@@ -341,17 +338,13 @@ open class Transformer(@JvmField protected var viewPortHandler: ViewPortHandler)
     tmp.mapPoints(pixels)
   }
 
-  /**
-   * buffer for performance
-   */
+  /** buffer for performance */
   var ptsBuffer = FloatArray(2)
 
   /**
-   * Returns a recyclable MPPointD instance.
-   * returns the x and y values in the chart at the given touch point
-   * (encapsulated in a MPPointD). This method transforms pixel coordinates to
-   * coordinates / values in the chart. This is the opposite method to
-   * getPixelForValues(...).
+   * Returns a recyclable MPPointD instance. returns the x and y values in the chart at the given
+   * touch point (encapsulated in a MPPointD). This method transforms pixel coordinates to
+   * coordinates / values in the chart. This is the opposite method to getPixelForValues(...).
    *
    * @param x
    * @param y
@@ -372,8 +365,8 @@ open class Transformer(@JvmField protected var viewPortHandler: ViewPortHandler)
   }
 
   /**
-   * Returns a recyclable MPPointD instance.
-   * Returns the x and y coordinates (pixels) for a given x and y value in the chart.
+   * Returns a recyclable MPPointD instance. Returns the x and y coordinates (pixels) for a given x
+   * and y value in the chart.
    *
    * @param x
    * @param y
@@ -389,14 +382,17 @@ open class Transformer(@JvmField protected var viewPortHandler: ViewPortHandler)
   }
 
   private val mMBuffer1 = Matrix()
-  val valueToPixelMatrix: Matrix
+
+  private val valueToPixelMatrix: Matrix
     get() {
       mMBuffer1.set(valueMatrix)
-      mMBuffer1.postConcat(viewPortHandler.mMatrixTouch)
+      mMBuffer1.postConcat(viewPortHandler.matrixTouch)
       mMBuffer1.postConcat(offsetMatrix)
       return mMBuffer1
     }
+
   private val mMBuffer2 = Matrix()
+
   val pixelToValueMatrix: Matrix
     get() {
       valueToPixelMatrix.invert(mMBuffer2)

@@ -180,7 +180,7 @@ object Utils {
    * @param demoText
    * @param outputFSize An output variable, modified by the function.
    */
-  fun calcTextSize(paint: Paint?, demoText: String, outputFSize: FSize) {
+  private fun calcTextSize(paint: Paint?, demoText: String, outputFSize: FSize) {
     val r = mCalcTextSizeRect
     r[0, 0, 0] = 0
     paint?.getTextBounds(demoText, 0, demoText.length, r)
@@ -242,14 +242,14 @@ object Utils {
       digitCount = POW_10.size - 1
     }
     number *= POW_10[digitCount]
-    var lval = Math.round(number).toLong()
+    var lval = number.roundToLong()
     var ind = out.size - 1
     var charCount = 0
     var decimalPointAdded = false
     while (lval != 0L || charCount < digitCount + 1) {
       val digit = (lval % 10).toInt()
-      lval = lval / 10
-      out[ind--] = (digit + '0'.toInt()).toChar()
+      lval /= 10
+      out[ind--] = (digit + '0'.code).toChar()
       charCount++
 
       // add decimal point
@@ -329,7 +329,7 @@ object Utils {
     return ret
   }
 
-  fun copyIntegers(from: List<Int>, to: IntArray) {
+  private fun copyIntegers(from: List<Int>, to: IntArray) {
     val count = if (to.size < from.size) to.size else from.size
     for (i in 0 until count) {
       to[i] = from[i]
@@ -358,23 +358,6 @@ object Utils {
   }
 
   /**
-   * Replacement for the Math.nextUp(...) method that is only available in HONEYCOMB and higher.
-   * Dat's some seeeeek sheeet.
-   *
-   * @param d
-   * @return
-   */
-  fun nextUp(d: Double): Double {
-    var d = d
-    return if (d == Double.POSITIVE_INFINITY) d
-    else {
-      d += 0.0
-      java.lang.Double.longBitsToDouble(
-          java.lang.Double.doubleToRawLongBits(d) + if (d >= 0.0) +1L else -1L)
-    }
-  }
-
-  /**
    * Returns a recyclable MPPointF instance. Calculates the position around a center point,
    * depending on the distance from the center, and the angle of the position around the center.
    *
@@ -392,8 +375,9 @@ object Utils {
   fun getPosition(center: MPPointF?, dist: Float, angle: Float, outputPoint: MPPointF) {
     val centerX = center?.x ?: 0f
     val centerY = center?.y ?: 0f
-    outputPoint.x = (centerX + dist * cos(Math.toRadians(angle.toDouble()))).toFloat()
-    outputPoint.y = (centerY + dist * sin(Math.toRadians(angle.toDouble()))).toFloat()
+
+    outputPoint.x = centerX + dist * cos(angle.toRadians())
+    outputPoint.y = centerY + dist * sin(angle.toRadians())
   }
 
   fun velocityTrackerPointerUpCleanUpIfNecessary(ev: MotionEvent, tracker: VelocityTracker) {
@@ -522,7 +506,7 @@ object Utils {
     paint.textAlign = originalTextAlign
   }
 
-  fun drawMultilineText(
+  private fun drawMultilineText(
       c: Canvas,
       textLayout: StaticLayout,
       x: Float,
@@ -533,10 +517,9 @@ object Utils {
   ) {
     var drawOffsetX = 0f
     var drawOffsetY = 0f
-    val drawWidth: Float
     val drawHeight: Float
     val lineHeight = paint.getFontMetrics(mFontMetricsBuffer)
-    drawWidth = textLayout.width.toFloat()
+    val drawWidth: Float = textLayout.width.toFloat()
     drawHeight = textLayout.lineCount * lineHeight
 
     // Android sometimes has pre-padding
@@ -658,7 +641,7 @@ object Utils {
    * @param radians
    * @return A Recyclable FSize instance
    */
-  fun getSizeOfRotatedRectangleByRadians(
+  private fun getSizeOfRotatedRectangleByRadians(
       rectangleWidth: Float,
       rectangleHeight: Float,
       radians: Float

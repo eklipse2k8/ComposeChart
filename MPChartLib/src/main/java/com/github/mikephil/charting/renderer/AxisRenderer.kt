@@ -131,7 +131,7 @@ abstract class AxisRenderer(
       if (mAxis.isCenterAxisLabelsEnabled) {
         first -= interval
       }
-      val last = if (interval == 0.0) 0.0 else Utils.nextUp(floor(max / interval) * interval)
+      val last = if (interval == 0.0) 0.0 else (floor(max / interval) * interval).nextUp()
       var f: Double
       if (interval != 0.0 && last != first) {
         f = first
