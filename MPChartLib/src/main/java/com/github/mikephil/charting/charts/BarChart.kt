@@ -72,9 +72,9 @@ open class BarChart : BarLineChartBase<BarData>, BarDataProvider {
     }
 
     // calculate axis range (min / max) according to provided data
-    mAxisLeft.calculate(
+    axisLeft?.calculate(
         mData!!.getYMin(YAxis.AxisDependency.LEFT), mData!!.getYMax(YAxis.AxisDependency.LEFT))
-    mAxisRight.calculate(
+    axisRight?.calculate(
         mData!!.getYMin(YAxis.AxisDependency.RIGHT), mData!!.getYMax(YAxis.AxisDependency.RIGHT))
   }
 

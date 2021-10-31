@@ -11,7 +11,7 @@ import com.github.mikephil.charting.renderer.LineChartRenderer
  *
  * @author Philipp Jahoda
  */
-class LineChart : BarLineChartBase<LineData?>, LineDataProvider {
+class LineChart : BarLineChartBase<LineData>, LineDataProvider {
   constructor(context: Context?) : super(context)
 
   constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)

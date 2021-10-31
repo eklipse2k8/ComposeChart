@@ -65,7 +65,7 @@ class ZoomJob(
     mViewPortHandler!!.zoom(scaleX, scaleY, save)
     mViewPortHandler!!.refresh(save, view, false)
     val yValsInView =
-        (view as BarLineChartBase<*>).getAxis(axisDependency).mAxisRange / mViewPortHandler!!.scaleY
+        (view as BarLineChartBase<*>).getAxis(axisDependency!!).mAxisRange / mViewPortHandler!!.scaleY
     val xValsInView = (view as BarLineChartBase<*>).xAxis.mAxisRange / mViewPortHandler!!.scaleX
     pts[0] = xValue - xValsInView / 2f
     pts[1] = yValue + yValsInView / 2f
