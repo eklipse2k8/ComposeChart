@@ -78,7 +78,7 @@ public abstract class SimpleFragment extends Fragment {
 
         ArrayList<IScatterDataSet> sets = new ArrayList<>();
 
-        ScatterChart.ScatterShape[] shapes = ScatterChart.ScatterShape.getAllDefaultShapes();
+        ScatterChart.ScatterShape[] shapes = ScatterChart.ScatterShape.Companion.getAllDefaultShapes();
 
         for(int i = 0; i < dataSets; i++) {
 
