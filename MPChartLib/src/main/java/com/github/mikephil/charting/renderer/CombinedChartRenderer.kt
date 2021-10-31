@@ -30,18 +30,20 @@ class CombinedChartRenderer(
     this.subRenderers.clear()
     val chart = weakChart.get() as CombinedChart? ?: return
     val orders = chart.drawOrder
-    for (order in orders) {
-      when (order) {
-        DrawOrder.BAR -> this.subRenderers.add(BarChartRenderer(chart, mAnimator, mViewPortHandler))
-        DrawOrder.BUBBLE ->
+    if (orders != null) {
+      for (order in orders) {
+        when (order) {
+          DrawOrder.BAR -> this.subRenderers.add(BarChartRenderer(chart, mAnimator, mViewPortHandler))
+          DrawOrder.BUBBLE ->
             this.subRenderers.add(BubbleChartRenderer(chart, mAnimator, mViewPortHandler))
-        DrawOrder.LINE ->
+          DrawOrder.LINE ->
             this.subRenderers.add(LineChartRenderer(chart, mAnimator, mViewPortHandler))
-        DrawOrder.CANDLE ->
+          DrawOrder.CANDLE ->
             this.subRenderers.add(CandleStickChartRenderer(chart, mAnimator, mViewPortHandler))
-        DrawOrder.SCATTER ->
+          DrawOrder.SCATTER ->
             this.subRenderers.add(ScatterChartRenderer(chart, mAnimator, mViewPortHandler))
-        else -> Unit
+          else -> Unit
+        }
       }
     }
   }
