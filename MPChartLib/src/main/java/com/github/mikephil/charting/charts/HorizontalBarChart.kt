@@ -1,346 +1,283 @@
-package com.github.mikephil.charting.charts;
+package com.github.mikephil.charting.charts
 
-import android.content.Context;
-import android.graphics.RectF;
-import android.util.AttributeSet;
-import android.util.Log;
-
-import com.github.mikephil.charting.components.XAxis.XAxisPosition;
-import com.github.mikephil.charting.components.YAxis.AxisDependency;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.highlight.HorizontalBarHighlighter;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.github.mikephil.charting.renderer.HorizontalBarChartRenderer;
-import com.github.mikephil.charting.renderer.XAxisRendererHorizontalBarChart;
-import com.github.mikephil.charting.renderer.YAxisRendererHorizontalBarChart;
-import com.github.mikephil.charting.utils.MPPointF;
-import com.github.mikephil.charting.utils.TransformerHorizontalBarChart;
-import com.github.mikephil.charting.utils.Utils;
-import com.github.mikephil.charting.utils.ViewPortHandler;
+import android.content.Context
+import android.graphics.RectF
+import android.util.AttributeSet
+import android.util.Log
+import com.github.mikephil.charting.components.Legend.*
+import com.github.mikephil.charting.components.XAxis.XAxisPosition
+import com.github.mikephil.charting.components.YAxis.AxisDependency
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.highlight.HorizontalBarHighlighter
+import com.github.mikephil.charting.renderer.HorizontalBarChartRenderer
+import com.github.mikephil.charting.renderer.XAxisRendererHorizontalBarChart
+import com.github.mikephil.charting.renderer.YAxisRendererHorizontalBarChart
+import com.github.mikephil.charting.utils.MPPointF
+import com.github.mikephil.charting.utils.TransformerHorizontalBarChart
+import com.github.mikephil.charting.utils.Utils.convertDpToPixel
+import com.github.mikephil.charting.utils.ViewPortHandler
+import kotlin.math.max
+import kotlin.math.min
 
 /**
- * BarChart with horizontal bar orientation. In this implementation, x- and y-axis are switched, meaning the YAxis class
- * represents the horizontal values and the XAxis class represents the vertical values.
+ * BarChart with horizontal bar orientation. In this implementation, x- and y-axis are switched,
+ * meaning the YAxis class represents the horizontal values and the XAxis class represents the
+ * vertical values.
  *
  * @author Philipp Jahoda
  */
-public class HorizontalBarChart extends BarChart {
+class HorizontalBarChart : BarChart {
 
-    public HorizontalBarChart(Context context) {
-        super(context);
-    }
+  constructor(context: Context?) : super(context)
 
-    public HorizontalBarChart(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
+  constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
 
-    public HorizontalBarChart(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
+  constructor(
+      context: Context?,
+      attrs: AttributeSet?,
+      defStyle: Int
+  ) : super(context, attrs, defStyle)
 
-    @Override
-    protected void init() {
+  override fun init() {
+    mViewPortHandler = ViewPortHandler()
+    super.init()
+    mLeftAxisTransformer = TransformerHorizontalBarChart(mViewPortHandler)
+    mRightAxisTransformer = TransformerHorizontalBarChart(mViewPortHandler)
+    mRenderer = HorizontalBarChartRenderer(this, mAnimator, mViewPortHandler)
+    setHighlighter(HorizontalBarHighlighter(this))
+    mAxisRendererLeft =
+        YAxisRendererHorizontalBarChart(mViewPortHandler, mAxisLeft, mLeftAxisTransformer)
+    mAxisRendererRight =
+        YAxisRendererHorizontalBarChart(mViewPortHandler, mAxisRight, mRightAxisTransformer)
+    mXAxisRenderer =
+        XAxisRendererHorizontalBarChart(mViewPortHandler, mXAxis, mLeftAxisTransformer, this)
+  }
 
-        mViewPortHandler = new ViewPortHandler();
-
-        super.init();
-
-        mLeftAxisTransformer = new TransformerHorizontalBarChart(mViewPortHandler);
-        mRightAxisTransformer = new TransformerHorizontalBarChart(mViewPortHandler);
-
-        mRenderer = new HorizontalBarChartRenderer(this, mAnimator, mViewPortHandler);
-        setHighlighter(new HorizontalBarHighlighter(this));
-
-        mAxisRendererLeft = new YAxisRendererHorizontalBarChart(mViewPortHandler, mAxisLeft, mLeftAxisTransformer);
-        mAxisRendererRight = new YAxisRendererHorizontalBarChart(mViewPortHandler, mAxisRight, mRightAxisTransformer);
-        mXAxisRenderer = new XAxisRendererHorizontalBarChart(mViewPortHandler, mXAxis, mLeftAxisTransformer, this);
-    }
-
-    private RectF mOffsetsBuffer = new RectF();
-
-    protected void calculateLegendOffsets(RectF offsets) {
-
-        offsets.left = 0.f;
-        offsets.right = 0.f;
-        offsets.top = 0.f;
-        offsets.bottom = 0.f;
-
-        if (mLegend == null || !mLegend.isEnabled() || mLegend.isDrawInsideEnabled())
-            return;
-
-        switch (mLegend.getOrientation()) {
-            case VERTICAL:
-
-                switch (mLegend.getHorizontalAlignment()) {
-                    case LEFT:
-                        offsets.left += Math.min(mLegend.mNeededWidth,
-                                mViewPortHandler.getChartWidth() * mLegend.getMaxSizePercent())
-                                + mLegend.getXOffset();
-                        break;
-
-                    case RIGHT:
-                        offsets.right += Math.min(mLegend.mNeededWidth,
-                                mViewPortHandler.getChartWidth() * mLegend.getMaxSizePercent())
-                                + mLegend.getXOffset();
-                        break;
-
-                    case CENTER:
-
-                        switch (mLegend.getVerticalAlignment()) {
-                            case TOP:
-                                offsets.top += Math.min(mLegend.mNeededHeight,
-                                        mViewPortHandler.getChartHeight() * mLegend.getMaxSizePercent())
-                                        + mLegend.getYOffset();
-                                break;
-
-                            case BOTTOM:
-                                offsets.bottom += Math.min(mLegend.mNeededHeight,
-                                        mViewPortHandler.getChartHeight() * mLegend.getMaxSizePercent())
-                                        + mLegend.getYOffset();
-                                break;
-
-                            default:
-                                break;
-                        }
+  private val mOffsetsBuffer = RectF()
+  override fun calculateLegendOffsets(offsets: RectF) {
+    offsets.left = 0f
+    offsets.right = 0f
+    offsets.top = 0f
+    offsets.bottom = 0f
+    if (mLegend == null || !mLegend.isEnabled || mLegend.isDrawInsideEnabled) return
+    when (mLegend.orientation) {
+      LegendOrientation.VERTICAL ->
+          when (mLegend.horizontalAlignment) {
+            LegendHorizontalAlignment.LEFT ->
+                offsets.left +=
+                    (mLegend.mNeededWidth.coerceAtMost(
+                        mViewPortHandler.chartWidth * mLegend.maxSizePercent) + mLegend.xOffset)
+            LegendHorizontalAlignment.RIGHT ->
+                offsets.right +=
+                    (mLegend.mNeededWidth.coerceAtMost(
+                        mViewPortHandler.chartWidth * mLegend.maxSizePercent) + mLegend.xOffset)
+            LegendHorizontalAlignment.CENTER ->
+                when (mLegend.verticalAlignment) {
+                  LegendVerticalAlignment.TOP ->
+                      offsets.top +=
+                          (mLegend.mNeededHeight.coerceAtMost(
+                              mViewPortHandler.chartHeight * mLegend.maxSizePercent) +
+                              mLegend.yOffset)
+                  LegendVerticalAlignment.BOTTOM ->
+                      offsets.bottom +=
+                          (mLegend.mNeededHeight.coerceAtMost(
+                              mViewPortHandler.chartHeight * mLegend.maxSizePercent) +
+                              mLegend.yOffset)
+                  else -> Unit
                 }
-
-                break;
-
-            case HORIZONTAL:
-
-                switch (mLegend.getVerticalAlignment()) {
-                    case TOP:
-                        offsets.top += Math.min(mLegend.mNeededHeight,
-                                mViewPortHandler.getChartHeight() * mLegend.getMaxSizePercent())
-                                + mLegend.getYOffset();
-
-                        if (mAxisLeft.isEnabled() && mAxisLeft.isDrawLabelsEnabled())
-                            offsets.top += mAxisLeft.getRequiredHeightSpace(
-                                    mAxisRendererLeft.getPaintAxisLabels());
-                        break;
-
-                    case BOTTOM:
-                        offsets.bottom += Math.min(mLegend.mNeededHeight,
-                                mViewPortHandler.getChartHeight() * mLegend.getMaxSizePercent())
-                                + mLegend.getYOffset();
-
-                        if (mAxisRight.isEnabled() && mAxisRight.isDrawLabelsEnabled())
-                            offsets.bottom += mAxisRight.getRequiredHeightSpace(
-                                    mAxisRendererRight.getPaintAxisLabels());
-                        break;
-
-                    default:
-                        break;
-                }
-                break;
-        }
-    }
-
-    @Override
-    public void calculateOffsets() {
-
-        float offsetLeft = 0f, offsetRight = 0f, offsetTop = 0f, offsetBottom = 0f;
-
-        calculateLegendOffsets(mOffsetsBuffer);
-
-        offsetLeft += mOffsetsBuffer.left;
-        offsetTop += mOffsetsBuffer.top;
-        offsetRight += mOffsetsBuffer.right;
-        offsetBottom += mOffsetsBuffer.bottom;
-
-        // offsets for y-labels
-        if (mAxisLeft.needsOffset()) {
-            offsetTop += mAxisLeft.getRequiredHeightSpace(mAxisRendererLeft.getPaintAxisLabels());
-        }
-
-        if (mAxisRight.needsOffset()) {
-            offsetBottom += mAxisRight.getRequiredHeightSpace(mAxisRendererRight.getPaintAxisLabels());
-        }
-
-        float xlabelwidth = mXAxis.mLabelRotatedWidth;
-
-        if (mXAxis.isEnabled()) {
-
-            // offsets for x-labels
-            if (mXAxis.getPosition() == XAxisPosition.BOTTOM) {
-
-                offsetLeft += xlabelwidth;
-
-            } else if (mXAxis.getPosition() == XAxisPosition.TOP) {
-
-                offsetRight += xlabelwidth;
-
-            } else if (mXAxis.getPosition() == XAxisPosition.BOTH_SIDED) {
-
-                offsetLeft += xlabelwidth;
-                offsetRight += xlabelwidth;
+          }
+      LegendOrientation.HORIZONTAL ->
+          when (mLegend.verticalAlignment) {
+            LegendVerticalAlignment.TOP -> {
+              offsets.top +=
+                  (mLegend.mNeededHeight.coerceAtMost(
+                      mViewPortHandler.chartHeight * mLegend.maxSizePercent) + mLegend.yOffset)
+              if (mAxisLeft.isEnabled && mAxisLeft.isDrawLabelsEnabled)
+                  offsets.top += mAxisLeft.getRequiredHeightSpace(mAxisRendererLeft.paintAxisLabels)
             }
-        }
+            LegendVerticalAlignment.BOTTOM -> {
+              offsets.bottom +=
+                  (mLegend.mNeededHeight.coerceAtMost(
+                      mViewPortHandler.chartHeight * mLegend.maxSizePercent) + mLegend.yOffset)
+              if (mAxisRight.isEnabled && mAxisRight.isDrawLabelsEnabled)
+                  offsets.bottom +=
+                      mAxisRight.getRequiredHeightSpace(mAxisRendererRight.paintAxisLabels)
+            }
+            else -> {}
+          }
+    }
+  }
 
-        offsetTop += getExtraTopOffset();
-        offsetRight += getExtraRightOffset();
-        offsetBottom += getExtraBottomOffset();
-        offsetLeft += getExtraLeftOffset();
+  override fun calculateOffsets() {
+    var offsetLeft = 0f
+    var offsetRight = 0f
+    var offsetTop = 0f
+    var offsetBottom = 0f
+    calculateLegendOffsets(mOffsetsBuffer)
+    offsetLeft += mOffsetsBuffer.left
+    offsetTop += mOffsetsBuffer.top
+    offsetRight += mOffsetsBuffer.right
+    offsetBottom += mOffsetsBuffer.bottom
 
-        float minOffset = Utils.INSTANCE.convertDpToPixel(mMinOffset);
+    // offsets for y-labels
+    if (mAxisLeft.needsOffset()) {
+      offsetTop += mAxisLeft.getRequiredHeightSpace(mAxisRendererLeft.paintAxisLabels)
+    }
+    if (mAxisRight.needsOffset()) {
+      offsetBottom += mAxisRight.getRequiredHeightSpace(mAxisRendererRight.paintAxisLabels)
+    }
+    val xlabelwidth = mXAxis.mLabelRotatedWidth.toFloat()
+    if (mXAxis.isEnabled) {
 
-        mViewPortHandler.restrainViewPort(
-                Math.max(minOffset, offsetLeft),
-                Math.max(minOffset, offsetTop),
-                Math.max(minOffset, offsetRight),
-                Math.max(minOffset, offsetBottom));
+      // offsets for x-labels
+      if (mXAxis.position === XAxisPosition.BOTTOM) {
+        offsetLeft += xlabelwidth
+      } else if (mXAxis.position === XAxisPosition.TOP) {
+        offsetRight += xlabelwidth
+      } else if (mXAxis.position === XAxisPosition.BOTH_SIDED) {
+        offsetLeft += xlabelwidth
+        offsetRight += xlabelwidth
+      }
+    }
+    offsetTop += extraTopOffset
+    offsetRight += extraRightOffset
+    offsetBottom += extraBottomOffset
+    offsetLeft += extraLeftOffset
+    val minOffset = convertDpToPixel(mMinOffset)
+    mViewPortHandler.restrainViewPort(
+        Math.max(minOffset, offsetLeft),
+        Math.max(minOffset, offsetTop),
+        Math.max(minOffset, offsetRight),
+        Math.max(minOffset, offsetBottom))
+    if (mLogEnabled) {
+      Log.i(
+          LOG_TAG,
+          "offsetLeft: " +
+              offsetLeft +
+              ", offsetTop: " +
+              offsetTop +
+              ", offsetRight: " +
+              offsetRight +
+              ", offsetBottom: " +
+              offsetBottom)
+      Log.i(LOG_TAG, "Content: " + mViewPortHandler.contentRect.toString())
+    }
+    prepareOffsetMatrix()
+    prepareValuePxMatrix()
+  }
 
-        if (mLogEnabled) {
-            Log.i(LOG_TAG, "offsetLeft: " + offsetLeft + ", offsetTop: " + offsetTop + ", offsetRight: " +
-                    offsetRight + ", offsetBottom: "
-                    + offsetBottom);
-            Log.i(LOG_TAG, "Content: " + mViewPortHandler.getContentRect().toString());
-        }
+  override fun prepareValuePxMatrix() {
+    mRightAxisTransformer.prepareMatrixValuePx(
+        mAxisRight.mAxisMinimum, mAxisRight.mAxisRange, mXAxis.mAxisRange, mXAxis.mAxisMinimum)
+    mLeftAxisTransformer.prepareMatrixValuePx(
+        mAxisLeft.mAxisMinimum, mAxisLeft.mAxisRange, mXAxis.mAxisRange, mXAxis.mAxisMinimum)
+  }
 
-        prepareOffsetMatrix();
-        prepareValuePxMatrix();
+  override fun getMarkerPosition(high: Highlight): FloatArray {
+    return floatArrayOf(high.drawY, high.drawX)
+  }
+
+  override fun getBarBounds(e: BarEntry, outputRect: RectF) {
+    val set = mData.getDataSetForEntry(e)
+    if (set == null) {
+      outputRect[Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE] = Float.MIN_VALUE
+      return
+    }
+    val y = e.y
+    val x = e.x
+    val barWidth = mData.barWidth
+    val top = x - barWidth / 2f
+    val bottom = x + barWidth / 2f
+    val left: Float = if (y >= 0) y else 0f
+    val right: Float = if (y <= 0) y else 0f
+    outputRect[left, top, right] = bottom
+    getTransformer(set.axisDependency).rectValueToPixel(outputRect)
+  }
+
+  private var mGetPositionBuffer = FloatArray(2)
+
+  /**
+   * Returns a recyclable MPPointF instance.
+   *
+   * @param e
+   * @param axis
+   * @return
+   */
+  override fun getPosition(e: Entry, axis: AxisDependency): MPPointF? {
+    if (e == null) return null
+    val vals = mGetPositionBuffer
+    vals[0] = e.y
+    vals[1] = e.x
+    getTransformer(axis).pointValuesToPixel(vals)
+    return MPPointF.getInstance(vals[0], vals[1])
+  }
+
+  /**
+   * Returns the Highlight object (contains x-index and DataSet index) of the selected value at the
+   * given touch point inside the BarChart.
+   *
+   * @param x
+   * @param y
+   * @return
+   */
+  override fun getHighlightByTouchPoint(x: Float, y: Float): Highlight? {
+    return if (mData == null) {
+      if (mLogEnabled) Log.e(LOG_TAG, "Can't select by touch. No data set.")
+      null
+    } else highlighter.getHighlight(y, x) // switch x and y
+  }
+
+  override val lowestVisibleX: Float
+    get() {
+      getTransformer(AxisDependency.LEFT)
+          .getValuesByTouchPoint(
+              mViewPortHandler.contentLeft(),
+              mViewPortHandler.contentBottom(),
+              posForGetLowestVisibleX)
+      return max(mXAxis.mAxisMinimum, posForGetLowestVisibleX.y.toFloat())
+    }
+  override val highestVisibleX: Float
+    get() {
+      getTransformer(AxisDependency.LEFT)
+          .getValuesByTouchPoint(
+              mViewPortHandler.contentLeft(),
+              mViewPortHandler.contentTop(),
+              posForGetHighestVisibleX)
+      return min(mXAxis.mAxisMaximum, posForGetHighestVisibleX.y.toFloat())
     }
 
-    @Override
-    protected void prepareValuePxMatrix() {
-        mRightAxisTransformer.prepareMatrixValuePx(mAxisRight.mAxisMinimum, mAxisRight.mAxisRange, mXAxis.mAxisRange,
-                mXAxis.mAxisMinimum);
-        mLeftAxisTransformer.prepareMatrixValuePx(mAxisLeft.mAxisMinimum, mAxisLeft.mAxisRange, mXAxis.mAxisRange,
-                mXAxis.mAxisMinimum);
-    }
+  /** ###### VIEWPORT METHODS BELOW THIS ###### */
+  override fun setVisibleXRangeMaximum(maxXRange: Float) {
+    val xScale = mXAxis.mAxisRange / maxXRange
+    mViewPortHandler.setMinimumScaleY(xScale)
+  }
 
-    @Override
-    protected float[] getMarkerPosition(Highlight high) {
-        return new float[]{high.getDrawY(), high.getDrawX()};
-    }
+  override fun setVisibleXRangeMinimum(minXRange: Float) {
+    val xScale = mXAxis.mAxisRange / minXRange
+    mViewPortHandler.setMaximumScaleY(xScale)
+  }
 
-    @Override
-    public void getBarBounds(BarEntry e, RectF outputRect) {
+  override fun setVisibleXRange(minXRange: Float, maxXRange: Float) {
+    val minScale = mXAxis.mAxisRange / minXRange
+    val maxScale = mXAxis.mAxisRange / maxXRange
+    mViewPortHandler.setMinMaxScaleY(minScale, maxScale)
+  }
 
-        RectF bounds = outputRect;
-        IBarDataSet set = mData.getDataSetForEntry(e);
+  override fun setVisibleYRangeMaximum(maxYRange: Float, axis: AxisDependency) {
+    val yScale = getAxisRange(axis) / maxYRange
+    mViewPortHandler.setMinimumScaleX(yScale)
+  }
 
-        if (set == null) {
-            outputRect.set(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
-            return;
-        }
+  override fun setVisibleYRangeMinimum(minYRange: Float, axis: AxisDependency) {
+    val yScale = getAxisRange(axis) / minYRange
+    mViewPortHandler.setMaximumScaleX(yScale)
+  }
 
-        float y = e.getY();
-        float x = e.getX();
-
-        float barWidth = mData.getBarWidth();
-
-        float top = x - barWidth / 2f;
-        float bottom = x + barWidth / 2f;
-        float left = y >= 0 ? y : 0;
-        float right = y <= 0 ? y : 0;
-
-        bounds.set(left, top, right, bottom);
-
-        getTransformer(set.getAxisDependency()).rectValueToPixel(bounds);
-
-    }
-
-    protected float[] mGetPositionBuffer = new float[2];
-
-    /**
-     * Returns a recyclable MPPointF instance.
-     *
-     * @param e
-     * @param axis
-     * @return
-     */
-    @Override
-    public MPPointF getPosition(Entry e, AxisDependency axis) {
-
-        if (e == null)
-            return null;
-
-        float[] vals = mGetPositionBuffer;
-        vals[0] = e.getY();
-        vals[1] = e.getX();
-
-        getTransformer(axis).pointValuesToPixel(vals);
-
-        return MPPointF.getInstance(vals[0], vals[1]);
-    }
-
-    /**
-     * Returns the Highlight object (contains x-index and DataSet index) of the selected value at the given touch point
-     * inside the BarChart.
-     *
-     * @param x
-     * @param y
-     * @return
-     */
-    @Override
-    public Highlight getHighlightByTouchPoint(float x, float y) {
-
-        if (mData == null) {
-            if (mLogEnabled)
-                Log.e(LOG_TAG, "Can't select by touch. No data set.");
-            return null;
-        } else
-            return getHighlighter().getHighlight(y, x); // switch x and y
-    }
-
-    @Override
-    public float getLowestVisibleX() {
-        getTransformer(AxisDependency.LEFT).getValuesByTouchPoint(mViewPortHandler.contentLeft(),
-                mViewPortHandler.contentBottom(), posForGetLowestVisibleX);
-        float result = (float) Math.max(mXAxis.mAxisMinimum, posForGetLowestVisibleX.y);
-        return result;
-    }
-
-    @Override
-    public float getHighestVisibleX() {
-        getTransformer(AxisDependency.LEFT).getValuesByTouchPoint(mViewPortHandler.contentLeft(),
-                mViewPortHandler.contentTop(), posForGetHighestVisibleX);
-        float result = (float) Math.min(mXAxis.mAxisMaximum, posForGetHighestVisibleX.y);
-        return result;
-    }
-
-    /**
-     * ###### VIEWPORT METHODS BELOW THIS ######
-     */
-
-    @Override
-    public void setVisibleXRangeMaximum(float maxXRange) {
-        float xScale = mXAxis.mAxisRange / (maxXRange);
-        mViewPortHandler.setMinimumScaleY(xScale);
-    }
-
-    @Override
-    public void setVisibleXRangeMinimum(float minXRange) {
-        float xScale = mXAxis.mAxisRange / (minXRange);
-        mViewPortHandler.setMaximumScaleY(xScale);
-    }
-
-    @Override
-    public void setVisibleXRange(float minXRange, float maxXRange) {
-        float minScale = mXAxis.mAxisRange / minXRange;
-        float maxScale = mXAxis.mAxisRange / maxXRange;
-        mViewPortHandler.setMinMaxScaleY(minScale, maxScale);
-    }
-
-    @Override
-    public void setVisibleYRangeMaximum(float maxYRange, AxisDependency axis) {
-        float yScale = getAxisRange(axis) / maxYRange;
-        mViewPortHandler.setMinimumScaleX(yScale);
-    }
-
-    @Override
-    public void setVisibleYRangeMinimum(float minYRange, AxisDependency axis) {
-        float yScale = getAxisRange(axis) / minYRange;
-        mViewPortHandler.setMaximumScaleX(yScale);
-    }
-
-    @Override
-    public void setVisibleYRange(float minYRange, float maxYRange, AxisDependency axis) {
-        float minScale = getAxisRange(axis) / minYRange;
-        float maxScale = getAxisRange(axis) / maxYRange;
-        mViewPortHandler.setMinMaxScaleX(minScale, maxScale);
-    }
+  override fun setVisibleYRange(minYRange: Float, maxYRange: Float, axis: AxisDependency) {
+    val minScale = getAxisRange(axis) / minYRange
+    val maxScale = getAxisRange(axis) / maxYRange
+    mViewPortHandler.setMinMaxScaleX(minScale, maxScale)
+  }
 }
