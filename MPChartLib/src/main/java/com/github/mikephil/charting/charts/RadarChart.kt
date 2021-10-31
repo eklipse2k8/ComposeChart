@@ -27,6 +27,7 @@ class RadarChart : PieRadarChartBase<RadarData> {
 
   /** width of the inner web lines */
   private var mInnerWebLineWidth = 1.5f
+
   /**
    * Sets the color for the web lines that come from the center. Don't forget to use
    * getResources().getColor(...) when loading a color from the resources. Default: Color.rgb(122,
@@ -36,6 +37,7 @@ class RadarChart : PieRadarChartBase<RadarData> {
    */
   /** color for the main web lines */
   var webColor = Color.rgb(122, 122, 122)
+
   /**
    * Sets the color for the web lines in between the lines that come from the center. Don't forget
    * to use getResources().getColor(...) when loading a color from the resources. Default:
@@ -45,6 +47,7 @@ class RadarChart : PieRadarChartBase<RadarData> {
    */
   /** color for the inner web */
   var webColorInner = Color.rgb(122, 122, 122)
+
   /**
    * Returns the alpha value for all web lines.
    *
@@ -222,17 +225,17 @@ class RadarChart : PieRadarChartBase<RadarData> {
       mSkipWebLineCount = max(0, count)
     }
 
-  override fun getRequiredLegendOffset(): Float {
-    return mLegendRenderer.labelPaint.textSize * 4f
-  }
+  override val requiredLegendOffset: Float
+    get() = mLegendRenderer.labelPaint.textSize * 4f
 
-  override fun getRequiredBaseOffset(): Float {
-    return if (mXAxis.isEnabled && mXAxis.isDrawLabelsEnabled) mXAxis.mLabelRotatedWidth.toFloat()
-    else Utils.convertDpToPixel(10f)
-  }
+  override val requiredBaseOffset: Float
+    get() =
+        if (mXAxis.isEnabled && mXAxis.isDrawLabelsEnabled) mXAxis.mLabelRotatedWidth.toFloat()
+        else Utils.convertDpToPixel(10f)
 
-  override fun getRadius(): Float {
-    val content = mViewPortHandler.contentRect
-    return min(content.width() / 2f, content.height() / 2f)
-  }
+  override val radius: Float
+    get() {
+      val content = mViewPortHandler.contentRect
+      return min(content.width() / 2f, content.height() / 2f)
+    }
 }

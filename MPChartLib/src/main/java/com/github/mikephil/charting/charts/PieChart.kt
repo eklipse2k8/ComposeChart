@@ -23,14 +23,15 @@ import kotlin.math.sin
  *
  * @author Philipp Jahoda
  */
-class PieChart : PieRadarChartBase<PieData?> {
+class PieChart : PieRadarChartBase<PieData> {
   /**
    * returns the circlebox, the boundingbox of the pie-chart slices
    *
    * @return
    */
   /** rect object that represents the bounds of the piechart, needed for drawing the circle */
-  val circleBox: RectF? = RectF()
+  val circleBox: RectF = RectF()
+
   /**
    * Returns true if drawing the entry labels is enabled, false if not.
    *
@@ -39,6 +40,7 @@ class PieChart : PieRadarChartBase<PieData?> {
   /** flag indicating if entry labels should be drawn or not */
   var isDrawEntryLabelsEnabled = true
     private set
+
   /**
    * returns an integer array of all the different angles the chart slices have the angles in the
    * returned array determine how much space (of 360°) each slice takes
@@ -48,6 +50,7 @@ class PieChart : PieRadarChartBase<PieData?> {
   /** array that holds the width of each pie-slice in degrees */
   var drawAngles = FloatArray(1)
     private set
+
   /**
    * returns the absolute angles of the different chart slices (where the slices end)
    *
@@ -56,6 +59,7 @@ class PieChart : PieRadarChartBase<PieData?> {
   /** array that holds the absolute angle in degrees of each slice */
   var absoluteAngles = FloatArray(1)
     private set
+
   /**
    * returns true if the hole in the center of the pie-chart is set to be visible, false if not
    *
@@ -68,6 +72,7 @@ class PieChart : PieRadarChartBase<PieData?> {
    */
   /** if true, the white hole inside the chart will be drawn */
   var isDrawHoleEnabled = true
+
   /**
    * Returns true if the inner tips of the slices are visible behind the hole, false if not.
    *
@@ -76,6 +81,7 @@ class PieChart : PieRadarChartBase<PieData?> {
   /** if true, the hole will see-through to the inner tips of the slices */
   var isDrawSlicesUnderHoleEnabled = false
     private set
+
   /**
    * Returns true if using percentage values is enabled for the chart.
    *
@@ -84,6 +90,7 @@ class PieChart : PieRadarChartBase<PieData?> {
   /** if true, the values inside the piechart are drawn as percent values */
   var isUsePercentValuesEnabled = false
     private set
+
   /**
    * Returns true if the chart is set to draw each end of a pie-slice "rounded".
    *
@@ -96,6 +103,7 @@ class PieChart : PieRadarChartBase<PieData?> {
   /** variable for the text that is drawn in the center of the pie-chart */
   private var mCenterText: CharSequence = ""
   private val mCenterTextOffset = MPPointF.getInstance(0f, 0f)
+
   /**
    * Returns the size of the hole radius in percent of the total radius.
    *
@@ -109,6 +117,7 @@ class PieChart : PieRadarChartBase<PieData?> {
    */
   /** indicates the size of the hole in the center of the piechart, default: radius / 2 */
   var holeRadius = 50f
+
   /**
    * sets the radius of the transparent circle that is drawn next to the hole in the piechart in
    * percent of the maximum radius (max = the radius of the whole chart), default 55% -> means 5%
@@ -118,6 +127,7 @@ class PieChart : PieRadarChartBase<PieData?> {
    */
   /** the radius of the transparent circle next to the chart-hole in the center */
   var transparentCircleRadius = 55f
+
   /**
    * returns true if drawing the center text is enabled
    *
@@ -126,6 +136,7 @@ class PieChart : PieRadarChartBase<PieData?> {
   /** if enabled, centertext is drawn */
   var isDrawCenterTextEnabled = true
     private set
+
   /**
    * the rectangular radius of the bounding box for the center text, as a percentage of the pie hole
    * default 1.f (100%)
@@ -135,7 +146,8 @@ class PieChart : PieRadarChartBase<PieData?> {
    * default 1.f (100%)
    */
   var centerTextRadiusPercent = 100f
-  protected var mMaxAngle = 360f
+
+  private var mMaxAngle = 360f
 
   /**
    * Minimum angle to draw slices, this only works if there is enough room for all slices to have
@@ -143,13 +155,15 @@ class PieChart : PieRadarChartBase<PieData?> {
    */
   private var mMinAngleForSlices = 0f
 
-  constructor(context: Context?) : super(context) {}
-  constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {}
+  constructor(context: Context?) : super(context)
+
+  constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
+
   constructor(
       context: Context?,
       attrs: AttributeSet?,
       defStyle: Int
-  ) : super(context, attrs, defStyle) {}
+  ) : super(context, attrs, defStyle)
 
   override fun init() {
     super.init()
@@ -182,7 +196,7 @@ class PieChart : PieRadarChartBase<PieData?> {
 
     // create the circle box that will contain the pie-chart (the bounds of
     // the pie-chart)
-    circleBox!![c.x - radius + shift, c.y - radius + shift, c.x + radius - shift] =
+    circleBox[c.x - radius + shift, c.y - radius + shift, c.x + radius - shift] =
         c.y + radius - shift
     MPPointF.recycleInstance(c)
   }
@@ -326,7 +340,6 @@ class PieChart : PieRadarChartBase<PieData?> {
   }
 
   override fun getIndexForAngle(angle: Float): Int {
-
     // take the current angle of the chart into consideration
     val a = getNormalizedAngle(angle - rotationAngle)
     for (i in absoluteAngles.indices) {
@@ -344,7 +357,7 @@ class PieChart : PieRadarChartBase<PieData?> {
   fun getDataSetIndexForIndex(xIndex: Int): Int {
     val dataSets = mData!!.dataSets
     for (i in dataSets.indices) {
-      if (dataSets[i].getEntryForXValue(xIndex.toFloat(), Float.NaN) != null) return i
+      return i
     }
     return -1
   }
@@ -387,17 +400,14 @@ class PieChart : PieRadarChartBase<PieData?> {
     isDrawCenterTextEnabled = enabled
   }
 
-  override fun getRequiredLegendOffset(): Float {
-    return mLegendRenderer.labelPaint.textSize * 2f
-  }
+  override val requiredLegendOffset: Float
+    get() = mLegendRenderer.labelPaint.textSize * 2f
 
-  override fun getRequiredBaseOffset(): Float {
-    return 0f
-  }
+  override val requiredBaseOffset: Float
+    get() = 0f
 
-  override fun getRadius(): Float {
-    return if (circleBox == null) 0f else min(circleBox.width() / 2f, circleBox.height() / 2f)
-  }
+  override val radius: Float
+    get() = min(circleBox.width() / 2f, circleBox.height() / 2f)
 
   /**
    * returns the center of the circlebox
@@ -405,7 +415,7 @@ class PieChart : PieRadarChartBase<PieData?> {
    * @return
    */
   val centerCircleBox: MPPointF
-    get() = MPPointF.getInstance(circleBox!!.centerX(), circleBox.centerY())
+    get() = MPPointF.getInstance(circleBox.centerX(), circleBox.centerY())
 
   /**
    * sets the typeface for the center-text paint
