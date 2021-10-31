@@ -205,7 +205,9 @@ class PieChartRenderer(
         if (drawRoundedSlices) {
           mPathBuffer.arcTo(roundedCircleBox, startAngleOuter + 180, -180f)
         }
-        mPathBuffer.arcTo(circleBox, startAngleOuter, sweepAngleOuter)
+        if (circleBox != null) {
+          mPathBuffer.arcTo(circleBox, startAngleOuter, sweepAngleOuter)
+        }
       }
 
       // API < 21 does not receive floats in addArc, but a RectF
@@ -631,7 +633,7 @@ class PieChartRenderer(
       var innerRadius = userInnerRadius
       val shift = set.selectionShift
       val highlightedRadius = radius + shift
-      highlightedCircleBox.set(mChart.circleBox)
+      mChart.circleBox?.let { highlightedCircleBox.set(it) }
       highlightedCircleBox.inset(-shift, -shift)
       val accountForSliceSpacing = sliceSpace > 0f && sliceAngle <= 180f
       var highlightColor = set.highlightColor
