@@ -126,13 +126,13 @@ public abstract class PieRadarChartBase<T extends ChartData<? extends IDataSet<?
                             || mLegend.getHorizontalAlignment() == Legend.LegendHorizontalAlignment.RIGHT) {
                         if (mLegend.getVerticalAlignment() == Legend.LegendVerticalAlignment.CENTER) {
                             // this is the space between the legend and the chart
-                            final float spacing = Utils.convertDpToPixel(13f);
+                            final float spacing = Utils.INSTANCE.convertDpToPixel(13f);
 
                             xLegendOffset = fullLegendWidth + spacing;
 
                         } else {
                             // this is the space between the legend and the chart
-                            float spacing = Utils.convertDpToPixel(8f);
+                            float spacing = Utils.INSTANCE.convertDpToPixel(8f);
 
                             float legendWidth = fullLegendWidth + spacing;
                             float legendHeight = mLegend.mNeededHeight + mLegend.mTextHeightMax;
@@ -150,7 +150,7 @@ public abstract class PieRadarChartBase<T extends ChartData<? extends IDataSet<?
                                     getAngleForPoint(bottomX, bottomY));
 
                             float distReference = distanceToCenter(reference.x, reference.y);
-                            float minOffset = Utils.convertDpToPixel(5f);
+                            float minOffset = Utils.INSTANCE.convertDpToPixel(5f);
 
                             if (bottomY >= center.y && getHeight() - legendWidth > getWidth()) {
                                 xLegendOffset = legendWidth;
@@ -222,7 +222,7 @@ public abstract class PieRadarChartBase<T extends ChartData<? extends IDataSet<?
             legendBottom += getRequiredBaseOffset();
         }
 
-        float minOffset = Utils.convertDpToPixel(mMinOffset);
+        float minOffset = Utils.INSTANCE.convertDpToPixel(mMinOffset);
 
         if (this instanceof RadarChart) {
             XAxis x = this.getXAxis();
@@ -359,7 +359,7 @@ public abstract class PieRadarChartBase<T extends ChartData<? extends IDataSet<?
      */
     public void setRotationAngle(float angle) {
         mRawRotationAngle = angle;
-        mRotationAngle = Utils.getNormalizedAngle(mRawRotationAngle);
+        mRotationAngle = Utils.INSTANCE.getNormalizedAngle(mRawRotationAngle);
     }
 
     /**

@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         setTitle("MPAndroidChart Example");
 
         // initialize the utilities
-        Utils.init(this);
+        Utils.INSTANCE.init(this);
 
         ArrayList<ContentItem> objects = new ArrayList<>();
 

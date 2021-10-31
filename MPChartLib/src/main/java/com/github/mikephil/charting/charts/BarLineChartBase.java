@@ -178,7 +178,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
         mBorderPaint = new Paint();
         mBorderPaint.setStyle(Style.STROKE);
         mBorderPaint.setColor(Color.BLACK);
-        mBorderPaint.setStrokeWidth(Utils.convertDpToPixel(1f));
+        mBorderPaint.setStrokeWidth(Utils.INSTANCE.convertDpToPixel(1f));
     }
 
     // for performance tracking
@@ -518,7 +518,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
             offsetBottom += getExtraBottomOffset();
             offsetLeft += getExtraLeftOffset();
 
-            float minOffset = Utils.convertDpToPixel(mMinOffset);
+            float minOffset = Utils.INSTANCE.convertDpToPixel(mMinOffset);
 
             mViewPortHandler.restrainViewPort(
                     Math.max(minOffset, offsetLeft),
@@ -1271,7 +1271,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
      * @param width
      */
     public void setBorderWidth(float width) {
-        mBorderPaint.setStrokeWidth(Utils.convertDpToPixel(width));
+        mBorderPaint.setStrokeWidth(Utils.INSTANCE.convertDpToPixel(width));
     }
 
     /**

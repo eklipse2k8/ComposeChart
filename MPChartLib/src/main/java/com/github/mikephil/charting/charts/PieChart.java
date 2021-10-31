@@ -345,7 +345,7 @@ public class PieChart extends PieRadarChartBase<PieData> {
     public int getIndexForAngle(float angle) {
 
         // take the current angle of the chart into consideration
-        float a = Utils.getNormalizedAngle(angle - getRotationAngle());
+        float a = Utils.INSTANCE.getNormalizedAngle(angle - getRotationAngle());
 
         for (int i = 0; i < mAbsoluteAngles.length; i++) {
             if (mAbsoluteAngles[i] > a)
@@ -532,7 +532,7 @@ public class PieChart extends PieRadarChartBase<PieData> {
      */
     public void setCenterTextSize(float sizeDp) {
         ((PieChartRenderer) mRenderer).getPaintCenterText().setTextSize(
-                Utils.convertDpToPixel(sizeDp));
+                Utils.INSTANCE.convertDpToPixel(sizeDp));
     }
 
     /**
@@ -551,8 +551,8 @@ public class PieChart extends PieRadarChartBase<PieData> {
      * @param y
      */
     public void setCenterTextOffset(float x, float y) {
-        mCenterTextOffset.x = Utils.convertDpToPixel(x);
-        mCenterTextOffset.y = Utils.convertDpToPixel(y);
+        mCenterTextOffset.x = Utils.INSTANCE.convertDpToPixel(x);
+        mCenterTextOffset.y = Utils.INSTANCE.convertDpToPixel(y);
     }
 
     /**
@@ -685,7 +685,7 @@ public class PieChart extends PieRadarChartBase<PieData> {
      * @param size
      */
     public void setEntryLabelTextSize(float size) {
-        ((PieChartRenderer) mRenderer).getPaintEntryLabels().setTextSize(Utils.convertDpToPixel(size));
+        ((PieChartRenderer) mRenderer).getPaintEntryLabels().setTextSize(Utils.INSTANCE.convertDpToPixel(size));
     }
 
     /**

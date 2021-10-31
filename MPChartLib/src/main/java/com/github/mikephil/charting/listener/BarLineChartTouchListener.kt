@@ -154,11 +154,11 @@ class BarLineChartTouchListener(
       MotionEvent.ACTION_UP -> {
         val velocityTracker = mVelocityTracker
         val pointerId = event.getPointerId(0)
-        velocityTracker!!.computeCurrentVelocity(1000, Utils.getMaximumFlingVelocity().toFloat())
+        velocityTracker!!.computeCurrentVelocity(1000, Utils.maximumFlingVelocity.toFloat())
         val velocityY = velocityTracker.getYVelocity(pointerId)
         val velocityX = velocityTracker.getXVelocity(pointerId)
-        if (abs(velocityX) > Utils.getMinimumFlingVelocity() ||
-            abs(velocityY) > Utils.getMinimumFlingVelocity()) {
+        if (abs(velocityX) > Utils.minimumFlingVelocity ||
+            abs(velocityY) > Utils.minimumFlingVelocity) {
           if (touchMode == DRAG && chart.isDragDecelerationEnabled) {
             stopDeceleration()
             mDecelerationLastTime = AnimationUtils.currentAnimationTimeMillis()
@@ -191,7 +191,7 @@ class BarLineChartTouchListener(
         endAction(event)
       }
       MotionEvent.ACTION_POINTER_UP -> {
-        Utils.velocityTrackerPointerUpCleanUpIfNecessary(event, mVelocityTracker)
+        mVelocityTracker?.let { Utils.velocityTrackerPointerUpCleanUpIfNecessary(event, it) }
         touchMode = POST_ZOOM
       }
       MotionEvent.ACTION_CANCEL -> {

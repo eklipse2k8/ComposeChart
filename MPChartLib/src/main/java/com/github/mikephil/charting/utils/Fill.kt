@@ -219,15 +219,13 @@ open class Fill {
   }
 
   private val isClipPathSupported: Boolean
-    get() = Utils.getSDKInt() >= 18
+    get() = Utils.sDKInt >= 18
 
   private fun ensureClipPathSupported() {
-    if (Utils.getSDKInt() < 18) {
+    if (Utils.sDKInt < 18) {
       throw RuntimeException(
           "Fill-drawables not (yet) supported below API level 18, " +
-              "this code was run on API level " +
-              Utils.getSDKInt() +
-              ".")
+              "this code was run on API level ${Utils.sDKInt}.")
     }
   }
 }

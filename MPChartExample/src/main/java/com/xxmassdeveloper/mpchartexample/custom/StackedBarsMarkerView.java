@@ -42,13 +42,13 @@ public class StackedBarsMarkerView extends MarkerView {
             if(be.getYVals() != null) {
 
                 // draw the stack value
-                tvContent.setText(Utils.formatNumber(be.getYVals()[highlight.getStackIndex()], 0, true));
+                tvContent.setText(Utils.INSTANCE.formatNumber(be.getYVals()[highlight.getStackIndex()], 0, true));
             } else {
-                tvContent.setText(Utils.formatNumber(be.getY(), 0, true));
+                tvContent.setText(Utils.INSTANCE.formatNumber(be.getY(), 0, true));
             }
         } else {
 
-            tvContent.setText(Utils.formatNumber(e.getY(), 0, true));
+            tvContent.setText(Utils.INSTANCE.formatNumber(e.getY(), 0, true));
         }
 
         super.refreshContent(e, highlight);

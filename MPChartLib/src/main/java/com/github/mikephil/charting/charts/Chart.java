@@ -219,8 +219,8 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
         });
 
         // initialize the utils
-        Utils.init(getContext());
-        mMaxHighlightDistance = Utils.convertDpToPixel(500f);
+        Utils.INSTANCE.init(getContext());
+        mMaxHighlightDistance = Utils.INSTANCE.convertDpToPixel(500f);
 
         mDescription = new Description();
         mLegend = new Legend();
@@ -234,7 +234,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
         mInfoPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mInfoPaint.setColor(Color.rgb(247, 189, 51)); // orange
         mInfoPaint.setTextAlign(Align.CENTER);
-        mInfoPaint.setTextSize(Utils.convertDpToPixel(12f));
+        mInfoPaint.setTextSize(Utils.INSTANCE.convertDpToPixel(12f));
 
         if (mLogEnabled)
             Log.i("", "Chart.init()");
@@ -379,7 +379,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
             reference = Math.abs(max - min);
         }
 
-        int digits = Utils.getDecimals(reference);
+        int digits = Utils.INSTANCE.getDecimals(reference);
 
         // setup the formatter with a new number of digits
         mDefaultValueFormatter.setup(digits);
@@ -486,7 +486,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @param distDp
      */
     public void setMaxHighlightDistance(float distDp) {
-        mMaxHighlightDistance = Utils.convertDpToPixel(distDp);
+        mMaxHighlightDistance = Utils.INSTANCE.convertDpToPixel(distDp);
     }
 
     /**
@@ -1129,7 +1129,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * Set an extra offset to be appended to the viewport's top
      */
     public void setExtraTopOffset(float offset) {
-        mExtraTopOffset = Utils.convertDpToPixel(offset);
+        mExtraTopOffset = Utils.INSTANCE.convertDpToPixel(offset);
     }
 
     /**
@@ -1143,7 +1143,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * Set an extra offset to be appended to the viewport's right
      */
     public void setExtraRightOffset(float offset) {
-        mExtraRightOffset = Utils.convertDpToPixel(offset);
+        mExtraRightOffset = Utils.INSTANCE.convertDpToPixel(offset);
     }
 
     /**
@@ -1157,7 +1157,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * Set an extra offset to be appended to the viewport's bottom
      */
     public void setExtraBottomOffset(float offset) {
-        mExtraBottomOffset = Utils.convertDpToPixel(offset);
+        mExtraBottomOffset = Utils.INSTANCE.convertDpToPixel(offset);
     }
 
     /**
@@ -1171,7 +1171,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * Set an extra offset to be appended to the viewport's left
      */
     public void setExtraLeftOffset(float offset) {
-        mExtraLeftOffset = Utils.convertDpToPixel(offset);
+        mExtraLeftOffset = Utils.INSTANCE.convertDpToPixel(offset);
     }
 
     /**
@@ -1723,7 +1723,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int size = (int) Utils.convertDpToPixel(50f);
+        int size = (int) Utils.INSTANCE.convertDpToPixel(50f);
         setMeasuredDimension(
                 Math.max(getSuggestedMinimumWidth(),
                         resolveSize(size,

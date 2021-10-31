@@ -285,7 +285,7 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     @Override
     public IValueFormatter getValueFormatter() {
         if (needsFormatter())
-            return Utils.getDefaultValueFormatter();
+            return Utils.INSTANCE.getDefaultValueFormatter();
         return mValueFormatter;
     }
 
@@ -312,7 +312,7 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
 
     @Override
     public void setValueTextSize(float size) {
-        mValueTextSize = Utils.convertDpToPixel(size);
+        mValueTextSize = Utils.INSTANCE.convertDpToPixel(size);
     }
 
     @Override

@@ -699,7 +699,7 @@ public class ViewPortHandler {
      * @param offset
      */
     public void setDragOffsetX(float offset) {
-        mTransOffsetX = Utils.convertDpToPixel(offset);
+        mTransOffsetX = Utils.INSTANCE.convertDpToPixel(offset);
     }
 
     /**
@@ -709,7 +709,7 @@ public class ViewPortHandler {
      * @param offset
      */
     public void setDragOffsetY(float offset) {
-        mTransOffsetY = Utils.convertDpToPixel(offset);
+        mTransOffsetY = Utils.INSTANCE.convertDpToPixel(offset);
     }
 
     /**

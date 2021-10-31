@@ -238,7 +238,7 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
             });
 
             // set color of filled area
-            if (Utils.getSDKInt() >= 18) {
+            if (Utils.INSTANCE.getSDKInt() >= 18) {
                 // drawables only supported on api level 18 and above
                 Drawable drawable = ContextCompat.getDrawable(this, R.drawable.fade_red);
                 set1.setFillDrawable(drawable);
