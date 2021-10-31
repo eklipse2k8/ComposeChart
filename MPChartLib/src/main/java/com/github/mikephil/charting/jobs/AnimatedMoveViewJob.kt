@@ -1,65 +1,72 @@
-package com.github.mikephil.charting.jobs;
+package com.github.mikephil.charting.jobs
 
-import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
-import android.view.View;
+import android.animation.ValueAnimator
+import android.view.View
+import com.github.mikephil.charting.utils.ObjectPool
+import com.github.mikephil.charting.utils.ObjectPool.Poolable
+import com.github.mikephil.charting.utils.Transformer
+import com.github.mikephil.charting.utils.ViewPortHandler
 
-import com.github.mikephil.charting.utils.ObjectPool;
-import com.github.mikephil.charting.utils.Transformer;
-import com.github.mikephil.charting.utils.ViewPortHandler;
+/** Created by Philipp Jahoda on 19/02/16. */
+class AnimatedMoveViewJob(
+    viewPortHandler: ViewPortHandler?,
+    xValue: Float,
+    yValue: Float,
+    trans: Transformer?,
+    v: View?,
+    xOrigin: Float,
+    yOrigin: Float,
+    duration: Long
+) : AnimatedViewPortJob(viewPortHandler, xValue, yValue, trans, v, xOrigin, yOrigin, duration) {
 
-/**
- * Created by Philipp Jahoda on 19/02/16.
- */
-@SuppressLint("NewApi")
-public class AnimatedMoveViewJob extends AnimatedViewPortJob {
-
-    private static ObjectPool<AnimatedMoveViewJob> pool;
-
-    static {
-        pool = ObjectPool.create(4, new AnimatedMoveViewJob(null,0,0,null,null,0,0,0));
-        pool.setReplenishPercentage(0.5f);
+  companion object {
+    private var pool: ObjectPool<AnimatedMoveViewJob>? = null
+    fun getInstance(
+        viewPortHandler: ViewPortHandler?,
+        xValue: Float,
+        yValue: Float,
+        trans: Transformer?,
+        v: View?,
+        xOrigin: Float,
+        yOrigin: Float,
+        duration: Long
+    ): AnimatedMoveViewJob? {
+      val result = pool?.get() ?: return null
+      result.mViewPortHandler = viewPortHandler
+      result.xValue = xValue
+      result.yValue = yValue
+      result.mTrans = trans
+      result.view = v
+      result.xOrigin = xOrigin
+      result.yOrigin = yOrigin
+      result.animator.duration = duration
+      return result
     }
 
-    public static AnimatedMoveViewJob getInstance(ViewPortHandler viewPortHandler, float xValue, float yValue, Transformer trans, View v, float xOrigin, float yOrigin, long duration){
-        AnimatedMoveViewJob result = pool.get();
-        result.mViewPortHandler = viewPortHandler;
-        result.xValue = xValue;
-        result.yValue = yValue;
-        result.mTrans = trans;
-        result.view = v;
-        result.xOrigin = xOrigin;
-        result.yOrigin = yOrigin;
-        //result.resetAnimator();
-        result.animator.setDuration(duration);
-        return result;
+    fun recycleInstance(instance: AnimatedMoveViewJob) {
+      pool?.recycle(instance)
     }
 
-    public static void recycleInstance(AnimatedMoveViewJob instance){
-        pool.recycle(instance);
+    init {
+      pool =
+          ObjectPool.create(4, AnimatedMoveViewJob(null, 0f, 0f, null, null, 0f, 0f, 0L)) as
+              ObjectPool<AnimatedMoveViewJob>?
+      pool?.replenishPercentage = 0.5f
     }
+  }
 
+  override fun onAnimationUpdate(animation: ValueAnimator) {
+    pts[0] = xOrigin + (xValue - xOrigin) * phase
+    pts[1] = yOrigin + (yValue - yOrigin) * phase
+    mTrans?.pointValuesToPixel(pts)
+    view?.let { mViewPortHandler?.centerViewPort(pts, it) }
+  }
 
-    public AnimatedMoveViewJob(ViewPortHandler viewPortHandler, float xValue, float yValue, Transformer trans, View v, float xOrigin, float yOrigin, long duration) {
-        super(viewPortHandler, xValue, yValue, trans, v, xOrigin, yOrigin, duration);
-    }
+  override fun recycleSelf() {
+    recycleInstance(this)
+  }
 
-    @Override
-    public void onAnimationUpdate(ValueAnimator animation) {
-
-        pts[0] = xOrigin + (xValue - xOrigin) * phase;
-        pts[1] = yOrigin + (yValue - yOrigin) * phase;
-
-        mTrans.pointValuesToPixel(pts);
-        mViewPortHandler.centerViewPort(pts, view);
-    }
-
-    public void recycleSelf(){
-        recycleInstance(this);
-    }
-
-    @Override
-    protected ObjectPool.Poolable instantiate() {
-        return new AnimatedMoveViewJob(null,0,0,null,null,0,0,0);
-    }
+  override fun instantiate(): Poolable {
+    return AnimatedMoveViewJob(null, 0f, 0f, null, null, 0f, 0f, 0)
+  }
 }

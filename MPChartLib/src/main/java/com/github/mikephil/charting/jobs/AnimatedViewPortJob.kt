@@ -1,99 +1,71 @@
-package com.github.mikephil.charting.jobs;
+package com.github.mikephil.charting.jobs
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
-import android.view.View;
+import android.animation.Animator
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
+import android.animation.ValueAnimator.AnimatorUpdateListener
+import android.annotation.SuppressLint
+import android.view.View
+import com.github.mikephil.charting.utils.Transformer
+import com.github.mikephil.charting.utils.ViewPortHandler
 
-import com.github.mikephil.charting.utils.Transformer;
-import com.github.mikephil.charting.utils.ViewPortHandler;
+/** Created by Philipp Jahoda on 19/02/16. */
+abstract class AnimatedViewPortJob(
+    viewPortHandler: ViewPortHandler?,
+    xValue: Float,
+    yValue: Float,
+    trans: Transformer?,
+    v: View?,
+    var xOrigin: Float,
+    var yOrigin: Float,
+    duration: Long
+) :
+    ViewPortJob(viewPortHandler, xValue, yValue, trans, v),
+    AnimatorUpdateListener,
+    Animator.AnimatorListener {
 
-/**
- * Created by Philipp Jahoda on 19/02/16.
- */
-@SuppressLint("NewApi")
-public abstract class AnimatedViewPortJob extends ViewPortJob implements ValueAnimator.AnimatorUpdateListener, Animator.AnimatorListener {
+  protected var animator: ObjectAnimator = ObjectAnimator.ofFloat(this, "phase", 0f, 1f)
 
-    protected ObjectAnimator animator;
+  var phase = 0f
 
-    protected float phase;
+  override fun run() {
+    animator.start()
+  }
 
-    protected float xOrigin;
-    protected float yOrigin;
+  abstract fun recycleSelf()
 
-    public AnimatedViewPortJob(ViewPortHandler viewPortHandler, float xValue, float yValue, Transformer trans, View v, float xOrigin, float yOrigin, long duration) {
-        super(viewPortHandler, xValue, yValue, trans, v);
-        this.xOrigin = xOrigin;
-        this.yOrigin = yOrigin;
-        animator = ObjectAnimator.ofFloat(this, "phase", 0f, 1f);
-        animator.setDuration(duration);
-        animator.addUpdateListener(this);
-        animator.addListener(this);
+  protected fun resetAnimator() {
+    animator.removeAllListeners()
+    animator.removeAllUpdateListeners()
+    animator.reverse()
+    animator.addUpdateListener(this)
+    animator.addListener(this)
+  }
+
+  override fun onAnimationStart(animation: Animator) = Unit
+
+  override fun onAnimationEnd(animation: Animator) {
+    try {
+      recycleSelf()
+    } catch (e: IllegalArgumentException) {
+      // don't worry about it.
     }
+  }
 
-    @SuppressLint("NewApi")
-    @Override
-    public void run() {
-        animator.start();
+  override fun onAnimationCancel(animation: Animator) {
+    try {
+      recycleSelf()
+    } catch (e: IllegalArgumentException) {
+      // don't worry about it.
     }
+  }
 
-    public float getPhase() {
-        return phase;
-    }
+  override fun onAnimationRepeat(animation: Animator) = Unit
+  override fun onAnimationUpdate(animation: ValueAnimator) = Unit
 
-    public void setPhase(float phase) {
-        this.phase = phase;
-    }
-
-    public float getXOrigin() {
-        return xOrigin;
-    }
-
-    public float getYOrigin() {
-        return yOrigin;
-    }
-
-    public abstract void recycleSelf();
-
-    protected void resetAnimator(){
-        animator.removeAllListeners();
-        animator.removeAllUpdateListeners();
-        animator.reverse();
-        animator.addUpdateListener(this);
-        animator.addListener(this);
-    }
-
-    @Override
-    public void onAnimationStart(Animator animation) {
-
-    }
-
-    @Override
-    public void onAnimationEnd(Animator animation) {
-        try{
-            recycleSelf();
-        }catch (IllegalArgumentException e){
-            // don't worry about it.
-        }
-    }
-
-    @Override
-    public void onAnimationCancel(Animator animation) {
-        try{
-            recycleSelf();
-        }catch (IllegalArgumentException e){
-            // don't worry about it.
-        }
-    }
-
-    @Override
-    public void onAnimationRepeat(Animator animation) {
-
-    }
-
-    @Override
-    public void onAnimationUpdate(ValueAnimator animation) {
-
-    }
+  init {
+    animator.duration = duration
+    animator.addUpdateListener(this)
+    animator.addListener(this)
+  }
 }

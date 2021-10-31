@@ -1,87 +1,83 @@
+package com.github.mikephil.charting.jobs
 
-package com.github.mikephil.charting.jobs;
+import android.graphics.Matrix
+import android.view.View
+import com.github.mikephil.charting.charts.BarLineChartBase
+import com.github.mikephil.charting.components.YAxis.AxisDependency
+import com.github.mikephil.charting.utils.ObjectPool
+import com.github.mikephil.charting.utils.ObjectPool.Poolable
+import com.github.mikephil.charting.utils.Transformer
+import com.github.mikephil.charting.utils.ViewPortHandler
 
-import android.graphics.Matrix;
-import android.view.View;
-
-import com.github.mikephil.charting.charts.BarLineChartBase;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.utils.ObjectPool;
-import com.github.mikephil.charting.utils.Transformer;
-import com.github.mikephil.charting.utils.ViewPortHandler;
-
-/**
- * Created by Philipp Jahoda on 19/02/16.
- */
-public class ZoomJob extends ViewPortJob {
-
-    private static ObjectPool<ZoomJob> pool;
-
-    static {
-        pool = ObjectPool.create(1, new ZoomJob(null, 0, 0, 0, 0, null, null, null));
-        pool.setReplenishPercentage(0.5f);
+/** Created by Philipp Jahoda on 19/02/16. */
+class ZoomJob(
+    viewPortHandler: ViewPortHandler?,
+    private var scaleX: Float,
+    private var scaleY: Float,
+    xValue: Float,
+    yValue: Float,
+    trans: Transformer?,
+    private var axisDependency: AxisDependency?,
+    v: View?
+) : ViewPortJob(viewPortHandler, xValue, yValue, trans, v) {
+  companion object {
+    private var pool: ObjectPool<ZoomJob>? = null
+    fun getInstance(
+        viewPortHandler: ViewPortHandler?,
+        scaleX: Float,
+        scaleY: Float,
+        xValue: Float,
+        yValue: Float,
+        trans: Transformer?,
+        axis: AxisDependency?,
+        v: View?
+    ): ZoomJob? {
+      val result = pool?.get() ?: return null
+      result.xValue = xValue
+      result.yValue = yValue
+      result.scaleX = scaleX
+      result.scaleY = scaleY
+      result.mViewPortHandler = viewPortHandler
+      result.mTrans = trans
+      result.axisDependency = axis
+      result.view = v
+      return result
     }
 
-    public static ZoomJob getInstance(ViewPortHandler viewPortHandler, float scaleX, float scaleY, float xValue, float yValue,
-                                      Transformer trans, YAxis.AxisDependency axis, View v) {
-        ZoomJob result = pool.get();
-        result.xValue = xValue;
-        result.yValue = yValue;
-        result.scaleX = scaleX;
-        result.scaleY = scaleY;
-        result.mViewPortHandler = viewPortHandler;
-        result.mTrans = trans;
-        result.axisDependency = axis;
-        result.view = v;
-        return result;
+    fun recycleInstance(instance: ZoomJob) {
+      pool?.recycle(instance)
     }
 
-    public static void recycleInstance(ZoomJob instance) {
-        pool.recycle(instance);
+    init {
+      pool =
+          ObjectPool.create(1, ZoomJob(null, 0f, 0f, 0f, 0f, null, null, null)) as
+              ObjectPool<ZoomJob>?
+      pool?.replenishPercentage = 0.5f
     }
+  }
 
-    protected float scaleX;
-    protected float scaleY;
-
-    protected YAxis.AxisDependency axisDependency;
-
-    public ZoomJob(ViewPortHandler viewPortHandler, float scaleX, float scaleY, float xValue, float yValue, Transformer trans,
-                   YAxis.AxisDependency axis, View v) {
-        super(viewPortHandler, xValue, yValue, trans, v);
-
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
-        this.axisDependency = axis;
+  private var mRunMatrixBuffer = Matrix()
+  override fun run() {
+    val save = mRunMatrixBuffer
+    if (mViewPortHandler == null) {
+      return
     }
+    mViewPortHandler!!.zoom(scaleX, scaleY, save)
+    mViewPortHandler!!.refresh(save, view, false)
+    val yValsInView =
+        (view as BarLineChartBase<*>).getAxis(axisDependency).mAxisRange / mViewPortHandler!!.scaleY
+    val xValsInView = (view as BarLineChartBase<*>).xAxis.mAxisRange / mViewPortHandler!!.scaleX
+    pts[0] = xValue - xValsInView / 2f
+    pts[1] = yValue + yValsInView / 2f
+    mTrans?.pointValuesToPixel(pts)
+    mViewPortHandler!!.translate(pts, save)
+    mViewPortHandler!!.refresh(save, view, false)
+    (view as BarLineChartBase<*>).calculateOffsets()
+    view?.postInvalidate()
+    recycleInstance(this)
+  }
 
-    protected Matrix mRunMatrixBuffer = new Matrix();
-
-    @Override
-    public void run() {
-
-        Matrix save = mRunMatrixBuffer;
-        mViewPortHandler.zoom(scaleX, scaleY, save);
-        mViewPortHandler.refresh(save, view, false);
-
-        float yValsInView = ((BarLineChartBase) view).getAxis(axisDependency).mAxisRange / mViewPortHandler.getScaleY();
-        float xValsInView = ((BarLineChartBase) view).getXAxis().mAxisRange / mViewPortHandler.getScaleX();
-
-        pts[0] = xValue - xValsInView / 2f;
-        pts[1] = yValue + yValsInView / 2f;
-
-        mTrans.pointValuesToPixel(pts);
-
-        mViewPortHandler.translate(pts, save);
-        mViewPortHandler.refresh(save, view, false);
-
-        ((BarLineChartBase) view).calculateOffsets();
-        view.postInvalidate();
-
-        recycleInstance(this);
-    }
-
-    @Override
-    protected ObjectPool.Poolable instantiate() {
-        return new ZoomJob(null, 0, 0, 0, 0, null, null, null);
-    }
+  override fun instantiate(): Poolable {
+    return ZoomJob(null, 0f, 0f, 0f, 0f, null, null, null)
+  }
 }

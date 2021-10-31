@@ -684,7 +684,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
      */
     public void zoom(float scaleX, float scaleY, float xValue, float yValue, AxisDependency axis) {
 
-        Runnable job = ZoomJob.getInstance(mViewPortHandler, scaleX, scaleY, xValue, yValue, getTransformer(axis), axis, this);
+        Runnable job = ZoomJob.Companion.getInstance(mViewPortHandler, scaleX, scaleY, xValue, yValue, getTransformer(axis), axis, this);
         addViewportJob(job);
     }
 
@@ -719,7 +719,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
 
         MPPointD origin = getValuesByTouchPoint(mViewPortHandler.contentLeft(), mViewPortHandler.contentTop(), axis);
 
-        Runnable job = AnimatedZoomJob.getInstance(mViewPortHandler, this, getTransformer(axis), getAxis(axis), mXAxis
+        Runnable job = AnimatedZoomJob.Companion.getInstance(mViewPortHandler, this, getTransformer(axis), getAxis(axis), mXAxis
                         .mAxisRange, scaleX, scaleY, mViewPortHandler.getScaleX(), mViewPortHandler.getScaleY(),
                 xValue, yValue, (float) origin.x, (float) origin.y, duration);
         addViewportJob(job);
@@ -839,7 +839,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
      */
     public void moveViewToX(float xValue) {
 
-        Runnable job = MoveViewJob.getInstance(mViewPortHandler, xValue, 0f,
+        Runnable job = MoveViewJob.Companion.getInstance(mViewPortHandler, xValue, 0f,
                 getTransformer(AxisDependency.LEFT), this);
 
         addViewportJob(job);
@@ -858,7 +858,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
 
         float yInView = getAxisRange(axis) / mViewPortHandler.getScaleY();
 
-        Runnable job = MoveViewJob.getInstance(mViewPortHandler, xValue, yValue + yInView / 2f,
+        Runnable job = MoveViewJob.Companion.getInstance(mViewPortHandler, xValue, yValue + yInView / 2f,
                 getTransformer(axis), this);
 
         addViewportJob(job);
@@ -881,7 +881,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
 
         float yInView = getAxisRange(axis) / mViewPortHandler.getScaleY();
 
-        Runnable job = AnimatedMoveViewJob.getInstance(mViewPortHandler, xValue, yValue + yInView / 2f,
+        Runnable job = AnimatedMoveViewJob.Companion.getInstance(mViewPortHandler, xValue, yValue + yInView / 2f,
                 getTransformer(axis), this, (float) bounds.x, (float) bounds.y, duration);
 
         addViewportJob(job);
@@ -900,7 +900,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
 
         float valsInView = getAxisRange(axis) / mViewPortHandler.getScaleY();
 
-        Runnable job = MoveViewJob.getInstance(mViewPortHandler, 0f, yValue + valsInView / 2f,
+        Runnable job = MoveViewJob.Companion.getInstance(mViewPortHandler, 0f, yValue + valsInView / 2f,
                 getTransformer(axis), this);
 
         addViewportJob(job);
@@ -920,7 +920,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
         float yInView = getAxisRange(axis) / mViewPortHandler.getScaleY();
         float xInView = getXAxis().mAxisRange / mViewPortHandler.getScaleX();
 
-        Runnable job = MoveViewJob.getInstance(mViewPortHandler,
+        Runnable job = MoveViewJob.Companion.getInstance(mViewPortHandler,
                 xValue - xInView / 2f, yValue + yInView / 2f,
                 getTransformer(axis), this);
 
@@ -944,7 +944,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
         float yInView = getAxisRange(axis) / mViewPortHandler.getScaleY();
         float xInView = getXAxis().mAxisRange / mViewPortHandler.getScaleX();
 
-        Runnable job = AnimatedMoveViewJob.getInstance(mViewPortHandler,
+        Runnable job = AnimatedMoveViewJob.Companion.getInstance(mViewPortHandler,
                 xValue - xInView / 2f, yValue + yInView / 2f,
                 getTransformer(axis), this, (float) bounds.x, (float) bounds.y, duration);
 
@@ -1235,8 +1235,8 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
 
     /**
      * When disabled, the data and/or highlights will not be clipped to contentRect. Disabling this option can
-     *   be useful, when the data lies fully within the content rect, but is drawn in such a way (such as thick lines)
-     *   that there is unwanted clipping.
+     * be useful, when the data lies fully within the content rect, but is drawn in such a way (such as thick lines)
+     * that there is unwanted clipping.
      *
      * @param enabled
      */
@@ -1256,8 +1256,8 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
 
     /**
      * When disabled, the data and/or highlights will not be clipped to contentRect. Disabling this option can
-     *   be useful, when the data lies fully within the content rect, but is drawn in such a way (such as thick lines)
-     *   that there is unwanted clipping.
+     * be useful, when the data lies fully within the content rect, but is drawn in such a way (such as thick lines)
+     * that there is unwanted clipping.
      *
      * @return
      */
