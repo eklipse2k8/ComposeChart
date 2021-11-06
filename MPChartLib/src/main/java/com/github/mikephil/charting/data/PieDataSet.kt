@@ -3,7 +3,7 @@ package com.github.mikephil.charting.data
 import com.github.mikephil.charting.interfaces.datasets.IPieDataSet
 import com.github.mikephil.charting.utils.Utils
 
-class PieDataSet(yVals: List<PieEntry>, label: String) :
+class PieDataSet(yVals: MutableList<PieEntry>, label: String) :
     DataSet<PieEntry>(yVals, label), IPieDataSet {
   /** the space in pixels between the chart-slices, default 0f */
   private var mSliceSpace = 0f
@@ -45,21 +45,19 @@ class PieDataSet(yVals: List<PieEntry>, label: String) :
   /** Sets the color for the highlighted sector (null for using entry color) */
   override var highlightColor: Int? = null
 
-  override fun getEntryIndex(e: PieEntry): Int = super.getEntryIndex(e)
-
   override fun copy(): DataSet<PieEntry> {
     val entries = mutableListOf<PieEntry>()
-    mEntries.forEach { entry -> entries.add(entry.copy()) }
+    mEntries?.forEach { entry -> entries.add(entry.copy()) }
     val copied = PieDataSet(entries, label!!)
     copy(copied)
     return copied
   }
 
-  private fun copy(pieDataSet: PieDataSet?) {
+  private fun copy(pieDataSet: PieDataSet) {
     super.copy(pieDataSet)
   }
 
-  protected override fun calcMinMax(e: PieEntry) {
+  override fun calcMinMax(e: PieEntry?) {
     if (e == null) return
     calcMinMaxY(e)
   }

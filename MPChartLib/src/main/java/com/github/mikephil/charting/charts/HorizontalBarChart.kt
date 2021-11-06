@@ -21,6 +21,8 @@ import com.github.mikephil.charting.utils.ViewPortHandler
 import kotlin.math.max
 import kotlin.math.min
 
+private val TAG = HorizontalBarChart::class.java.simpleName
+
 /**
  * BarChart with horizontal bar orientation. In this implementation, x- and y-axis are switched,
  * meaning the YAxis class represents the horizontal values and the XAxis class represents the
@@ -28,21 +30,13 @@ import kotlin.math.min
  *
  * @author Philipp Jahoda
  */
-class HorizontalBarChart : BarChart {
+class HorizontalBarChart
+@JvmOverloads
+constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+    BarChart(context, attrs, defStyleAttr) {
 
-  constructor(context: Context?) : super(context)
-
-  constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-
-  constructor(
-      context: Context?,
-      attrs: AttributeSet?,
-      defStyle: Int
-  ) : super(context, attrs, defStyle)
-
-  override fun init() {
+  init {
     mViewPortHandler = ViewPortHandler()
-    super.init()
     mLeftAxisTransformer = TransformerHorizontalBarChart(mViewPortHandler)
     mRightAxisTransformer = TransformerHorizontalBarChart(mViewPortHandler)
     mRenderer = HorizontalBarChartRenderer(this, mAnimator, mViewPortHandler)
@@ -52,16 +46,17 @@ class HorizontalBarChart : BarChart {
     rendererRightYAxis =
         YAxisRendererHorizontalBarChart(mViewPortHandler, axisRight!!, mRightAxisTransformer)
     rendererXAxis =
-        XAxisRendererHorizontalBarChart(mViewPortHandler, mXAxis, mLeftAxisTransformer!!, this)
+        XAxisRendererHorizontalBarChart(mViewPortHandler, xAxis, mLeftAxisTransformer!!, this)
   }
 
   private val mOffsetsBuffer = RectF()
+
   override fun calculateLegendOffsets(offsets: RectF) {
     offsets.left = 0f
     offsets.right = 0f
     offsets.top = 0f
     offsets.bottom = 0f
-    if (mLegend == null || !mLegend.isEnabled || mLegend.isDrawInsideEnabled) return
+    if (!mLegend.isEnabled || mLegend.isDrawInsideEnabled) return
     when (mLegend.orientation) {
       LegendOrientation.VERTICAL ->
           when (mLegend.horizontalAlignment) {
@@ -95,7 +90,8 @@ class HorizontalBarChart : BarChart {
                   (mLegend.mNeededHeight.coerceAtMost(
                       mViewPortHandler.chartHeight * mLegend.maxSizePercent) + mLegend.yOffset)
               if (axisLeft!!.isEnabled && axisLeft!!.isDrawLabelsEnabled)
-                  offsets.top += axisLeft!!.getRequiredHeightSpace(rendererLeftYAxis!!.paintAxisLabels)
+                  offsets.top +=
+                      axisLeft!!.getRequiredHeightSpace(rendererLeftYAxis!!.paintAxisLabels)
             }
             LegendVerticalAlignment.BOTTOM -> {
               offsets.bottom +=
@@ -128,15 +124,15 @@ class HorizontalBarChart : BarChart {
     if (axisRight!!.needsOffset()) {
       offsetBottom += axisRight!!.getRequiredHeightSpace(rendererRightYAxis!!.paintAxisLabels)
     }
-    val xlabelwidth = mXAxis.mLabelRotatedWidth.toFloat()
-    if (mXAxis.isEnabled) {
+    val xlabelwidth = xAxis.mLabelRotatedWidth.toFloat()
+    if (xAxis.isEnabled) {
 
       // offsets for x-labels
-      if (mXAxis.position === XAxisPosition.BOTTOM) {
+      if (xAxis.position === XAxisPosition.BOTTOM) {
         offsetLeft += xlabelwidth
-      } else if (mXAxis.position === XAxisPosition.TOP) {
+      } else if (xAxis.position === XAxisPosition.TOP) {
         offsetRight += xlabelwidth
-      } else if (mXAxis.position === XAxisPosition.BOTH_SIDED) {
+      } else if (xAxis.position === XAxisPosition.BOTH_SIDED) {
         offsetLeft += xlabelwidth
         offsetRight += xlabelwidth
       }
@@ -153,7 +149,7 @@ class HorizontalBarChart : BarChart {
         Math.max(minOffset, offsetBottom))
     if (mLogEnabled) {
       Log.i(
-          LOG_TAG,
+          TAG,
           "offsetLeft: " +
               offsetLeft +
               ", offsetTop: " +
@@ -162,7 +158,7 @@ class HorizontalBarChart : BarChart {
               offsetRight +
               ", offsetBottom: " +
               offsetBottom)
-      Log.i(LOG_TAG, "Content: " + mViewPortHandler.contentRect.toString())
+      Log.i(TAG, "Content: " + mViewPortHandler.contentRect.toString())
     }
     prepareOffsetMatrix()
     prepareValuePxMatrix()
@@ -170,9 +166,9 @@ class HorizontalBarChart : BarChart {
 
   override fun prepareValuePxMatrix() {
     mRightAxisTransformer!!.prepareMatrixValuePx(
-        axisRight!!.mAxisMinimum, axisRight!!.mAxisRange, mXAxis.mAxisRange, mXAxis.mAxisMinimum)
+        axisRight!!.mAxisMinimum, axisRight!!.mAxisRange, xAxis.mAxisRange, xAxis.mAxisMinimum)
     mLeftAxisTransformer!!.prepareMatrixValuePx(
-        axisLeft!!.mAxisMinimum, axisLeft!!.mAxisRange, mXAxis.mAxisRange, mXAxis.mAxisMinimum)
+        axisLeft!!.mAxisMinimum, axisLeft!!.mAxisRange, xAxis.mAxisRange, xAxis.mAxisMinimum)
   }
 
   override fun getMarkerPosition(high: Highlight): FloatArray {
@@ -180,14 +176,14 @@ class HorizontalBarChart : BarChart {
   }
 
   override fun getBarBounds(e: BarEntry, outputRect: RectF) {
-    val set = mData.getDataSetForEntry(e)
+    val set = data?.getDataSetForEntry(e)
     if (set == null) {
       outputRect[Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE] = Float.MIN_VALUE
       return
     }
     val y = e.y
     val x = e.x
-    val barWidth = mData.barWidth
+    val barWidth = data?.barWidth ?: 0f
     val top = x - barWidth / 2f
     val bottom = x + barWidth / 2f
     val left: Float = if (y >= 0) y else 0f
@@ -223,10 +219,10 @@ class HorizontalBarChart : BarChart {
    * @return
    */
   override fun getHighlightByTouchPoint(x: Float, y: Float): Highlight? {
-    return if (mData == null) {
-      if (mLogEnabled) Log.e(LOG_TAG, "Can't select by touch. No data set.")
+    return if (data == null) {
+      if (mLogEnabled) Log.e(TAG, "Can't select by touch. No data set.")
       null
-    } else highlighter.getHighlight(y, x) // switch x and y
+    } else getHighlighter()?.getHighlight(y, x) // switch x and y
   }
 
   override val lowestVisibleX: Float
@@ -236,7 +232,7 @@ class HorizontalBarChart : BarChart {
               mViewPortHandler.contentLeft(),
               mViewPortHandler.contentBottom(),
               posForGetLowestVisibleX)
-      return max(mXAxis.mAxisMinimum, posForGetLowestVisibleX.y.toFloat())
+      return max(xAxis.mAxisMinimum, posForGetLowestVisibleX.y.toFloat())
     }
   override val highestVisibleX: Float
     get() {
@@ -245,23 +241,23 @@ class HorizontalBarChart : BarChart {
               mViewPortHandler.contentLeft(),
               mViewPortHandler.contentTop(),
               posForGetHighestVisibleX)
-      return min(mXAxis.mAxisMaximum, posForGetHighestVisibleX.y.toFloat())
+      return min(xAxis.mAxisMaximum, posForGetHighestVisibleX.y.toFloat())
     }
 
   /** ###### VIEWPORT METHODS BELOW THIS ###### */
   override fun setVisibleXRangeMaximum(maxXRange: Float) {
-    val xScale = mXAxis.mAxisRange / maxXRange
+    val xScale = xAxis.mAxisRange / maxXRange
     mViewPortHandler.setMinimumScaleY(xScale)
   }
 
   override fun setVisibleXRangeMinimum(minXRange: Float) {
-    val xScale = mXAxis.mAxisRange / minXRange
+    val xScale = xAxis.mAxisRange / minXRange
     mViewPortHandler.setMaximumScaleY(xScale)
   }
 
   override fun setVisibleXRange(minXRange: Float, maxXRange: Float) {
-    val minScale = mXAxis.mAxisRange / minXRange
-    val maxScale = mXAxis.mAxisRange / maxXRange
+    val minScale = xAxis.mAxisRange / minXRange
+    val maxScale = xAxis.mAxisRange / maxXRange
     mViewPortHandler.setMinMaxScaleY(minScale, maxScale)
   }
 

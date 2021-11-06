@@ -20,7 +20,7 @@ class CombinedChartRenderer(
   /** all rederers for the different kinds of data this combined-renderer can draw */
   private var subRenderers: MutableList<DataRenderer> = mutableListOf()
 
-  private var weakChart: WeakReference<Chart<*>> = WeakReference(chart)
+  private var weakChart: WeakReference<Chart<*,*,*>> = WeakReference(chart)
 
   /**
    * Creates the renderers needed for this combined-renderer in the required order. Also takes the

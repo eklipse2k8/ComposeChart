@@ -4,19 +4,8 @@ import android.annotation.SuppressLint
 
 /** Created by philipp on 13/06/16. */
 @SuppressLint("ParcelCreator")
-class RadarEntry : Entry {
-  constructor(value: Float) : super(0f, value) {}
-  constructor(value: Float, data: Any?) : super(0f, value, data) {}
+class RadarEntry @JvmOverloads constructor(value: Float = Float.NaN, data: Any? = null) :
+    Entry(y = value, data = data) {
 
-  override fun copy(): RadarEntry? {
-    return RadarEntry(y, data)
-  }
-
-  @get:Deprecated("")
-  @set:Deprecated("")
-  override var x: Float
-    get() = super.x
-    set(x) {
-      super.x = x
-    }
+  override fun copy(): RadarEntry = RadarEntry(y, data)
 }

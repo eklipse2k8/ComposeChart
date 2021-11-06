@@ -12,7 +12,7 @@ import com.github.mikephil.charting.interfaces.datasets.IPieDataSet
  *
  * @author Philipp Jahoda
  */
-class PieData : ChartData<IPieDataSet> {
+class PieData : ChartData<IPieDataSet, PieEntry> {
 
   constructor() : super()
 
@@ -29,7 +29,7 @@ class PieData : ChartData<IPieDataSet> {
    *
    * @param dataSet
    */
-  var dataSet: IPieDataSet?
+  var dataSet: IPieDataSet
     get() = mDataSets[0]
     set(dataSet) {
       mDataSets.clear()
@@ -37,13 +37,14 @@ class PieData : ChartData<IPieDataSet> {
       notifyDataChanged()
     }
 
-  override fun getDataSets(): List<IPieDataSet> {
-    val dataSets: List<IPieDataSet> = super.getDataSets()
-    if (dataSets.isEmpty()) {
-      Log.e("MPAndroidChart", "Found multiple data sets while pie chart only allows one")
+  override val dataSets: List<IPieDataSet>
+    get() {
+      val sets = super.dataSets
+      if (sets.isEmpty()) {
+        Log.e("MPAndroidChart", "Found multiple data sets while pie chart only allows one")
+      }
+      return sets
     }
-    return dataSets
-  }
 
   /**
    * The PieData object can only have one DataSet. Use getDataSet() method instead.
@@ -52,17 +53,17 @@ class PieData : ChartData<IPieDataSet> {
    * @return
    */
   override fun getDataSetByIndex(index: Int): IPieDataSet? {
-    return if (index == 0) dataSet!! else null
+    return if (index == 0) dataSet else null
   }
 
   override fun getDataSetByLabel(label: String, ignorecase: Boolean): IPieDataSet? {
     return if (ignorecase)
-        (if (label.equals(mDataSets[0]!!.label, ignoreCase = true)) mDataSets[0] else null)!!
-    else (if (label == mDataSets[0]!!.label) mDataSets[0] else null)!!
+        (if (label.equals(mDataSets[0].label, ignoreCase = true)) mDataSets[0] else null)!!
+    else (if (label == mDataSets[0].label) mDataSets[0] else null)!!
   }
 
-  override fun getEntryForHighlight(highlight: Highlight): Entry {
-    return dataSet!!.getEntryForIndex(highlight.x.toInt())
+  override fun getEntryForHighlight(highlight: Highlight): PieEntry {
+    return dataSet.getEntryForIndex(highlight.x.toInt())
   }
 
   /**
@@ -73,7 +74,7 @@ class PieData : ChartData<IPieDataSet> {
   val yValueSum: Float
     get() {
       var sum = 0f
-      for (i in 0 until dataSet!!.entryCount) sum += dataSet!!.getEntryForIndex(i).y
+      for (i in 0 until dataSet.entryCount) sum += dataSet.getEntryForIndex(i).y
       return sum
     }
 }

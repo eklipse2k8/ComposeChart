@@ -10,7 +10,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.github.mikephil.charting.utils.Utils
 
-class LineDataSet(yVals: List<Entry>, label: String?) :
+class LineDataSet(yVals: MutableList<Entry>, label: String?) :
     LineRadarDataSet<Entry>(yVals, label), ILineDataSet {
 
   /** Drawing mode for this line dataset */
@@ -47,7 +47,7 @@ class LineDataSet(yVals: List<Entry>, label: String?) :
 
   override fun copy(): DataSet<Entry> {
     val entries = mutableListOf<Entry>()
-    mEntries.forEach { entry -> entries.add(entry.copy()!!) }
+    mEntries?.forEach { entry -> entries.add(entry.copy()!!) }
     val copied = LineDataSet(entries, label)
     copy(copied)
     return copied

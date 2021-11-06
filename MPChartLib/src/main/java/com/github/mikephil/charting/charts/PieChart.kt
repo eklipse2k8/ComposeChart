@@ -7,8 +7,10 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.highlight.PieHighlighter
+import com.github.mikephil.charting.interfaces.datasets.IPieDataSet
 import com.github.mikephil.charting.renderer.PieChartRenderer
 import com.github.mikephil.charting.utils.MPPointF
 import com.github.mikephil.charting.utils.Utils.convertDpToPixel
@@ -23,7 +25,10 @@ import kotlin.math.sin
  *
  * @author Philipp Jahoda
  */
-class PieChart : PieRadarChartBase<PieData> {
+class PieChart
+@JvmOverloads
+constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+    PieRadarChartBase<PieData, IPieDataSet, PieEntry>(context, attrs, defStyleAttr) {
   /**
    * returns the circlebox, the boundingbox of the pie-chart slices
    *
@@ -155,30 +160,18 @@ class PieChart : PieRadarChartBase<PieData> {
    */
   private var mMinAngleForSlices = 0f
 
-  constructor(context: Context?) : super(context)
-
-  constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-
-  constructor(
-      context: Context?,
-      attrs: AttributeSet?,
-      defStyle: Int
-  ) : super(context, attrs, defStyle)
-
-  override fun init() {
-    super.init()
+  init {
     mRenderer = PieChartRenderer(this, mAnimator, mViewPortHandler)
-    mXAxis = null
     mHighlighter = PieHighlighter(this)
   }
 
   override fun onDraw(canvas: Canvas) {
     super.onDraw(canvas)
-    if (mData == null) return
-    mRenderer.drawData(canvas)
-    if (valuesToHighlight()) mRenderer.drawHighlighted(canvas, mIndicesToHighlight)
-    mRenderer.drawExtras(canvas)
-    mRenderer.drawValues(canvas)
+    if (data == null) return
+    mRenderer?.drawData(canvas)
+    if (valuesToHighlight()) mRenderer?.drawHighlighted(canvas, mIndicesToHighlight)
+    mRenderer?.drawExtras(canvas)
+    mRenderer?.drawValues(canvas)
     mLegendRenderer.renderLegend(canvas)
     drawDescription(canvas)
     drawMarkers(canvas)
@@ -188,11 +181,11 @@ class PieChart : PieRadarChartBase<PieData> {
     super.calculateOffsets()
 
     // prevent nullpointer when no data set
-    if (mData == null) return
+    if (data == null) return
     val diameter = diameter
     val radius = diameter / 2f
     val c: MPPointF = centerOffsets ?: MPPointF.getInstance(0f, 0f)
-    val shift = mData!!.dataSet!!.selectionShift
+    val shift = data?.dataSet?.selectionShift ?: 0f
 
     // create the circle box that will contain the pie-chart (the bounds of
     // the pie-chart)
@@ -236,7 +229,9 @@ class PieChart : PieRadarChartBase<PieData> {
 
   /** calculates the needed angles for the chart slices */
   private fun calcAngles() {
-    val entryCount = mData!!.entryCount
+    val localData = data ?: return
+
+    val entryCount = localData.entryCount
     if (drawAngles.size != entryCount) {
       drawAngles = FloatArray(entryCount)
     } else {
@@ -251,14 +246,14 @@ class PieChart : PieRadarChartBase<PieData> {
         absoluteAngles[i] = 0f
       }
     }
-    val yValueSum = mData!!.yValueSum
-    val dataSets = mData!!.dataSets
+    val yValueSum = localData.yValueSum
+    val dataSets = localData.dataSets
     val hasMinAngle = mMinAngleForSlices != 0f && entryCount * mMinAngleForSlices <= mMaxAngle
     val minAngles = FloatArray(entryCount)
     var cnt = 0
     var offset = 0f
     var diff = 0f
-    for (i in 0 until mData!!.dataSetCount) {
+    for (i in 0 until localData.dataSetCount) {
       val set = dataSets[i]
       for (j in 0 until set.entryCount) {
         val drawAngle = calcAngle(Math.abs(set.getEntryForIndex(j).y), yValueSum)
@@ -304,14 +299,13 @@ class PieChart : PieRadarChartBase<PieData> {
    * @return
    */
   fun needsHighlight(index: Int): Boolean {
-
     // no highlight
     if (!valuesToHighlight()) return false
-    for (i in
-        mIndicesToHighlight.indices) // check if the xvalue for the given dataset needs highlight
-    if (mIndicesToHighlight[i].x.toInt() == index) return true
-    return false
+    // check if the xvalue for the given dataset needs highlight
+    val first = mIndicesToHighlight?.firstOrNull { it?.x?.toInt() == index }
+    return first != null
   }
+
   /**
    * calculates the needed angle for a given value
    *
@@ -319,25 +313,13 @@ class PieChart : PieRadarChartBase<PieData> {
    * @param yValueSum
    * @return
    */
-  /**
-   * calculates the needed angle for a given value
-   *
-   * @param value
-   * @return
-   */
-  private fun calcAngle(value: Float, yValueSum: Float = mData!!.yValueSum): Float {
+  private fun calcAngle(value: Float, yValueSum: Float = data?.yValueSum ?: 0f): Float {
     return value / yValueSum * mMaxAngle
   }
 
-  /**
-   * This will throw an exception, PieChart has no XAxis object.
-   *
-   * @return
-   */
-  @Deprecated("")
-  override fun getXAxis(): XAxis {
-    throw RuntimeException("PieChart has no XAxis")
-  }
+  override var xAxis: XAxis
+    get() = throw UnsupportedOperationException("PieChart has no XAxis")
+    set(value) = throw UnsupportedOperationException("PieChart has no XAxis")
 
   override fun getIndexForAngle(angle: Float): Int {
     // take the current angle of the chart into consideration
@@ -354,13 +336,9 @@ class PieChart : PieRadarChartBase<PieData> {
    * @param xIndex
    * @return
    */
-  fun getDataSetIndexForIndex(xIndex: Int): Int {
-    val dataSets = mData!!.dataSets
-    for (i in dataSets.indices) {
-      return i
-    }
-    return -1
-  }
+  fun getDataSetIndexForIndex(xIndex: Int): Int =
+      data?.dataSets?.indexOfFirst { it.getEntryForXValue(xIndex.toFloat(), Float.NaN) != null }
+          ?: -1
 
   /**
    * Sets the color for the hole that is drawn in the center of the PieChart (if enabled).
@@ -571,11 +549,8 @@ class PieChart : PieRadarChartBase<PieData> {
    */
   var maxAngle: Float
     get() = mMaxAngle
-    set(maxangle) {
-      var maxangle = maxangle
-      if (maxangle > 360) maxangle = 360f
-      if (maxangle < 90) maxangle = 90f
-      mMaxAngle = maxangle
+    set(value) {
+      mMaxAngle = value.coerceIn(90f, 360f)
     }
   /**
    * The minimum angle slices on the chart are rendered with, default is 0f.

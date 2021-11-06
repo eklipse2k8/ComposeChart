@@ -135,5 +135,5 @@ abstract class DataRenderer(
    * @param c
    * @param indices the highlighted values
    */
-  abstract fun drawHighlighted(c: Canvas, indices: Array<Highlight>)
+  abstract fun drawHighlighted(c: Canvas, indices: Array<Highlight?>?)
 }

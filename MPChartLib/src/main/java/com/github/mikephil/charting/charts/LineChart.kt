@@ -2,8 +2,10 @@ package com.github.mikephil.charting.charts
 
 import android.content.Context
 import android.util.AttributeSet
+import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.renderer.LineChartRenderer
 
 /**
@@ -11,24 +13,18 @@ import com.github.mikephil.charting.renderer.LineChartRenderer
  *
  * @author Philipp Jahoda
  */
-class LineChart : BarLineChartBase<LineData>, LineDataProvider {
-  constructor(context: Context?) : super(context)
+class LineChart
+@JvmOverloads
+constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+    BarLineChartBase<LineData, ILineDataSet, Entry>(context, attrs, defStyleAttr),
+    LineDataProvider {
 
-  constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-
-  constructor(
-      context: Context?,
-      attrs: AttributeSet?,
-      defStyle: Int
-  ) : super(context, attrs, defStyle)
-
-  override fun init() {
-    super.init()
+  init {
     mRenderer = LineChartRenderer(this, mAnimator, mViewPortHandler)
   }
 
-  override val lineData: LineData
-    get() = mData!!
+  override val lineData: LineData?
+    get() = data
 
   override fun onDetachedFromWindow() {
     // releases the bitmap in the renderer to avoid oom error

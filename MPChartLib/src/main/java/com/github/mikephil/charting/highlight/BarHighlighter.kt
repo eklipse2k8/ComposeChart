@@ -1,36 +1,33 @@
 package com.github.mikephil.charting.highlight
 
-import com.github.mikephil.charting.interfaces.dataprovider.BarDataProvider
-import com.github.mikephil.charting.utils.MPPointD
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.data.BarLineScatterCandleBubbleData
+import com.github.mikephil.charting.interfaces.dataprovider.BarDataProvider
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
+import com.github.mikephil.charting.utils.MPPointD
 import kotlin.math.abs
 import kotlin.math.max
 
-/**
- * Created by Philipp Jahoda on 22/07/15.
- */
+/** Created by Philipp Jahoda on 22/07/15. */
 open class BarHighlighter(chart: BarDataProvider) : ChartHighlighter<BarDataProvider>(chart) {
+
   override fun getHighlight(x: Float, y: Float): Highlight? {
-    val high = super.getHighlight(x, y) ?: return null
-    val pos = getValsForTouch(x, y)
-    val barData = mChart.barData
-    val set = barData.getDataSetByIndex(high.dataSetIndex)
-    if (set.isStacked) {
-      return getStackedHighlight(
-        high,
-        set,
-        pos.x.toFloat(),
-        pos.y.toFloat()
-      )
+    val highlight = super.getHighlight(x, y) ?: return null
+    return mChart.barData?.getDataSetByIndex(highlight.dataSetIndex)?.let {
+      if (it.isStacked) {
+        val pos = getValsForTouch(x, y)
+        val stacked = getStackedHighlight(highlight, it, pos.x.toFloat(), pos.y.toFloat())
+        MPPointD.recycleInstance(pos)
+        stacked
+      } else {
+        null
+      }
     }
-    MPPointD.recycleInstance(pos)
-    return high
+        ?: highlight
   }
 
   /**
-   * This method creates the Highlight object that also indicates which value of a stacked BarEntry has been
-   * selected.
+   * This method creates the Highlight object that also indicates which value of a stacked BarEntry
+   * has been selected.
    *
    * @param high the Highlight to work with looking for stacked values
    * @param set
@@ -48,17 +45,19 @@ open class BarHighlighter(chart: BarDataProvider) : ChartHighlighter<BarDataProv
       val ranges = entry.ranges
       if (ranges.isNotEmpty()) {
         val stackIndex = getClosestStackIndex(ranges, yVal)
-        val pixels = mChart.getTransformer(set.axisDependency)
-          .getPixelForValues(high.x, ranges[stackIndex]?.to!!)
-        val stackedHigh = Highlight(
-          entry.x,
-          entry.y,
-          pixels.x.toFloat(),
-          pixels.y.toFloat(),
-          high.dataSetIndex,
-          stackIndex,
-          high.axis
-        )
+        val pixels =
+            mChart
+                .getTransformer(set.axisDependency)
+                .getPixelForValues(high.x, ranges[stackIndex]?.to!!)
+        val stackedHigh =
+            Highlight(
+                entry.x,
+                entry.y,
+                pixels.x.toFloat(),
+                pixels.y.toFloat(),
+                high.dataSetIndex,
+                stackIndex,
+                high.axis)
         MPPointD.recycleInstance(pixels)
         return stackedHigh
       }
@@ -67,9 +66,8 @@ open class BarHighlighter(chart: BarDataProvider) : ChartHighlighter<BarDataProv
   }
 
   /**
-   * Returns the index of the closest value inside the values array / ranges (stacked barchart) to the value
-   * given as
-   * a parameter.
+   * Returns the index of the closest value inside the values array / ranges (stacked barchart) to
+   * the value given as a parameter.
    *
    * @param ranges
    * @param value
@@ -88,6 +86,6 @@ open class BarHighlighter(chart: BarDataProvider) : ChartHighlighter<BarDataProv
     return abs(x1 - x2)
   }
 
-  override val data: BarLineScatterCandleBubbleData<*>
+  override val data: BarLineScatterCandleBubbleData<*, *>?
     get() = mChart.barData
 }

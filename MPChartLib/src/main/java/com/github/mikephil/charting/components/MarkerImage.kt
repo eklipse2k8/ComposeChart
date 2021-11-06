@@ -27,7 +27,7 @@ class MarkerImage(mContext: Context, drawableResourceId: Int) : IMarker {
       }
   private var mOffset: MPPointF = MPPointF()
   private val mOffset2 = MPPointF()
-  private var mWeakChart: WeakReference<Chart<*>>? = null
+  private var mWeakChart: WeakReference<Chart<*, *, *>>? = null
   private var mSize: FSize? = FSize()
   private val mDrawableBoundsCache = Rect()
 
@@ -51,11 +51,11 @@ class MarkerImage(mContext: Context, drawableResourceId: Int) : IMarker {
       }
     }
 
-  fun setChartView(chart: Chart<*>) {
+  fun setChartView(chart: Chart<*, *, *>) {
     mWeakChart = WeakReference(chart)
   }
 
-  private val chartView: Chart<*>?
+  private val chartView: Chart<*, *, *>?
     get() = if (mWeakChart == null) null else mWeakChart?.get()
 
   override fun getOffsetForDrawingAtPoint(posX: Float, posY: Float): MPPointF {

@@ -99,12 +99,10 @@ open class ChartHighlighter<T : BarLineScatterCandleBubbleDataProvider>(
    */
   protected open fun getHighlightsAtXValue(xVal: Float, x: Float, y: Float): List<Highlight> {
     mHighlightBuffer.clear()
-    val data = data ?: return mHighlightBuffer
+    val setCount = data?.dataSetCount ?: return mHighlightBuffer
     var i = 0
-    val dataSetCount = data.dataSetCount
-    while (i < dataSetCount) {
-      val dataSet = data.getDataSetByIndex(i)
-
+    while (i < setCount) {
+      val dataSet = data?.getDataSetByIndex(i)
       // don't include DataSets that cannot be highlighted
       if (dataSet?.isHighlightEnabled == false) {
         i++
@@ -136,7 +134,7 @@ open class ChartHighlighter<T : BarLineScatterCandleBubbleDataProvider>(
     if (entries?.size == 0) {
       // Try to find closest x-value and take all entries for that x-value
       val closest = set.getEntryForXValue(xVal, Float.NaN, rounding)
-      entries = set.getEntriesForXValue(closest.x)
+      entries = closest?.let { set.getEntriesForXValue(it.x) }
     }
     if (entries.isNullOrEmpty()) return highlights
     for (e in entries) {
@@ -196,6 +194,6 @@ open class ChartHighlighter<T : BarLineScatterCandleBubbleDataProvider>(
     return hypot((x1 - x2), (y1 - y2))
   }
 
-  protected open val data: BarLineScatterCandleBubbleData<*>?
+  protected open val data: BarLineScatterCandleBubbleData<*, *>?
     @Nullable get() = mChart.data
 }

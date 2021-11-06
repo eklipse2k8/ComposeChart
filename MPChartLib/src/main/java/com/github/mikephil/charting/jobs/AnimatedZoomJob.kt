@@ -99,8 +99,8 @@ class AnimatedZoomJob(
   }
 
   override fun onAnimationEnd(animation: Animator) {
-    if (view is BarLineChartBase<*>) {
-      (view as BarLineChartBase<*>).calculateOffsets()
+    if (view is BarLineChartBase<*, *, *>) {
+      (view as BarLineChartBase<*, *, *>).calculateOffsets()
     }
     view?.postInvalidate()
   }

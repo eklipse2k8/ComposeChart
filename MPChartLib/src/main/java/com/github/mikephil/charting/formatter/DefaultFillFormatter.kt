@@ -12,7 +12,7 @@ class DefaultFillFormatter : IFillFormatter {
   override fun getFillLinePosition(dataSet: ILineDataSet, dataProvider: LineDataProvider): Float {
     val chartMaxY = dataProvider.yChartMax
     val chartMinY = dataProvider.yChartMin
-    val data = dataProvider.lineData
+    val data = dataProvider.lineData ?: return 0f
     return if (dataSet.yMax > 0 && dataSet.yMin < 0) {
       0f
     } else {

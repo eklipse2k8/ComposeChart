@@ -6,7 +6,7 @@ import com.github.mikephil.charting.charts.PieRadarChartBase
 import java.util.ArrayList
 
 /** Created by philipp on 12/06/16. */
-abstract class PieRadarHighlighter<T : PieRadarChartBase<*>>(@JvmField protected var mChart: T) :
+abstract class PieRadarHighlighter<T : PieRadarChartBase<*, *, *>>(@JvmField protected var mChart: T) :
     IHighlighter {
   /** buffer for storing previously highlighted values */
   @JvmField protected val mHighlightBuffer = mutableListOf<Highlight>()
@@ -22,7 +22,7 @@ abstract class PieRadarHighlighter<T : PieRadarChartBase<*>>(@JvmField protected
     } else {
       var angle = mChart.getAngleForPoint(x, y)
       if (mChart is PieChart) {
-        angle /= mChart.animator.phaseY
+        angle /= mChart.getAnimator().phaseY
       }
       val index = mChart.getIndexForAngle(angle)
 

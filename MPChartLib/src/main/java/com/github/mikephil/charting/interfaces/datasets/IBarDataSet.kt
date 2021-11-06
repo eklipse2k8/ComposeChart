@@ -5,7 +5,9 @@ import com.github.mikephil.charting.utils.Fill
 
 /** Created by philipp on 21/10/15. */
 interface IBarDataSet : IBarLineScatterCandleBubbleDataSet<BarEntry> {
+
   val fills: List<Fill?>?
+
   fun getFill(index: Int): Fill?
 
   /**
@@ -59,5 +61,5 @@ interface IBarDataSet : IBarLineScatterCandleBubbleDataSet<BarEntry> {
    *
    * @return
    */
-  val stackLabels: Array<String?>?
+  val stackLabels: Array<String>
 }

@@ -15,8 +15,8 @@ import kotlin.math.abs
  *
  * @author Philipp Jahoda
  */
-class PieRadarChartTouchListener(chart: PieRadarChartBase<*>) :
-    ChartTouchListener<PieRadarChartBase<*>>(chart) {
+class PieRadarChartTouchListener(chart: PieRadarChartBase<*, *, *>) :
+    ChartTouchListener<PieRadarChartBase<*, *, *>>(chart) {
   private val mTouchStartPoint = MPPointF.getInstance(0f, 0f)
 
   /** the angle where the dragging started */
@@ -39,13 +39,13 @@ class PieRadarChartTouchListener(chart: PieRadarChartBase<*>) :
           startAction(event)
           stopDeceleration()
           resetVelocity()
-          if (chart.isDragDecelerationEnabled) sampleVelocity(x, y)
+          if (chart.isDragDecelerationEnabled()) sampleVelocity(x, y)
           setGestureStartAngle(x, y)
           mTouchStartPoint.x = x
           mTouchStartPoint.y = y
         }
         MotionEvent.ACTION_MOVE -> {
-          if (chart.isDragDecelerationEnabled) sampleVelocity(x, y)
+          if (chart.isDragDecelerationEnabled()) sampleVelocity(x, y)
           if (touchMode == NONE &&
               distance(x, mTouchStartPoint.x, y, mTouchStartPoint.y) > Utils.convertDpToPixel(8f)) {
             lastGesture = ChartGesture.ROTATE
@@ -58,7 +58,7 @@ class PieRadarChartTouchListener(chart: PieRadarChartBase<*>) :
           endAction(event)
         }
         MotionEvent.ACTION_UP -> {
-          if (chart.isDragDecelerationEnabled) {
+          if (chart.isDragDecelerationEnabled()) {
             stopDeceleration()
             sampleVelocity(x, y)
             mDecelerationAngularVelocity = calculateVelocity()
@@ -79,7 +79,7 @@ class PieRadarChartTouchListener(chart: PieRadarChartBase<*>) :
 
   override fun onLongPress(me: MotionEvent) {
     lastGesture = ChartGesture.LONG_PRESS
-    val l = chart.onChartGestureListener
+    val l = chart.getOnChartGestureListener()
     l?.onChartLongPressed(me)
   }
 
@@ -89,9 +89,9 @@ class PieRadarChartTouchListener(chart: PieRadarChartBase<*>) :
 
   override fun onSingleTapUp(e: MotionEvent): Boolean {
     lastGesture = ChartGesture.SINGLE_TAP
-    val l = chart.onChartGestureListener
+    val l = chart.getOnChartGestureListener()
     l?.onChartSingleTapped(e)
-    if (!chart.isHighlightPerTapEnabled) {
+    if (!chart.isHighlightPerTapEnabled()) {
       return false
     }
     val high = chart.getHighlightByTouchPoint(e.x, e.y)

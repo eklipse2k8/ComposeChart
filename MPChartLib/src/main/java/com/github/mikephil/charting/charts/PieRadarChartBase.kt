@@ -15,17 +15,24 @@ import com.github.mikephil.charting.listener.PieRadarChartTouchListener
 import com.github.mikephil.charting.utils.MPPointF
 import com.github.mikephil.charting.utils.Utils.convertDpToPixel
 import com.github.mikephil.charting.utils.Utils.getNormalizedAngle
-import kotlin.math.acos
-import kotlin.math.max
-import kotlin.math.pow
-import kotlin.math.sqrt
+import com.github.mikephil.charting.utils.toRadians
+import kotlin.math.*
+
+private val TAG = PieRadarChartBase::class.java.simpleName
 
 /**
  * Baseclass of PieChart and RadarChart.
  *
  * @author Philipp Jahoda
  */
-abstract class PieRadarChartBase<T : ChartData<out IDataSet<out Entry>>> : Chart<T> {
+abstract class PieRadarChartBase<T, S, E>
+@JvmOverloads
+constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+    Chart<T, S, E>(context, attrs, defStyleAttr) where
+T : ChartData<S, E>,
+S : IDataSet<E>,
+E : Entry {
+
   /** holds the normalized version of the current rotation angle of the chart */
   private var mRotationAngle = 270f
   /**
@@ -51,48 +58,38 @@ abstract class PieRadarChartBase<T : ChartData<out IDataSet<out Entry>>> : Chart
    */
   /** flag that indicates if rotation is enabled or not */
   var isRotationEnabled = true
-  /** Gets the minimum offset (padding) around the chart, defaults to 0.f */
-  /** Sets the minimum offset (padding) around the chart, defaults to 0.f */
+
   /** Sets the minimum offset (padding) around the chart, defaults to 0.f */
   var minOffset = 0f
 
-  constructor(context: Context?) : super(context)
-
-  constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-
-  constructor(
-      context: Context?,
-      attrs: AttributeSet?,
-      defStyle: Int
-  ) : super(context, attrs, defStyle)
-
-  override fun init() {
-    super.init()
-    mChartTouchListener = PieRadarChartTouchListener(this)
+  init {
+    onTouchListener = PieRadarChartTouchListener(this)
   }
 
   override fun calcMinMax() {}
 
   override val maxVisibleCount: Int
-    get() = mData!!.entryCount
+    get() = data?.entryCount ?: 0
 
   override fun onTouchEvent(event: MotionEvent): Boolean {
     // use the pie- and radarchart listener own listener
-    return if (mTouchEnabled && mChartTouchListener != null)
-        mChartTouchListener.onTouch(this, event)
-    else super.onTouchEvent(event)
+    val touchListener = onTouchListener ?: return super.onTouchEvent(event)
+    return touchListener.onTouch(this, event)
   }
 
   override fun computeScroll() {
-    if (mChartTouchListener is PieRadarChartTouchListener)
-        (mChartTouchListener as PieRadarChartTouchListener).computeScroll()
+    val touchListener = onTouchListener
+    if (touchListener is PieRadarChartTouchListener) {
+      touchListener.computeScroll()
+    }
   }
 
   override fun notifyDataSetChanged() {
-    if (mData == null) return
-    calcMinMax()
-    if (mLegend != null) mLegendRenderer.computeLegend(mData!!)
-    calculateOffsets()
+    if (data != null) {
+      calcMinMax()
+      mLegendRenderer.computeLegend(data)
+      calculateOffsets()
+    }
   }
 
   public override fun calculateOffsets() {
@@ -117,7 +114,7 @@ abstract class PieRadarChartBase<T : ChartData<out IDataSet<out Entry>>> : Chart
               val spacing = convertDpToPixel(8f)
               val legendWidth = fullLegendWidth + spacing
               val legendHeight = mLegend.mNeededHeight + mLegend.mTextHeightMax
-              val center = center
+              val center = getCenter() ?: MPPointF.getInstance(0f, 0f)
               val bottomX =
                   if (mLegend.horizontalAlignment === LegendHorizontalAlignment.RIGHT)
                       width - legendWidth + 15f
@@ -182,7 +179,7 @@ abstract class PieRadarChartBase<T : ChartData<out IDataSet<out Entry>>> : Chart
     }
     var minOffset = convertDpToPixel(minOffset)
     if (this is RadarChart) {
-      val x = getXAxis()
+      val x = xAxis
       if (x.isEnabled && x.isDrawLabelsEnabled) {
         minOffset = max(minOffset, x.mLabelRotatedWidth.toFloat())
       }
@@ -198,15 +195,8 @@ abstract class PieRadarChartBase<T : ChartData<out IDataSet<out Entry>>> : Chart
     mViewPortHandler.restrainViewPort(offsetLeft, offsetTop, offsetRight, offsetBottom)
     if (mLogEnabled)
         Log.i(
-            LOG_TAG,
-            "offsetLeft: " +
-                offsetLeft +
-                ", offsetTop: " +
-                offsetTop +
-                ", offsetRight: " +
-                offsetRight +
-                ", offsetBottom: " +
-                offsetBottom)
+            TAG,
+            "offsetLeft: $offsetLeft, offsetTop: $offsetTop, offsetRight: $offsetRight, offsetBottom: $offsetBottom")
   }
 
   /**
@@ -251,8 +241,8 @@ abstract class PieRadarChartBase<T : ChartData<out IDataSet<out Entry>>> : Chart
   }
 
   fun getPosition(center: MPPointF, dist: Float, angle: Float, outputPoint: MPPointF) {
-    outputPoint.x = (center.x + dist * Math.cos(Math.toRadians(angle.toDouble()))).toFloat()
-    outputPoint.y = (center.y + dist * Math.sin(Math.toRadians(angle.toDouble()))).toFloat()
+    outputPoint.x = (center.x + dist * cos(angle.toRadians()))
+    outputPoint.y = (center.y + dist * sin(angle.toRadians()))
   }
 
   /**
@@ -352,8 +342,6 @@ abstract class PieRadarChartBase<T : ChartData<out IDataSet<out Entry>>> : Chart
 
   override val yChartMin: Float = 0f
 
-  /** ################ ################ ################ ################ */
-  /** CODE BELOW THIS RELATED TO ANIMATION */
   /**
    * Applys a spin animation to the Chart.
    *
@@ -361,7 +349,6 @@ abstract class PieRadarChartBase<T : ChartData<out IDataSet<out Entry>>> : Chart
    * @param fromangle
    * @param toangle
    */
-  @SuppressLint("NewApi")
   fun spin(durationmillis: Int, fromangle: Float, toangle: Float, easing: EasingFunction?) {
     rotationAngle = fromangle
     val spinAnimator = ObjectAnimator.ofFloat(this, "rotationAngle", fromangle, toangle)

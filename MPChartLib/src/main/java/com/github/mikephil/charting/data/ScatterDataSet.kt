@@ -12,7 +12,7 @@ import com.github.mikephil.charting.renderer.scatter.TriangleShapeRenderer
 import com.github.mikephil.charting.renderer.scatter.XShapeRenderer
 import com.github.mikephil.charting.utils.ColorTemplate
 
-class ScatterDataSet(yVals: List<Entry>, label: String) :
+class ScatterDataSet(yVals: MutableList<Entry>, label: String) :
     LineScatterCandleRadarDataSet<Entry>(yVals, label), IScatterDataSet {
   /**
    * Sets the size in density pixels the drawn scattershape will have. This only applies for non
@@ -52,9 +52,10 @@ class ScatterDataSet(yVals: List<Entry>, label: String) :
    * - default: ColorTemplate.COLOR_NONE
    */
   override var scatterShapeHoleColor = ColorTemplate.COLOR_NONE
-  override fun copy(): DataSet<Entry?> {
+
+  override fun copy(): DataSet<Entry> {
     val entries = mutableListOf<Entry>()
-    mEntries.forEach { entry -> entries.add(entry.copy()!!) }
+    mEntries?.forEach { entry -> entries.add(entry.copy()!!) }
     val copied = ScatterDataSet(entries, label!!)
     copy(copied)
     return copied

@@ -2,9 +2,12 @@ package com.github.mikephil.charting.data
 
 import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet
 
-class ScatterData : BarLineScatterCandleBubbleData<IScatterDataSet> {
+class ScatterData : BarLineScatterCandleBubbleData<IScatterDataSet, Entry> {
+
   constructor() : super()
-  constructor(dataSets: List<IScatterDataSet>) : super(dataSets)
+
+  constructor(dataSets: MutableList<IScatterDataSet>) : super(dataSets)
+
   constructor(vararg dataSets: IScatterDataSet) : super(*dataSets)
 
   /**

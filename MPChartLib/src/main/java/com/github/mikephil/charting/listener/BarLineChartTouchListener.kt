@@ -18,6 +18,57 @@ import com.github.mikephil.charting.utils.Utils
 import kotlin.math.abs
 import kotlin.math.sqrt
 
+typealias AnyBarLineChart =
+    BarLineChartBase<
+        BarLineScatterCandleBubbleData<IBarLineScatterCandleBubbleDataSet<Entry>, Entry>,
+        IBarLineScatterCandleBubbleDataSet<Entry>,
+        Entry>
+
+/**
+ * Determines the center point between two pointer touch points.
+ *
+ * @param point
+ * @param event
+ */
+private fun midPoint(point: MPPointF, event: MotionEvent) {
+  val x = event.getX(0) + event.getX(1)
+  val y = event.getY(0) + event.getY(1)
+  point.x = x / 2f
+  point.y = y / 2f
+}
+
+/**
+ * returns the distance between two pointer touch points
+ *
+ * @param event
+ * @return
+ */
+private fun spacing(event: MotionEvent): Float {
+  val x = event.getX(0) - event.getX(1)
+  val y = event.getY(0) - event.getY(1)
+  return sqrt((x * x + y * y).toDouble()).toFloat()
+}
+
+/**
+ * calculates the distance on the x-axis between two pointers (fingers on the display)
+ *
+ * @param e
+ * @return
+ */
+private fun getXDist(e: MotionEvent): Float {
+  return abs(e.getX(0) - e.getX(1))
+}
+
+/**
+ * calculates the distance on the y-axis between two pointers (fingers on the display)
+ *
+ * @param e
+ * @return
+ */
+private fun getYDist(e: MotionEvent): Float {
+  return abs(e.getY(0) - e.getY(1))
+}
+
 /**
  * TouchListener for Bar-, Line-, Scatter- and CandleStickChart with handles all touch interaction.
  * Longpress == Zoom out. Double-Tap == Zoom in.
@@ -25,16 +76,10 @@ import kotlin.math.sqrt
  * @author Philipp Jahoda
  */
 class BarLineChartTouchListener(
-    chart:
-        BarLineChartBase<
-            out BarLineScatterCandleBubbleData<out IBarLineScatterCandleBubbleDataSet<out Entry>>>,
+    chart: AnyBarLineChart,
     touchMatrix: Matrix,
     dragTriggerDistance: Float
-) :
-    ChartTouchListener<
-        BarLineChartBase<
-            out BarLineScatterCandleBubbleData<out IBarLineScatterCandleBubbleDataSet<out Entry>>>>(
-        chart) {
+) : ChartTouchListener<AnyBarLineChart>(chart) {
   /**
    * returns the matrix object the listener holds
    *
@@ -68,6 +113,7 @@ class BarLineChartTouchListener(
 
   /** the minimum distance between the pointers that will trigger a zoom gesture */
   private val mMinScalePointerDistance: Float
+
   @SuppressLint("ClickableViewAccessibility")
   override fun onTouch(v: View, event: MotionEvent): Boolean {
     if (mVelocityTracker == null) {
@@ -159,7 +205,7 @@ class BarLineChartTouchListener(
         val velocityX = velocityTracker.getXVelocity(pointerId)
         if (abs(velocityX) > Utils.minimumFlingVelocity ||
             abs(velocityY) > Utils.minimumFlingVelocity) {
-          if (touchMode == DRAG && chart.isDragDecelerationEnabled) {
+          if (touchMode == DRAG && chart.isDragDecelerationEnabled()) {
             stopDeceleration()
             mDecelerationLastTime = AnimationUtils.currentAnimationTimeMillis()
             mDecelerationCurrentPoint.x = event.x
@@ -201,7 +247,8 @@ class BarLineChartTouchListener(
     }
 
     // perform the transformation, update the chart
-    matrix = chart.viewPortHandler.refresh(matrix, chart, true)
+    val viewport = chart.getViewPortHandler() ?: return false
+    matrix = viewport.refresh(matrix, chart, true)
     return true // indicate event was handled
   }
   /** ################ ################ ################ ################ */
@@ -228,11 +275,10 @@ class BarLineChartTouchListener(
     var distanceY = distanceY
     lastGesture = ChartGesture.DRAG
     matrix.set(mSavedMatrix)
-    val l = chart.onChartGestureListener
+    val l = chart.getOnChartGestureListener()
 
     // check if axis is inverted
     if (inverted()) {
-
       // if there is an inverted horizontalbarchart
       if (chart is HorizontalBarChart) {
         distanceX = -distanceX
@@ -251,7 +297,7 @@ class BarLineChartTouchListener(
    */
   private fun performZoom(event: MotionEvent) {
     if (event.pointerCount >= 2) { // two finger zoom
-      val l = chart.onChartGestureListener
+      val l = chart.getOnChartGestureListener()
 
       // get the distance between the pointers of the touch event
       val totalDist = spacing(event)
@@ -259,7 +305,7 @@ class BarLineChartTouchListener(
 
         // get the translation
         val t = getTrans(mTouchPointCenter.x, mTouchPointCenter.y)
-        val h = chart.viewPortHandler
+        val h = chart.getViewPortHandler() ?: return
 
         // take actions depending on the activated touch mode
         if (touchMode == PINCH_ZOOM) {
@@ -325,7 +371,7 @@ class BarLineChartTouchListener(
    * @return
    */
   fun getTrans(x: Float, y: Float): MPPointF {
-    val vph = chart.viewPortHandler
+    val vph = chart.getViewPortHandler() ?: return MPPointF.getInstance(0f, 0f)
     val xTrans = x - vph.offsetLeft()
 
     // check if axis is inverted
@@ -348,8 +394,7 @@ class BarLineChartTouchListener(
         (mClosestDataSetToTouch != null &&
             chart.isInverted(mClosestDataSetToTouch!!.axisDependency))
   }
-  /** ################ ################ ################ ################ */
-  /** GETTERS AND GESTURE RECOGNITION BELOW */
+
   /**
    * Sets the minimum distance that will be interpreted as a "drag" by the chart in dp. Default: 3dp
    *
@@ -361,7 +406,7 @@ class BarLineChartTouchListener(
 
   override fun onDoubleTap(e: MotionEvent): Boolean {
     lastGesture = ChartGesture.DOUBLE_TAP
-    val l = chart.onChartGestureListener
+    val l = chart.getOnChartGestureListener()
     l?.onChartDoubleTapped(e)
 
     // check if double-tap zooming is enabled
@@ -370,7 +415,7 @@ class BarLineChartTouchListener(
       val scaleX = if (chart.isScaleXEnabled) 1.4f else 1f
       val scaleY = if (chart.isScaleYEnabled) 1.4f else 1f
       chart.zoom(scaleX, scaleY, trans.x, trans.y)
-      if (chart.isLogEnabled)
+      if (chart.isLogEnabled())
           Log.i("BarlineChartTouch", "Double-Tap, Zooming In, x: " + trans.x + ", y: " + trans.y)
       l?.onChartScale(e, scaleX, scaleY)
       MPPointF.recycleInstance(trans)
@@ -380,15 +425,15 @@ class BarLineChartTouchListener(
 
   override fun onLongPress(e: MotionEvent) {
     lastGesture = ChartGesture.LONG_PRESS
-    val l = chart.onChartGestureListener
+    val l = chart.getOnChartGestureListener()
     l?.onChartLongPressed(e)
   }
 
   override fun onSingleTapUp(e: MotionEvent): Boolean {
     lastGesture = ChartGesture.SINGLE_TAP
-    val l = chart.onChartGestureListener
+    val l = chart.getOnChartGestureListener()
     l?.onChartSingleTapped(e)
-    if (!chart.isHighlightPerTapEnabled) {
+    if (!chart.isHighlightPerTapEnabled()) {
       return false
     }
     val h = chart.getHighlightByTouchPoint(e.x, e.y)
@@ -403,7 +448,7 @@ class BarLineChartTouchListener(
       velocityY: Float
   ): Boolean {
     lastGesture = ChartGesture.FLING
-    val l = chart.onChartGestureListener
+    val l = chart.getOnChartGestureListener()
     l?.onChartFling(e1, e2, velocityX, velocityY)
     return super.onFling(e1, e2, velocityX, velocityY)
   }
@@ -438,9 +483,10 @@ class BarLineChartTouchListener(
         if (chart.isDragYEnabled) mDecelerationCurrentPoint.y - mTouchStartPoint.y else 0f
     performDrag(event, dragDistanceX, dragDistanceY)
     event.recycle()
-    matrix = chart.viewPortHandler.refresh(matrix, chart, false)
+    val viewport = chart.getViewPortHandler() ?: return
+    matrix = viewport.refresh(matrix, chart, false)
     mDecelerationLastTime = currentTime
-    if (Math.abs(mDecelerationVelocity.x) >= 0.01 || Math.abs(mDecelerationVelocity.y) >= 0.01)
+    if (abs(mDecelerationVelocity.x) >= 0.01 || abs(mDecelerationVelocity.y) >= 0.01)
         Utils.postInvalidateOnAnimation(
             chart) // This causes computeScroll to fire, recommended for this by Google
     else {
@@ -450,55 +496,6 @@ class BarLineChartTouchListener(
       chart.calculateOffsets()
       chart.postInvalidate()
       stopDeceleration()
-    }
-  }
-
-  companion object {
-    /** ################ ################ ################ ################ */
-    /** DOING THE MATH BELOW ;-) */
-    /**
-     * Determines the center point between two pointer touch points.
-     *
-     * @param point
-     * @param event
-     */
-    private fun midPoint(point: MPPointF, event: MotionEvent) {
-      val x = event.getX(0) + event.getX(1)
-      val y = event.getY(0) + event.getY(1)
-      point.x = x / 2f
-      point.y = y / 2f
-    }
-
-    /**
-     * returns the distance between two pointer touch points
-     *
-     * @param event
-     * @return
-     */
-    private fun spacing(event: MotionEvent): Float {
-      val x = event.getX(0) - event.getX(1)
-      val y = event.getY(0) - event.getY(1)
-      return sqrt((x * x + y * y).toDouble()).toFloat()
-    }
-
-    /**
-     * calculates the distance on the x-axis between two pointers (fingers on the display)
-     *
-     * @param e
-     * @return
-     */
-    private fun getXDist(e: MotionEvent): Float {
-      return abs(e.getX(0) - e.getX(1))
-    }
-
-    /**
-     * calculates the distance on the y-axis between two pointers (fingers on the display)
-     *
-     * @param e
-     * @return
-     */
-    private fun getYDist(e: MotionEvent): Float {
-      return abs(e.getY(0) - e.getY(1))
     }
   }
 

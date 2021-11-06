@@ -2,11 +2,9 @@ package com.github.mikephil.charting.highlight
 
 import androidx.annotation.NonNull
 import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.ChartData
 import com.github.mikephil.charting.data.DataSet
 import com.github.mikephil.charting.interfaces.dataprovider.BarDataProvider
 import com.github.mikephil.charting.interfaces.dataprovider.CombinedDataProvider
-import com.github.mikephil.charting.interfaces.datasets.IDataSet
 
 /** Created by Philipp Jahoda on 12/09/15. */
 class CombinedHighlighter(chart: CombinedDataProvider, @NonNull barChart: BarDataProvider) :
@@ -16,9 +14,8 @@ class CombinedHighlighter(chart: CombinedDataProvider, @NonNull barChart: BarDat
 
   override fun getHighlightsAtXValue(xVal: Float, x: Float, y: Float): List<Highlight> {
     mHighlightBuffer.clear()
-    val dataObjects = mChart.combinedData.allData
-    for (i in dataObjects.indices) {
-      val dataObject: ChartData<*> = dataObjects[i]
+    val dataObjects = mChart.combinedData?.allData
+    dataObjects?.forEachIndexed { i, dataObject ->
 
       // in case of BarData, let the BarHighlighter take over
       if (dataObject is BarData) {
@@ -31,7 +28,7 @@ class CombinedHighlighter(chart: CombinedDataProvider, @NonNull barChart: BarDat
         var j = 0
         val dataSetCount = dataObject.dataSetCount
         while (j < dataSetCount) {
-          val dataSet: IDataSet<*> = dataObjects[i].getDataSetByIndex(j)
+          val dataSet = dataObject.getDataSetByIndex(j) ?: continue
 
           // don't include datasets that cannot be highlighted
           if (!dataSet.isHighlightEnabled) {

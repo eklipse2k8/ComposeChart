@@ -1,5 +1,6 @@
 package com.github.mikephil.charting.charts
 
+import android.R.attr
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -7,7 +8,9 @@ import android.util.AttributeSet
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.components.YAxis.AxisDependency
 import com.github.mikephil.charting.data.RadarData
+import com.github.mikephil.charting.data.RadarEntry
 import com.github.mikephil.charting.highlight.RadarHighlighter
+import com.github.mikephil.charting.interfaces.datasets.IRadarDataSet
 import com.github.mikephil.charting.renderer.RadarChartRenderer
 import com.github.mikephil.charting.renderer.XAxisRendererRadarChart
 import com.github.mikephil.charting.renderer.YAxisRendererRadarChart
@@ -21,7 +24,11 @@ import kotlin.math.min
  *
  * @author Philipp Jahoda
  */
-class RadarChart : PieRadarChartBase<RadarData> {
+class RadarChart
+@JvmOverloads
+constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+    PieRadarChartBase<RadarData, IRadarDataSet, RadarEntry>(context, attrs, defStyleAttr) {
+
   /** width of the main web lines */
   private var mWebLineWidth = 2.5f
 
@@ -83,60 +90,48 @@ class RadarChart : PieRadarChartBase<RadarData> {
   val yRange: Float
     get() = yAxis?.mAxisRange ?: 0f
 
-  constructor(context: Context?) : super(context)
-
-  constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-
-  constructor(
-      context: Context?,
-      attrs: AttributeSet?,
-      defStyle: Int
-  ) : super(context, attrs, defStyle)
-
-  override fun init() {
-    super.init()
+  init {
     yAxis = YAxis(AxisDependency.LEFT)
     yAxis!!.labelXOffset = 10f
     mWebLineWidth = Utils.convertDpToPixel(1.5f)
     mInnerWebLineWidth = Utils.convertDpToPixel(0.75f)
     mRenderer = RadarChartRenderer(this, mAnimator, mViewPortHandler)
     mYAxisRenderer = YAxisRendererRadarChart(mViewPortHandler, yAxis!!, this)
-    mXAxisRenderer = XAxisRendererRadarChart(mViewPortHandler, mXAxis, this)
+    mXAxisRenderer = XAxisRendererRadarChart(mViewPortHandler, xAxis, this)
     mHighlighter = RadarHighlighter(this)
   }
 
   override fun calcMinMax() {
     super.calcMinMax()
-    yAxis!!.calculate(mData!!.getYMin(AxisDependency.LEFT), mData!!.getYMax(AxisDependency.LEFT))
-    mXAxis.calculate(0f, mData!!.maxEntryCountSet.entryCount.toFloat())
+    yAxis!!.calculate(data!!.getYMin(AxisDependency.LEFT), data!!.getYMax(AxisDependency.LEFT))
+    xAxis.calculate(0f, data!!.maxEntryCountSet?.entryCount?.toFloat() ?: 0f)
   }
 
   override fun notifyDataSetChanged() {
-    if (mData == null) return
+    if (data == null) return
     calcMinMax()
     mYAxisRenderer?.computeAxis(
         yAxis?.axisMinimum ?: 0f, yAxis?.axisMaximum ?: 0f, yAxis?.isInverted == true)
-    mXAxisRenderer?.computeAxis(mXAxis.axisMinimum, mXAxis.axisMaximum, false)
-    if (mLegend != null && !mLegend.isLegendCustom) mLegendRenderer.computeLegend(mData!!)
+    mXAxisRenderer?.computeAxis(xAxis.axisMinimum, xAxis.axisMaximum, false)
+    if (!mLegend.isLegendCustom) mLegendRenderer.computeLegend(data!!)
     calculateOffsets()
   }
 
   override fun onDraw(canvas: Canvas) {
     super.onDraw(canvas)
-    if (mData == null) return
+    if (data == null) return
 
-    if (mXAxis.isEnabled)
-        mXAxisRenderer!!.computeAxis(mXAxis.axisMinimum, mXAxis.axisMaximum, false)
+    if (xAxis.isEnabled) mXAxisRenderer!!.computeAxis(xAxis.axisMinimum, xAxis.axisMaximum, false)
     mXAxisRenderer!!.renderAxisLabels(canvas)
-    if (mDrawWeb) mRenderer.drawExtras(canvas)
+    if (mDrawWeb) mRenderer?.drawExtras(canvas)
     if (yAxis!!.isEnabled && yAxis!!.isDrawLimitLinesBehindDataEnabled)
         mYAxisRenderer!!.renderLimitLines(canvas)
-    mRenderer.drawData(canvas)
-    if (valuesToHighlight()) mRenderer.drawHighlighted(canvas, mIndicesToHighlight)
+    mRenderer?.drawData(canvas)
+    if (valuesToHighlight()) mRenderer?.drawHighlighted(canvas, mIndicesToHighlight)
     if (yAxis!!.isEnabled && !yAxis!!.isDrawLimitLinesBehindDataEnabled)
         mYAxisRenderer!!.renderLimitLines(canvas)
     mYAxisRenderer!!.renderAxisLabels(canvas)
-    mRenderer.drawValues(canvas)
+    mRenderer?.drawValues(canvas)
     mLegendRenderer.renderLegend(canvas)
     drawDescription(canvas)
     drawMarkers(canvas)
@@ -153,27 +148,32 @@ class RadarChart : PieRadarChartBase<RadarData> {
       return min(content.width() / 2f, content.height() / 2f) / (yAxis?.mAxisRange ?: 0f)
     }
 
-  /**
-   * Returns the angle that each slice in the radar chart occupies.
-   *
-   * @return
-   */
+  /** Returns the angle that each slice in the radar chart occupies. */
   val sliceAngle: Float
-    get() = 360f / mData!!.maxEntryCountSet.entryCount.toFloat()
+    get() {
+      val entryCount = data?.maxEntryCountSet?.entryCount ?: 0
+      return if (entryCount > 0) {
+        360f / entryCount
+      } else {
+        0f
+      }
+    }
 
   override fun getIndexForAngle(angle: Float): Int {
     // take the current angle of the chart into consideration
-    val a = Utils.getNormalizedAngle(angle - rotationAngle)
-    val sliceangle = sliceAngle
-    val max = mData!!.maxEntryCountSet.entryCount
+    val a = Utils.getNormalizedAngle(attr.angle - rotationAngle)
+    val localSliceAngle = sliceAngle
+    val max: Int = data?.maxEntryCountSet?.entryCount ?: 0
     var index = 0
+
     for (i in 0 until max) {
-      val referenceAngle = sliceangle * (i + 1) - sliceangle / 2f
+      val referenceAngle = localSliceAngle * (i + 1) - localSliceAngle / 2f
       if (referenceAngle > a) {
         index = i
         break
       }
     }
+
     return index
   }
 
@@ -230,7 +230,7 @@ class RadarChart : PieRadarChartBase<RadarData> {
 
   override val requiredBaseOffset: Float
     get() =
-        if (mXAxis.isEnabled && mXAxis.isDrawLabelsEnabled) mXAxis.mLabelRotatedWidth.toFloat()
+        if (xAxis.isEnabled && xAxis.isDrawLabelsEnabled) xAxis.mLabelRotatedWidth.toFloat()
         else Utils.convertDpToPixel(10f)
 
   override val radius: Float

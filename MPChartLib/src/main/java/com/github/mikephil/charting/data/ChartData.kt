@@ -1,821 +1,559 @@
+package com.github.mikephil.charting.data
 
-package com.github.mikephil.charting.data;
-
-import android.graphics.Typeface;
-import android.util.Log;
-
-import com.github.mikephil.charting.components.YAxis.AxisDependency;
-import com.github.mikephil.charting.formatter.IValueFormatter;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.interfaces.datasets.IDataSet;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.graphics.Typeface
+import android.util.Log
+import com.github.mikephil.charting.components.YAxis.AxisDependency
+import com.github.mikephil.charting.formatter.IValueFormatter
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.interfaces.datasets.IDataSet
 
 /**
- * Class that holds all relevant data that represents the chart. That involves
- * at least one (or more) DataSets, and an array of x-values.
+ * Class that holds all relevant data that represents the chart. That involves at least one (or
+ * more) DataSets, and an array of x-values.
  *
  * @author Philipp Jahoda
  */
-public abstract class ChartData<T extends IDataSet<? extends Entry>> {
+abstract class ChartData<T, E> where T : IDataSet<E>, E : Entry {
 
-    /**
-     * maximum y-value in the value array across all axes
-     */
-    protected float mYMax = -Float.MAX_VALUE;
+  /** maximum y-value in the value array across all axes */
+  var yMax = -Float.MAX_VALUE
+    protected set
 
-    /**
-     * the minimum y-value in the value array across all axes
-     */
-    protected float mYMin = Float.MAX_VALUE;
+  /** the minimum y-value in the value array across all axes */
+  var yMin = Float.MAX_VALUE
+    protected set
 
-    /**
-     * maximum x-value in the value array
-     */
-    protected float mXMax = -Float.MAX_VALUE;
+  /** maximum x-value in the value array */
+  var xMax = -Float.MAX_VALUE
+    protected set
 
-    /**
-     * minimum x-value in the value array
-     */
-    protected float mXMin = Float.MAX_VALUE;
+  /** minimum x-value in the value array */
+  var xMin = Float.MAX_VALUE
+    protected set
 
+  protected var mLeftAxisMax = -Float.MAX_VALUE
 
-    protected float mLeftAxisMax = -Float.MAX_VALUE;
+  protected var mLeftAxisMin = Float.MAX_VALUE
 
-    protected float mLeftAxisMin = Float.MAX_VALUE;
+  protected var mRightAxisMax = -Float.MAX_VALUE
 
-    protected float mRightAxisMax = -Float.MAX_VALUE;
+  protected var mRightAxisMin = Float.MAX_VALUE
 
-    protected float mRightAxisMin = Float.MAX_VALUE;
+  /** array that holds all DataSets the ChartData object represents */
+  protected var mDataSets: MutableList<T>
 
-    /**
-     * array that holds all DataSets the ChartData object represents
-     */
-    protected List<T> mDataSets;
+  /** Default constructor. */
+  constructor() {
+    mDataSets = mutableListOf()
+  }
 
-    /**
-     * Default constructor.
-     */
-    public ChartData() {
-        mDataSets = new ArrayList<T>();
+  /**
+   * Constructor taking single or multiple DataSet objects.
+   *
+   * @param dataSets
+   */
+  constructor(vararg dataSets: T) {
+    mDataSets = dataSets.toMutableList()
+    notifyDataChanged()
+  }
+
+  /**
+   * constructor for chart data
+   *
+   * @param sets the dataset array
+   */
+  constructor(sets: MutableList<T>) {
+    mDataSets = sets
+    notifyDataChanged()
+  }
+
+  /**
+   * Call this method to let the ChartData know that the underlying data has changed. Calling this
+   * performs all necessary recalculations needed when the contained data has changed.
+   */
+  open fun notifyDataChanged() {
+    calcMinMax()
+  }
+
+  /**
+   * Calc minimum and maximum y-values over all DataSets. Tell DataSets to recalculate their min and
+   * max y-values, this is only needed for autoScaleMinMax.
+   *
+   * @param fromX the x-value to start the calculation from
+   * @param toX the x-value to which the calculation should be performed
+   */
+  fun calcMinMaxY(fromX: Float, toX: Float) {
+    for (set in mDataSets) {
+      set.calcMinMaxY(fromX, toX)
     }
 
-    /**
-     * Constructor taking single or multiple DataSet objects.
-     *
-     * @param dataSets
-     */
-    public ChartData(T... dataSets) {
-        mDataSets = arrayToList(dataSets);
-        notifyDataChanged();
+    // apply the new data
+    calcMinMax()
+  }
+
+  /** Calc minimum and maximum values (both x and y) over all DataSets. */
+  open fun calcMinMax() {
+    yMax = -Float.MAX_VALUE
+    yMin = Float.MAX_VALUE
+    xMax = -Float.MAX_VALUE
+    xMin = Float.MAX_VALUE
+    for (set in mDataSets) {
+      calcMinMax(set)
     }
+    mLeftAxisMax = -Float.MAX_VALUE
+    mLeftAxisMin = Float.MAX_VALUE
+    mRightAxisMax = -Float.MAX_VALUE
+    mRightAxisMin = Float.MAX_VALUE
 
-    /**
-     * Created because Arrays.asList(...) does not support modification.
-     *
-     * @param array
-     * @return
-     */
-    private List<T> arrayToList(T[] array) {
-
-        List<T> list = new ArrayList<>();
-
-        for (T set : array) {
-            list.add(set);
+    // left axis
+    val firstLeft = getFirstLeft(mDataSets)
+    if (firstLeft != null) {
+      mLeftAxisMax = firstLeft.yMax
+      mLeftAxisMin = firstLeft.yMin
+      for (dataSet in mDataSets) {
+        if (dataSet.axisDependency === AxisDependency.LEFT) {
+          if (dataSet.yMin < mLeftAxisMin) mLeftAxisMin = dataSet.yMin
+          if (dataSet.yMax > mLeftAxisMax) mLeftAxisMax = dataSet.yMax
         }
-
-        return list;
+      }
     }
 
-    /**
-     * constructor for chart data
-     *
-     * @param sets the dataset array
-     */
-    public ChartData(List<T> sets) {
-        this.mDataSets = sets;
-        notifyDataChanged();
-    }
-
-    /**
-     * Call this method to let the ChartData know that the underlying data has
-     * changed. Calling this performs all necessary recalculations needed when
-     * the contained data has changed.
-     */
-    public void notifyDataChanged() {
-        calcMinMax();
-    }
-
-    /**
-     * Calc minimum and maximum y-values over all DataSets.
-     * Tell DataSets to recalculate their min and max y-values, this is only needed for autoScaleMinMax.
-     *
-     * @param fromX the x-value to start the calculation from
-     * @param toX   the x-value to which the calculation should be performed
-     */
-    public void calcMinMaxY(float fromX, float toX) {
-
-        for (T set : mDataSets) {
-            set.calcMinMaxY(fromX, toX);
+    // right axis
+    val firstRight = getFirstRight(mDataSets)
+    if (firstRight != null) {
+      mRightAxisMax = firstRight.yMax
+      mRightAxisMin = firstRight.yMin
+      for (dataSet in mDataSets) {
+        if (dataSet.axisDependency === AxisDependency.RIGHT) {
+          if (dataSet.yMin < mRightAxisMin) mRightAxisMin = dataSet.yMin
+          if (dataSet.yMax > mRightAxisMax) mRightAxisMax = dataSet.yMax
         }
+      }
+    }
+  }
+  /** ONLY GETTERS AND SETTERS BELOW THIS */
+  /**
+   * returns the number of LineDataSets this object contains
+   *
+   * @return
+   */
+  val dataSetCount: Int
+    get() = mDataSets.size
 
-        // apply the new data
-        calcMinMax();
+  /**
+   * Returns the minimum y-value for the specified axis.
+   *
+   * @param axis
+   * @return
+   */
+  fun getYMin(axis: AxisDependency): Float {
+    return if (axis === AxisDependency.LEFT) {
+      if (mLeftAxisMin == Float.MAX_VALUE) {
+        mRightAxisMin
+      } else mLeftAxisMin
+    } else {
+      if (mRightAxisMin == Float.MAX_VALUE) {
+        mLeftAxisMin
+      } else mRightAxisMin
+    }
+  }
+
+  /**
+   * Returns the maximum y-value for the specified axis.
+   *
+   * @param axis
+   * @return
+   */
+  fun getYMax(axis: AxisDependency): Float {
+    return if (axis === AxisDependency.LEFT) {
+      if (mLeftAxisMax == -Float.MAX_VALUE) {
+        mRightAxisMax
+      } else mLeftAxisMax
+    } else {
+      if (mRightAxisMax == -Float.MAX_VALUE) {
+        mLeftAxisMax
+      } else mRightAxisMax
+    }
+  }
+
+  /**
+   * Returns all DataSet objects this ChartData object holds.
+   *
+   * @return
+   */
+  open val dataSets: List<T>
+    get() = mDataSets
+
+  /**
+   * Retrieve the index of a DataSet with a specific label from the ChartData. Search can be case
+   * sensitive or not. IMPORTANT: This method does calculations at runtime, do not over-use in
+   * performance critical situations.
+   *
+   * @param dataSets the DataSet array to search
+   * @param label
+   * @param ignorecase if true, the search is not case-sensitive
+   * @return
+   */
+  protected fun getDataSetIndexByLabel(
+      dataSets: List<T>?,
+      label: String,
+      ignorecase: Boolean
+  ): Int {
+    if (ignorecase) {
+      for (i in dataSets!!.indices) if (label.equals(dataSets[i].label, ignoreCase = true)) return i
+    } else {
+      for (i in dataSets!!.indices) if (label == dataSets[i].label) return i
+    }
+    return -1
+  }
+
+  /**
+   * Returns the labels of all DataSets as a string array.
+   *
+   * @return
+   */
+  val dataSetLabels: Array<String?>
+    get() {
+      val types = arrayOfNulls<String>(mDataSets.size)
+      for (i in mDataSets.indices) {
+        types[i] = mDataSets[i].label
+      }
+      return types
     }
 
-    /**
-     * Calc minimum and maximum values (both x and y) over all DataSets.
-     */
-    protected void calcMinMax() {
-
-        if (mDataSets == null)
-            return;
-
-        mYMax = -Float.MAX_VALUE;
-        mYMin = Float.MAX_VALUE;
-        mXMax = -Float.MAX_VALUE;
-        mXMin = Float.MAX_VALUE;
-
-        for (T set : mDataSets) {
-            calcMinMax(set);
-        }
-
-        mLeftAxisMax = -Float.MAX_VALUE;
-        mLeftAxisMin = Float.MAX_VALUE;
-        mRightAxisMax = -Float.MAX_VALUE;
-        mRightAxisMin = Float.MAX_VALUE;
-
-        // left axis
-        T firstLeft = getFirstLeft(mDataSets);
-
-        if (firstLeft != null) {
-
-            mLeftAxisMax = firstLeft.getYMax();
-            mLeftAxisMin = firstLeft.getYMin();
-
-            for (T dataSet : mDataSets) {
-                if (dataSet.getAxisDependency() == AxisDependency.LEFT) {
-                    if (dataSet.getYMin() < mLeftAxisMin)
-                        mLeftAxisMin = dataSet.getYMin();
-
-                    if (dataSet.getYMax() > mLeftAxisMax)
-                        mLeftAxisMax = dataSet.getYMax();
-                }
-            }
-        }
-
-        // right axis
-        T firstRight = getFirstRight(mDataSets);
-
-        if (firstRight != null) {
-
-            mRightAxisMax = firstRight.getYMax();
-            mRightAxisMin = firstRight.getYMin();
-
-            for (T dataSet : mDataSets) {
-                if (dataSet.getAxisDependency() == AxisDependency.RIGHT) {
-                    if (dataSet.getYMin() < mRightAxisMin)
-                        mRightAxisMin = dataSet.getYMin();
-
-                    if (dataSet.getYMax() > mRightAxisMax)
-                        mRightAxisMax = dataSet.getYMax();
-                }
-            }
-        }
-    }
-
-    /** ONLY GETTERS AND SETTERS BELOW THIS */
-
-    /**
-     * returns the number of LineDataSets this object contains
-     *
-     * @return
-     */
-    public int getDataSetCount() {
-        if (mDataSets == null)
-            return 0;
-        return mDataSets.size();
-    }
-
-    /**
-     * Returns the smallest y-value the data object contains.
-     *
-     * @return
-     */
-    public float getYMin() {
-        return mYMin;
-    }
-
-    /**
-     * Returns the minimum y-value for the specified axis.
-     *
-     * @param axis
-     * @return
-     */
-    public float getYMin(AxisDependency axis) {
-        if (axis == AxisDependency.LEFT) {
-
-            if (mLeftAxisMin == Float.MAX_VALUE) {
-                return mRightAxisMin;
-            } else
-                return mLeftAxisMin;
+  /**
+   * Get the Entry for a corresponding highlight object
+   *
+   * @param highlight
+   * @return the entry that is highlighted
+   */
+  open fun getEntryForHighlight(highlight: Highlight): E? =
+      mDataSets.let {
+        if (highlight.dataSetIndex < it.size) {
+          it[highlight.dataSetIndex].getEntryForXValue(highlight.x, highlight.y)
         } else {
-            if (mRightAxisMin == Float.MAX_VALUE) {
-                return mLeftAxisMin;
-            } else
-                return mRightAxisMin;
+          null
         }
+      }
+
+  /**
+   * Returns the DataSet object with the given label. Search can be case sensitive or not.
+   * IMPORTANT: This method does calculations at runtime. Use with care in performance critical
+   * situations.
+   *
+   * @param label
+   * @param ignorecase
+   * @return
+   */
+  open fun getDataSetByLabel(label: String, ignorecase: Boolean): T? {
+    val index = getDataSetIndexByLabel(mDataSets, label, ignorecase)
+    return if (index < 0 || index >= mDataSets.size) null else mDataSets[index]
+  }
+
+  open fun getDataSetByIndex(index: Int): T? {
+    return if (index < 0 || index >= mDataSets.size) null else mDataSets[index]
+  }
+
+  /**
+   * Adds a DataSet dynamically.
+   *
+   * @param d
+   */
+  fun addDataSet(d: T?) {
+    if (d == null) return
+    calcMinMax(d)
+    mDataSets.add(d)
+  }
+
+  /**
+   * Removes the given DataSet from this data object. Also recalculates all minimum and maximum
+   * values. Returns true if a DataSet was removed, false if no DataSet could be removed.
+   *
+   * @param d
+   */
+  open fun removeDataSet(d: T?): Boolean {
+    if (d == null) return false
+    val removed = mDataSets.remove(d)
+
+    // if a DataSet was removed
+    if (removed) {
+      notifyDataChanged()
     }
+    return removed
+  }
 
-    /**
-     * Returns the greatest y-value the data object contains.
-     *
-     * @return
-     */
-    public float getYMax() {
-        return mYMax;
+  /**
+   * Removes the DataSet at the given index in the DataSet array from the data object. Also
+   * recalculates all minimum and maximum values. Returns true if a DataSet was removed, false if no
+   * DataSet could be removed.
+   *
+   * @param index
+   */
+  open fun removeDataSet(index: Int): Boolean {
+    if (index >= mDataSets.size || index < 0) return false
+    val set = mDataSets[index]
+    return removeDataSet(set)
+  }
+
+  /**
+   * Adds an Entry to the DataSet at the specified index. Entries are added to the end of the list.
+   *
+   * @param e
+   * @param dataSetIndex
+   */
+  fun addEntry(e: E, dataSetIndex: Int) {
+    if (mDataSets.size > dataSetIndex && dataSetIndex >= 0) {
+      val set = mDataSets[dataSetIndex]
+      // add the entry to the dataset
+      if (!set.addEntry(e)) return
+      calcMinMax(e, set.axisDependency)
+    } else {
+      Log.e("addEntry", "Cannot add Entry because dataSetIndex too high or too low.")
     }
+  }
 
-    /**
-     * Returns the maximum y-value for the specified axis.
-     *
-     * @param axis
-     * @return
-     */
-    public float getYMax(AxisDependency axis) {
-        if (axis == AxisDependency.LEFT) {
+  /**
+   * Adjusts the current minimum and maximum values based on the provided Entry object.
+   *
+   * @param e
+   * @param axis
+   */
+  protected fun calcMinMax(e: E, axis: AxisDependency?) {
+    if (yMax < e.y) yMax = e.y
+    if (yMin > e.y) yMin = e.y
+    if (xMax < e.x) xMax = e.x
+    if (xMin > e.x) xMin = e.x
+    if (axis === AxisDependency.LEFT) {
+      if (mLeftAxisMax < e.y) mLeftAxisMax = e.y
+      if (mLeftAxisMin > e.y) mLeftAxisMin = e.y
+    } else {
+      if (mRightAxisMax < e.y) mRightAxisMax = e.y
+      if (mRightAxisMin > e.y) mRightAxisMin = e.y
+    }
+  }
 
-            if (mLeftAxisMax == -Float.MAX_VALUE) {
-                return mRightAxisMax;
-            } else
-                return mLeftAxisMax;
-        } else {
-            if (mRightAxisMax == -Float.MAX_VALUE) {
-                return mLeftAxisMax;
-            } else
-                return mRightAxisMax;
+  /**
+   * Adjusts the minimum and maximum values based on the given DataSet.
+   *
+   * @param d
+   */
+  protected fun calcMinMax(d: T) {
+    if (yMax < d.yMax) yMax = d.yMax
+    if (yMin > d.yMin) yMin = d.yMin
+    if (xMax < d.xMax) xMax = d.xMax
+    if (xMin > d.xMin) xMin = d.xMin
+    if (d.axisDependency === AxisDependency.LEFT) {
+      if (mLeftAxisMax < d.yMax) mLeftAxisMax = d.yMax
+      if (mLeftAxisMin > d.yMin) mLeftAxisMin = d.yMin
+    } else {
+      if (mRightAxisMax < d.yMax) mRightAxisMax = d.yMax
+      if (mRightAxisMin > d.yMin) mRightAxisMin = d.yMin
+    }
+  }
+
+  /**
+   * Removes the given Entry object from the DataSet at the specified index.
+   *
+   * @param e
+   * @param dataSetIndex
+   */
+  open fun removeEntry(e: E?, dataSetIndex: Int): Boolean {
+    // entry null, outofbounds
+    if (e == null || dataSetIndex >= mDataSets.size) return false
+    val set = mDataSets[dataSetIndex]
+    return run {
+      // remove the entry from the dataset
+      val removed: Boolean = set.removeEntry(e)
+      if (removed) {
+        notifyDataChanged()
+      }
+      removed
+    }
+  }
+
+  /**
+   * Removes the Entry object closest to the given DataSet at the specified index. Returns true if
+   * an Entry was removed, false if no Entry was found that meets the specified requirements.
+   *
+   * @param xValue
+   * @param dataSetIndex
+   * @return
+   */
+  open fun removeEntry(xValue: Float, dataSetIndex: Int): Boolean {
+    if (dataSetIndex >= mDataSets.size) return false
+    val dataSet = mDataSets[dataSetIndex]
+    val e = dataSet.getEntryForXValue(xValue, Float.NaN) ?: return false
+    return removeEntry(e, dataSetIndex)
+  }
+
+  /**
+   * Returns the DataSet that contains the provided Entry, or null, if no DataSet contains this
+   * Entry.
+   *
+   * @param e
+   * @return
+   */
+  fun getDataSetForEntry(e: E?): T? {
+    if (e == null) return null
+    for (i in mDataSets.indices) {
+      val set = mDataSets[i]
+      for (j in 0 until set.entryCount) {
+        if (e.equalTo(set.getEntryForXValue(e.x, e.y))) return set
+      }
+    }
+    return null
+  }
+
+  /**
+   * Returns all colors used across all DataSet objects this object represents.
+   *
+   * @return
+   */
+  val colors: IntArray
+    get() {
+      var clrcnt = 0
+      for (i in mDataSets.indices) {
+        clrcnt += mDataSets[i].colors.size
+      }
+      val colors = IntArray(clrcnt)
+      var cnt = 0
+      for (i in mDataSets.indices) {
+        val clrs = mDataSets[i].colors
+        for (clr in clrs) {
+          colors[cnt] = clr
+          cnt++
         }
+      }
+      return colors
     }
 
-    /**
-     * Returns the minimum x-value this data object contains.
-     *
-     * @return
-     */
-    public float getXMin() {
-        return mXMin;
+  /**
+   * Returns the index of the provided DataSet in the DataSet array of this data object, or -1 if it
+   * does not exist.
+   *
+   * @param dataSet
+   * @return
+   */
+  fun getIndexOfDataSet(dataSet: T): Int {
+    return mDataSets.indexOf(dataSet)
+  }
+
+  fun getFirstAxis(sets: List<T>, dependency: AxisDependency): T? =
+      sets.firstOrNull { it.axisDependency === dependency }
+
+  /**
+   * Returns the first DataSet from the datasets-array that has it's dependency on the left axis.
+   * Returns null if no DataSet with left dependency could be found.
+   *
+   * @return
+   */
+  protected fun getFirstLeft(sets: List<T>): T? = getFirstAxis(sets, AxisDependency.LEFT)
+
+  /**
+   * Returns the first DataSet from the datasets-array that has it's dependency on the right axis.
+   * Returns null if no DataSet with right dependency could be found.
+   *
+   * @return
+   */
+  fun getFirstRight(sets: List<T>): T? = getFirstAxis(sets, AxisDependency.RIGHT)
+
+  /**
+   * Sets a custom IValueFormatter for all DataSets this data object contains.
+   *
+   * @param f
+   */
+  fun setValueFormatter(f: IValueFormatter?) {
+    if (f == null) return
+    mDataSets.forEach { it.valueFormatter = f }
+  }
+
+  /**
+   * Sets the color of the value-text (color in which the value-labels are drawn) for all DataSets
+   * this data object contains.
+   *
+   * @param color
+   */
+  fun setValueTextColor(color: Int) {
+    mDataSets.forEach { it.valueTextColor = color }
+  }
+
+  /**
+   * Sets the same list of value-colors for all DataSets this data object contains.
+   *
+   * @param colors
+   */
+  fun setValueTextColors(colors: List<Int>) {
+    mDataSets.forEach { it.setValueTextColors(colors) }
+  }
+
+  /**
+   * Sets the Typeface for all value-labels for all DataSets this data object contains.
+   *
+   * @param tf
+   */
+  fun setValueTypeface(tf: Typeface?) {
+    mDataSets.forEach { it.valueTypeface = tf }
+  }
+
+  /**
+   * Sets the size (in dp) of the value-text for all DataSets this data object contains.
+   *
+   * @param size
+   */
+  fun setValueTextSize(size: Float) {
+    mDataSets.forEach { it.valueTextSize = size }
+  }
+
+  /**
+   * Enables / disables drawing values (value-text) for all DataSets this data object contains.
+   *
+   * @param enabled
+   */
+  fun setDrawValues(enabled: Boolean) {
+    mDataSets.forEach { it.setDrawValues(enabled) }
+  }
+
+  /**
+   * Enables / disables highlighting values for all DataSets this data object contains. If set to
+   * true, this means that values can be highlighted programmatically or by touch gesture.
+   */
+  var isHighlightEnabled: Boolean
+    get() {
+      val first = mDataSets.firstOrNull { !it.isHighlightEnabled }
+      if (first != null) {
+        return false
+      }
+      return true
+    }
+    set(enabled) {
+      mDataSets.forEach { it.isHighlightEnabled = enabled }
     }
 
-    /**
-     * Returns the maximum x-value this data object contains.
-     *
-     * @return
-     */
-    public float getXMax() {
-        return mXMax;
-    }
-
-    /**
-     * Returns all DataSet objects this ChartData object holds.
-     *
-     * @return
-     */
-    public List<T> getDataSets() {
-        return mDataSets;
-    }
-
-    /**
-     * Retrieve the index of a DataSet with a specific label from the ChartData.
-     * Search can be case sensitive or not. IMPORTANT: This method does
-     * calculations at runtime, do not over-use in performance critical
-     * situations.
-     *
-     * @param dataSets   the DataSet array to search
-     * @param label
-     * @param ignorecase if true, the search is not case-sensitive
-     * @return
-     */
-    protected int getDataSetIndexByLabel(List<T> dataSets, String label,
-                                         boolean ignorecase) {
-
-        if (ignorecase) {
-            for (int i = 0; i < dataSets.size(); i++)
-                if (label.equalsIgnoreCase(dataSets.get(i).getLabel()))
-                    return i;
-        } else {
-            for (int i = 0; i < dataSets.size(); i++)
-                if (label.equals(dataSets.get(i).getLabel()))
-                    return i;
-        }
-
-        return -1;
-    }
-
-    /**
-     * Returns the labels of all DataSets as a string array.
-     *
-     * @return
-     */
-    public String[] getDataSetLabels() {
-
-        String[] types = new String[mDataSets.size()];
-
-        for (int i = 0; i < mDataSets.size(); i++) {
-            types[i] = mDataSets.get(i).getLabel();
-        }
-
-        return types;
-    }
-
-    /**
-     * Get the Entry for a corresponding highlight object
-     *
-     * @param highlight
-     * @return the entry that is highlighted
-     */
-    public Entry getEntryForHighlight(Highlight highlight) {
-        if (highlight.getDataSetIndex() >= mDataSets.size())
-            return null;
-        else {
-            return mDataSets.get(highlight.getDataSetIndex()).getEntryForXValue(highlight.getX(), highlight.getY());
-        }
-    }
-
-    /**
-     * Returns the DataSet object with the given label. Search can be case
-     * sensitive or not. IMPORTANT: This method does calculations at runtime.
-     * Use with care in performance critical situations.
-     *
-     * @param label
-     * @param ignorecase
-     * @return
-     */
-    public T getDataSetByLabel(String label, boolean ignorecase) {
-
-        int index = getDataSetIndexByLabel(mDataSets, label, ignorecase);
-
-        if (index < 0 || index >= mDataSets.size())
-            return null;
-        else
-            return mDataSets.get(index);
-    }
-
-    public T getDataSetByIndex(int index) {
-
-        if (mDataSets == null || index < 0 || index >= mDataSets.size())
-            return null;
-
-        return mDataSets.get(index);
-    }
-
-    /**
-     * Adds a DataSet dynamically.
-     *
-     * @param d
-     */
-    public void addDataSet(T d) {
-
-        if (d == null)
-            return;
-
-        calcMinMax(d);
-
-        mDataSets.add(d);
-    }
-
-    /**
-     * Removes the given DataSet from this data object. Also recalculates all
-     * minimum and maximum values. Returns true if a DataSet was removed, false
-     * if no DataSet could be removed.
-     *
-     * @param d
-     */
-    public boolean removeDataSet(T d) {
-
-        if (d == null)
-            return false;
-
-        boolean removed = mDataSets.remove(d);
-
-        // if a DataSet was removed
-        if (removed) {
-            notifyDataChanged();
-        }
-
-        return removed;
-    }
-
-    /**
-     * Removes the DataSet at the given index in the DataSet array from the data
-     * object. Also recalculates all minimum and maximum values. Returns true if
-     * a DataSet was removed, false if no DataSet could be removed.
-     *
-     * @param index
-     */
-    public boolean removeDataSet(int index) {
-
-        if (index >= mDataSets.size() || index < 0)
-            return false;
-
-        T set = mDataSets.get(index);
-        return removeDataSet(set);
-    }
-
-    /**
-     * Adds an Entry to the DataSet at the specified index.
-     * Entries are added to the end of the list.
-     *
-     * @param e
-     * @param dataSetIndex
-     */
-    public void addEntry(Entry e, int dataSetIndex) {
-
-        if (mDataSets.size() > dataSetIndex && dataSetIndex >= 0) {
-
-            IDataSet set = mDataSets.get(dataSetIndex);
-            // add the entry to the dataset
-            if (!set.addEntry(e))
-                return;
-
-            calcMinMax(e, set.getAxisDependency());
-
-        } else {
-            Log.e("addEntry", "Cannot add Entry because dataSetIndex too high or too low.");
-        }
-    }
-
-    /**
-     * Adjusts the current minimum and maximum values based on the provided Entry object.
-     *
-     * @param e
-     * @param axis
-     */
-    protected void calcMinMax(Entry e, AxisDependency axis) {
-
-        if (mYMax < e.getY())
-            mYMax = e.getY();
-        if (mYMin > e.getY())
-            mYMin = e.getY();
-
-        if (mXMax < e.getX())
-            mXMax = e.getX();
-        if (mXMin > e.getX())
-            mXMin = e.getX();
-
-        if (axis == AxisDependency.LEFT) {
-
-            if (mLeftAxisMax < e.getY())
-                mLeftAxisMax = e.getY();
-            if (mLeftAxisMin > e.getY())
-                mLeftAxisMin = e.getY();
-        } else {
-            if (mRightAxisMax < e.getY())
-                mRightAxisMax = e.getY();
-            if (mRightAxisMin > e.getY())
-                mRightAxisMin = e.getY();
-        }
-    }
-
-    /**
-     * Adjusts the minimum and maximum values based on the given DataSet.
-     *
-     * @param d
-     */
-    protected void calcMinMax(T d) {
-
-        if (mYMax < d.getYMax())
-            mYMax = d.getYMax();
-        if (mYMin > d.getYMin())
-            mYMin = d.getYMin();
-
-        if (mXMax < d.getXMax())
-            mXMax = d.getXMax();
-        if (mXMin > d.getXMin())
-            mXMin = d.getXMin();
-
-        if (d.getAxisDependency() == AxisDependency.LEFT) {
-
-            if (mLeftAxisMax < d.getYMax())
-                mLeftAxisMax = d.getYMax();
-            if (mLeftAxisMin > d.getYMin())
-                mLeftAxisMin = d.getYMin();
-        } else {
-            if (mRightAxisMax < d.getYMax())
-                mRightAxisMax = d.getYMax();
-            if (mRightAxisMin > d.getYMin())
-                mRightAxisMin = d.getYMin();
-        }
-    }
-
-    /**
-     * Removes the given Entry object from the DataSet at the specified index.
-     *
-     * @param e
-     * @param dataSetIndex
-     */
-    public boolean removeEntry(Entry e, int dataSetIndex) {
-
-        // entry null, outofbounds
-        if (e == null || dataSetIndex >= mDataSets.size())
-            return false;
-
-        IDataSet set = mDataSets.get(dataSetIndex);
-
-        if (set != null) {
-            // remove the entry from the dataset
-            boolean removed = set.removeEntry(e);
-
-            if (removed) {
-                notifyDataChanged();
-            }
-
-            return removed;
-        } else
-            return false;
-    }
-
-    /**
-     * Removes the Entry object closest to the given DataSet at the
-     * specified index. Returns true if an Entry was removed, false if no Entry
-     * was found that meets the specified requirements.
-     *
-     * @param xValue
-     * @param dataSetIndex
-     * @return
-     */
-    public boolean removeEntry(float xValue, int dataSetIndex) {
-
-        if (dataSetIndex >= mDataSets.size())
-            return false;
-
-        IDataSet dataSet = mDataSets.get(dataSetIndex);
-        Entry e = dataSet.getEntryForXValue(xValue, Float.NaN);
-
-        if (e == null)
-            return false;
-
-        return removeEntry(e, dataSetIndex);
-    }
-
-    /**
-     * Returns the DataSet that contains the provided Entry, or null, if no
-     * DataSet contains this Entry.
-     *
-     * @param e
-     * @return
-     */
-    public T getDataSetForEntry(Entry e) {
-
-        if (e == null)
-            return null;
-
-        for (int i = 0; i < mDataSets.size(); i++) {
-
-            T set = mDataSets.get(i);
-
-            for (int j = 0; j < set.getEntryCount(); j++) {
-                if (e.equalTo(set.getEntryForXValue(e.getX(), e.getY())))
-                    return set;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Returns all colors used across all DataSet objects this object
-     * represents.
-     *
-     * @return
-     */
-    public int[] getColors() {
-
-        if (mDataSets == null)
-            return null;
-
-        int clrcnt = 0;
-
-        for (int i = 0; i < mDataSets.size(); i++) {
-            clrcnt += mDataSets.get(i).getColors().size();
-        }
-
-        int[] colors = new int[clrcnt];
-        int cnt = 0;
-
-        for (int i = 0; i < mDataSets.size(); i++) {
-
-            List<Integer> clrs = mDataSets.get(i).getColors();
-
-            for (Integer clr : clrs) {
-                colors[cnt] = clr;
-                cnt++;
-            }
-        }
-
-        return colors;
-    }
-
-    /**
-     * Returns the index of the provided DataSet in the DataSet array of this data object, or -1 if it does not exist.
-     *
-     * @param dataSet
-     * @return
-     */
-    public int getIndexOfDataSet(T dataSet) {
-        return mDataSets.indexOf(dataSet);
-    }
-
-    /**
-     * Returns the first DataSet from the datasets-array that has it's dependency on the left axis.
-     * Returns null if no DataSet with left dependency could be found.
-     *
-     * @return
-     */
-    protected T getFirstLeft(List<T> sets) {
-        for (T dataSet : sets) {
-            if (dataSet.getAxisDependency() == AxisDependency.LEFT)
-                return dataSet;
-        }
-        return null;
-    }
-
-    /**
-     * Returns the first DataSet from the datasets-array that has it's dependency on the right axis.
-     * Returns null if no DataSet with right dependency could be found.
-     *
-     * @return
-     */
-    public T getFirstRight(List<T> sets) {
-        for (T dataSet : sets) {
-            if (dataSet.getAxisDependency() == AxisDependency.RIGHT)
-                return dataSet;
-        }
-        return null;
-    }
-
-    /**
-     * Sets a custom IValueFormatter for all DataSets this data object contains.
-     *
-     * @param f
-     */
-    public void setValueFormatter(IValueFormatter f) {
-        if (f == null)
-            return;
-        else {
-            for (IDataSet set : mDataSets) {
-                set.setValueFormatter(f);
-            }
-        }
-    }
-
-    /**
-     * Sets the color of the value-text (color in which the value-labels are
-     * drawn) for all DataSets this data object contains.
-     *
-     * @param color
-     */
-    public void setValueTextColor(int color) {
-        for (IDataSet set : mDataSets) {
-            set.setValueTextColor(color);
-        }
-    }
-
-    /**
-     * Sets the same list of value-colors for all DataSets this
-     * data object contains.
-     *
-     * @param colors
-     */
-    public void setValueTextColors(List<Integer> colors) {
-        for (IDataSet set : mDataSets) {
-            set.setValueTextColors(colors);
-        }
-    }
-
-    /**
-     * Sets the Typeface for all value-labels for all DataSets this data object
-     * contains.
-     *
-     * @param tf
-     */
-    public void setValueTypeface(Typeface tf) {
-        for (IDataSet set : mDataSets) {
-            set.setValueTypeface(tf);
-        }
-    }
-
-    /**
-     * Sets the size (in dp) of the value-text for all DataSets this data object
-     * contains.
-     *
-     * @param size
-     */
-    public void setValueTextSize(float size) {
-        for (IDataSet set : mDataSets) {
-            set.setValueTextSize(size);
-        }
-    }
-
-    /**
-     * Enables / disables drawing values (value-text) for all DataSets this data
-     * object contains.
-     *
-     * @param enabled
-     */
-    public void setDrawValues(boolean enabled) {
-        for (IDataSet set : mDataSets) {
-            set.setDrawValues(enabled);
-        }
-    }
-
-    /**
-     * Enables / disables highlighting values for all DataSets this data object
-     * contains. If set to true, this means that values can
-     * be highlighted programmatically or by touch gesture.
-     */
-    public void setHighlightEnabled(boolean enabled) {
-        for (IDataSet set : mDataSets) {
-            set.setHighlightEnabled(enabled);
-        }
-    }
-
-    /**
-     * Returns true if highlighting of all underlying values is enabled, false
-     * if not.
-     *
-     * @return
-     */
-    public boolean isHighlightEnabled() {
-        for (IDataSet set : mDataSets) {
-            if (!set.isHighlightEnabled())
-                return false;
-        }
-        return true;
-    }
-
-    /**
-     * Clears this data object from all DataSets and removes all Entries. Don't
-     * forget to invalidate the chart after this.
-     */
-    public void clearValues() {
-        if (mDataSets != null) {
-            mDataSets.clear();
-        }
-        notifyDataChanged();
-    }
-
-    /**
-     * Checks if this data object contains the specified DataSet. Returns true
-     * if so, false if not.
-     *
-     * @param dataSet
-     * @return
-     */
-    public boolean contains(T dataSet) {
-
-        for (T set : mDataSets) {
-            if (set.equals(dataSet))
-                return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns the total entry count across all DataSet objects this data object contains.
-     *
-     * @return
-     */
-    public int getEntryCount() {
-
-        int count = 0;
-
-        for (T set : mDataSets) {
-            count += set.getEntryCount();
-        }
-
-        return count;
-    }
-
-    /**
-     * Returns the DataSet object with the maximum number of entries or null if there are no DataSets.
-     *
-     * @return
-     */
-    public T getMaxEntryCountSet() {
-
-        if (mDataSets == null || mDataSets.isEmpty())
-            return null;
-
-        T max = mDataSets.get(0);
-
-        for (T set : mDataSets) {
-
-            if (set.getEntryCount() > max.getEntryCount())
-                max = set;
-        }
-
-        return max;
+  /**
+   * Clears this data object from all DataSets and removes all Entries. Don't forget to invalidate
+   * the chart after this.
+   */
+  fun clearValues() {
+    mDataSets.clear()
+    notifyDataChanged()
+  }
+
+  /**
+   * Checks if this data object contains the specified DataSet. Returns true if so, false if not.
+   */
+  operator fun contains(dataSet: T): Boolean = mDataSets.contains(dataSet)
+
+  /** Returns the total entry count across all DataSet objects this data object contains. */
+  val entryCount: Int
+    get() = mDataSets.sumOf { it.entryCount }
+
+  /**
+   * Returns the DataSet object with the maximum number of entries or null if there are no DataSets.
+   */
+  val maxEntryCountSet: T?
+    get() {
+      var max: T = mDataSets.firstOrNull() ?: return null
+      mDataSets.forEach { set -> if (set.entryCount > max.entryCount) max = set }
+      return max
     }
 }

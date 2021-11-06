@@ -3,7 +3,9 @@ package com.github.mikephil.charting.charts
 import android.content.Context
 import android.util.AttributeSet
 import com.github.mikephil.charting.data.BubbleData
+import com.github.mikephil.charting.data.BubbleEntry
 import com.github.mikephil.charting.interfaces.dataprovider.BubbleDataProvider
+import com.github.mikephil.charting.interfaces.datasets.IBubbleDataSet
 import com.github.mikephil.charting.renderer.BubbleChartRenderer
 
 /**
@@ -13,22 +15,16 @@ import com.github.mikephil.charting.renderer.BubbleChartRenderer
  *
  * @author Philipp Jahoda
  */
-class BubbleChart : BarLineChartBase<BubbleData>, BubbleDataProvider {
-  constructor(context: Context?) : super(context)
+class BubbleChart
+@JvmOverloads
+constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+    BarLineChartBase<BubbleData, IBubbleDataSet, BubbleEntry>(context, attrs, defStyleAttr),
+    BubbleDataProvider {
 
-  constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-
-  constructor(
-      context: Context?,
-      attrs: AttributeSet?,
-      defStyle: Int
-  ) : super(context, attrs, defStyle)
-
-  override fun init() {
-    super.init()
+  init {
     mRenderer = BubbleChartRenderer(this, mAnimator, mViewPortHandler)
   }
 
-  override val bubbleData: BubbleData
-    get() = mData!!
+  override val bubbleData: BubbleData?
+    get() = data
 }

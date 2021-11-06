@@ -9,7 +9,7 @@ import com.github.mikephil.charting.highlight.Highlight
 import kotlin.math.sqrt
 
 /** Created by philipp on 12/06/15. */
-abstract class ChartTouchListener<T : Chart<*>>(
+abstract class ChartTouchListener<T : Chart<*,*,*>>(
     /** the chart the listener represents */
     protected val chart: T
 ) : SimpleOnGestureListener(), OnTouchListener {
@@ -54,7 +54,7 @@ abstract class ChartTouchListener<T : Chart<*>>(
    * @param me
    */
   fun startAction(me: MotionEvent?) {
-    val l = chart.onChartGestureListener
+    val l = chart.getOnChartGestureListener()
     l?.onChartGestureStart(me, lastGesture)
   }
 
@@ -64,7 +64,7 @@ abstract class ChartTouchListener<T : Chart<*>>(
    * @param me
    */
   fun endAction(me: MotionEvent?) {
-    val l = chart.onChartGestureListener
+    val l = chart.getOnChartGestureListener()
     l?.onChartGestureEnd(me, lastGesture)
   }
 

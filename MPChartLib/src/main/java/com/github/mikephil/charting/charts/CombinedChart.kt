@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.util.Log
-import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.highlight.CombinedHighlighter
 import com.github.mikephil.charting.highlight.Highlight
@@ -12,13 +11,20 @@ import com.github.mikephil.charting.interfaces.dataprovider.CombinedDataProvider
 import com.github.mikephil.charting.interfaces.datasets.IBarLineScatterCandleBubbleDataSet
 import com.github.mikephil.charting.renderer.CombinedChartRenderer
 
+private val TAG = CombinedChart::class.java.simpleName
+
 /**
  * This chart class allows the combination of lines, bars, scatter and candle data all displayed in
  * one chart area.
  *
  * @author Philipp Jahoda
  */
-class CombinedChart : BarLineChartBase<CombinedData>, CombinedDataProvider {
+class CombinedChart
+@JvmOverloads
+constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+    BarLineChartBase<CombinedData, IBarLineScatterCandleBubbleDataSet<Entry>, Entry>(
+        context, attrs, defStyleAttr),
+    CombinedDataProvider {
   /** if set to true, all values are drawn above their bars, instead of below their top */
   override var isDrawValueAboveBarEnabled = true
     private set
@@ -50,19 +56,7 @@ class CombinedChart : BarLineChartBase<CombinedData>, CombinedDataProvider {
     SCATTER
   }
 
-  constructor(context: Context?) : super(context)
-
-  constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-
-  constructor(
-      context: Context?,
-      attrs: AttributeSet?,
-      defStyle: Int
-  ) : super(context, attrs, defStyle)
-
-  override fun init() {
-    super.init()
-
+  init {
     // Default values are not ready here yet
     mDrawOrder =
         arrayOf(
@@ -74,15 +68,14 @@ class CombinedChart : BarLineChartBase<CombinedData>, CombinedDataProvider {
     mRenderer = CombinedChartRenderer(this, mAnimator, mViewPortHandler)
   }
 
-  override val combinedData: CombinedData
-    get() = mData!!
-
-  override fun setData(data: CombinedData) {
-    super.setData(data)
-    setHighlighter(CombinedHighlighter(this, this))
-    (mRenderer as CombinedChartRenderer).createRenderers()
-    mRenderer.initBuffers()
-  }
+  override var combinedData: CombinedData?
+    get() = data
+    set(value) {
+      super.data = value
+      setHighlighter(CombinedHighlighter(this, this))
+      (mRenderer as CombinedChartRenderer).createRenderers()
+      mRenderer?.initBuffers()
+    }
 
   /**
    * Returns the Highlight object (contains x-index and DataSet index) of the selected value at the
@@ -93,29 +86,29 @@ class CombinedChart : BarLineChartBase<CombinedData>, CombinedDataProvider {
    * @return
    */
   override fun getHighlightByTouchPoint(x: Float, y: Float): Highlight? =
-      if (mData == null) {
-        Log.e(LOG_TAG, "Can't select by touch. No data set.")
+      if (data == null) {
+        Log.e(TAG, "Can't select by touch. No data set.")
         null
       } else {
-        val h = highlighter.getHighlight(x, y)
+        val h = getHighlighter()?.getHighlight(x, y)
         if (h == null || !isHighlightFullBarEnabled) h!!
         else Highlight(h.x, h.y, h.xPx, h.yPx, h.dataSetIndex, -1, h.axis)
       }
 
-  override val lineData: LineData
-    get() = mData.lineData
+  override val lineData: LineData?
+    get() = data?.lineData
 
-  override val barData: BarData
-    get() = mData.barData
+  override val barData: BarData?
+    get() = data?.barData
 
-  override val scatterData: ScatterData
-    get() = mData.scatterData
+  override val scatterData: ScatterData?
+    get() = data?.scatterData
 
-  override val candleData: CandleData
-    get() = mData.candleData
+  override val candleData: CandleData?
+    get() = data?.candleData
 
-  override val bubbleData: BubbleData
-    get() = mData.bubbleData
+  override val bubbleData: BubbleData?
+    get() = data?.bubbleData
 
   /**
    * If set to true, all values are drawn above their bars, instead of below their top.
@@ -158,25 +151,27 @@ class CombinedChart : BarLineChartBase<CombinedData>, CombinedDataProvider {
   override fun drawMarkers(canvas: Canvas) {
 
     // if there is no marker view or drawing marker is disabled
-    if (mMarker == null || !isDrawMarkersEnabled || !valuesToHighlight()) return
-    for (i in mIndicesToHighlight.indices) {
-      val highlight = mIndicesToHighlight[i]
-      val set = mData.getDataSetByHighlight(highlight) as IBarLineScatterCandleBubbleDataSet<Entry>
-      val e: Entry = mData.getEntryForHighlight(highlight) ?: continue
+    if (mMarker == null || !isDrawMarkersEnabled() || !valuesToHighlight()) return
+    val indicesToHighlight = mIndicesToHighlight ?: return
+    indicesToHighlight.forEach { highlight ->
+      if (highlight == null) return@forEach
+
+      val set = data?.getDataSetByHighlight(highlight) as IBarLineScatterCandleBubbleDataSet<Entry>
+      val e: Entry = data?.getEntryForHighlight(highlight) ?: return@forEach
       val entryIndex = set.getEntryIndex(e)
 
       // make sure entry not null
-      if (entryIndex > set.entryCount * mAnimator.phaseX) continue
+      if (entryIndex > set.entryCount * mAnimator.phaseX) return@forEach
       val pos = getMarkerPosition(highlight)
 
       // check bounds
-      if (!mViewPortHandler.isInBounds(pos[0], pos[1])) continue
+      if (!mViewPortHandler.isInBounds(pos[0], pos[1])) return@forEach
 
       // callbacks to update the content
-      mMarker.refreshContent(e, highlight)
+      mMarker?.refreshContent(e, highlight)
 
       // draw the marker
-      mMarker.draw(canvas, pos[0], pos[1])
+      mMarker?.draw(canvas, pos[0], pos[1])
     }
   }
 }

@@ -29,7 +29,7 @@ open class MarkerView : RelativeLayout, IMarker {
 
   private var mOffset = MPPointF()
   private val mOffset2 = MPPointF()
-  private var mWeakChart: WeakReference<Chart<*>>? = null
+  private var mWeakChart: WeakReference<Chart<*,*,*>>? = null
 
   /**
    * Sets the layout resource for a custom MarkerView.
@@ -55,11 +55,11 @@ open class MarkerView : RelativeLayout, IMarker {
       mOffset = offset
     }
 
-  fun setChartView(chart: Chart<*>) {
+  fun setChartView(chart: Chart<*,*,*>) {
     mWeakChart = WeakReference(chart)
   }
 
-  private val chartView: Chart<*>?
+  private val chartView: Chart<*,*,*>?
     get() = if (mWeakChart == null) null else mWeakChart?.get()
 
   override fun getOffsetForDrawingAtPoint(posX: Float, posY: Float): MPPointF {

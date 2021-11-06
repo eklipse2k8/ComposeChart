@@ -10,7 +10,7 @@ import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.utils.MPPointF
 
 /** Created by Philipp Jahoda on 21/10/15. */
-interface IDataSet<T : Entry> {
+interface IDataSet<E : Entry> {
   /** ###### ###### DATA RELATED METHODS ###### ###### */
   /**
    * returns the minimum y-value this DataSet holds
@@ -72,7 +72,7 @@ interface IDataSet<T : Entry> {
    * provided x-value
    * @return
    */
-  fun getEntryForXValue(xValue: Float, closestToY: Float, rounding: Rounding?): T
+  fun getEntryForXValue(xValue: Float, closestToY: Float, rounding: Rounding?): E?
 
   /**
    * Returns the first Entry object found at the given x-value with binary search. If the no Entry
@@ -84,7 +84,7 @@ interface IDataSet<T : Entry> {
    * @param closestToY If there are multiple y-values for the specified x-value,
    * @return
    */
-  fun getEntryForXValue(xValue: Float, closestToY: Float): T
+  fun getEntryForXValue(xValue: Float, closestToY: Float): E?
 
   /**
    * Returns all Entry objects found at the given x-value with binary search. An empty array if no
@@ -94,7 +94,7 @@ interface IDataSet<T : Entry> {
    * @param xValue
    * @return
    */
-  fun getEntriesForXValue(xValue: Float): List<T>?
+  fun getEntriesForXValue(xValue: Float): List<E>?
 
   /**
    * Returns the Entry object found at the given index (NOT xIndex) in the values array.
@@ -102,7 +102,7 @@ interface IDataSet<T : Entry> {
    * @param index
    * @return
    */
-  fun getEntryForIndex(index: Int): T
+  fun getEntryForIndex(index: Int): E
 
   /**
    * Returns the first Entry index found at the given x-value with binary search. If the no Entry at
@@ -125,7 +125,7 @@ interface IDataSet<T : Entry> {
    * @param e
    * @return
    */
-  fun getEntryIndex(e: T): Int
+  fun getEntryIndex(e: E): Int
 
   /**
    * This method returns the actual index in the Entry array of the DataSet for a given xIndex.
@@ -143,7 +143,7 @@ interface IDataSet<T : Entry> {
    *
    * @param e
    */
-  fun addEntry(e: T): Boolean
+  fun addEntry(e: E): Boolean
 
   /**
    * Adds an Entry to the DataSet dynamically. Entries are added to their appropriate index in the
@@ -152,7 +152,7 @@ interface IDataSet<T : Entry> {
    *
    * @param e
    */
-  fun addEntryOrdered(e: T)
+  fun addEntryOrdered(e: E)
 
   /**
    * Removes the first Entry (at index 0) of this DataSet from the entries array. Returns true if
@@ -177,7 +177,7 @@ interface IDataSet<T : Entry> {
    *
    * @param e
    */
-  fun removeEntry(e: T): Boolean
+  fun removeEntry(e: E): Boolean
 
   /**
    * Removes the Entry object closest to the given x-value from the DataSet. Returns true if an
@@ -203,7 +203,7 @@ interface IDataSet<T : Entry> {
    * @param entry
    * @return
    */
-  operator fun contains(entry: T): Boolean
+  operator fun contains(entry: E): Boolean
 
   /** Removes all values from this DataSet and does all necessary recalculations. */
   fun clear()
@@ -236,7 +236,7 @@ interface IDataSet<T : Entry> {
    *
    * @return
    */
-  val colors: List<Int?>?
+  val colors: MutableList<Int>
 
   /**
    * Returns the first color (index 0) of the colors-array this DataSet contains. This is only used
@@ -254,6 +254,7 @@ interface IDataSet<T : Entry> {
    * @return
    */
   fun getColor(index: Int): Int
+
   /**
    * returns true if highlighting of values is enabled, false if not
    *
@@ -293,7 +294,8 @@ interface IDataSet<T : Entry> {
    *
    * @param colors
    */
-  fun setValueTextColors(colors: List<Int?>?)
+  fun setValueTextColors(colors: List<Int>)
+
   /**
    * Returns only the first color of all colors that are set to be used for the values.
    *

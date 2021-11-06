@@ -40,7 +40,7 @@ object FileUtils {
           for (i in vals.indices) {
             vals[i] = split[i].toFloat()
           }
-          entries.add(BarEntry(split[split.size - 1].toFloat(), vals))
+          entries.add(BarEntry(split[split.size - 1].toFloat(), yVals = vals))
         }
       }
     } catch (e: IOException) {
@@ -72,7 +72,7 @@ object FileUtils {
           for (i in vals.indices) {
             vals[i] = split[i].toFloat()
           }
-          entries.add(BarEntry(split[split.size - 1].toFloat(), vals))
+          entries.add(BarEntry(split[split.size - 1].toFloat(), yVals = vals))
         }
         line = reader.readLine()
       }

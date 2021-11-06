@@ -3,7 +3,9 @@ package com.github.mikephil.charting.charts
 import android.content.Context
 import android.util.AttributeSet
 import com.github.mikephil.charting.data.CandleData
+import com.github.mikephil.charting.data.CandleEntry
 import com.github.mikephil.charting.interfaces.dataprovider.CandleDataProvider
+import com.github.mikephil.charting.interfaces.datasets.ICandleDataSet
 import com.github.mikephil.charting.renderer.CandleStickChartRenderer
 
 /**
@@ -11,24 +13,18 @@ import com.github.mikephil.charting.renderer.CandleStickChartRenderer
  *
  * @author Philipp Jahoda
  */
-class CandleStickChart : BarLineChartBase<CandleData>, CandleDataProvider {
-  constructor(context: Context?) : super(context)
+class CandleStickChart
+@JvmOverloads
+constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+    BarLineChartBase<CandleData, ICandleDataSet, CandleEntry>(context, attrs, defStyleAttr),
+    CandleDataProvider {
 
-  constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-
-  constructor(
-      context: Context?,
-      attrs: AttributeSet?,
-      defStyle: Int
-  ) : super(context, attrs, defStyle)
-
-  override fun init() {
-    super.init()
+  init {
     mRenderer = CandleStickChartRenderer(this, mAnimator, mViewPortHandler)
     xAxis.spaceMin = 0.5f
     xAxis.spaceMax = 0.5f
   }
 
-  override val candleData: CandleData
-    get() = mData!!
+  override val candleData: CandleData?
+    get() = data
 }
