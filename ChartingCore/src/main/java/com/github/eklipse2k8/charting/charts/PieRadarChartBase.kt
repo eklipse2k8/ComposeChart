@@ -34,28 +34,19 @@ E : Entry {
 
   /** holds the normalized version of the current rotation angle of the chart */
   private var mRotationAngle = 270f
+
   /**
    * gets the raw version of the current rotation angle of the pie chart the returned value could be
    * any value, negative or positive, outside of the 360 degrees. this is used when working with
    * rotation direction, mainly by gestures and animations.
-   *
-   * @return
    */
-  /** holds the raw version of the current rotation angle of the chart */
   var rawRotationAngle = 270f
     private set
-  /**
-   * Returns true if rotation of the chart by touch is enabled, false if not.
-   *
-   * @return
-   */
+
   /**
    * Set this to true to enable the rotation / spinning of the chart by touch. Set it to false to
    * disable it. Default: true
-   *
-   * @param enabled
    */
-  /** flag that indicates if rotation is enabled or not */
   var isRotationEnabled = true
 
   /** Sets the minimum offset (padding) around the chart, defaults to 0.f */
@@ -86,7 +77,7 @@ E : Entry {
   override fun notifyDataSetChanged() {
     if (data != null) {
       calcMinMax()
-      mLegendRenderer.computeLegend(data!!)
+      legendRenderer.computeLegend(data!!)
       calculateOffsets()
     }
   }
@@ -98,7 +89,7 @@ E : Entry {
     var legendTop = 0f
     if (mLegend.isEnabled && !mLegend.isDrawInsideEnabled) {
       val fullLegendWidth =
-          Math.min(mLegend.mNeededWidth, mViewPortHandler.chartWidth * mLegend.maxSizePercent)
+          Math.min(mLegend.mNeededWidth, viewPortHandler.chartWidth * mLegend.maxSizePercent)
       when (mLegend.orientation) {
         LegendOrientation.VERTICAL -> {
           var xLegendOffset = 0f
@@ -142,12 +133,12 @@ E : Entry {
                       legendTop =
                           min(
                               mLegend.mNeededHeight,
-                              mViewPortHandler.chartHeight * mLegend.maxSizePercent)
+                              viewPortHandler.chartHeight * mLegend.maxSizePercent)
                   LegendVerticalAlignment.BOTTOM ->
                       legendBottom =
                           min(
                               mLegend.mNeededHeight,
-                              mViewPortHandler.chartHeight * mLegend.maxSizePercent)
+                              viewPortHandler.chartHeight * mLegend.maxSizePercent)
                 }
           }
         }
@@ -163,7 +154,7 @@ E : Entry {
             yLegendOffset =
                 min(
                     mLegend.mNeededHeight + yOffset,
-                    mViewPortHandler.chartHeight * mLegend.maxSizePercent)
+                    viewPortHandler.chartHeight * mLegend.maxSizePercent)
             when (mLegend.verticalAlignment) {
               LegendVerticalAlignment.TOP -> legendTop = yLegendOffset
               LegendVerticalAlignment.BOTTOM -> legendBottom = yLegendOffset
@@ -191,7 +182,7 @@ E : Entry {
     val offsetTop = minOffset.coerceAtLeast(legendTop)
     val offsetRight = minOffset.coerceAtLeast(legendRight)
     val offsetBottom = minOffset.coerceAtLeast(requiredBaseOffset.coerceAtLeast(legendBottom))
-    mViewPortHandler.restrainViewPort(offsetLeft, offsetTop, offsetRight, offsetBottom)
+    viewPortHandler.restrainViewPort(offsetLeft, offsetTop, offsetRight, offsetBottom)
     if (mLogEnabled)
         Log.i(
             TAG,
@@ -253,16 +244,14 @@ E : Entry {
    */
   fun distanceToCenter(x: Float, y: Float): Float {
     val c: MPPointF = centerOffsets ?: MPPointF.getInstance(0f, 0f)
-    var dist = 0f
-    var xDist = 0f
-    var yDist = 0f
-    xDist =
+    val dist: Float
+    val xDist: Float =
         if (x > c.x) {
           x - c.x
         } else {
           c.x - x
         }
-    yDist =
+    val yDist: Float =
         if (y > c.y) {
           y - c.y
         } else {
@@ -308,7 +297,7 @@ E : Entry {
    */
   val diameter: Float
     get() {
-      val content = mViewPortHandler.contentRect
+      val content = viewPortHandler.contentRect
       content.left += extraLeftOffset
       content.top += extraTopOffset
       content.right -= extraRightOffset

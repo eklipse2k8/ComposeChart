@@ -7,21 +7,13 @@ import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.view.View
 import android.view.animation.AnimationUtils
-import com.github.eklipse2k8.charting.charts.BarLineChartBase
-import com.github.eklipse2k8.charting.data.BarLineScatterCandleBubbleData
-import com.github.eklipse2k8.charting.data.Entry
-import com.github.eklipse2k8.charting.interfaces.datasets.IBarLineScatterCandleBubbleDataSet
+import com.github.eklipse2k8.charting.charts.AnyBarChart
+import com.github.eklipse2k8.charting.charts.HorizontalBarChart
 import com.github.eklipse2k8.charting.interfaces.datasets.IDataSet
 import com.github.eklipse2k8.charting.utils.MPPointF
 import com.github.eklipse2k8.charting.utils.Utils
 import kotlin.math.abs
 import kotlin.math.sqrt
-
-typealias AnyBarLineChart =
-    BarLineChartBase<
-        BarLineScatterCandleBubbleData<IBarLineScatterCandleBubbleDataSet<Entry>, Entry>,
-        IBarLineScatterCandleBubbleDataSet<Entry>,
-        Entry>
 
 /**
  * Determines the center point between two pointer touch points.
@@ -75,10 +67,10 @@ private fun getYDist(e: MotionEvent): Float {
  * @author Philipp Jahoda
  */
 class BarLineChartTouchListener(
-    chart: AnyBarLineChart,
+    chart: AnyBarChart,
     touchMatrix: Matrix,
     dragTriggerDistance: Float
-) : ChartTouchListener<AnyBarLineChart>(chart) {
+) : ChartTouchListener<AnyBarChart>(chart) {
   /**
    * returns the matrix object the listener holds
    *
@@ -246,7 +238,7 @@ class BarLineChartTouchListener(
     }
 
     // perform the transformation, update the chart
-    val viewport = chart.getViewPortHandler() ?: return false
+    val viewport = chart.viewPortHandler
     matrix = viewport.refresh(matrix, chart, true)
     return true // indicate event was handled
   }
@@ -279,11 +271,11 @@ class BarLineChartTouchListener(
     // check if axis is inverted
     if (inverted()) {
       // if there is an inverted horizontalbarchart
-      //if (chart is HorizontalBarChart) {
-      //  distanceX = -distanceX
-      //} else {
+      if (chart is HorizontalBarChart) {
+        distX = -distanceX
+      } else {
         distY = -distY
-      //}
+      }
     }
     matrix.postTranslate(distX, distY)
     l?.onChartTranslate(event, distX, distY)
@@ -304,7 +296,7 @@ class BarLineChartTouchListener(
 
         // get the translation
         val t = getTrans(mTouchPointCenter.x, mTouchPointCenter.y)
-        val h = chart.getViewPortHandler() ?: return
+        val h = chart.viewPortHandler ?: return
 
         // take actions depending on the activated touch mode
         if (touchMode == PINCH_ZOOM) {
@@ -370,7 +362,7 @@ class BarLineChartTouchListener(
    * @return
    */
   fun getTrans(x: Float, y: Float): MPPointF {
-    val vph = chart.getViewPortHandler() ?: return MPPointF.getInstance(0f, 0f)
+    val vph = chart.viewPortHandler
     val xTrans = x - vph.offsetLeft()
 
     // check if axis is inverted
@@ -482,7 +474,7 @@ class BarLineChartTouchListener(
         if (chart.isDragYEnabled) mDecelerationCurrentPoint.y - mTouchStartPoint.y else 0f
     performDrag(event, dragDistanceX, dragDistanceY)
     event.recycle()
-    val viewport = chart.getViewPortHandler() ?: return
+    val viewport = chart.viewPortHandler
     matrix = viewport.refresh(matrix, chart, false)
     mDecelerationLastTime = currentTime
     if (abs(mDecelerationVelocity.x) >= 0.01 || abs(mDecelerationVelocity.y) >= 0.01)

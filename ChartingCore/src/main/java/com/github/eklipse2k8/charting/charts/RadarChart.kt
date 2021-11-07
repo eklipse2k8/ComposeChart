@@ -28,7 +28,7 @@ class RadarChart
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     PieRadarChartBase<RadarData, IRadarDataSet, RadarEntry>(context, attrs, defStyleAttr) {
 
-  override val dataRenderer: DataRenderer = RadarChartRenderer(this, mAnimator, mViewPortHandler)
+  override val dataRenderer: DataRenderer = RadarChartRenderer(this, mAnimator, viewPortHandler)
 
   /** width of the main web lines */
   private var mWebLineWidth = 2.5f
@@ -98,8 +98,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     yAxis!!.labelXOffset = 10f
     mWebLineWidth = Utils.convertDpToPixel(1.5f)
     mInnerWebLineWidth = Utils.convertDpToPixel(0.75f)
-    mYAxisRenderer = YAxisRendererRadarChart(mViewPortHandler, yAxis!!, this)
-    mXAxisRenderer = XAxisRendererRadarChart(mViewPortHandler, xAxis, this)
+    mYAxisRenderer = YAxisRendererRadarChart(viewPortHandler, yAxis!!, this)
+    mXAxisRenderer = XAxisRendererRadarChart(viewPortHandler, xAxis, this)
   }
 
   override fun calcMinMax() {
@@ -114,7 +114,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     mYAxisRenderer?.computeAxis(
         yAxis?.axisMinimum ?: 0f, yAxis?.axisMaximum ?: 0f, yAxis?.isInverted == true)
     mXAxisRenderer?.computeAxis(xAxis.axisMinimum, xAxis.axisMaximum, false)
-    if (!mLegend.isLegendCustom) mLegendRenderer.computeLegend(data!!)
+    if (!mLegend.isLegendCustom) legendRenderer.computeLegend(data!!)
     calculateOffsets()
   }
 
@@ -133,7 +133,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         mYAxisRenderer!!.renderLimitLines(canvas)
     mYAxisRenderer!!.renderAxisLabels(canvas)
     dataRenderer.drawValues(canvas)
-    mLegendRenderer.renderLegend(canvas)
+    legendRenderer.renderLegend(canvas)
     drawDescription(canvas)
     drawMarkers(canvas)
   }
@@ -145,7 +145,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    */
   val factor: Float
     get() {
-      val content = mViewPortHandler.contentRect
+      val content = viewPortHandler.contentRect
       return min(content.width() / 2f, content.height() / 2f) / (yAxis?.mAxisRange ?: 0f)
     }
 
@@ -227,7 +227,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
 
   override val requiredLegendOffset: Float
-    get() = mLegendRenderer.labelPaint.textSize * 4f
+    get() = legendRenderer.labelPaint.textSize * 4f
 
   override val requiredBaseOffset: Float
     get() =
@@ -236,7 +236,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   override val radius: Float
     get() {
-      val content = mViewPortHandler.contentRect
+      val content = viewPortHandler.contentRect
       return min(content.width() / 2f, content.height() / 2f)
     }
 }

@@ -58,7 +58,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     SCATTER
   }
 
-  override val dataRenderer: DataRenderer = CombinedChartRenderer(this, mAnimator, mViewPortHandler)
+  override val dataRenderer: DataRenderer = CombinedChartRenderer(this, mAnimator, viewPortHandler)
 
   override val highlighter = CombinedHighlighter(this, this)
 
@@ -163,7 +163,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       val pos = getMarkerPosition(highlight)
 
       // check bounds
-      if (!mViewPortHandler.isInBounds(pos[0], pos[1])) return@forEach
+      if (!viewPortHandler.isInBounds(pos[0], pos[1])) return@forEach
 
       // callbacks to update the content
       mMarker?.refreshContent(e, highlight)

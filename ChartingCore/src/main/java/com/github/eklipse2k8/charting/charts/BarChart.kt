@@ -10,7 +10,6 @@ import com.github.eklipse2k8.charting.data.BarEntry
 import com.github.eklipse2k8.charting.highlight.BarHighlighter
 import com.github.eklipse2k8.charting.highlight.Highlight
 import com.github.eklipse2k8.charting.interfaces.dataprovider.BarDataProvider
-import com.github.eklipse2k8.charting.interfaces.datasets.IBarDataSet
 import com.github.eklipse2k8.charting.renderer.BarChartRenderer
 import com.github.eklipse2k8.charting.renderer.DataRenderer
 
@@ -24,8 +23,7 @@ private val TAG = BarChart::class.java.simpleName
 open class BarChart
 @JvmOverloads
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
-    BarLineChartBase<BarData, IBarDataSet, BarEntry>(context, attrs, defStyleAttr),
-    BarDataProvider {
+    AnyBarChart(context, attrs, defStyleAttr), BarDataProvider {
 
   /**
    * Set this to true to make the highlight operation full-bar oriented, false to make it highlight
@@ -42,7 +40,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private var mFitBars = false
 
-  override val dataRenderer: DataRenderer = BarChartRenderer(this, mAnimator, mViewPortHandler)
+  override val dataRenderer: DataRenderer = BarChartRenderer(this, mAnimator, viewPortHandler)
 
   override val highlighter = BarHighlighter(this)
 

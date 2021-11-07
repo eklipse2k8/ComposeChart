@@ -19,7 +19,7 @@ class LineChart
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     BarLineChartBase<LineData, ILineDataSet, Entry>(context, attrs, defStyleAttr),
     LineDataProvider {
-  override val dataRenderer: DataRenderer = LineChartRenderer(this, mAnimator, mViewPortHandler)
+  override val dataRenderer: DataRenderer = LineChartRenderer(this, mAnimator, viewPortHandler)
 
   override val lineData: LineData?
     get() = data

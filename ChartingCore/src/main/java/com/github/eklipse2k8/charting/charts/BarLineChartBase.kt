@@ -20,7 +20,6 @@ import com.github.eklipse2k8.charting.jobs.AnimatedMoveViewJob.Companion.getInst
 import com.github.eklipse2k8.charting.jobs.AnimatedZoomJob.Companion.getInstance
 import com.github.eklipse2k8.charting.jobs.MoveViewJob.Companion.getInstance
 import com.github.eklipse2k8.charting.jobs.ZoomJob.Companion.getInstance
-import com.github.eklipse2k8.charting.listener.AnyBarLineChart
 import com.github.eklipse2k8.charting.listener.BarLineChartTouchListener
 import com.github.eklipse2k8.charting.listener.OnDrawListener
 import com.github.eklipse2k8.charting.renderer.XAxisRenderer
@@ -161,13 +160,13 @@ E : Entry {
   init {
     axisLeft = YAxis(AxisDependency.LEFT)
     axisRight = YAxis(AxisDependency.RIGHT)
-    mLeftAxisTransformer = Transformer(mViewPortHandler)
-    mRightAxisTransformer = Transformer(mViewPortHandler)
-    rendererLeftYAxis = YAxisRenderer(mViewPortHandler, axisLeft!!, mLeftAxisTransformer)
-    rendererRightYAxis = YAxisRenderer(mViewPortHandler, axisRight!!, mRightAxisTransformer)
-    rendererXAxis = XAxisRenderer(mViewPortHandler, xAxis, mLeftAxisTransformer)
+    mLeftAxisTransformer = Transformer(viewPortHandler)
+    mRightAxisTransformer = Transformer(viewPortHandler)
+    rendererLeftYAxis = YAxisRenderer(viewPortHandler, axisLeft!!, mLeftAxisTransformer)
+    rendererRightYAxis = YAxisRenderer(viewPortHandler, axisRight!!, mRightAxisTransformer)
+    rendererXAxis = XAxisRenderer(viewPortHandler, xAxis, mLeftAxisTransformer)
     onTouchListener =
-        BarLineChartTouchListener(this as AnyBarLineChart, mViewPortHandler.matrixTouch, 3f)
+        BarLineChartTouchListener(this as AnyBarChart, viewPortHandler.matrixTouch, 3f)
     mGridBackgroundPaint =
         Paint().apply {
           style = Paint.Style.FILL
@@ -218,7 +217,7 @@ E : Entry {
     var clipRestoreCount = canvas.save()
     if (isClipDataToContentEnabled) {
       // make sure the data cannot be drawn outside the content-rect
-      canvas.clipRect(mViewPortHandler.contentRect)
+      canvas.clipRect(viewPortHandler.contentRect)
     }
     dataRenderer.drawData(canvas)
     if (!xAxis.isDrawGridLinesBehindDataEnabled) rendererXAxis!!.renderGridLines(canvas)
@@ -242,13 +241,13 @@ E : Entry {
     rendererRightYAxis!!.renderAxisLabels(canvas)
     if (isClipValuesToContentEnabled) {
       clipRestoreCount = canvas.save()
-      canvas.clipRect(mViewPortHandler.contentRect)
+      canvas.clipRect(viewPortHandler.contentRect)
       dataRenderer.drawValues(canvas)
       canvas.restoreToCount(clipRestoreCount)
     } else {
       dataRenderer.drawValues(canvas)
     }
-    mLegendRenderer.renderLegend(canvas)
+    legendRenderer.renderLegend(canvas)
     drawDescription(canvas)
     drawMarkers(canvas)
     if (mLogEnabled) {
@@ -301,7 +300,7 @@ E : Entry {
     rendererRightYAxis!!.computeAxis(
         axisRight!!.mAxisMinimum, axisRight!!.mAxisMaximum, axisRight!!.isInverted)
     rendererXAxis!!.computeAxis(xAxis.mAxisMinimum, xAxis.mAxisMaximum, false)
-    mLegendRenderer.computeLegend(data!!)
+    legendRenderer.computeLegend(data!!)
     calculateOffsets()
   }
 
@@ -347,25 +346,25 @@ E : Entry {
                 offsets.left +=
                     (min(
                         mLegend.mNeededWidth,
-                        mViewPortHandler.chartWidth * mLegend.maxSizePercent) + mLegend.xOffset)
+                        viewPortHandler.chartWidth * mLegend.maxSizePercent) + mLegend.xOffset)
             LegendHorizontalAlignment.RIGHT ->
                 offsets.right +=
                     (min(
                         mLegend.mNeededWidth,
-                        mViewPortHandler.chartWidth * mLegend.maxSizePercent) + mLegend.xOffset)
+                        viewPortHandler.chartWidth * mLegend.maxSizePercent) + mLegend.xOffset)
             LegendHorizontalAlignment.CENTER ->
                 when (mLegend.verticalAlignment) {
                   LegendVerticalAlignment.TOP ->
                       offsets.top +=
                           (min(
                               mLegend.mNeededHeight,
-                              mViewPortHandler.chartHeight * mLegend.maxSizePercent) +
+                              viewPortHandler.chartHeight * mLegend.maxSizePercent) +
                               mLegend.yOffset)
                   LegendVerticalAlignment.BOTTOM ->
                       offsets.bottom +=
                           (min(
                               mLegend.mNeededHeight,
-                              mViewPortHandler.chartHeight * mLegend.maxSizePercent) +
+                              viewPortHandler.chartHeight * mLegend.maxSizePercent) +
                               mLegend.yOffset)
                   else -> Unit
                 }
@@ -376,12 +375,12 @@ E : Entry {
                 offsets.top +=
                     (min(
                         mLegend.mNeededHeight,
-                        mViewPortHandler.chartHeight * mLegend.maxSizePercent) + mLegend.yOffset)
+                        viewPortHandler.chartHeight * mLegend.maxSizePercent) + mLegend.yOffset)
             LegendVerticalAlignment.BOTTOM ->
                 offsets.bottom +=
                     (min(
                         mLegend.mNeededHeight,
-                        mViewPortHandler.chartHeight * mLegend.maxSizePercent) + mLegend.yOffset)
+                        viewPortHandler.chartHeight * mLegend.maxSizePercent) + mLegend.yOffset)
             else -> Unit
           }
     }
@@ -425,7 +424,7 @@ E : Entry {
       offsetBottom += extraBottomOffset
       offsetLeft += extraLeftOffset
       val minOffset = convertDpToPixel(minOffset)
-      mViewPortHandler.restrainViewPort(
+      viewPortHandler.restrainViewPort(
           max(minOffset, offsetLeft),
           max(minOffset, offsetTop),
           max(minOffset, offsetRight),
@@ -441,7 +440,7 @@ E : Entry {
                 offsetRight +
                 ", offsetBottom: " +
                 offsetBottom)
-        Log.i(TAG, "Content: " + mViewPortHandler.contentRect.toString())
+        Log.i(TAG, "Content: " + viewPortHandler.contentRect.toString())
       }
     }
     prepareOffsetMatrix()
@@ -452,10 +451,10 @@ E : Entry {
   private fun drawGridBackground(c: Canvas) {
     if (mDrawGridBackground) {
       // draw the grid background
-      c.drawRect(mViewPortHandler.contentRect, mGridBackgroundPaint!!)
+      c.drawRect(viewPortHandler.contentRect, mGridBackgroundPaint!!)
     }
     if (isDrawBordersEnabled) {
-      c.drawRect(mViewPortHandler.contentRect, mBorderPaint!!)
+      c.drawRect(viewPortHandler.contentRect, mBorderPaint!!)
     }
   }
 
@@ -474,7 +473,7 @@ E : Entry {
     if (onTouchListener == null || data == null) return false
 
     // check if touch gestures are enabled
-    return if (!mTouchEnabled) false else onTouchListener!!.onTouch(this, event)
+    return if (!isTouchEnabled) false else onTouchListener!!.onTouch(this, event)
   }
 
   override fun computeScroll() {
@@ -486,9 +485,9 @@ E : Entry {
 
   /** Zooms in by 1.4f, into the charts center. */
   fun zoomIn() {
-    val center = mViewPortHandler.contentCenter
-    mViewPortHandler.zoomIn(center.x, -center.y, mZoomMatrixBuffer)
-    mViewPortHandler.refresh(mZoomMatrixBuffer, this, false)
+    val center = viewPortHandler.contentCenter
+    viewPortHandler.zoomIn(center.x, -center.y, mZoomMatrixBuffer)
+    viewPortHandler.refresh(mZoomMatrixBuffer, this, false)
     MPPointF.recycleInstance(center)
 
     // Range might have changed, which means that Y-axis labels
@@ -500,9 +499,9 @@ E : Entry {
 
   /** Zooms out by 0.7f, from the charts center. */
   fun zoomOut() {
-    val center = mViewPortHandler.contentCenter
-    mViewPortHandler.zoomOut(center.x, -center.y, mZoomMatrixBuffer)
-    mViewPortHandler.refresh(mZoomMatrixBuffer, this, false)
+    val center = viewPortHandler.contentCenter
+    viewPortHandler.zoomOut(center.x, -center.y, mZoomMatrixBuffer)
+    viewPortHandler.refresh(mZoomMatrixBuffer, this, false)
     MPPointF.recycleInstance(center)
 
     // Range might have changed, which means that Y-axis labels
@@ -514,8 +513,8 @@ E : Entry {
 
   /** Zooms out to original size. */
   fun resetZoom() {
-    mViewPortHandler.resetZoom(mZoomMatrixBuffer)
-    mViewPortHandler.refresh(mZoomMatrixBuffer, this, false)
+    viewPortHandler.resetZoom(mZoomMatrixBuffer)
+    viewPortHandler.refresh(mZoomMatrixBuffer, this, false)
 
     // Range might have changed, which means that Y-axis labels
     // could have changed in size, affecting Y-axis size.
@@ -534,8 +533,8 @@ E : Entry {
    * @param y
    */
   fun zoom(scaleX: Float, scaleY: Float, x: Float, y: Float) {
-    mViewPortHandler.zoom(scaleX, scaleY, x, -y, mZoomMatrixBuffer)
-    mViewPortHandler.refresh(mZoomMatrixBuffer, this, false)
+    viewPortHandler.zoom(scaleX, scaleY, x, -y, mZoomMatrixBuffer)
+    viewPortHandler.refresh(mZoomMatrixBuffer, this, false)
 
     // Range might have changed, which means that Y-axis labels
     // could have changed in size, affecting Y-axis size.
@@ -557,7 +556,7 @@ E : Entry {
   fun zoom(scaleX: Float, scaleY: Float, xValue: Float, yValue: Float, axis: AxisDependency?) {
     val job =
         getInstance(
-            mViewPortHandler, scaleX, scaleY, xValue, yValue, getTransformer(axis), axis, this)
+            viewPortHandler, scaleX, scaleY, xValue, yValue, getTransformer(axis), axis, this)
             ?: return
     addViewportJob(job)
   }
@@ -571,8 +570,8 @@ E : Entry {
   fun zoomToCenter(scaleX: Float, scaleY: Float) {
     val center: MPPointF = centerOffsets ?: MPPointF.getInstance(0f, 0f)
     val save = mZoomMatrixBuffer
-    mViewPortHandler.zoom(scaleX, scaleY, center.x, -center.y, save)
-    mViewPortHandler.refresh(save, this, false)
+    viewPortHandler.zoom(scaleX, scaleY, center.x, -center.y, save)
+    viewPortHandler.refresh(save, this, false)
   }
 
   /**
@@ -595,18 +594,18 @@ E : Entry {
       duration: Long
   ) {
     val origin =
-        getValuesByTouchPoint(mViewPortHandler.contentLeft(), mViewPortHandler.contentTop(), axis)
+        getValuesByTouchPoint(viewPortHandler.contentLeft(), viewPortHandler.contentTop(), axis)
     val job =
         getInstance(
-            mViewPortHandler,
+            viewPortHandler,
             this,
             getTransformer(axis),
             getAxis(axis!!),
             xAxis.mAxisRange,
             scaleX,
             scaleY,
-            mViewPortHandler.scaleX,
-            mViewPortHandler.scaleY,
+            viewPortHandler.scaleX,
+            viewPortHandler.scaleY,
             xValue,
             yValue,
             origin.x.toFloat(),
@@ -621,8 +620,8 @@ E : Entry {
   /** Resets all zooming and dragging and makes the chart fit exactly it's bounds. */
   fun fitScreen() {
     val save = mFitScreenMatrixBuffer
-    mViewPortHandler.fitScreen(save)
-    mViewPortHandler.refresh(save, this, false)
+    viewPortHandler.fitScreen(save)
+    viewPortHandler.refresh(save, this, false)
     calculateOffsets()
     postInvalidate()
   }
@@ -634,8 +633,8 @@ E : Entry {
    * @param scaleY
    */
   fun setScaleMinima(scaleX: Float, scaleY: Float) {
-    mViewPortHandler.setMinimumScaleX(scaleX)
-    mViewPortHandler.setMinimumScaleY(scaleY)
+    viewPortHandler.setMinimumScaleX(scaleX)
+    viewPortHandler.setMinimumScaleY(scaleY)
   }
 
   /**
@@ -647,7 +646,7 @@ E : Entry {
    */
   open fun setVisibleXRangeMaximum(maxXRange: Float) {
     val xScale = xAxis.mAxisRange / maxXRange
-    mViewPortHandler.setMinimumScaleX(xScale)
+    viewPortHandler.setMinimumScaleX(xScale)
   }
 
   /**
@@ -659,7 +658,7 @@ E : Entry {
    */
   open fun setVisibleXRangeMinimum(minXRange: Float) {
     val xScale = xAxis.mAxisRange / minXRange
-    mViewPortHandler.setMaximumScaleX(xScale)
+    viewPortHandler.setMaximumScaleX(xScale)
   }
 
   /**
@@ -673,7 +672,7 @@ E : Entry {
   open fun setVisibleXRange(minXRange: Float, maxXRange: Float) {
     val minScale = xAxis.mAxisRange / minXRange
     val maxScale = xAxis.mAxisRange / maxXRange
-    mViewPortHandler.setMinMaxScaleX(minScale, maxScale)
+    viewPortHandler.setMinMaxScaleX(minScale, maxScale)
   }
 
   /**
@@ -684,7 +683,7 @@ E : Entry {
    */
   open fun setVisibleYRangeMaximum(maxYRange: Float, axis: AxisDependency) {
     val yScale = getAxisRange(axis) / maxYRange
-    mViewPortHandler.setMinimumScaleY(yScale)
+    viewPortHandler.setMinimumScaleY(yScale)
   }
 
   /**
@@ -696,7 +695,7 @@ E : Entry {
    */
   open fun setVisibleYRangeMinimum(minYRange: Float, axis: AxisDependency) {
     val yScale = getAxisRange(axis) / minYRange
-    mViewPortHandler.setMaximumScaleY(yScale)
+    viewPortHandler.setMaximumScaleY(yScale)
   }
 
   /**
@@ -709,7 +708,7 @@ E : Entry {
   open fun setVisibleYRange(minYRange: Float, maxYRange: Float, axis: AxisDependency) {
     val minScale = getAxisRange(axis) / minYRange
     val maxScale = getAxisRange(axis) / maxYRange
-    mViewPortHandler.setMinMaxScaleY(minScale, maxScale)
+    viewPortHandler.setMinMaxScaleY(minScale, maxScale)
   }
 
   /**
@@ -720,7 +719,7 @@ E : Entry {
    */
   fun moveViewToX(xValue: Float) {
     val job: Runnable =
-        getInstance(mViewPortHandler, xValue, 0f, getTransformer(AxisDependency.LEFT), this)
+        getInstance(viewPortHandler, xValue, 0f, getTransformer(AxisDependency.LEFT), this)
     addViewportJob(job)
   }
 
@@ -735,9 +734,9 @@ E : Entry {
    * - which axis should be used as a reference for the y-axis
    */
   fun moveViewTo(xValue: Float, yValue: Float, axis: AxisDependency) {
-    val yInView = getAxisRange(axis) / mViewPortHandler.scaleY
+    val yInView = getAxisRange(axis) / viewPortHandler.scaleY
     val job: Runnable =
-        getInstance(mViewPortHandler, xValue, yValue + yInView / 2f, getTransformer(axis), this)
+        getInstance(viewPortHandler, xValue, yValue + yInView / 2f, getTransformer(axis), this)
     addViewportJob(job)
   }
 
@@ -753,11 +752,11 @@ E : Entry {
   @TargetApi(11)
   fun moveViewToAnimated(xValue: Float, yValue: Float, axis: AxisDependency, duration: Long) {
     val bounds =
-        getValuesByTouchPoint(mViewPortHandler.contentLeft(), mViewPortHandler.contentTop(), axis)
-    val yInView = getAxisRange(axis) / mViewPortHandler.scaleY
+        getValuesByTouchPoint(viewPortHandler.contentLeft(), viewPortHandler.contentTop(), axis)
+    val yInView = getAxisRange(axis) / viewPortHandler.scaleY
     val job =
         getInstance(
-            mViewPortHandler,
+            viewPortHandler,
             xValue,
             yValue + yInView / 2f,
             getTransformer(axis),
@@ -778,9 +777,9 @@ E : Entry {
    * - which axis should be used as a reference for the y-axis
    */
   fun centerViewToY(yValue: Float, axis: AxisDependency) {
-    val valsInView = getAxisRange(axis) / mViewPortHandler.scaleY
+    val valsInView = getAxisRange(axis) / viewPortHandler.scaleY
     val job =
-        getInstance(mViewPortHandler, 0f, yValue + valsInView / 2f, getTransformer(axis), this)
+        getInstance(viewPortHandler, 0f, yValue + valsInView / 2f, getTransformer(axis), this)
     addViewportJob(job)
   }
 
@@ -794,11 +793,11 @@ E : Entry {
    * - which axis should be used as a reference for the y axis
    */
   fun centerViewTo(xValue: Float, yValue: Float, axis: AxisDependency) {
-    val yInView = getAxisRange(axis) / mViewPortHandler.scaleY
-    val xInView = xAxis.mAxisRange / mViewPortHandler.scaleX
+    val yInView = getAxisRange(axis) / viewPortHandler.scaleY
+    val xInView = xAxis.mAxisRange / viewPortHandler.scaleX
     val job: Runnable =
         getInstance(
-            mViewPortHandler,
+            viewPortHandler,
             xValue - xInView / 2f,
             yValue + yInView / 2f,
             getTransformer(axis),
@@ -817,12 +816,12 @@ E : Entry {
   @TargetApi(11)
   fun centerViewToAnimated(xValue: Float, yValue: Float, axis: AxisDependency, duration: Long) {
     val bounds =
-        getValuesByTouchPoint(mViewPortHandler.contentLeft(), mViewPortHandler.contentTop(), axis)
-    val yInView = getAxisRange(axis) / mViewPortHandler.scaleY
-    val xInView = xAxis.mAxisRange / mViewPortHandler.scaleX
+        getValuesByTouchPoint(viewPortHandler.contentLeft(), viewPortHandler.contentTop(), axis)
+    val yInView = getAxisRange(axis) / viewPortHandler.scaleY
+    val xInView = xAxis.mAxisRange / viewPortHandler.scaleX
     val job =
         getInstance(
-            mViewPortHandler,
+            viewPortHandler,
             xValue - xInView / 2f,
             yValue + yInView / 2f,
             getTransformer(axis),
@@ -851,7 +850,7 @@ E : Entry {
   fun setViewPortOffsets(left: Float, top: Float, right: Float, bottom: Float) {
     mCustomViewPortEnabled = true
     post {
-      mViewPortHandler.restrainViewPort(left, top, right, bottom)
+      viewPortHandler.restrainViewPort(left, top, right, bottom)
       prepareOffsetMatrix()
       prepareValuePxMatrix()
     }
@@ -1079,8 +1078,8 @@ E : Entry {
     get() {
       getTransformer(AxisDependency.LEFT)
           .getValuesByTouchPoint(
-              mViewPortHandler.contentLeft(),
-              mViewPortHandler.contentBottom(),
+              viewPortHandler.contentLeft(),
+              viewPortHandler.contentBottom(),
               posForGetLowestVisibleX)
       return max(xAxis.mAxisMinimum, posForGetLowestVisibleX.x.toFloat())
     }
@@ -1097,8 +1096,8 @@ E : Entry {
     get() {
       getTransformer(AxisDependency.LEFT)
           .getValuesByTouchPoint(
-              mViewPortHandler.contentRight(),
-              mViewPortHandler.contentBottom(),
+              viewPortHandler.contentRight(),
+              viewPortHandler.contentBottom(),
               posForGetHighestVisibleX)
       return min(xAxis.mAxisMaximum, posForGetHighestVisibleX.x.toFloat())
     }
@@ -1113,12 +1112,12 @@ E : Entry {
 
   /** returns the current x-scale factor */
   override fun getScaleX(): Float {
-    return mViewPortHandler.scaleX
+    return viewPortHandler.scaleX
   }
 
   /** returns the current y-scale factor */
   override fun getScaleY(): Float {
-    return mViewPortHandler.scaleY
+    return viewPortHandler.scaleY
   }
 
   /**
@@ -1127,7 +1126,7 @@ E : Entry {
    * @return
    */
   val isFullyZoomedOut: Boolean
-    get() = mViewPortHandler.isFullyZoomedOut
+    get() = viewPortHandler.isFullyZoomedOut
 
   /**
    * Returns the y-axis object to the corresponding AxisDependency. In the horizontal bar-chart,
@@ -1160,7 +1159,7 @@ E : Entry {
    * @param offset
    */
   fun setDragOffsetX(offset: Float) {
-    mViewPortHandler.setDragOffsetX(offset)
+    viewPortHandler.setDragOffsetX(offset)
   }
 
   /**
@@ -1169,7 +1168,7 @@ E : Entry {
    * @param offset
    */
   fun setDragOffsetY(offset: Float) {
-    mViewPortHandler.setDragOffsetY(offset)
+    viewPortHandler.setDragOffsetY(offset)
   }
 
   /**
@@ -1178,7 +1177,7 @@ E : Entry {
    * @return
    */
   fun hasNoDragOffset(): Boolean {
-    return mViewPortHandler.hasNoDragOffset()
+    return viewPortHandler.hasNoDragOffset()
   }
 
   /**
@@ -1230,8 +1229,8 @@ E : Entry {
     mOnSizeChangedBuffer[1] = 0f
     mOnSizeChangedBuffer[0] = mOnSizeChangedBuffer[1]
     if (isKeepPositionOnRotation) {
-      mOnSizeChangedBuffer[0] = mViewPortHandler.contentLeft()
-      mOnSizeChangedBuffer[1] = mViewPortHandler.contentTop()
+      mOnSizeChangedBuffer[0] = viewPortHandler.contentLeft()
+      mOnSizeChangedBuffer[1] = viewPortHandler.contentTop()
       getTransformer(AxisDependency.LEFT).pixelsToValue(mOnSizeChangedBuffer)
     }
 
@@ -1240,9 +1239,9 @@ E : Entry {
     if (isKeepPositionOnRotation) {
       // Restoring old position of chart.
       getTransformer(AxisDependency.LEFT).pointValuesToPixel(mOnSizeChangedBuffer)
-      mViewPortHandler.centerViewPort(mOnSizeChangedBuffer, this)
+      viewPortHandler.centerViewPort(mOnSizeChangedBuffer, this)
     } else {
-      mViewPortHandler.refresh(mViewPortHandler.matrixTouch, this, true)
+      viewPortHandler.refresh(viewPortHandler.matrixTouch, this, true)
     }
   }
 }

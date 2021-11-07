@@ -144,10 +144,14 @@ E : Entry {
   open var xAxis: XAxis = XAxis()
 
   /** if true, touch gestures are enabled on the chart */
-  protected var mTouchEnabled = true
+  protected var isTouchEnabled = true
 
-  /** the object responsible for representing the description text */
-  protected var mDescription: Description? = Description()
+  /**
+   * Returns the Description object of the chart that is responsible for holding all information
+   * related to the description text that is displayed in the bottom right corner of the chart (by
+   * default).
+   */
+  protected var description: Description? = Description()
 
   /** the legend object containing all data associated with the legend */
   protected var mLegend: Legend = Legend()
@@ -191,10 +195,14 @@ E : Entry {
   /** Gesture listener for custom callbacks when making gestures on the chart. */
   private var mGestureListener: OnChartGestureListener? = null
 
-  /** object that manages the bounds and drawing constraints of the chart */
-  protected var mViewPortHandler = ViewPortHandler()
+  /**
+   * Returns the ViewPortHandler of the chart that is responsible for the content area of the chart
+   * and its offsets and dimensions.
+   */
+  val viewPortHandler = ViewPortHandler()
 
-  protected var mLegendRenderer: LegendRenderer = LegendRenderer(mViewPortHandler, mLegend)
+  /** Returns the renderer object responsible for rendering / drawing the Legend. */
+  val legendRenderer: LegendRenderer = LegendRenderer(viewPortHandler, mLegend)
 
   /** object responsible for rendering the data */
   protected abstract val dataRenderer: DataRenderer
@@ -320,7 +328,7 @@ E : Entry {
   /** Draws the description text in the bottom right corner of the chart (per default) */
   protected open fun drawDescription(c: Canvas) {
     // check if description should be drawn
-    val description = mDescription ?: return
+    val description = description ?: return
     if (description.isEnabled) {
       mDescPaint.typeface = description.typeface
       mDescPaint.textSize = description.textSize
@@ -329,8 +337,8 @@ E : Entry {
 
       // if no position specified, draw on default position
       val position = description.position
-      val x = position?.x ?: width - mViewPortHandler.offsetRight() - description.xOffset
-      val y = position?.y ?: height - mViewPortHandler.offsetBottom() - description.yOffset
+      val x = position?.x ?: width - viewPortHandler.offsetRight() - description.xOffset
+      val y = position?.y ?: height - viewPortHandler.offsetBottom() - description.yOffset
 
       c.drawText(description.text, x, y, mDescPaint)
     }
@@ -506,7 +514,7 @@ E : Entry {
       val pos = getMarkerPosition(highlight)
 
       // check bounds
-      if (!mViewPortHandler.isInBounds(pos[0], pos[1])) return@forEachIndexed
+      if (!viewPortHandler.isInBounds(pos[0], pos[1])) return@forEachIndexed
 
       // callbacks to update the content
       mMarker!!.refreshContent(e, highlight)
@@ -712,7 +720,7 @@ E : Entry {
   }
 
   override val centerOffsets: MPPointF?
-    get() = mViewPortHandler.contentCenter
+    get() = viewPortHandler.contentCenter
 
   /**
    * Sets extra offsets (around the chart view) to be appended to the auto-calculated offsets.
@@ -786,15 +794,6 @@ E : Entry {
   }
 
   /**
-   * Set this to false to disable all gestures and touches on the chart, default: true
-   *
-   * @param enabled
-   */
-  open fun setTouchEnabled(enabled: Boolean) {
-    mTouchEnabled = enabled
-  }
-
-  /**
    * sets the marker that is displayed when a value is clicked on the chart
    *
    * @param marker
@@ -823,26 +822,6 @@ E : Entry {
   }
 
   /**
-   * Sets a new Description object for the chart.
-   *
-   * @param desc
-   */
-  open fun setDescription(desc: Description?) {
-    mDescription = desc
-  }
-
-  /**
-   * Returns the Description object of the chart that is responsible for holding all information
-   * related to the description text that is displayed in the bottom right corner of the chart (by
-   * default).
-   *
-   * @return
-   */
-  open fun getDescription(): Description? {
-    return mDescription
-  }
-
-  /**
    * Returns the Legend object of the chart. This method can be used to get an instance of the
    * legend in order to customize the automatically generated Legend.
    *
@@ -852,17 +831,8 @@ E : Entry {
     return mLegend
   }
 
-  /**
-   * Returns the renderer object responsible for rendering / drawing the Legend.
-   *
-   * @return
-   */
-  open fun getLegendRenderer(): LegendRenderer? {
-    return mLegendRenderer
-  }
-
   override val contentRect: RectF?
-    get() = mViewPortHandler.contentRect
+    get() = viewPortHandler.contentRect
 
   /** disables intercept touchevents */
   open fun disableScroll() {
@@ -931,16 +901,6 @@ E : Entry {
    */
   open fun setDrawMarkers(enabled: Boolean) {
     mDrawMarkers = enabled
-  }
-
-  /**
-   * Returns the ViewPortHandler of the chart that is responsible for the content area of the chart
-   * and its offsets and dimensions.
-   *
-   * @return
-   */
-  open fun getViewPortHandler(): ViewPortHandler? {
-    return mViewPortHandler
   }
 
   override val centerOfView: MPPointF?
@@ -1091,7 +1051,7 @@ E : Entry {
    * @param job
    */
   open fun addViewportJob(job: Runnable) {
-    if (mViewPortHandler.hasChartDimens()) {
+    if (viewPortHandler.hasChartDimens()) {
       post(job)
     } else {
       mJobs.add(job)
@@ -1125,7 +1085,7 @@ E : Entry {
     if (mLogEnabled) Log.i(TAG, "OnSizeChanged()")
     if ((w > 0) && (h > 0) && (w < 10000) && (h < 10000)) {
       if (mLogEnabled) Log.i(TAG, "Setting chart dimens, width: $w, height: $h")
-      mViewPortHandler.setChartDimens(w.toFloat(), h.toFloat())
+      viewPortHandler.setChartDimens(w.toFloat(), h.toFloat())
     } else {
       if (mLogEnabled) Log.w(TAG, "*Avoiding* setting chart dimens! width: $w, height: $h")
     }

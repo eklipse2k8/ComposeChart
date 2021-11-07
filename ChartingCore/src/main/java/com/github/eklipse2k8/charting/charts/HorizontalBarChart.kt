@@ -18,7 +18,6 @@ import com.github.eklipse2k8.charting.renderer.YAxisRendererHorizontalBarChart
 import com.github.eklipse2k8.charting.utils.MPPointF
 import com.github.eklipse2k8.charting.utils.TransformerHorizontalBarChart
 import com.github.eklipse2k8.charting.utils.Utils.convertDpToPixel
-import com.github.eklipse2k8.charting.utils.ViewPortHandler
 import kotlin.math.max
 import kotlin.math.min
 
@@ -37,20 +36,19 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     BarChart(context, attrs, defStyleAttr) {
 
   override val dataRenderer: DataRenderer =
-      HorizontalBarChartRenderer(this, mAnimator, mViewPortHandler)
+      HorizontalBarChartRenderer(this, mAnimator, viewPortHandler)
 
   override val highlighter = HorizontalBarHighlighter(this)
 
   init {
-    mViewPortHandler = ViewPortHandler()
-    mLeftAxisTransformer = TransformerHorizontalBarChart(mViewPortHandler)
-    mRightAxisTransformer = TransformerHorizontalBarChart(mViewPortHandler)
+    mLeftAxisTransformer = TransformerHorizontalBarChart(viewPortHandler)
+    mRightAxisTransformer = TransformerHorizontalBarChart(viewPortHandler)
     rendererLeftYAxis =
-        YAxisRendererHorizontalBarChart(mViewPortHandler, axisLeft!!, mLeftAxisTransformer)
+        YAxisRendererHorizontalBarChart(viewPortHandler, axisLeft!!, mLeftAxisTransformer)
     rendererRightYAxis =
-        YAxisRendererHorizontalBarChart(mViewPortHandler, axisRight!!, mRightAxisTransformer)
+        YAxisRendererHorizontalBarChart(viewPortHandler, axisRight!!, mRightAxisTransformer)
     rendererXAxis =
-        XAxisRendererHorizontalBarChart(mViewPortHandler, xAxis, mLeftAxisTransformer!!, this)
+        XAxisRendererHorizontalBarChart(viewPortHandler, xAxis, mLeftAxisTransformer!!, this)
   }
 
   private val mOffsetsBuffer = RectF()
@@ -67,22 +65,22 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
             LegendHorizontalAlignment.LEFT ->
                 offsets.left +=
                     (mLegend.mNeededWidth.coerceAtMost(
-                        mViewPortHandler.chartWidth * mLegend.maxSizePercent) + mLegend.xOffset)
+                        viewPortHandler.chartWidth * mLegend.maxSizePercent) + mLegend.xOffset)
             LegendHorizontalAlignment.RIGHT ->
                 offsets.right +=
                     (mLegend.mNeededWidth.coerceAtMost(
-                        mViewPortHandler.chartWidth * mLegend.maxSizePercent) + mLegend.xOffset)
+                        viewPortHandler.chartWidth * mLegend.maxSizePercent) + mLegend.xOffset)
             LegendHorizontalAlignment.CENTER ->
                 when (mLegend.verticalAlignment) {
                   LegendVerticalAlignment.TOP ->
                       offsets.top +=
                           (mLegend.mNeededHeight.coerceAtMost(
-                              mViewPortHandler.chartHeight * mLegend.maxSizePercent) +
+                              viewPortHandler.chartHeight * mLegend.maxSizePercent) +
                               mLegend.yOffset)
                   LegendVerticalAlignment.BOTTOM ->
                       offsets.bottom +=
                           (mLegend.mNeededHeight.coerceAtMost(
-                              mViewPortHandler.chartHeight * mLegend.maxSizePercent) +
+                              viewPortHandler.chartHeight * mLegend.maxSizePercent) +
                               mLegend.yOffset)
                   else -> Unit
                 }
@@ -92,7 +90,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
             LegendVerticalAlignment.TOP -> {
               offsets.top +=
                   (mLegend.mNeededHeight.coerceAtMost(
-                      mViewPortHandler.chartHeight * mLegend.maxSizePercent) + mLegend.yOffset)
+                      viewPortHandler.chartHeight * mLegend.maxSizePercent) + mLegend.yOffset)
               if (axisLeft!!.isEnabled && axisLeft!!.isDrawLabelsEnabled)
                   offsets.top +=
                       axisLeft!!.getRequiredHeightSpace(rendererLeftYAxis!!.paintAxisLabels)
@@ -100,7 +98,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
             LegendVerticalAlignment.BOTTOM -> {
               offsets.bottom +=
                   (mLegend.mNeededHeight.coerceAtMost(
-                      mViewPortHandler.chartHeight * mLegend.maxSizePercent) + mLegend.yOffset)
+                      viewPortHandler.chartHeight * mLegend.maxSizePercent) + mLegend.yOffset)
               if (axisRight!!.isEnabled && axisRight!!.isDrawLabelsEnabled)
                   offsets.bottom +=
                       axisRight!!.getRequiredHeightSpace(rendererRightYAxis!!.paintAxisLabels)
@@ -146,7 +144,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     offsetBottom += extraBottomOffset
     offsetLeft += extraLeftOffset
     val minOffset = convertDpToPixel(minOffset)
-    mViewPortHandler.restrainViewPort(
+    viewPortHandler.restrainViewPort(
         max(minOffset, offsetLeft),
         max(minOffset, offsetTop),
         max(minOffset, offsetRight),
@@ -162,7 +160,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
               offsetRight +
               ", offsetBottom: " +
               offsetBottom)
-      Log.i(TAG, "Content: " + mViewPortHandler.contentRect.toString())
+      Log.i(TAG, "Content: " + viewPortHandler.contentRect.toString())
     }
     prepareOffsetMatrix()
     prepareValuePxMatrix()
@@ -233,8 +231,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     get() {
       getTransformer(AxisDependency.LEFT)
           .getValuesByTouchPoint(
-              mViewPortHandler.contentLeft(),
-              mViewPortHandler.contentBottom(),
+              viewPortHandler.contentLeft(),
+              viewPortHandler.contentBottom(),
               posForGetLowestVisibleX)
       return max(xAxis.mAxisMinimum, posForGetLowestVisibleX.y.toFloat())
     }
@@ -242,42 +240,40 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     get() {
       getTransformer(AxisDependency.LEFT)
           .getValuesByTouchPoint(
-              mViewPortHandler.contentLeft(),
-              mViewPortHandler.contentTop(),
-              posForGetHighestVisibleX)
+              viewPortHandler.contentLeft(), viewPortHandler.contentTop(), posForGetHighestVisibleX)
       return min(xAxis.mAxisMaximum, posForGetHighestVisibleX.y.toFloat())
     }
 
   /** ###### VIEWPORT METHODS BELOW THIS ###### */
   override fun setVisibleXRangeMaximum(maxXRange: Float) {
     val xScale = xAxis.mAxisRange / maxXRange
-    mViewPortHandler.setMinimumScaleY(xScale)
+    viewPortHandler.setMinimumScaleY(xScale)
   }
 
   override fun setVisibleXRangeMinimum(minXRange: Float) {
     val xScale = xAxis.mAxisRange / minXRange
-    mViewPortHandler.setMaximumScaleY(xScale)
+    viewPortHandler.setMaximumScaleY(xScale)
   }
 
   override fun setVisibleXRange(minXRange: Float, maxXRange: Float) {
     val minScale = xAxis.mAxisRange / minXRange
     val maxScale = xAxis.mAxisRange / maxXRange
-    mViewPortHandler.setMinMaxScaleY(minScale, maxScale)
+    viewPortHandler.setMinMaxScaleY(minScale, maxScale)
   }
 
   override fun setVisibleYRangeMaximum(maxYRange: Float, axis: AxisDependency) {
     val yScale = getAxisRange(axis) / maxYRange
-    mViewPortHandler.setMinimumScaleX(yScale)
+    viewPortHandler.setMinimumScaleX(yScale)
   }
 
   override fun setVisibleYRangeMinimum(minYRange: Float, axis: AxisDependency) {
     val yScale = getAxisRange(axis) / minYRange
-    mViewPortHandler.setMaximumScaleX(yScale)
+    viewPortHandler.setMaximumScaleX(yScale)
   }
 
   override fun setVisibleYRange(minYRange: Float, maxYRange: Float, axis: AxisDependency) {
     val minScale = getAxisRange(axis) / minYRange
     val maxScale = getAxisRange(axis) / maxYRange
-    mViewPortHandler.setMinMaxScaleX(minScale, maxScale)
+    viewPortHandler.setMinMaxScaleX(minScale, maxScale)
   }
 }

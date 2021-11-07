@@ -33,7 +33,7 @@ class PieChart
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     PieRadarChartBase<PieData, IPieDataSet, PieEntry>(context, attrs, defStyleAttr) {
 
-  override val dataRenderer: DataRenderer = PieChartRenderer(this, mAnimator, mViewPortHandler)
+  override val dataRenderer: DataRenderer = PieChartRenderer(this, mAnimator, viewPortHandler)
 
   /**
    * returns the circlebox, the boundingbox of the pie-chart slices
@@ -175,7 +175,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     if (valuesToHighlight()) dataRenderer.drawHighlighted(canvas, mIndicesToHighlight)
     dataRenderer.drawExtras(canvas)
     dataRenderer.drawValues(canvas)
-    mLegendRenderer.renderLegend(canvas)
+    legendRenderer.renderLegend(canvas)
     drawDescription(canvas)
     drawMarkers(canvas)
   }
@@ -382,7 +382,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   override val requiredLegendOffset: Float
-    get() = mLegendRenderer.labelPaint.textSize * 2f
+    get() = legendRenderer.labelPaint.textSize * 2f
 
   override val requiredBaseOffset: Float
     get() = 0f
