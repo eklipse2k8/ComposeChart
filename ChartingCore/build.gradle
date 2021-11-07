@@ -4,7 +4,7 @@ plugins {
     id('kotlin-parcelize')
 }
 
-group = 'com.github.philjay'
+group = 'com.github.eklipse2k8'
 
 android {
     compileSdkVersion 31

@@ -3,7 +3,6 @@ package com.github.mikephil.charting.components
 import android.graphics.Color
 import android.graphics.DashPathEffect
 import android.graphics.Paint
-import com.github.mikephil.charting.components.LimitLine.LimitLabelPosition
 import com.github.mikephil.charting.utils.Utils
 
 /**

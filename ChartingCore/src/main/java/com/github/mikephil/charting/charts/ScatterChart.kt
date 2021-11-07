@@ -6,7 +6,6 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.ScatterData
 import com.github.mikephil.charting.interfaces.dataprovider.ScatterDataProvider
 import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet
-import com.github.mikephil.charting.renderer.CombinedChartRenderer
 import com.github.mikephil.charting.renderer.DataRenderer
 import com.github.mikephil.charting.renderer.ScatterChartRenderer
 

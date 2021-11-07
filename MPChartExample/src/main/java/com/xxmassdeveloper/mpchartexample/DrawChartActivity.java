@@ -11,7 +11,6 @@ import android.view.WindowManager;
 
 import androidx.core.content.ContextCompat;
 
-import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;

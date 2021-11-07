@@ -8,7 +8,6 @@ import android.view.VelocityTracker
 import android.view.View
 import android.view.animation.AnimationUtils
 import com.github.mikephil.charting.charts.BarLineChartBase
-import com.github.mikephil.charting.charts.HorizontalBarChart
 import com.github.mikephil.charting.data.BarLineScatterCandleBubbleData
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.interfaces.datasets.IBarLineScatterCandleBubbleDataSet
