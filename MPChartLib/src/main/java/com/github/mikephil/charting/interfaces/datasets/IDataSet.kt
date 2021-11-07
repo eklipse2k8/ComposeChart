@@ -4,47 +4,29 @@ import android.graphics.DashPathEffect
 import android.graphics.Typeface
 import com.github.mikephil.charting.components.Legend.LegendForm
 import com.github.mikephil.charting.components.YAxis.AxisDependency
-import com.github.mikephil.charting.data.DataSet.Rounding
+import com.github.mikephil.charting.data.Rounding
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.formatter.IValueFormatter
 import com.github.mikephil.charting.utils.MPPointF
 
 /** Created by Philipp Jahoda on 21/10/15. */
 interface IDataSet<E : Entry> {
-  /** ###### ###### DATA RELATED METHODS ###### ###### */
-  /**
-   * returns the minimum y-value this DataSet holds
-   *
-   * @return
-   */
+
+  /** returns the minimum y-value this DataSet holds */
   val yMin: Float
 
-  /**
-   * returns the maximum y-value this DataSet holds
-   *
-   * @return
-   */
+  /** returns the maximum y-value this DataSet holds */
   val yMax: Float
 
-  /**
-   * returns the minimum x-value this DataSet holds
-   *
-   * @return
-   */
+  /** returns the minimum x-value this DataSet holds */
   val xMin: Float
 
-  /**
-   * returns the maximum x-value this DataSet holds
-   *
-   * @return
-   */
+  /** returns the maximum x-value this DataSet holds */
   val xMax: Float
 
   /**
    * Returns the number of y-values this DataSet represents -> the size of the y-values array ->
    * yvals.size()
-   *
-   * @return
    */
   val entryCount: Int
 
@@ -125,7 +107,7 @@ interface IDataSet<E : Entry> {
    * @param e
    * @return
    */
-  fun getEntryIndex(e: E): Int
+  fun getEntryIndex(entry: E): Int
 
   /**
    * This method returns the actual index in the Entry array of the DataSet for a given xIndex.
@@ -141,18 +123,18 @@ interface IDataSet<E : Entry> {
    * Adds an Entry to the DataSet dynamically. Entries are added to the end of the list. This will
    * also recalculate the current minimum and maximum values of the DataSet and the value-sum.
    *
-   * @param e
+   * @param entry
    */
-  fun addEntry(e: E): Boolean
+  fun addEntry(entry: E): Boolean
 
   /**
    * Adds an Entry to the DataSet dynamically. Entries are added to their appropriate index in the
    * values array respective to their x-position. This will also recalculate the current minimum and
    * maximum values of the DataSet and the value-sum.
    *
-   * @param e
+   * @param entry
    */
-  fun addEntryOrdered(e: E)
+  fun addEntryOrdered(entry: E)
 
   /**
    * Removes the first Entry (at index 0) of this DataSet from the entries array. Returns true if
@@ -175,9 +157,9 @@ interface IDataSet<E : Entry> {
    * minimum and maximum values of the DataSet and the value-sum. Returns true if an Entry was
    * removed, false if no Entry could be removed.
    *
-   * @param e
+   * @param entry
    */
-  fun removeEntry(e: E): Boolean
+  fun removeEntry(entry: E): Boolean
 
   /**
    * Removes the Entry object closest to the given x-value from the DataSet. Returns true if an
@@ -207,42 +189,19 @@ interface IDataSet<E : Entry> {
 
   /** Removes all values from this DataSet and does all necessary recalculations. */
   fun clear()
-  /** ###### ###### STYLING RELATED (& OTHER) METHODS ###### ###### */
-  /**
-   * Returns the label string that describes the DataSet.
-   *
-   * @return
-   */
-  /**
-   * Sets the label string that describes the DataSet.
-   *
-   * @param label
-   */
+
+  /** the label string that describes the DataSet. */
   var label: String?
-  /**
-   * Returns the axis this DataSet should be plotted against.
-   *
-   * @return
-   */
-  /**
-   * Set the y-axis this DataSet should be plotted against (either LEFT or RIGHT). Default: LEFT
-   *
-   * @param dependency
-   */
+
+  /** the axis this DataSet should be plotted against. (either LEFT or RIGHT). Default: LEFT */
   var axisDependency: AxisDependency?
 
-  /**
-   * returns all the colors that are set for this DataSet
-   *
-   * @return
-   */
+  /** returns all the colors that are set for this DataSet */
   val colors: MutableList<Int>
 
   /**
    * Returns the first color (index 0) of the colors-array this DataSet contains. This is only used
    * for performance reasons when only one color is in the colors array (size == 1)
-   *
-   * @return
    */
   val color: Int
 
@@ -251,42 +210,24 @@ interface IDataSet<E : Entry> {
    * check by modulus.
    *
    * @param index
-   * @return
    */
   fun getColor(index: Int): Int
 
   /**
-   * returns true if highlighting of values is enabled, false if not
-   *
-   * @return
-   */
-  /**
    * If set to true, value highlighting is enabled which means that values can be highlighted
    * programmatically or by touch gesture.
-   *
-   * @param enabled
    */
   var isHighlightEnabled: Boolean
-  /**
-   * Returns the formatter used for drawing the values inside the chart.
-   *
-   * @return
-   */
+
   /**
    * Sets the formatter to be used for drawing the values inside the chart. If no formatter is set,
    * the chart will automatically determine a reasonable formatting (concerning decimals) for all
    * the values that are drawn inside the chart. Use chart.getDefaultValueFormatter() to use the
    * formatter calculated by the chart.
-   *
-   * @param f
    */
   var valueFormatter: IValueFormatter?
 
-  /**
-   * Returns true if the valueFormatter object of this DataSet is null.
-   *
-   * @return
-   */
+  /** Returns true if the valueFormatter object of this DataSet is null. */
   fun needsFormatter(): Boolean
 
   /**
@@ -296,16 +237,7 @@ interface IDataSet<E : Entry> {
    */
   fun setValueTextColors(colors: List<Int>)
 
-  /**
-   * Returns only the first color of all colors that are set to be used for the values.
-   *
-   * @return
-   */
-  /**
-   * Sets the color the value-labels of this DataSet should have.
-   *
-   * @param color
-   */
+  /** Sets the color the value-labels of this DataSet should have. */
   var valueTextColor: Int
 
   /**
@@ -316,27 +248,11 @@ interface IDataSet<E : Entry> {
    * @return
    */
   fun getValueTextColor(index: Int): Int
-  /**
-   * Returns the typeface that is used for drawing the values inside the chart
-   *
-   * @return
-   */
-  /**
-   * Sets a Typeface for the value-labels of this DataSet.
-   *
-   * @param tf
-   */
+
+  /** the typeface that is used for drawing the values inside the chart */
   var valueTypeface: Typeface?
-  /**
-   * Returns the text size that is used for drawing the values inside the chart
-   *
-   * @return
-   */
-  /**
-   * Sets the text-size of the value-labels of this DataSet in dp.
-   *
-   * @param size
-   */
+
+  /** Sets the text-size of the value-labels of this DataSet in dp. */
   var valueTextSize: Float
 
   /**

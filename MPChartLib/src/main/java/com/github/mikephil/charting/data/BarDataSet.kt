@@ -18,30 +18,16 @@ class BarDataSet(yVals: MutableList<BarEntry>, label: String?) :
    * Sets the color used for drawing the bar-shadows. The bar shadows is a surface behind the bar
    * that indicates the maximum value. Don't for get to use getResources().getColor(...) to set
    * this. Or Color.rgb(...).
-   *
-   * @param color
    */
-  /** the color used for drawing the bar shadows */
   override var barShadowColor = Color.rgb(215, 215, 215)
+
   /**
    * Returns the width used for drawing borders around the bars. If borderWidth == 0, no border will
    * be drawn.
-   *
-   * @return
-   */
-  /**
-   * Sets the width used for drawing borders around the bars. If borderWidth == 0, no border will be
-   * drawn.
-   *
-   * @return
    */
   override var barBorderWidth = 0.0f
 
-  /**
-   * Returns the color drawing borders around the bars.
-   *
-   * @return
-   */
+  /** Returns the color drawing borders around the bars. */
   override var barBorderColor = Color.BLACK
 
   /** the alpha value used to draw the highlight indicator bar */
@@ -54,20 +40,35 @@ class BarDataSet(yVals: MutableList<BarEntry>, label: String?) :
   /** array of labels used to describe the different values of the stacked bars */
   override var stackLabels = arrayOf<String>()
 
-  protected var mFills: MutableList<Fill>? = null
+  private val mutableFills: MutableList<Fill> = mutableListOf()
+
+  override val isStacked: Boolean
+    get() = stackSize > 1
+
+  /** Sets the fills for the bars in this dataset. */
+  override var fills: List<Fill>
+    get() = mutableFills.toList()
+    set(value) {
+      mutableFills.clear()
+      mutableFills.addAll(value)
+    }
+
+  init {
+    highLightColor = Color.rgb(0, 0, 0)
+    calcStackSize(yVals)
+    calcEntryCountIncludingStacks(yVals)
+  }
 
   override fun copy(): DataSet<BarEntry> {
     val entries: MutableList<BarEntry> = mutableListOf()
-    mEntries?.forEach {
-      entries.add(it.copy())
-    }
+    mutableEntries.forEach { entries.add(it.copy()) }
     val copied = BarDataSet(entries, label)
-    copy(copied)
+    copyTo(copied)
     return copied
   }
 
-  protected fun copy(barDataSet: BarDataSet) {
-    super.copy(barDataSet)
+  private fun copyTo(barDataSet: BarDataSet) {
+    super.copyTo(barDataSet)
     barDataSet.stackSize = stackSize
     barDataSet.barShadowColor = barShadowColor
     barDataSet.barBorderWidth = barBorderWidth
@@ -75,98 +76,44 @@ class BarDataSet(yVals: MutableList<BarEntry>, label: String?) :
     barDataSet.highLightAlpha = highLightAlpha
   }
 
-  override val fills: List<Fill>?
-    get() = mFills
-
-  override fun getFill(index: Int): Fill? {
-    return mFills!![index % mFills!!.size]
-  }
-
-  /** This method is deprecated. Use getFills() instead. */
-  @get:Deprecated("")
-  val gradients: List<Fill>?
-    get() = mFills
-
-  /**
-   * This method is deprecated. Use getFill(...) instead.
-   *
-   * @param index
-   */
-  @Deprecated("")
-  fun getGradient(index: Int): Fill? {
-    return getFill(index)
-  }
-
-  /**
-   * Sets the start and end color for gradient color, ONLY color that should be used for this
-   * DataSet.
-   *
-   * @param startColor
-   * @param endColor
-   */
-  fun setGradientColor(startColor: Int, endColor: Int) {
-    mFills!!.clear()
-    mFills!!.add(Fill(startColor, endColor))
-  }
-
-  /**
-   * This method is deprecated. Use setFills(...) instead.
-   *
-   * @param gradientColors
-   */
-  @Deprecated("")
-  fun setGradientColors(gradientColors: MutableList<Fill>?) {
-    mFills = gradientColors
-  }
-
-  /**
-   * Sets the fills for the bars in this dataset.
-   *
-   * @param fills
-   */
-  fun setFills(fills: MutableList<Fill>?) {
-    mFills = fills
+  override fun getFill(index: Int): Fill {
+    return mutableFills[index % mutableFills.size]
   }
 
   /**
    * Calculates the total number of entries this DataSet represents, including stacks. All values
    * belonging to a stack are calculated separately.
    */
-  private fun calcEntryCountIncludingStacks(yVals: List<BarEntry?>) {
+  private fun calcEntryCountIncludingStacks(yVals: List<BarEntry>) {
     entryCountStacks = 0
-    for (i in yVals.indices) {
-      val vals = yVals[i]!!.yVals
-      if (vals == null) entryCountStacks++ else entryCountStacks += vals.size
+    yVals.forEach { entry ->
+      val vals = entry.yVals
+      if (vals == null) {
+        entryCountStacks++
+      } else {
+        entryCountStacks += vals.size
+      }
     }
   }
 
   /** calculates the maximum stacksize that occurs in the Entries array of this DataSet */
-  private fun calcStackSize(yVals: List<BarEntry?>) {
-    for (i in yVals.indices) {
-      val vals = yVals[i]!!.yVals
+  private fun calcStackSize(yVals: List<BarEntry>) {
+    yVals.forEach { entry ->
+      val vals = entry.yVals
       if (vals != null && vals.size > stackSize) stackSize = vals.size
     }
   }
 
-  override fun calcMinMax(e: BarEntry?) {
-    if (e != null && !e.y.isNaN()) {
-      if (e.yVals == null) {
-        if (e.y < yMin) yMin = e.y
-        if (e.y > yMax) yMax = e.y
+  override fun calcMinMax(entry: BarEntry) {
+    if (!entry.y.isNaN()) {
+      if (entry.yVals == null) {
+        if (entry.y < yMin) yMin = entry.y
+        if (entry.y > yMax) yMax = entry.y
       } else {
-        if (-e.negativeSum < yMin) yMin = -e.negativeSum
-        if (e.positiveSum > yMax) yMax = e.positiveSum
+        if (-entry.negativeSum < yMin) yMin = -entry.negativeSum
+        if (entry.positiveSum > yMax) yMax = entry.positiveSum
       }
-      super.calcMinMax(e)
+      super.calcMinMax(entry)
     }
-  }
-
-  override val isStacked: Boolean
-    get() = stackSize > 1
-
-  init {
-    highLightColor = Color.rgb(0, 0, 0)
-    calcStackSize(yVals)
-    calcEntryCountIncludingStacks(yVals)
   }
 }

@@ -55,14 +55,14 @@ class ScatterDataSet(yVals: MutableList<Entry>, label: String) :
 
   override fun copy(): DataSet<Entry> {
     val entries = mutableListOf<Entry>()
-    mEntries?.forEach { entry -> entries.add(entry.copy()!!) }
+    mutableEntries?.forEach { entry -> entries.add(entry.copy()!!) }
     val copied = ScatterDataSet(entries, label!!)
     copy(copied)
     return copied
   }
 
   private fun copy(scatterDataSet: ScatterDataSet) {
-    super.copy(scatterDataSet)
+    super.copyTo(scatterDataSet)
     scatterDataSet.scatterShapeSize = scatterShapeSize
     scatterDataSet.shapeRenderer = shapeRenderer
     scatterDataSet.scatterShapeHoleRadius = scatterShapeHoleRadius

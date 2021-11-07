@@ -18,7 +18,7 @@ class ScatterData : BarLineScatterCandleBubbleData<IScatterDataSet, Entry> {
   val greatestShapeSize: Float
     get() {
       var max = 0f
-      for (set in mDataSets) {
+      for (set in dataSets) {
         val size = set.scatterShapeSize
         if (size > max) max = size
       }

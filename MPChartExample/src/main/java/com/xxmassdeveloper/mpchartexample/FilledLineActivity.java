@@ -102,8 +102,12 @@ public class FilledLineActivity extends DemoBase {
                 chart.getData().getDataSetCount() > 0) {
             set1 = (LineDataSet) chart.getData().getDataSetByIndex(0);
             set2 = (LineDataSet) chart.getData().getDataSetByIndex(1);
-            set1.setValues(values1);
-            set2.setValues(values2);
+            if (set1 != null) {
+                set1.setEntries(values1);
+            }
+            if (set2 != null) {
+                set2.setEntries(values2);
+            }
             chart.getData().notifyDataChanged();
             chart.notifyDataSetChanged();
         } else {

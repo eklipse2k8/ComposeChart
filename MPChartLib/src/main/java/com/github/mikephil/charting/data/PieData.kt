@@ -1,6 +1,5 @@
 package com.github.mikephil.charting.data
 
-import android.util.Log
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.IPieDataSet
 
@@ -15,35 +14,15 @@ import com.github.mikephil.charting.interfaces.datasets.IPieDataSet
 class PieData : ChartData<IPieDataSet, PieEntry> {
 
   constructor() : super()
-
   constructor(dataSet: IPieDataSet) : super(dataSet)
 
-  /**
-   * Returns the DataSet this PieData object represents. A PieData object can only contain one
-   * DataSet.
-   *
-   * @return
-   */
-  /**
-   * Sets the PieDataSet this data object should represent.
-   *
-   * @param dataSet
-   */
+  /** Sets the PieDataSet this data object should represent. */
   var dataSet: IPieDataSet
-    get() = mDataSets[0]
+    get() = dataSets[0]
     set(dataSet) {
-      mDataSets.clear()
-      mDataSets.add(dataSet)
+      mutableDataSets.clear()
+      mutableDataSets.add(dataSet)
       notifyDataChanged()
-    }
-
-  override val dataSets: List<IPieDataSet>
-    get() {
-      val sets = super.dataSets
-      if (sets.isEmpty()) {
-        Log.e("MPAndroidChart", "Found multiple data sets while pie chart only allows one")
-      }
-      return sets
     }
 
   /**
@@ -58,19 +37,15 @@ class PieData : ChartData<IPieDataSet, PieEntry> {
 
   override fun getDataSetByLabel(label: String, ignorecase: Boolean): IPieDataSet? {
     return if (ignorecase)
-        (if (label.equals(mDataSets[0].label, ignoreCase = true)) mDataSets[0] else null)!!
-    else (if (label == mDataSets[0].label) mDataSets[0] else null)!!
+        (if (label.equals(dataSets[0].label, ignoreCase = true)) dataSets[0] else null)!!
+    else (if (label == dataSets[0].label) dataSets[0] else null)!!
   }
 
   override fun getEntryForHighlight(highlight: Highlight): PieEntry {
     return dataSet.getEntryForIndex(highlight.x.toInt())
   }
 
-  /**
-   * Returns the sum of all values in this PieData object.
-   *
-   * @return
-   */
+  /** Returns the sum of all values in this PieData object. */
   val yValueSum: Float
     get() {
       var sum = 0f

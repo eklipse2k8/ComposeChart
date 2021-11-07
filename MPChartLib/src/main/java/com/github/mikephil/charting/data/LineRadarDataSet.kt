@@ -70,8 +70,8 @@ abstract class LineRadarDataSet<T : Entry>(yVals: MutableList<T>, label: String?
     isDrawFilledEnabled = filled
   }
 
-  protected fun copy(lineRadarDataSet: LineRadarDataSet<*>) {
-    super.copy(lineRadarDataSet)
+  protected fun copyTo(lineRadarDataSet: LineRadarDataSet<*>) {
+    super.copyTo(lineRadarDataSet)
     lineRadarDataSet.isDrawFilledEnabled = isDrawFilledEnabled
     lineRadarDataSet.fillAlpha = fillAlpha
     lineRadarDataSet.mFillColor = mFillColor

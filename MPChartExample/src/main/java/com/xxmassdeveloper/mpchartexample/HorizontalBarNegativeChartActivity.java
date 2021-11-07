@@ -136,7 +136,9 @@ public class HorizontalBarNegativeChartActivity extends DemoBase implements OnSe
         if (chart.getData() != null &&
                 chart.getData().getDataSetCount() > 0) {
             set1 = (BarDataSet) chart.getData().getDataSetByIndex(0);
-            set1.setValues(values);
+            if (set1 != null) {
+                set1.setEntries(values);
+            }
             chart.getData().notifyDataChanged();
             chart.notifyDataSetChanged();
         } else {

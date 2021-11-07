@@ -193,8 +193,10 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
         if (chart.getData() != null &&
                 chart.getData().getDataSetCount() > 0) {
             set1 = (LineDataSet) chart.getData().getDataSetByIndex(0);
-            set1.setValues(values);
-            set1.notifyDataSetChanged();
+            if (set1 != null) {
+                set1.setEntries(values);
+                set1.notifyDataSetChanged();
+            }
             chart.getData().notifyDataChanged();
             chart.notifyDataSetChanged();
         } else {

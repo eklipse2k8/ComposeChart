@@ -24,18 +24,18 @@ class RadarDataSet(yVals: MutableList<RadarEntry>, label: String) :
   override var highlightCircleOuterRadius = 4.0f
   override var highlightCircleStrokeWidth = 2.0f
 
-  override fun getEntryIndex(e: RadarEntry): Int = super.getEntryIndex(e)
+  override fun getEntryIndex(entry: RadarEntry): Int = super.getEntryIndex(entry)
 
   override fun copy(): DataSet<RadarEntry> {
     val entries = mutableListOf<RadarEntry>()
-    mEntries?.forEach { entry -> entries.add(entry.copy()) }
+    mutableEntries?.forEach { entry -> entries.add(entry.copy()) }
     val copied = RadarDataSet(entries, label!!)
     copy(copied)
     return copied
   }
 
   private fun copy(radarDataSet: RadarDataSet) {
-    super.copy(radarDataSet)
+    super.copyTo(radarDataSet)
     radarDataSet.isDrawHighlightCircleEnabled = isDrawHighlightCircleEnabled
     radarDataSet.highlightCircleFillColor = highlightCircleFillColor
     radarDataSet.highlightCircleInnerRadius = highlightCircleInnerRadius

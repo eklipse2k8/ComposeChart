@@ -3,7 +3,7 @@ package com.github.mikephil.charting.highlight
 import androidx.annotation.Nullable
 import com.github.mikephil.charting.components.YAxis.AxisDependency
 import com.github.mikephil.charting.data.BarLineScatterCandleBubbleData
-import com.github.mikephil.charting.data.DataSet.Rounding
+import com.github.mikephil.charting.data.Rounding
 import com.github.mikephil.charting.interfaces.dataprovider.BarLineScatterCandleBubbleDataProvider
 import com.github.mikephil.charting.interfaces.datasets.IDataSet
 import com.github.mikephil.charting.utils.MPPointD

@@ -2,7 +2,7 @@ package com.github.mikephil.charting.highlight
 
 import androidx.annotation.NonNull
 import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.DataSet
+import com.github.mikephil.charting.data.Rounding
 import com.github.mikephil.charting.interfaces.dataprovider.BarDataProvider
 import com.github.mikephil.charting.interfaces.dataprovider.CombinedDataProvider
 
@@ -35,7 +35,7 @@ class CombinedHighlighter(chart: CombinedDataProvider, @NonNull barChart: BarDat
             j++
             continue
           }
-          val highs = buildHighlights(dataSet, j, xVal, DataSet.Rounding.CLOSEST)
+          val highs = buildHighlights(dataSet, j, xVal, Rounding.CLOSEST)
           for (high in highs!!) {
             high.dataIndex = i
             mHighlightBuffer.add(high)

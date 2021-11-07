@@ -14,9 +14,6 @@ abstract class LineScatterCandleRadarDataSet<T : Entry>(yVals: MutableList<T>, l
   override var isHorizontalHighlightIndicatorEnabled = true
     protected set
 
-  /** the width of the highlight indicator lines */
-  protected var mHighlightLineWidth = 0.5f
-
   /** the path effect for dashed highlight-lines */
   override var dashPathEffectHighlight: DashPathEffect? = null
     protected set
@@ -50,11 +47,11 @@ abstract class LineScatterCandleRadarDataSet<T : Entry>(yVals: MutableList<T>, l
    * Sets the width of the highlight line in dp.
    * @param width
    */
-  override var highlightLineWidth: Float
-    get() = mHighlightLineWidth
-    set(width) {
-      mHighlightLineWidth = convertDpToPixel(width)
-    }
+  override var highlightLineWidth: Float = convertDpToPixel(0.5f)
+
+  fun setHighlighLineWidthPixel(width: Float) {
+    highlightLineWidth = convertDpToPixel(width)
+  }
 
   /**
    * Enables the highlight-line to be drawn in dashed mode, e.g. like this "- - - - - -"
@@ -81,17 +78,11 @@ abstract class LineScatterCandleRadarDataSet<T : Entry>(yVals: MutableList<T>, l
   val isDashedHighlightLineEnabled: Boolean
     get() = dashPathEffectHighlight != null
 
-  protected fun copy(lineScatterCandleRadarDataSet: LineScatterCandleRadarDataSet<*>) {
-    super.copy(lineScatterCandleRadarDataSet)
-    lineScatterCandleRadarDataSet.isHorizontalHighlightIndicatorEnabled =
-        isHorizontalHighlightIndicatorEnabled
-    lineScatterCandleRadarDataSet.isVerticalHighlightIndicatorEnabled =
-        isVerticalHighlightIndicatorEnabled
-    lineScatterCandleRadarDataSet.mHighlightLineWidth = mHighlightLineWidth
-    lineScatterCandleRadarDataSet.dashPathEffectHighlight = dashPathEffectHighlight
-  }
-
-  init {
-    mHighlightLineWidth = convertDpToPixel(0.5f)
+  protected fun copyTo(dataSet: LineScatterCandleRadarDataSet<*>) {
+    super.copyTo(dataSet)
+    dataSet.isHorizontalHighlightIndicatorEnabled = isHorizontalHighlightIndicatorEnabled
+    dataSet.isVerticalHighlightIndicatorEnabled = isVerticalHighlightIndicatorEnabled
+    dataSet.highlightLineWidth = highlightLineWidth
+    dataSet.dashPathEffectHighlight = dashPathEffectHighlight
   }
 }

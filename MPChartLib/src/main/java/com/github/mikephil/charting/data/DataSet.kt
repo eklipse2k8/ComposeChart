@@ -8,11 +8,17 @@ import kotlin.math.abs
  * the values for a specific line in the LineChart, or the values of a specific group of bars in the
  * BarChart).
  *
+ * Creates a new DataSet object with the given values (entries) it represents. Also, a label that
+ * describes the DataSet can be specified. The label can also be used to retrieve the DataSet from a
+ * ChartData object.
+ *
+ * @param mutableEntries the entries that this DataSet represents / holds together
+ * @param label
+ *
  * @author Philipp Jahoda
  */
 abstract class DataSet<E : Entry>(
-    /** the entries that this DataSet represents / holds together */
-    protected var mEntries: MutableList<E>?,
+    protected var mutableEntries: MutableList<E> = mutableListOf(),
     label: String?
 ) : BaseDataSet<E>(label) {
 
@@ -32,40 +38,42 @@ abstract class DataSet<E : Entry>(
   override var xMin = Float.MAX_VALUE
     protected set
 
+  override val entryCount: Int
+    get() = mutableEntries.size
+
+  init {
+    calcMinMax()
+  }
+
   override fun calcMinMax() {
     yMax = -Float.MAX_VALUE
     yMin = Float.MAX_VALUE
     xMax = -Float.MAX_VALUE
     xMin = Float.MAX_VALUE
-    if (mEntries == null || mEntries!!.isEmpty()) return
-    for (e in mEntries!!) {
-      calcMinMax(e)
-    }
+    mutableEntries.forEach { calcMinMax(it) }
   }
 
   override fun calcMinMaxY(fromX: Float, toX: Float) {
     yMax = -Float.MAX_VALUE
     yMin = Float.MAX_VALUE
-    if (mEntries == null || mEntries!!.isEmpty()) return
+    if (mutableEntries.isEmpty()) return
     val indexFrom = getEntryIndex(fromX, Float.NaN, Rounding.DOWN)
     val indexTo = getEntryIndex(toX, Float.NaN, Rounding.UP)
     if (indexTo < indexFrom) return
     for (i in indexFrom..indexTo) {
-
       // only recalculate y
-      calcMinMaxY(mEntries!![i])
+      calcMinMaxY(mutableEntries[i])
     }
   }
 
   /**
    * Updates the min and max x and y value of this DataSet based on the given Entry.
    *
-   * @param e
+   * @param entry
    */
-  protected open fun calcMinMax(e: E?) {
-    if (e == null) return
-    calcMinMaxX(e)
-    calcMinMaxY(e)
+  protected open fun calcMinMax(entry: E) {
+    calcMinMaxX(entry)
+    calcMinMaxY(entry)
   }
 
   protected fun calcMinMaxX(e: E) {
@@ -78,39 +86,18 @@ abstract class DataSet<E : Entry>(
     if (e.y > yMax) yMax = e.y
   }
 
-  override val entryCount: Int
-    get() = mEntries!!.size
-
-  /**
-   * This method is deprecated. Use getEntries() instead.
-   *
-   * @return
-   */
-  @get:Deprecated("")
-  val values: List<E>?
-    get() = mEntries
-
   /**
    * Returns the array of entries that this DataSet represents.
    *
    * @return
    */
-  var entries: MutableList<E>?
-    get() = mEntries
-    set(entries) {
-      mEntries = entries
+  var entries: List<E>
+    get() = mutableEntries.toList()
+    set(value) {
+      mutableEntries.clear()
+      mutableEntries.addAll(value)
       notifyDataSetChanged()
     }
-
-  /**
-   * This method is deprecated. Use setEntries(...) instead.
-   *
-   * @param values
-   */
-  @Deprecated("")
-  fun setValues(values: MutableList<E>?) {
-    mEntries = values
-  }
 
   /**
    * Provides an exact copy of the DataSet this method is used on.
@@ -119,81 +106,54 @@ abstract class DataSet<E : Entry>(
    */
   abstract fun copy(): DataSet<E>
 
-  protected fun copy(dataSet: DataSet<*>) {
-    super.copy(dataSet)
+  protected fun copyTo(dataSet: DataSet<*>) {
+    super.copyTo(dataSet)
   }
 
-  override fun toString(): String {
-    val buffer = StringBuffer()
-    buffer.append(toSimpleString())
-    for (i in mEntries!!.indices) {
-      buffer.append(mEntries!![i].toString() + " ")
-    }
-    return buffer.toString()
-  }
+  override fun toString(): String = mutableEntries.joinToString(" ")
 
   /**
    * Returns a simple string representation of the DataSet with the type and the number of Entries.
    *
    * @return
    */
-  fun toSimpleString(): String {
-    val buffer = StringBuffer()
-    buffer.append(
-        """
-  DataSet, label: ${if (label == null) "" else label}, entries: ${mEntries!!.size}
-  
-  """.trimIndent())
-    return buffer.toString()
-  }
+  fun toSimpleString(): String = "DataSet, label: $label, entries: $entryCount"
 
-  override fun addEntryOrdered(e: E) {
-    if (mEntries == null) {
-      mEntries = ArrayList()
-    }
-    calcMinMax(e)
-    if (mEntries!!.size > 0 && mEntries!![mEntries!!.size - 1].x > e.x) {
-      val closestIndex = getEntryIndex(e.x, e.y, Rounding.UP)
-      mEntries!!.add(closestIndex, e)
+  override fun addEntryOrdered(entry: E) {
+    calcMinMax(entry)
+    if (mutableEntries.size > 0 && mutableEntries[entryCount - 1].x > entry.x) {
+      val closestIndex = getEntryIndex(entry.x, entry.y, Rounding.UP)
+      mutableEntries.add(closestIndex, entry)
     } else {
-      mEntries!!.add(e)
+      mutableEntries.add(entry)
     }
   }
 
   override fun clear() {
-    mEntries!!.clear()
+    mutableEntries.clear()
     notifyDataSetChanged()
   }
 
-  override fun addEntry(e: E): Boolean {
-    var values = mEntries
-    if (values == null) {
-      values = ArrayList()
-    }
-    calcMinMax(e)
-
+  override fun addEntry(entry: E): Boolean {
+    calcMinMax(entry)
     // add the entry
-    return values.add(e)
+    return mutableEntries.add(entry)
   }
 
-  override fun removeEntry(e: E): Boolean {
-    if (mEntries == null) return false
-
+  override fun removeEntry(entry: E): Boolean {
     // remove the entry
-    val removed = mEntries!!.remove(e)
+    val removed = mutableEntries.remove(entry)
     if (removed) {
       calcMinMax()
     }
     return removed
   }
 
-  override fun getEntryIndex(e: E): Int {
-    return mEntries!!.indexOf(e)
-  }
+  override fun getEntryIndex(entry: E): Int = mutableEntries.indexOf(entry)
 
   override fun getEntryForXValue(xValue: Float, closestToY: Float, rounding: Rounding?): E? {
     val index = getEntryIndex(xValue, closestToY, rounding)
-    return if (index > -1) mEntries!![index] else null
+    return if (index > -1) mutableEntries[index] else null
   }
 
   override fun getEntryForXValue(xValue: Float, closestToY: Float): E? {
@@ -201,18 +161,18 @@ abstract class DataSet<E : Entry>(
   }
 
   override fun getEntryForIndex(index: Int): E {
-    return mEntries!![index]
+    return mutableEntries[index]
   }
 
   override fun getEntryIndex(xValue: Float, closestToY: Float, rounding: Rounding?): Int {
-    if (mEntries == null || mEntries!!.isEmpty()) return -1
+    if (mutableEntries.isEmpty()) return -1
     var low = 0
-    var high = mEntries!!.size - 1
+    var high = mutableEntries.size - 1
     var closest = high
     while (low < high) {
       val m = (low + high) / 2
-      val d1 = mEntries!![m].x - xValue
-      val d2 = mEntries!![m + 1].x - xValue
+      val d1 = mutableEntries[m].x - xValue
+      val d2 = mutableEntries[m + 1].x - xValue
       val ad1 = abs(d1)
       val ad2 = abs(d2)
       if (ad2 < ad1) {
@@ -236,10 +196,10 @@ abstract class DataSet<E : Entry>(
       closest = high
     }
     if (closest != -1) {
-      val closestXValue = mEntries!![closest].x
+      val closestXValue = mutableEntries[closest].x
       if (rounding == Rounding.UP) {
         // If rounding up, and found x-value is lower than specified x, and we can go upper...
-        if (closestXValue < xValue && closest < mEntries!!.size - 1) {
+        if (closestXValue < xValue && closest < mutableEntries.size - 1) {
           ++closest
         }
       } else if (rounding == Rounding.DOWN) {
@@ -250,14 +210,14 @@ abstract class DataSet<E : Entry>(
       }
 
       // Search by closest to y-value
-      if (!java.lang.Float.isNaN(closestToY)) {
-        while (closest > 0 && mEntries!![closest - 1].x == closestXValue) closest -= 1
-        var closestYValue = mEntries!![closest].y
+      if (!closestToY.isNaN()) {
+        while (closest > 0 && mutableEntries[closest - 1].x == closestXValue) closest -= 1
+        var closestYValue = mutableEntries[closest].y
         var closestYIndex = closest
         while (true) {
           closest += 1
-          if (closest >= mEntries!!.size) break
-          val value: Entry = mEntries!![closest]
+          if (closest >= mutableEntries.size) break
+          val value: Entry = mutableEntries[closest]
           if (value.x != closestXValue) break
           if (abs(value.y - closestToY) <= abs(closestYValue - closestToY)) {
             closestYValue = closestToY
@@ -270,22 +230,22 @@ abstract class DataSet<E : Entry>(
     return closest
   }
 
-  override fun getEntriesForXValue(xValue: Float): List<E>? {
-    val entries: MutableList<E> = ArrayList()
+  override fun getEntriesForXValue(xValue: Float): List<E> {
+    val entries = mutableListOf<E>()
     var low = 0
-    var high = mEntries!!.size - 1
+    var high = entryCount - 1
     while (low <= high) {
       var m = (high + low) / 2
-      var entry = mEntries!![m]
+      var entry = mutableEntries[m]
 
       // if we have a match
       if (xValue == entry.x) {
-        while (m > 0 && mEntries!![m - 1].x == xValue) m--
-        high = mEntries!!.size
+        while (m > 0 && mutableEntries[m - 1].x == xValue) m--
+        high = entryCount
 
         // loop over all "equal" entries
         while (m < high) {
-          entry = mEntries!![m]
+          entry = mutableEntries[m]
           if (entry.x == xValue) {
             entries.add(entry)
           } else {
@@ -298,29 +258,6 @@ abstract class DataSet<E : Entry>(
         if (xValue > entry.x) low = m + 1 else high = m - 1
       }
     }
-    return entries
-  }
-
-  /**
-   * Determines how to round DataSet index values for [DataSet.getEntryIndex]
-   * DataSet.getEntryIndex()} when an exact x-index is not found.
-   */
-  enum class Rounding {
-    UP,
-    DOWN,
-    CLOSEST
-  }
-
-  /**
-   * Creates a new DataSet object with the given values (entries) it represents. Also, a label that
-   * describes the DataSet can be specified. The label can also be used to retrieve the DataSet from
-   * a ChartData object.
-   *
-   * @param entries
-   * @param label
-   */
-  init {
-    if (mEntries == null) mEntries = mutableListOf()
-    calcMinMax()
+    return entries.toList()
   }
 }

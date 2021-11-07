@@ -1,6 +1,6 @@
 package com.github.mikephil.charting.highlight
 
-import com.github.mikephil.charting.data.DataSet.Rounding
+import com.github.mikephil.charting.data.Rounding
 import com.github.mikephil.charting.interfaces.dataprovider.BarDataProvider
 import com.github.mikephil.charting.interfaces.datasets.IDataSet
 import com.github.mikephil.charting.utils.MPPointD

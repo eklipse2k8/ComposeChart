@@ -1,8 +1,8 @@
 package com.github.mikephil.charting.renderer
 
 import com.github.mikephil.charting.animation.ChartAnimator
-import com.github.mikephil.charting.data.DataSet
 import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.Rounding
 import com.github.mikephil.charting.interfaces.dataprovider.BarLineScatterCandleBubbleDataProvider
 import com.github.mikephil.charting.interfaces.datasets.IBarLineScatterCandleBubbleDataSet
 import com.github.mikephil.charting.interfaces.datasets.IDataSet
@@ -72,8 +72,8 @@ abstract class BarLineScatterCandleBubbleRenderer(
       val phaseX = max(0f, min(1f, mAnimator.phaseX))
       val low = chart.lowestVisibleX
       val high = chart.highestVisibleX
-      val entryFrom = dataSet.getEntryForXValue(low, Float.NaN, DataSet.Rounding.DOWN)
-      val entryTo = dataSet.getEntryForXValue(high, Float.NaN, DataSet.Rounding.UP)
+      val entryFrom = dataSet.getEntryForXValue(low, Float.NaN, Rounding.DOWN)
+      val entryTo = dataSet.getEntryForXValue(high, Float.NaN, Rounding.UP)
       if (entryFrom != null) {
         min = dataSet.getEntryIndex(entryFrom)
       }

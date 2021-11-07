@@ -19,9 +19,9 @@ class BubbleDataSet(yVals: MutableList<BubbleEntry>, label: String?) :
       mHighlightCircleWidth = convertDpToPixel(width)
     }
 
-  override fun calcMinMax(e: BubbleEntry?) {
-    super.calcMinMax(e)
-    val size = e!!.size
+  override fun calcMinMax(entry: BubbleEntry) {
+    super.calcMinMax(entry)
+    val size = entry!!.size
     if (size > maxSize) {
       maxSize = size
     }
@@ -29,7 +29,7 @@ class BubbleDataSet(yVals: MutableList<BubbleEntry>, label: String?) :
 
   override fun copy(): DataSet<BubbleEntry> {
     val entries = mutableListOf<BubbleEntry>()
-    mEntries?.forEach {
+    mutableEntries?.forEach {
       entries.add(it.copy())
     }
     val copied = BubbleDataSet(entries, label)

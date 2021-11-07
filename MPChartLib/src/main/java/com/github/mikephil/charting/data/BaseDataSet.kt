@@ -49,9 +49,13 @@ abstract class BaseDataSet<E : Entry>(
 
   /** the typeface used for the value text */
   override var valueTypeface: Typeface? = null
+
   override var form = LegendForm.DEFAULT
+
   override var formSize = Float.NaN
+
   override var formLineWidth = Float.NaN
+
   override var formLineDashEffect: DashPathEffect? = null
 
   /** if true, y-values are drawn on the chart */
@@ -203,7 +207,6 @@ abstract class BaseDataSet<E : Entry>(
       mIconsOffset.y = offsetDp?.y ?: 0f
     }
 
-  /** ###### ###### DATA RELATED METHODS ###### ###### */
   override fun getIndexInEntries(xIndex: Int): Int {
     for (i in 0 until entryCount) {
       if (xIndex == getEntryForIndex(i).x.roundToInt()) return i
@@ -242,7 +245,7 @@ abstract class BaseDataSet<E : Entry>(
     return false
   }
 
-  protected fun copy(baseDataSet: BaseDataSet<*>) {
+  protected fun copyTo(baseDataSet: BaseDataSet<*>) {
     baseDataSet.axisDependency = axisDependency
     baseDataSet.colors = colors
     baseDataSet.isDrawIconsEnabled = isDrawIconsEnabled

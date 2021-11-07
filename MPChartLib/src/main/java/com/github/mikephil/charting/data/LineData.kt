@@ -7,11 +7,10 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
  *
  * @author Philipp Jahoda
  */
-class LineData : BarLineScatterCandleBubbleData<ILineDataSet, Entry> {
+class LineData
+@JvmOverloads
+constructor(mutableDataSets: MutableList<ILineDataSet> = mutableListOf()) :
+    BarLineScatterCandleBubbleData<ILineDataSet, Entry>(mutableDataSets) {
 
-  constructor() : super()
-
-  constructor(vararg dataSets: ILineDataSet) : super(*dataSets)
-
-  constructor(dataSets: MutableList<ILineDataSet>) : super(dataSets)
+  constructor(vararg dataSets: ILineDataSet) : this(dataSets.toMutableList())
 }

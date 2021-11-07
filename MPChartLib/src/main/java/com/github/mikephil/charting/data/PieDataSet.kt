@@ -47,19 +47,19 @@ class PieDataSet(yVals: MutableList<PieEntry>, label: String) :
 
   override fun copy(): DataSet<PieEntry> {
     val entries = mutableListOf<PieEntry>()
-    mEntries?.forEach { entry -> entries.add(entry.copy()) }
+    mutableEntries?.forEach { entry -> entries.add(entry.copy()) }
     val copied = PieDataSet(entries, label!!)
     copy(copied)
     return copied
   }
 
   private fun copy(pieDataSet: PieDataSet) {
-    super.copy(pieDataSet)
+    super.copyTo(pieDataSet)
   }
 
-  override fun calcMinMax(e: PieEntry?) {
-    if (e == null) return
-    calcMinMaxY(e)
+  override fun calcMinMax(entry: PieEntry) {
+    if (entry == null) return
+    calcMinMaxY(entry)
   }
 
   /**

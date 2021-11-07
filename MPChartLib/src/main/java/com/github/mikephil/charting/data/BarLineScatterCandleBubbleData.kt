@@ -7,12 +7,10 @@ import com.github.mikephil.charting.interfaces.datasets.IBarLineScatterCandleBub
  *
  * @author Philipp Jahoda
  */
-abstract class BarLineScatterCandleBubbleData<T, E> : ChartData<T, E> where
-T : IBarLineScatterCandleBubbleDataSet<E>,
-E : Entry {
-  constructor() : super()
+abstract class BarLineScatterCandleBubbleData<T, E>
+@JvmOverloads
+constructor(mutableDataSets: MutableList<T> = mutableListOf()) :
+    ChartData<T, E>(mutableDataSets) where T : IBarLineScatterCandleBubbleDataSet<E>, E : Entry {
 
-  constructor(vararg sets: T) : super(*sets)
-
-  constructor(sets: MutableList<T>) : super(sets)
+  constructor(vararg sets: T) : this(sets.toMutableList())
 }

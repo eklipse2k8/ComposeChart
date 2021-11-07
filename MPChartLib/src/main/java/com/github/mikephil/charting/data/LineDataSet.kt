@@ -47,14 +47,14 @@ class LineDataSet(yVals: MutableList<Entry>, label: String?) :
 
   override fun copy(): DataSet<Entry> {
     val entries = mutableListOf<Entry>()
-    mEntries?.forEach { entry -> entries.add(entry.copy()!!) }
+    mutableEntries?.forEach { entry -> entries.add(entry.copy()!!) }
     val copied = LineDataSet(entries, label)
     copy(copied)
     return copied
   }
 
   private fun copy(lineDataSet: LineDataSet) {
-    super.copy(lineDataSet)
+    super.copyTo(lineDataSet)
     lineDataSet.mCircleColors = mCircleColors
     lineDataSet.circleHoleColor = circleHoleColor
     lineDataSet.mCircleHoleRadius = mCircleHoleRadius
