@@ -12,6 +12,7 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.dataprovider.BarDataProvider
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.renderer.BarChartRenderer
+import com.github.mikephil.charting.renderer.DataRenderer
 
 private val TAG = BarChart::class.java.simpleName
 
@@ -41,25 +42,31 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private var mFitBars = false
 
+  override val dataRenderer: DataRenderer = BarChartRenderer(this, mAnimator, mViewPortHandler)
+
+  override val highlighter = BarHighlighter(this)
+
   init {
-    mRenderer = BarChartRenderer(this, mAnimator, mViewPortHandler)
-    setHighlighter(BarHighlighter(this))
     xAxis.spaceMin = 0.5f
     xAxis.spaceMax = 0.5f
   }
 
   override fun calcMinMax() {
+    val localData = data ?: return
+
     if (mFitBars) {
-      xAxis.calculate(data!!.xMin - data!!.barWidth / 2f, data!!.xMax + data!!.barWidth / 2f)
+      xAxis.calculate(
+          localData.xMin - localData.barWidth / 2f, localData.xMax + localData.barWidth / 2f)
     } else {
-      xAxis.calculate(data!!.xMin, data!!.xMax)
+      xAxis.calculate(localData.xMin, localData.xMax)
     }
 
     // calculate axis range (min / max) according to provided data
     axisLeft?.calculate(
-        data!!.getYMin(YAxis.AxisDependency.LEFT), data!!.getYMax(YAxis.AxisDependency.LEFT))
+        localData.getYMin(YAxis.AxisDependency.LEFT), localData.getYMax(YAxis.AxisDependency.LEFT))
     axisRight?.calculate(
-        data!!.getYMin(YAxis.AxisDependency.RIGHT), data!!.getYMax(YAxis.AxisDependency.RIGHT))
+        localData.getYMin(YAxis.AxisDependency.RIGHT),
+        localData.getYMax(YAxis.AxisDependency.RIGHT))
   }
 
   /**
@@ -75,9 +82,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       Log.e(TAG, "Can't select by touch. No data set.")
       null
     } else {
-      val h = getHighlighter()?.getHighlight(x, y)
+      val h = highlighter.getHighlight(x, y)
       if (h == null || !isHighlightFullBarEnabled) h!!
-      else Highlight(h.x, h.y, h.xPx, h.yPx, h.dataSetIndex, -1, h.axis)
+      else Highlight(h.x, h.y, h.xPx, h.yPx, h.dataSetIndex, h.axis, -1)
     }
   }
 

@@ -10,7 +10,7 @@ import kotlin.math.abs
 /** Created by Philipp Jahoda on 22/07/15. */
 class HorizontalBarHighlighter(chart: BarDataProvider) : BarHighlighter(chart) {
   override fun getHighlight(x: Float, y: Float): Highlight? {
-    val barData = mChart.barData
+    val barData = chartView.barData
     val pos = getValsForTouch(y, x)
     val high = getHighlightForX(pos.y.toFloat(), y, x) ?: return null
     val set = barData?.getDataSetByIndex(high.dataSetIndex)
@@ -36,7 +36,7 @@ class HorizontalBarHighlighter(chart: BarDataProvider) : BarHighlighter(chart) {
     }
     if (entries.isNullOrEmpty()) return highlights
     for (e in entries) {
-      val pixels = mChart.getTransformer(set.axisDependency).getPixelForValues(e.y, e.x)
+      val pixels = chartView.getTransformer(set.axisDependency).getPixelForValues(e.y, e.x)
       highlights.add(
           Highlight(
               e.x, e.y, pixels.x.toFloat(), pixels.y.toFloat(), dataSetIndex, set.axisDependency))

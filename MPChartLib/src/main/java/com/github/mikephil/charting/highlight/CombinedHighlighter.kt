@@ -13,8 +13,8 @@ class CombinedHighlighter(chart: CombinedDataProvider, @NonNull barChart: BarDat
   protected val barHighlighter: BarHighlighter = BarHighlighter(barChart)
 
   override fun getHighlightsAtXValue(xVal: Float, x: Float, y: Float): List<Highlight> {
-    mHighlightBuffer.clear()
-    val dataObjects = mChart.combinedData?.allData
+    highlightBuffer.clear()
+    val dataObjects = chartView.combinedData?.allData
     dataObjects?.forEachIndexed { i, dataObject ->
 
       // in case of BarData, let the BarHighlighter take over
@@ -22,7 +22,7 @@ class CombinedHighlighter(chart: CombinedDataProvider, @NonNull barChart: BarDat
         val high = barHighlighter.getHighlight(x, y)
         if (high != null) {
           high.dataIndex = i
-          mHighlightBuffer.add(high)
+          highlightBuffer.add(high)
         }
       } else {
         var j = 0
@@ -38,12 +38,12 @@ class CombinedHighlighter(chart: CombinedDataProvider, @NonNull barChart: BarDat
           val highs = buildHighlights(dataSet, j, xVal, Rounding.CLOSEST)
           for (high in highs!!) {
             high.dataIndex = i
-            mHighlightBuffer.add(high)
+            highlightBuffer.add(high)
           }
           j++
         }
       }
     }
-    return mHighlightBuffer
+    return highlightBuffer
   }
 }

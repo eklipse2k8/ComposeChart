@@ -25,7 +25,6 @@ import com.github.mikephil.charting.data.ChartData
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.formatter.DefaultValueFormatter
 import com.github.mikephil.charting.formatter.IValueFormatter
-import com.github.mikephil.charting.highlight.ChartHighlighter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.highlight.IHighlighter
 import com.github.mikephil.charting.interfaces.dataprovider.ChartInterface
@@ -70,12 +69,16 @@ val PAINT_CENTER_TEXT = 14
 val PAINT_LEGEND_LABEL = 18
 
 abstract class Chart<T, S, E>
-@JvmOverloads
-constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
-    ViewGroup(context, attrs, defStyleAttr), ChartInterface where
+constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+) : ViewGroup(context, attrs, defStyleAttr), ChartInterface where
 T : ChartData<S, E>,
 S : IDataSet<E>,
 E : Entry {
+
+  protected abstract val highlighter: IHighlighter
 
   /** flag that indicates if logging is enabled or not */
   protected var mLogEnabled = false
@@ -96,7 +99,7 @@ E : Entry {
       setupDefaultFormatter(value.yMin, value.yMax)
       value.dataSets.forEach { set ->
         if (set.needsFormatter() || set.valueFormatter === mDefaultValueFormatter)
-          set.valueFormatter = mDefaultValueFormatter
+            set.valueFormatter = mDefaultValueFormatter
       }
 
       // let the chart know there is new data
@@ -194,9 +197,7 @@ E : Entry {
   protected var mLegendRenderer: LegendRenderer = LegendRenderer(mViewPortHandler, mLegend)
 
   /** object responsible for rendering the data */
-  protected var mRenderer: DataRenderer? = null
-
-  protected var mHighlighter: IHighlighter? = null
+  protected abstract val dataRenderer: DataRenderer
 
   /** object responsible for animations */
   protected var mAnimator: ChartAnimator = ChartAnimator { postInvalidate() }
@@ -487,7 +488,7 @@ E : Entry {
    * @return
    */
   open fun getHighlightByTouchPoint(x: Float, y: Float): Highlight? =
-      data?.let { getHighlighter()?.getHighlight(x, y) }
+      data?.let { highlighter.getHighlight(x, y) }
 
   /** draws all MarkerViews on the highlighted positions */
   protected open fun drawMarkers(canvas: Canvas) {
@@ -940,38 +941,6 @@ E : Entry {
    */
   open fun getViewPortHandler(): ViewPortHandler? {
     return mViewPortHandler
-  }
-
-  /**
-   * Returns the Renderer object the chart uses for drawing data.
-   *
-   * @return
-   */
-  open fun getRenderer(): DataRenderer? {
-    return mRenderer
-  }
-
-  /**
-   * Sets a new DataRenderer object for the chart.
-   *
-   * @param renderer
-   */
-  open fun setRenderer(renderer: DataRenderer?) {
-    if (renderer != null) mRenderer = renderer
-  }
-
-  open fun getHighlighter(): IHighlighter? {
-    return mHighlighter
-  }
-
-  /**
-   * Sets a custom highligher object for the chart that handles / processes all highlight touch
-   * events performed on the chart-view.
-   *
-   * @param highlighter
-   */
-  open fun setHighlighter(highlighter: ChartHighlighter<*>) {
-    mHighlighter = highlighter
   }
 
   override val centerOfView: MPPointF?

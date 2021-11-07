@@ -31,7 +31,7 @@ class RadarHighlighter(chart: RadarChart) : PieRadarHighlighter<RadarChart>(char
    * @param index
    * @return
    */
-  protected fun getHighlightsAtIndex(index: Int): List<Highlight> {
+  private fun getHighlightsAtIndex(index: Int): List<Highlight> {
     mHighlightBuffer.clear()
     val phaseX = mChart.getAnimator().phaseX
     val phaseY = mChart.getAnimator().phaseY

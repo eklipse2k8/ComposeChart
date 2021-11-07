@@ -21,7 +21,7 @@ class BubbleDataSet(yVals: MutableList<BubbleEntry>, label: String?) :
 
   override fun calcMinMax(entry: BubbleEntry) {
     super.calcMinMax(entry)
-    val size = entry!!.size
+    val size = entry.size
     if (size > maxSize) {
       maxSize = size
     }
@@ -29,9 +29,7 @@ class BubbleDataSet(yVals: MutableList<BubbleEntry>, label: String?) :
 
   override fun copy(): DataSet<BubbleEntry> {
     val entries = mutableListOf<BubbleEntry>()
-    mutableEntries?.forEach {
-      entries.add(it.copy())
-    }
+    mutableEntries.forEach { entries.add(it.copy()) }
     val copied = BubbleDataSet(entries, label)
     copy(copied)
     return copied

@@ -2,15 +2,19 @@ package com.github.mikephil.charting.data
 
 import com.github.mikephil.charting.charts.ScatterChart.ScatterShape
 import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet
-import com.github.mikephil.charting.renderer.scatter.ChevronDownShapeRenderer
-import com.github.mikephil.charting.renderer.scatter.ChevronUpShapeRenderer
-import com.github.mikephil.charting.renderer.scatter.CircleShapeRenderer
-import com.github.mikephil.charting.renderer.scatter.CrossShapeRenderer
-import com.github.mikephil.charting.renderer.scatter.IShapeRenderer
-import com.github.mikephil.charting.renderer.scatter.SquareShapeRenderer
-import com.github.mikephil.charting.renderer.scatter.TriangleShapeRenderer
-import com.github.mikephil.charting.renderer.scatter.XShapeRenderer
+import com.github.mikephil.charting.renderer.scatter.*
 import com.github.mikephil.charting.utils.ColorTemplate
+
+fun getRendererForShape(shape: ScatterShape): IShapeRenderer =
+    when (shape) {
+      ScatterShape.SQUARE -> SquareShapeRenderer()
+      ScatterShape.CIRCLE -> CircleShapeRenderer()
+      ScatterShape.TRIANGLE -> TriangleShapeRenderer()
+      ScatterShape.CROSS -> CrossShapeRenderer()
+      ScatterShape.X -> XShapeRenderer()
+      ScatterShape.CHEVRON_UP -> ChevronUpShapeRenderer()
+      ScatterShape.CHEVRON_DOWN -> ChevronDownShapeRenderer()
+    }
 
 class ScatterDataSet(yVals: MutableList<Entry>, label: String) :
     LineScatterCandleRadarDataSet<Entry>(yVals, label), IScatterDataSet {
@@ -55,13 +59,13 @@ class ScatterDataSet(yVals: MutableList<Entry>, label: String) :
 
   override fun copy(): DataSet<Entry> {
     val entries = mutableListOf<Entry>()
-    mutableEntries?.forEach { entry -> entries.add(entry.copy()!!) }
+    mutableEntries.forEach { entry -> entries.add(entry.copy()!!) }
     val copied = ScatterDataSet(entries, label!!)
-    copy(copied)
+    copyTo(copied)
     return copied
   }
 
-  private fun copy(scatterDataSet: ScatterDataSet) {
+  private fun copyTo(scatterDataSet: ScatterDataSet) {
     super.copyTo(scatterDataSet)
     scatterDataSet.scatterShapeSize = scatterShapeSize
     scatterDataSet.shapeRenderer = shapeRenderer
@@ -75,22 +79,7 @@ class ScatterDataSet(yVals: MutableList<Entry>, label: String) :
    *
    * @param shape
    */
-  fun setScatterShape(shape: ScatterShape?) {
+  fun setScatterShape(shape: ScatterShape) {
     shapeRenderer = getRendererForShape(shape)
-  }
-
-  companion object {
-    fun getRendererForShape(shape: ScatterShape?): IShapeRenderer? {
-      when (shape) {
-        ScatterShape.SQUARE -> return SquareShapeRenderer()
-        ScatterShape.CIRCLE -> return CircleShapeRenderer()
-        ScatterShape.TRIANGLE -> return TriangleShapeRenderer()
-        ScatterShape.CROSS -> return CrossShapeRenderer()
-        ScatterShape.X -> return XShapeRenderer()
-        ScatterShape.CHEVRON_UP -> return ChevronUpShapeRenderer()
-        ScatterShape.CHEVRON_DOWN -> return ChevronDownShapeRenderer()
-      }
-      return null
-    }
   }
 }

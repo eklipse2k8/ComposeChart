@@ -31,38 +31,38 @@ class BarData : BarLineScatterCandleBubbleData<IBarDataSet, BarEntry> {
    * width 1f
    */
   fun groupBars(fromX: Float, groupSpace: Float, barSpace: Float) {
-    var fromX = fromX
-    val setCount = dataSets.size
-    if (setCount <= 1) {
-      throw RuntimeException("BarData needs to hold at least 2 BarDataSets to allow grouping.")
+    if (dataSetCount <= 1) {
+      throw IllegalArgumentException(
+          "BarData needs to hold at least 2 BarDataSets to allow grouping.")
     }
     val max = maxEntryCountSet
-    val maxEntryCount = max!!.entryCount
+    val maxEntryCount = max?.entryCount ?: return
     val groupSpaceWidthHalf = groupSpace / 2f
     val barSpaceHalf = barSpace / 2f
     val barWidthHalf = barWidth / 2f
     val interval = getGroupWidth(groupSpace, barSpace)
+    var startFromX = fromX
     for (i in 0 until maxEntryCount) {
-      val start = fromX
-      fromX += groupSpaceWidthHalf
+      val start = startFromX
+      startFromX += groupSpaceWidthHalf
       for (set in dataSets) {
-        fromX += barSpaceHalf
-        fromX += barWidthHalf
+        startFromX += barSpaceHalf
+        startFromX += barWidthHalf
         if (i < set.entryCount) {
           val entry = set.getEntryForIndex(i)
-          entry.x = fromX
+          entry.x = startFromX
         }
-        fromX += barWidthHalf
-        fromX += barSpaceHalf
+        startFromX += barWidthHalf
+        startFromX += barSpaceHalf
       }
-      fromX += groupSpaceWidthHalf
-      val end = fromX
+      startFromX += groupSpaceWidthHalf
+      val end = startFromX
       val innerInterval = end - start
       val diff = interval - innerInterval
 
       // correct rounding errors
       if (diff > 0 || diff < 0) {
-        fromX += diff
+        startFromX += diff
       }
     }
     notifyDataChanged()

@@ -3,13 +3,10 @@ package com.github.mikephil.charting.data
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.IBarLineScatterCandleBubbleDataSet
 
-//import com.github.mikephil.charting.components.YAxis
-//import com.github.mikephil.charting.highlight.Highlight
-//import com.github.mikephil.charting.interfaces.datasets.IBarLineScatterCandleBubbleDataSet
+class CombinedData :
+    BarLineScatterCandleBubbleData<IBarLineScatterCandleBubbleDataSet<Entry>, Entry>() {
 
-class CombinedData : BarLineScatterCandleBubbleData<IBarLineScatterCandleBubbleDataSet<Entry>, Entry>() {
-
-    var lineData: LineData? = null
+  var lineData: LineData? = null
     private set(value) {
       field = value
       notifyDataChanged()
@@ -39,7 +36,6 @@ class CombinedData : BarLineScatterCandleBubbleData<IBarLineScatterCandleBubbleD
       notifyDataChanged()
     }
 
-
   /**
    * Returns all data objects in row: line-bar-scatter-candle-bubble if not null.
    *
@@ -56,7 +52,6 @@ class CombinedData : BarLineScatterCandleBubbleData<IBarLineScatterCandleBubbleD
       return singleList.toList()
     }
 
-
   /**
    * Get dataset for highlight
    *
@@ -65,22 +60,21 @@ class CombinedData : BarLineScatterCandleBubbleData<IBarLineScatterCandleBubbleD
    */
   fun getDataSetByHighlight(highlight: Highlight): IBarLineScatterCandleBubbleDataSet<*>? {
     return null
-//    if (highlight.dataIndex >= allData.size) return null
-//    val data = getDataByIndex(highlight.dataIndex)
-//    return if (highlight.dataSetIndex >= data.dataSetCount) null
-//    else data.dataSets[highlight.dataSetIndex]
+    //    if (highlight.dataIndex >= allData.size) return null
+    //    val data = getDataByIndex(highlight.dataIndex)
+    //    return if (highlight.dataSetIndex >= data.dataSetCount) null
+    //    else data.dataSets[highlight.dataSetIndex]
   }
-
-
 }
 
-///**
-// * Data object that allows the combination of Line-, Bar-, Scatter-, Bubble- and CandleData. Used in
+/// **
+// * Data object that allows the combination of Line-, Bar-, Scatter-, Bubble- and CandleData. Used
+// in
 // * the CombinedChart class.
 // *
 // * @author Philipp Jahoda
 // */
-//class CombinedData :
+// class CombinedData :
 //    BarLineScatterCandleBubbleData<IBarLineScatterCandleBubbleDataSet<Entry>, Entry>() {
 //
 //  var lineData: LineData? = null
@@ -232,4 +226,4 @@ class CombinedData : BarLineScatterCandleBubbleData<IBarLineScatterCandleBubbleD
 //  override fun removeEntry(xValue: Float, dataSetIndex: Int): Boolean {
 //    throw UnsupportedOperationException("removeEntry(...) not supported for CombinedData")
 //  }
-//}
+// }

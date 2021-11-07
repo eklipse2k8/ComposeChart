@@ -9,13 +9,16 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.highlight.IHighlighter
 import com.github.mikephil.charting.highlight.PieHighlighter
 import com.github.mikephil.charting.interfaces.datasets.IPieDataSet
+import com.github.mikephil.charting.renderer.DataRenderer
 import com.github.mikephil.charting.renderer.PieChartRenderer
 import com.github.mikephil.charting.utils.MPPointF
 import com.github.mikephil.charting.utils.Utils.convertDpToPixel
 import com.github.mikephil.charting.utils.Utils.getNormalizedAngle
 import com.github.mikephil.charting.utils.toRadians
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -29,6 +32,9 @@ class PieChart
 @JvmOverloads
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     PieRadarChartBase<PieData, IPieDataSet, PieEntry>(context, attrs, defStyleAttr) {
+
+  override val dataRenderer: DataRenderer = PieChartRenderer(this, mAnimator, mViewPortHandler)
+
   /**
    * returns the circlebox, the boundingbox of the pie-chart slices
    *
@@ -160,18 +166,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    */
   private var mMinAngleForSlices = 0f
 
-  init {
-    mRenderer = PieChartRenderer(this, mAnimator, mViewPortHandler)
-    mHighlighter = PieHighlighter(this)
-  }
+  override val highlighter: IHighlighter = PieHighlighter(this)
 
   override fun onDraw(canvas: Canvas) {
     super.onDraw(canvas)
     if (data == null) return
-    mRenderer?.drawData(canvas)
-    if (valuesToHighlight()) mRenderer?.drawHighlighted(canvas, mIndicesToHighlight)
-    mRenderer?.drawExtras(canvas)
-    mRenderer?.drawValues(canvas)
+    dataRenderer.drawData(canvas)
+    if (valuesToHighlight()) dataRenderer.drawHighlighted(canvas, mIndicesToHighlight)
+    dataRenderer.drawExtras(canvas)
+    dataRenderer.drawValues(canvas)
     mLegendRenderer.renderLegend(canvas)
     drawDescription(canvas)
     drawMarkers(canvas)
@@ -198,7 +201,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     calcAngles()
   }
 
-  override fun getMarkerPosition(highlight: Highlight): FloatArray {
+  override fun getMarkerPosition(high: Highlight): FloatArray {
     val center = centerCircleBox
     var r = radius
     var off = r / 10f * 3.6f
@@ -207,7 +210,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
     r -= off // offset to keep things inside the chart
     val rotationAngle = rotationAngle
-    val entryIndex = highlight.x.toInt()
+    val entryIndex = high.x.toInt()
 
     // offset needed to center the drawn text in the slice
     val offset = drawAngles[entryIndex] / 2
@@ -256,7 +259,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     for (i in 0 until localData.dataSetCount) {
       val set = dataSets[i]
       for (j in 0 until set.entryCount) {
-        val drawAngle = calcAngle(Math.abs(set.getEntryForIndex(j).y), yValueSum)
+        val drawAngle = calcAngle(abs(set.getEntryForIndex(j).y), yValueSum)
         if (hasMinAngle) {
           val temp = drawAngle - mMinAngleForSlices
           if (temp <= 0) {
@@ -346,7 +349,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    * @param color
    */
   fun setHoleColor(color: Int) {
-    (mRenderer as PieChartRenderer).paintHole.color = color
+    (dataRenderer as PieChartRenderer).paintHole.color = color
   }
 
   /** Enable or disable the visibility of the inner tips of the slices behind the hole */
@@ -401,7 +404,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    * @param t
    */
   fun setCenterTextTypeface(t: Typeface?) {
-    (mRenderer as PieChartRenderer).paintCenterText.typeface = t
+    (dataRenderer as PieChartRenderer).paintCenterText.typeface = t
   }
 
   /**
@@ -410,7 +413,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    * @param sizeDp
    */
   fun setCenterTextSize(sizeDp: Float) {
-    (mRenderer as PieChartRenderer).paintCenterText.textSize = convertDpToPixel(sizeDp)
+    (dataRenderer as PieChartRenderer).paintCenterText.textSize = convertDpToPixel(sizeDp)
   }
 
   /**
@@ -419,7 +422,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    * @param sizePixels
    */
   fun setCenterTextSizePixels(sizePixels: Float) {
-    (mRenderer as PieChartRenderer).paintCenterText.textSize = sizePixels
+    (dataRenderer as PieChartRenderer).paintCenterText.textSize = sizePixels
   }
 
   /**
@@ -448,7 +451,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    * @param color
    */
   fun setCenterTextColor(color: Int) {
-    (mRenderer as PieChartRenderer).paintCenterText.color = color
+    (dataRenderer as PieChartRenderer).paintCenterText.color = color
   }
 
   /**
@@ -457,7 +460,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    * @param color
    */
   fun setTransparentCircleColor(color: Int) {
-    val p = (mRenderer as PieChartRenderer).paintTransparentCircle
+    val p = (dataRenderer as PieChartRenderer).paintTransparentCircle
     val alpha = p.alpha
     p.color = color
     p.alpha = alpha
@@ -470,7 +473,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    * @param alpha 0-255
    */
   fun setTransparentCircleAlpha(alpha: Int) {
-    (mRenderer as PieChartRenderer).paintTransparentCircle.alpha = alpha
+    (dataRenderer as PieChartRenderer).paintTransparentCircle.alpha = alpha
   }
 
   /**
@@ -500,7 +503,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    * @param color
    */
   fun setEntryLabelColor(color: Int) {
-    (mRenderer as PieChartRenderer).paintEntryLabels.color = color
+    (dataRenderer as PieChartRenderer).paintEntryLabels.color = color
   }
 
   /**
@@ -509,7 +512,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    * @param tf
    */
   fun setEntryLabelTypeface(tf: Typeface?) {
-    (mRenderer as PieChartRenderer).paintEntryLabels.typeface = tf
+    (dataRenderer as PieChartRenderer).paintEntryLabels.typeface = tf
   }
 
   /**
@@ -518,7 +521,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    * @param size
    */
   fun setEntryLabelTextSize(size: Float) {
-    (mRenderer as PieChartRenderer).paintEntryLabels.textSize = convertDpToPixel(size)
+    (dataRenderer as PieChartRenderer).paintEntryLabels.textSize = convertDpToPixel(size)
   }
 
   /**
@@ -566,16 +569,16 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    */
   var minAngleForSlices: Float
     get() = mMinAngleForSlices
-    set(minAngle) {
-      var minAngle = minAngle
+    set(value) {
+      var minAngle = value
       if (minAngle > mMaxAngle / 2f) minAngle = mMaxAngle / 2f else if (minAngle < 0) minAngle = 0f
       mMinAngleForSlices = minAngle
     }
 
   override fun onDetachedFromWindow() {
     // releases the bitmap in the renderer to avoid oom error
-    if (mRenderer != null && mRenderer is PieChartRenderer) {
-      (mRenderer as PieChartRenderer).releaseBitmap()
+    if (dataRenderer is PieChartRenderer) {
+      dataRenderer.releaseBitmap()
     }
     super.onDetachedFromWindow()
   }

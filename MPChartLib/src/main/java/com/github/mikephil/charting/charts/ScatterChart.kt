@@ -6,6 +6,8 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.ScatterData
 import com.github.mikephil.charting.interfaces.dataprovider.ScatterDataProvider
 import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet
+import com.github.mikephil.charting.renderer.CombinedChartRenderer
+import com.github.mikephil.charting.renderer.DataRenderer
 import com.github.mikephil.charting.renderer.ScatterChartRenderer
 
 /**
@@ -20,8 +22,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     BarLineChartBase<ScatterData, IScatterDataSet, Entry>(context, attrs, defStyleAttr),
     ScatterDataProvider {
 
+  override val dataRenderer: DataRenderer = ScatterChartRenderer(this, mAnimator, mViewPortHandler)
+
   init {
-    mRenderer = ScatterChartRenderer(this, mAnimator, mViewPortHandler)
     xAxis.spaceMin = 0.5f
     xAxis.spaceMax = 0.5f
   }

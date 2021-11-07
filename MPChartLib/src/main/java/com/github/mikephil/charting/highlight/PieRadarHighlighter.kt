@@ -1,17 +1,15 @@
 package com.github.mikephil.charting.highlight
 
-import androidx.annotation.Nullable
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.charts.PieRadarChartBase
-import java.util.ArrayList
 
 /** Created by philipp on 12/06/16. */
-abstract class PieRadarHighlighter<T : PieRadarChartBase<*, *, *>>(@JvmField protected var mChart: T) :
-    IHighlighter {
+abstract class PieRadarHighlighter<T : PieRadarChartBase<*, *, *>>(
+    @JvmField protected var mChart: T
+) : IHighlighter {
   /** buffer for storing previously highlighted values */
   @JvmField protected val mHighlightBuffer = mutableListOf<Highlight>()
 
-  @Nullable
   override fun getHighlight(x: Float, y: Float): Highlight? {
     val touchDistanceToCenter = mChart.distanceToCenter(x, y)
 
@@ -45,5 +43,5 @@ abstract class PieRadarHighlighter<T : PieRadarChartBase<*, *, *>>(@JvmField pro
    * @param y
    * @return
    */
-  @Nullable protected abstract fun getClosestHighlight(index: Int, x: Float, y: Float): Highlight?
+  protected abstract fun getClosestHighlight(index: Int, x: Float, y: Float): Highlight?
 }

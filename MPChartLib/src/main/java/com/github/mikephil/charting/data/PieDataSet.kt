@@ -41,13 +41,14 @@ class PieDataSet(yVals: MutableList<PieEntry>, label: String) :
 
   /** When valuePosition is OutsideSlice, this allows variable line length */
   override var isValueLineVariableLength = true
+
   /** Gets the color for the highlighted sector */
   /** Sets the color for the highlighted sector (null for using entry color) */
   override var highlightColor: Int? = null
 
   override fun copy(): DataSet<PieEntry> {
     val entries = mutableListOf<PieEntry>()
-    mutableEntries?.forEach { entry -> entries.add(entry.copy()) }
+    mutableEntries.forEach { entry -> entries.add(entry.copy()) }
     val copied = PieDataSet(entries, label!!)
     copy(copied)
     return copied
@@ -58,7 +59,6 @@ class PieDataSet(yVals: MutableList<PieEntry>, label: String) :
   }
 
   override fun calcMinMax(entry: PieEntry) {
-    if (entry == null) return
     calcMinMaxY(entry)
   }
 
@@ -70,8 +70,8 @@ class PieDataSet(yVals: MutableList<PieEntry>, label: String) :
    */
   override var sliceSpace: Float
     get() = mSliceSpace
-    set(spaceDp) {
-      var spaceDp = spaceDp
+    set(value) {
+      var spaceDp = value
       if (spaceDp > 20) spaceDp = 20f
       if (spaceDp < 0) spaceDp = 0f
       mSliceSpace = Utils.convertDpToPixel(spaceDp)

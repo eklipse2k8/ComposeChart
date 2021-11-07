@@ -11,6 +11,7 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.highlight.HorizontalBarHighlighter
+import com.github.mikephil.charting.renderer.DataRenderer
 import com.github.mikephil.charting.renderer.HorizontalBarChartRenderer
 import com.github.mikephil.charting.renderer.XAxisRendererHorizontalBarChart
 import com.github.mikephil.charting.renderer.YAxisRendererHorizontalBarChart
@@ -35,12 +36,15 @@ class HorizontalBarChart
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     BarChart(context, attrs, defStyleAttr) {
 
+  override val dataRenderer: DataRenderer =
+      HorizontalBarChartRenderer(this, mAnimator, mViewPortHandler)
+
+  override val highlighter = HorizontalBarHighlighter(this)
+
   init {
     mViewPortHandler = ViewPortHandler()
     mLeftAxisTransformer = TransformerHorizontalBarChart(mViewPortHandler)
     mRightAxisTransformer = TransformerHorizontalBarChart(mViewPortHandler)
-    mRenderer = HorizontalBarChartRenderer(this, mAnimator, mViewPortHandler)
-    setHighlighter(HorizontalBarHighlighter(this))
     rendererLeftYAxis =
         YAxisRendererHorizontalBarChart(mViewPortHandler, axisLeft!!, mLeftAxisTransformer)
     rendererRightYAxis =
@@ -143,10 +147,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     offsetLeft += extraLeftOffset
     val minOffset = convertDpToPixel(minOffset)
     mViewPortHandler.restrainViewPort(
-        Math.max(minOffset, offsetLeft),
-        Math.max(minOffset, offsetTop),
-        Math.max(minOffset, offsetRight),
-        Math.max(minOffset, offsetBottom))
+        max(minOffset, offsetLeft),
+        max(minOffset, offsetTop),
+        max(minOffset, offsetRight),
+        max(minOffset, offsetBottom))
     if (mLogEnabled) {
       Log.i(
           TAG,
@@ -222,7 +226,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     return if (data == null) {
       if (mLogEnabled) Log.e(TAG, "Can't select by touch. No data set.")
       null
-    } else getHighlighter()?.getHighlight(y, x) // switch x and y
+    } else highlighter.getHighlight(y, x) // switch x and y
   }
 
   override val lowestVisibleX: Float

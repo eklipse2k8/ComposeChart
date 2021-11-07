@@ -35,7 +35,7 @@ class PieData : ChartData<IPieDataSet, PieEntry> {
     return if (index == 0) dataSet else null
   }
 
-  override fun getDataSetByLabel(label: String, ignorecase: Boolean): IPieDataSet? {
+  override fun getDataSetByLabel(label: String, ignorecase: Boolean): IPieDataSet {
     return if (ignorecase)
         (if (label.equals(dataSets[0].label, ignoreCase = true)) dataSets[0] else null)!!
     else (if (label == dataSets[0].label) dataSets[0] else null)!!

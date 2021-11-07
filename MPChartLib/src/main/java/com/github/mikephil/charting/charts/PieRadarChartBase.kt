@@ -1,7 +1,6 @@
 package com.github.mikephil.charting.charts
 
 import android.animation.ObjectAnimator
-import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
@@ -141,12 +140,12 @@ E : Entry {
                 when (mLegend.verticalAlignment) {
                   LegendVerticalAlignment.TOP ->
                       legendTop =
-                          Math.min(
+                          min(
                               mLegend.mNeededHeight,
                               mViewPortHandler.chartHeight * mLegend.maxSizePercent)
                   LegendVerticalAlignment.BOTTOM ->
                       legendBottom =
-                          Math.min(
+                          min(
                               mLegend.mNeededHeight,
                               mViewPortHandler.chartHeight * mLegend.maxSizePercent)
                 }
@@ -162,7 +161,7 @@ E : Entry {
             //   changing default visibility for existing apps.
             val yOffset = requiredLegendOffset
             yLegendOffset =
-                Math.min(
+                min(
                     mLegend.mNeededHeight + yOffset,
                     mViewPortHandler.chartHeight * mLegend.maxSizePercent)
             when (mLegend.verticalAlignment) {

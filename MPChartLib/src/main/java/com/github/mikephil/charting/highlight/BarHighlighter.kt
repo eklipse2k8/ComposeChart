@@ -12,7 +12,7 @@ open class BarHighlighter(chart: BarDataProvider) : ChartHighlighter<BarDataProv
 
   override fun getHighlight(x: Float, y: Float): Highlight? {
     val highlight = super.getHighlight(x, y) ?: return null
-    return mChart.barData?.getDataSetByIndex(highlight.dataSetIndex)?.let {
+    return chartView.barData?.getDataSetByIndex(highlight.dataSetIndex)?.let {
       if (it.isStacked) {
         val pos = getValsForTouch(x, y)
         val stacked = getStackedHighlight(highlight, it, pos.x.toFloat(), pos.y.toFloat())
@@ -46,7 +46,7 @@ open class BarHighlighter(chart: BarDataProvider) : ChartHighlighter<BarDataProv
       if (ranges.isNotEmpty()) {
         val stackIndex = getClosestStackIndex(ranges, yVal)
         val pixels =
-            mChart
+            chartView
                 .getTransformer(set.axisDependency)
                 .getPixelForValues(high.x, ranges[stackIndex]?.to!!)
         val stackedHigh =
@@ -56,8 +56,8 @@ open class BarHighlighter(chart: BarDataProvider) : ChartHighlighter<BarDataProv
                 pixels.x.toFloat(),
                 pixels.y.toFloat(),
                 high.dataSetIndex,
-                stackIndex,
-                high.axis)
+                high.axis,
+                stackIndex)
         MPPointD.recycleInstance(pixels)
         return stackedHigh
       }
@@ -87,5 +87,5 @@ open class BarHighlighter(chart: BarDataProvider) : ChartHighlighter<BarDataProv
   }
 
   override val data: BarLineScatterCandleBubbleData<*, *>?
-    get() = mChart.barData
+    get() = chartView.barData
 }

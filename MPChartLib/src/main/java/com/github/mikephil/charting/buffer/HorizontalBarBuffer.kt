@@ -1,6 +1,7 @@
 package com.github.mikephil.charting.buffer
 
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
+import kotlin.math.abs
 
 class HorizontalBarBuffer(size: Int, containsStacks: Boolean) : BarBuffer(size, containsStacks) {
 
@@ -10,10 +11,6 @@ class HorizontalBarBuffer(size: Int, containsStacks: Boolean) : BarBuffer(size, 
     var i = 0
     while (i < size) {
       val e = data.getEntryForIndex(i)
-      if (e == null) {
-        i++
-        continue
-      }
       val x = e.x
       var y = e.y
       val vals = e.yVals
@@ -47,8 +44,8 @@ class HorizontalBarBuffer(size: Int, containsStacks: Boolean) : BarBuffer(size, 
             posY = yStart
           } else {
             y = negY
-            yStart = negY + Math.abs(value)
-            negY += Math.abs(value)
+            yStart = negY + abs(value)
+            negY += abs(value)
           }
           val bottom = x - barWidthHalf
           val top = x + barWidthHalf

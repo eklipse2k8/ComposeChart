@@ -63,8 +63,8 @@ class CandleDataSet(yVals: MutableList<CandleEntry>, label: String?) :
 
   override fun copy(): DataSet<CandleEntry> {
     val entries: MutableList<CandleEntry> = ArrayList()
-    for (i in mutableEntries!!.indices) {
-      entries.add(mutableEntries!![i]!!.copy())
+    for (i in mutableEntries.indices) {
+      entries.add(mutableEntries[i].copy())
     }
     val copied = CandleDataSet(entries, label)
     copy(copied)
@@ -87,7 +87,7 @@ class CandleDataSet(yVals: MutableList<CandleEntry>, label: String?) :
   }
 
   override fun calcMinMax(entry: CandleEntry) {
-    if (entry!!.low < yMin) yMin = entry.low
+    if (entry.low < yMin) yMin = entry.low
     if (entry.high > yMax) yMax = entry.high
     calcMinMaxX(entry)
   }

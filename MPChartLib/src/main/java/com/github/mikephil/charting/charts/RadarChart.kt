@@ -9,11 +9,10 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.components.YAxis.AxisDependency
 import com.github.mikephil.charting.data.RadarData
 import com.github.mikephil.charting.data.RadarEntry
+import com.github.mikephil.charting.highlight.IHighlighter
 import com.github.mikephil.charting.highlight.RadarHighlighter
 import com.github.mikephil.charting.interfaces.datasets.IRadarDataSet
-import com.github.mikephil.charting.renderer.RadarChartRenderer
-import com.github.mikephil.charting.renderer.XAxisRendererRadarChart
-import com.github.mikephil.charting.renderer.YAxisRendererRadarChart
+import com.github.mikephil.charting.renderer.*
 import com.github.mikephil.charting.utils.Utils
 import kotlin.math.max
 import kotlin.math.min
@@ -28,6 +27,8 @@ class RadarChart
 @JvmOverloads
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     PieRadarChartBase<RadarData, IRadarDataSet, RadarEntry>(context, attrs, defStyleAttr) {
+
+  override val dataRenderer: DataRenderer = RadarChartRenderer(this, mAnimator, mViewPortHandler)
 
   /** width of the main web lines */
   private var mWebLineWidth = 2.5f
@@ -90,15 +91,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   val yRange: Float
     get() = yAxis?.mAxisRange ?: 0f
 
+  override val highlighter: IHighlighter = RadarHighlighter(this)
+
   init {
     yAxis = YAxis(AxisDependency.LEFT)
     yAxis!!.labelXOffset = 10f
     mWebLineWidth = Utils.convertDpToPixel(1.5f)
     mInnerWebLineWidth = Utils.convertDpToPixel(0.75f)
-    mRenderer = RadarChartRenderer(this, mAnimator, mViewPortHandler)
     mYAxisRenderer = YAxisRendererRadarChart(mViewPortHandler, yAxis!!, this)
     mXAxisRenderer = XAxisRendererRadarChart(mViewPortHandler, xAxis, this)
-    mHighlighter = RadarHighlighter(this)
   }
 
   override fun calcMinMax() {
@@ -123,15 +124,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
     if (xAxis.isEnabled) mXAxisRenderer!!.computeAxis(xAxis.axisMinimum, xAxis.axisMaximum, false)
     mXAxisRenderer!!.renderAxisLabels(canvas)
-    if (mDrawWeb) mRenderer?.drawExtras(canvas)
+    if (mDrawWeb) dataRenderer?.drawExtras(canvas)
     if (yAxis!!.isEnabled && yAxis!!.isDrawLimitLinesBehindDataEnabled)
         mYAxisRenderer!!.renderLimitLines(canvas)
-    mRenderer?.drawData(canvas)
-    if (valuesToHighlight()) mRenderer?.drawHighlighted(canvas, mIndicesToHighlight)
+    dataRenderer?.drawData(canvas)
+    if (valuesToHighlight()) dataRenderer?.drawHighlighted(canvas, mIndicesToHighlight)
     if (yAxis!!.isEnabled && !yAxis!!.isDrawLimitLinesBehindDataEnabled)
         mYAxisRenderer!!.renderLimitLines(canvas)
     mYAxisRenderer!!.renderAxisLabels(canvas)
-    mRenderer?.drawValues(canvas)
+    dataRenderer?.drawValues(canvas)
     mLegendRenderer.renderLegend(canvas)
     drawDescription(canvas)
     drawMarkers(canvas)

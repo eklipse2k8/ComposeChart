@@ -10,6 +10,7 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.dataprovider.CombinedDataProvider
 import com.github.mikephil.charting.interfaces.datasets.IBarLineScatterCandleBubbleDataSet
 import com.github.mikephil.charting.renderer.CombinedChartRenderer
+import com.github.mikephil.charting.renderer.DataRenderer
 
 private val TAG = CombinedChart::class.java.simpleName
 
@@ -42,7 +43,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   override var isDrawBarShadowEnabled = false
     private set
 
-  private lateinit var mDrawOrder: Array<DrawOrder>
+  private var mDrawOrder: Array<DrawOrder> =
+      arrayOf(DrawOrder.BAR, DrawOrder.BUBBLE, DrawOrder.LINE, DrawOrder.CANDLE, DrawOrder.SCATTER)
 
   /**
    * enum that allows to specify the order in which the different data objects for the
@@ -56,25 +58,21 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     SCATTER
   }
 
-  init {
-    // Default values are not ready here yet
-    mDrawOrder =
-        arrayOf(
-            DrawOrder.BAR, DrawOrder.BUBBLE, DrawOrder.LINE, DrawOrder.CANDLE, DrawOrder.SCATTER)
-    setHighlighter(CombinedHighlighter(this, this))
+  override val dataRenderer: DataRenderer = CombinedChartRenderer(this, mAnimator, mViewPortHandler)
 
+  override val highlighter = CombinedHighlighter(this, this)
+
+  init {
     // Old default behaviour
     isHighlightFullBarEnabled = true
-    mRenderer = CombinedChartRenderer(this, mAnimator, mViewPortHandler)
   }
 
   override var combinedData: CombinedData?
     get() = data
     set(value) {
       super.data = value
-      setHighlighter(CombinedHighlighter(this, this))
-      (mRenderer as CombinedChartRenderer).createRenderers()
-      mRenderer?.initBuffers()
+      (dataRenderer as CombinedChartRenderer).createRenderers()
+      dataRenderer.initBuffers()
     }
 
   /**
@@ -90,9 +88,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         Log.e(TAG, "Can't select by touch. No data set.")
         null
       } else {
-        val h = getHighlighter()?.getHighlight(x, y)
+        val h = highlighter.getHighlight(x, y)
         if (h == null || !isHighlightFullBarEnabled) h!!
-        else Highlight(h.x, h.y, h.xPx, h.yPx, h.dataSetIndex, -1, h.axis)
+        else Highlight(h.x, h.y, h.xPx, h.yPx, h.dataSetIndex,  h.axis, -1)
       }
 
   override val lineData: LineData?

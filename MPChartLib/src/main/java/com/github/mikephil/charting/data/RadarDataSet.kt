@@ -28,13 +28,13 @@ class RadarDataSet(yVals: MutableList<RadarEntry>, label: String) :
 
   override fun copy(): DataSet<RadarEntry> {
     val entries = mutableListOf<RadarEntry>()
-    mutableEntries?.forEach { entry -> entries.add(entry.copy()) }
+    mutableEntries.forEach { entry -> entries.add(entry.copy()) }
     val copied = RadarDataSet(entries, label!!)
-    copy(copied)
+    copyTo(copied)
     return copied
   }
 
-  private fun copy(radarDataSet: RadarDataSet) {
+  private fun copyTo(radarDataSet: RadarDataSet) {
     super.copyTo(radarDataSet)
     radarDataSet.isDrawHighlightCircleEnabled = isDrawHighlightCircleEnabled
     radarDataSet.highlightCircleFillColor = highlightCircleFillColor

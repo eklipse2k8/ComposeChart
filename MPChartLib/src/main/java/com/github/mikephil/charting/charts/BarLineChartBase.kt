@@ -13,6 +13,7 @@ import com.github.mikephil.charting.components.YAxis.AxisDependency
 import com.github.mikephil.charting.data.BarLineScatterCandleBubbleData
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.ChartHighlighter
+import com.github.mikephil.charting.highlight.IHighlighter
 import com.github.mikephil.charting.interfaces.dataprovider.BarLineScatterCandleBubbleDataProvider
 import com.github.mikephil.charting.interfaces.datasets.IBarLineScatterCandleBubbleDataSet
 import com.github.mikephil.charting.jobs.AnimatedMoveViewJob.Companion.getInstance
@@ -42,8 +43,7 @@ private val TAG = BarLineChartBase::class.java.simpleName
 abstract class BarLineChartBase<T, S, E>
 @JvmOverloads
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
-    Chart<T, S, E>(context, attrs, defStyleAttr),
-    BarLineScatterCandleBubbleDataProvider where
+    Chart<T, S, E>(context, attrs, defStyleAttr), BarLineScatterCandleBubbleDataProvider where
 T : BarLineScatterCandleBubbleData<S, E>,
 S : IBarLineScatterCandleBubbleDataSet<E>,
 E : Entry {
@@ -54,6 +54,8 @@ E : Entry {
    */
   override var maxVisibleCount = 100
     protected set
+
+  override val highlighter: IHighlighter = ChartHighlighter(this)
 
   /** flag that indicates if auto scaling on the y axis is enabled */
   var isAutoScaleMinMaxEnabled = false
@@ -164,8 +166,8 @@ E : Entry {
     rendererLeftYAxis = YAxisRenderer(mViewPortHandler, axisLeft!!, mLeftAxisTransformer)
     rendererRightYAxis = YAxisRenderer(mViewPortHandler, axisRight!!, mRightAxisTransformer)
     rendererXAxis = XAxisRenderer(mViewPortHandler, xAxis, mLeftAxisTransformer)
-    setHighlighter(ChartHighlighter(this))
-    onTouchListener = BarLineChartTouchListener(this as AnyBarLineChart, mViewPortHandler.matrixTouch, 3f)
+    onTouchListener =
+        BarLineChartTouchListener(this as AnyBarLineChart, mViewPortHandler.matrixTouch, 3f)
     mGridBackgroundPaint =
         Paint().apply {
           style = Paint.Style.FILL
@@ -218,17 +220,17 @@ E : Entry {
       // make sure the data cannot be drawn outside the content-rect
       canvas.clipRect(mViewPortHandler.contentRect)
     }
-    mRenderer?.drawData(canvas)
+    dataRenderer.drawData(canvas)
     if (!xAxis.isDrawGridLinesBehindDataEnabled) rendererXAxis!!.renderGridLines(canvas)
     if (!axisLeft!!.isDrawGridLinesBehindDataEnabled) rendererLeftYAxis!!.renderGridLines(canvas)
     if (!axisRight!!.isDrawGridLinesBehindDataEnabled) rendererRightYAxis!!.renderGridLines(canvas)
 
     // if highlighting is enabled
-    if (valuesToHighlight()) mRenderer?.drawHighlighted(canvas, mIndicesToHighlight)
+    if (valuesToHighlight()) dataRenderer.drawHighlighted(canvas, mIndicesToHighlight)
 
     // Removes clipping rectangle
     canvas.restoreToCount(clipRestoreCount)
-    mRenderer?.drawExtras(canvas)
+    dataRenderer.drawExtras(canvas)
     if (xAxis.isEnabled && !xAxis.isDrawLimitLinesBehindDataEnabled)
         rendererXAxis!!.renderLimitLines(canvas)
     if (axisLeft!!.isEnabled && !axisLeft!!.isDrawLimitLinesBehindDataEnabled)
@@ -241,10 +243,10 @@ E : Entry {
     if (isClipValuesToContentEnabled) {
       clipRestoreCount = canvas.save()
       canvas.clipRect(mViewPortHandler.contentRect)
-      mRenderer?.drawValues(canvas)
+      dataRenderer.drawValues(canvas)
       canvas.restoreToCount(clipRestoreCount)
     } else {
-      mRenderer?.drawValues(canvas)
+      dataRenderer.drawValues(canvas)
     }
     mLegendRenderer.renderLegend(canvas)
     drawDescription(canvas)
@@ -292,7 +294,7 @@ E : Entry {
     } else {
       if (mLogEnabled) Log.i(TAG, "Preparing...")
     }
-    mRenderer?.initBuffers()
+    dataRenderer?.initBuffers()
     calcMinMax()
     rendererLeftYAxis!!.computeAxis(
         axisLeft!!.mAxisMinimum, axisLeft!!.mAxisMaximum, axisLeft!!.isInverted)
