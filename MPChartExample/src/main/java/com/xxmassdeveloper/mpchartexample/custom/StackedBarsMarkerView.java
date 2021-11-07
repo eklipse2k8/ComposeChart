@@ -5,12 +5,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.widget.TextView;
 
-import com.github.mikephil.charting.components.MarkerView;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.utils.MPPointF;
-import com.github.mikephil.charting.utils.Utils;
+import com.github.eklipse2k8.charting.components.MarkerView;
+import com.github.eklipse2k8.charting.data.BarEntry;
+import com.github.eklipse2k8.charting.data.Entry;
+import com.github.eklipse2k8.charting.highlight.Highlight;
+import com.github.eklipse2k8.charting.utils.MPPointF;
+import com.github.eklipse2k8.charting.utils.Utils;
 import com.xxmassdeveloper.mpchartexample.R;
 
 /**

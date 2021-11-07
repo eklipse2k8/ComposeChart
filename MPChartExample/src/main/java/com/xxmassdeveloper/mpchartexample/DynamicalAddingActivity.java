@@ -13,15 +13,15 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.YAxis.AxisDependency;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.eklipse2k8.charting.charts.LineChart;
+import com.github.eklipse2k8.charting.components.YAxis.AxisDependency;
+import com.github.eklipse2k8.charting.data.Entry;
+import com.github.eklipse2k8.charting.data.LineData;
+import com.github.eklipse2k8.charting.data.LineDataSet;
+import com.github.eklipse2k8.charting.highlight.Highlight;
+import com.github.eklipse2k8.charting.interfaces.datasets.ILineDataSet;
+import com.github.eklipse2k8.charting.listener.OnChartValueSelectedListener;
+import com.github.eklipse2k8.charting.utils.ColorTemplate;
 import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
 
 import java.util.ArrayList;

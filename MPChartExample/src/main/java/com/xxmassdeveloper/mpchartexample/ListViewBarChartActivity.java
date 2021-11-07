@@ -17,15 +17,15 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.XAxis.XAxisPosition;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.eklipse2k8.charting.charts.BarChart;
+import com.github.eklipse2k8.charting.components.XAxis;
+import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition;
+import com.github.eklipse2k8.charting.components.YAxis;
+import com.github.eklipse2k8.charting.data.BarData;
+import com.github.eklipse2k8.charting.data.BarDataSet;
+import com.github.eklipse2k8.charting.data.BarEntry;
+import com.github.eklipse2k8.charting.interfaces.datasets.IBarDataSet;
+import com.github.eklipse2k8.charting.utils.ColorTemplate;
 import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
 
 import java.util.ArrayList;

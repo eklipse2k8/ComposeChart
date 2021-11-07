@@ -1,7 +1,7 @@
 package com.xxmassdeveloper.mpchartexample.custom;
 
-import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.eklipse2k8.charting.components.AxisBase;
+import com.github.eklipse2k8.charting.formatter.IAxisValueFormatter;
 
 import java.text.DecimalFormat;
 

@@ -11,17 +11,17 @@ import android.view.WindowManager;
 
 import androidx.core.content.ContextCompat;
 
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.DataSet;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.listener.OnDrawListener;
+import com.github.eklipse2k8.charting.charts.LineChart;
+import com.github.eklipse2k8.charting.components.XAxis;
+import com.github.eklipse2k8.charting.components.YAxis;
+import com.github.eklipse2k8.charting.data.DataSet;
+import com.github.eklipse2k8.charting.data.Entry;
+import com.github.eklipse2k8.charting.data.LineData;
+import com.github.eklipse2k8.charting.data.LineDataSet;
+import com.github.eklipse2k8.charting.highlight.Highlight;
+import com.github.eklipse2k8.charting.interfaces.datasets.ILineDataSet;
+import com.github.eklipse2k8.charting.listener.OnChartValueSelectedListener;
+import com.github.eklipse2k8.charting.listener.OnDrawListener;
 import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
 
 import java.util.ArrayList;

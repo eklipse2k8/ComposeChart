@@ -1,8 +1,8 @@
 package com.xxmassdeveloper.mpchartexample.custom;
 
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.formatter.IValueFormatter;
-import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.github.eklipse2k8.charting.data.Entry;
+import com.github.eklipse2k8.charting.formatter.IValueFormatter;
+import com.github.eklipse2k8.charting.utils.ViewPortHandler;
 
 import java.text.DecimalFormat;
 

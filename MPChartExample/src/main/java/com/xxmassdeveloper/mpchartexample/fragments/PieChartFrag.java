@@ -11,8 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
+import com.github.eklipse2k8.charting.charts.PieChart;
+import com.github.eklipse2k8.charting.components.Legend;
 import com.xxmassdeveloper.mpchartexample.R;
 
 

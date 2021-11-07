@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <com.github.mikephil.charting.charts.ScatterChart
+    <com.github.eklipse2k8.charting.charts.ScatterChart
         android:id="@+id/scatterChart1"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

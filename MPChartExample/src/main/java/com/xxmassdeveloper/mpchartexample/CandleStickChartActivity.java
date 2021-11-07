@@ -16,16 +16,16 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import com.github.mikephil.charting.charts.CandleStickChart;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.XAxis.XAxisPosition;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.components.YAxis.AxisDependency;
-import com.github.mikephil.charting.data.CandleData;
-import com.github.mikephil.charting.data.CandleDataSet;
-import com.github.mikephil.charting.data.CandleEntry;
-import com.github.mikephil.charting.interfaces.datasets.ICandleDataSet;
-import com.github.mikephil.charting.interfaces.datasets.IDataSet;
+import com.github.eklipse2k8.charting.charts.CandleStickChart;
+import com.github.eklipse2k8.charting.components.XAxis;
+import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition;
+import com.github.eklipse2k8.charting.components.YAxis;
+import com.github.eklipse2k8.charting.components.YAxis.AxisDependency;
+import com.github.eklipse2k8.charting.data.CandleData;
+import com.github.eklipse2k8.charting.data.CandleDataSet;
+import com.github.eklipse2k8.charting.data.CandleEntry;
+import com.github.eklipse2k8.charting.interfaces.datasets.ICandleDataSet;
+import com.github.eklipse2k8.charting.interfaces.datasets.IDataSet;
 import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
 
 import java.util.ArrayList;
