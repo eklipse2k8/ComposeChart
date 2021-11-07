@@ -19,7 +19,7 @@ public class LineChartItem extends ChartItem {
 
     private final Typeface mTf;
 
-    public LineChartItem(ChartData<?> cd, Context c) {
+    public LineChartItem(ChartData<?, ?> cd, Context c) {
         super(cd);
 
         mTf = Typeface.createFromAsset(c.getAssets(), "OpenSans-Regular.ttf");

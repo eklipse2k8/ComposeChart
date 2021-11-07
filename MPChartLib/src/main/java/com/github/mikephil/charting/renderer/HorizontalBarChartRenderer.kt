@@ -10,6 +10,8 @@ import com.github.mikephil.charting.interfaces.dataprovider.BarDataProvider
 import com.github.mikephil.charting.interfaces.dataprovider.ChartInterface
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.utils.*
+import kotlin.math.ceil
+import kotlin.math.min
 
 /**
  * Renderer for the HorizontalBarChart.
@@ -23,10 +25,10 @@ class HorizontalBarChartRenderer(
 ) : BarChartRenderer(chart!!, animator!!, viewPortHandler!!) {
 
   override fun initBuffers() {
-    val barData = mChart.barData
+    val barData = mChart.barData ?: return
     mBarBuffers = arrayOfNulls(barData.dataSetCount)
-    for (i in mBarBuffers.indices) {
-      val set = barData.getDataSetByIndex(i)
+    mBarBuffers.indices.forEach { i ->
+      val set = barData.getDataSetByIndex(i) ?: return@forEach
       mBarBuffers[i] =
           HorizontalBarBuffer(
               set.entryCount * 4 * if (set.isStacked) set.stackSize else 1, set.isStacked)
@@ -41,19 +43,16 @@ class HorizontalBarChartRenderer(
     val drawBorder = dataSet.barBorderWidth > 0f
     val phaseX = mAnimator.phaseX
     val phaseY = mAnimator.phaseY
+    val barData = mChart.barData
+    val barWidth = barData?.barWidth ?: 0f
 
     // draw the bar shadow before the values
     if (mChart.isDrawBarShadowEnabled) {
       mShadowPaint.color = dataSet.barShadowColor
-      val barData = mChart.barData
-      val barWidth = barData.barWidth
       val barWidthHalf = barWidth / 2.0f
       var x: Float
       var i = 0
-      val count =
-          Math.min(
-              Math.ceil((dataSet.entryCount.toFloat() * phaseX).toDouble()).toInt(),
-              dataSet.entryCount)
+      val count = min(ceil(dataSet.entryCount * phaseX).toInt(), dataSet.entryCount)
       while (i < count) {
         val e = dataSet.getEntryForIndex(i)
         x = e.x
@@ -77,11 +76,11 @@ class HorizontalBarChartRenderer(
     buffer.setPhases(phaseX, phaseY)
     buffer.setDataSet(index)
     buffer.setInverted(mChart.isInverted(dataSet.axisDependency))
-    buffer.setBarWidth(mChart.barData.barWidth)
+    buffer.setBarWidth(barWidth)
     buffer.feed(dataSet)
     trans.pointValuesToPixel(buffer.buffer)
-    val isCustomFill = dataSet.fills != null && !dataSet.fills!!.isEmpty()
-    val isSingleColor = dataSet.colors!!.size == 1
+    val isCustomFill = dataSet.fills != null && dataSet.fills!!.isNotEmpty()
+    val isSingleColor = dataSet.colors.size == 1
     val isInverted = mChart.isInverted(dataSet.axisDependency)
     if (isSingleColor) {
       mRenderPaint.color = dataSet.color
@@ -134,13 +133,14 @@ class HorizontalBarChartRenderer(
 
   override fun drawValues(c: Canvas) {
     // if values are drawn
+    val dataSets = mChart.barData?.dataSets ?: emptyList()
+    val dataSetCount = mChart.barData?.dataSetCount ?: 0
     if (isDrawingValuesAllowed(mChart)) {
-      val dataSets = mChart.barData.dataSets
       val valueOffsetPlus = Utils.convertDpToPixel(5f)
       var posOffset = 0f
       var negOffset = 0f
       val drawValueAboveBar = mChart.isDrawValueAboveBarEnabled
-      for (i in 0 until mChart.barData.dataSetCount) {
+      for (i in 0 until dataSetCount) {
         val dataSet = dataSets[i]
         if (!shouldDrawValues(dataSet)) continue
         val isInverted = mChart.isInverted(dataSet.axisDependency)
@@ -201,7 +201,7 @@ class HorizontalBarChartRenderer(
               px += iconsOffset.x
               py += iconsOffset.y
               Utils.drawImage(
-                  c, icon, px.toInt(), py.toInt(), icon!!.intrinsicWidth, icon.intrinsicHeight)
+                  c, icon, px.toInt(), py.toInt(), icon.intrinsicWidth, icon.intrinsicHeight)
             }
             j += 4
           }
@@ -252,7 +252,7 @@ class HorizontalBarChartRenderer(
                 px += iconsOffset.x
                 py += iconsOffset.y
                 Utils.drawImage(
-                    c, icon, px.toInt(), py.toInt(), icon!!.intrinsicWidth, icon.intrinsicHeight)
+                    c, icon, px.toInt(), py.toInt(), icon.intrinsicWidth, icon.intrinsicHeight)
               }
             } else {
               val transformed = FloatArray(vals.size * 2)
@@ -318,7 +318,7 @@ class HorizontalBarChartRenderer(
                       icon,
                       (x + iconsOffset.x).toInt(),
                       (y + iconsOffset.y).toInt(),
-                      icon!!.intrinsicWidth,
+                      icon.intrinsicWidth,
                       icon.intrinsicHeight)
                 }
                 k += 2

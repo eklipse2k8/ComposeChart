@@ -12,10 +12,7 @@ import com.github.mikephil.charting.interfaces.datasets.IBubbleDataSet
 import com.github.mikephil.charting.utils.MPPointF
 import com.github.mikephil.charting.utils.Utils
 import com.github.mikephil.charting.utils.ViewPortHandler
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.roundToInt
+import kotlin.math.*
 
 /**
  * Bubble chart implementation: Copyright 2015 Pierre-Marc Airoldi Licensed under Apache License 2.0
@@ -26,16 +23,17 @@ class BubbleChartRenderer(
     animator: ChartAnimator?,
     viewPortHandler: ViewPortHandler?
 ) : BarLineScatterCandleBubbleRenderer(animator!!, viewPortHandler!!) {
+
   override fun initBuffers() {}
+
   override fun drawData(c: Canvas) {
-    val bubbleData = mChart.bubbleData
-    for (set in bubbleData.dataSets) {
-      if (set.isVisible) drawDataSet(c, set)
-    }
+    mChart.bubbleData?.dataSets?.forEach { set -> if (set.isVisible) drawDataSet(c, set) }
   }
 
   private val sizeBuffer = FloatArray(4)
+
   private val pointBuffer = FloatArray(2)
+
   protected fun getShapeSize(
       entrySize: Float,
       maxSize: Float,
@@ -43,9 +41,7 @@ class BubbleChartRenderer(
       normalizeSize: Boolean
   ): Float {
     val factor =
-        if (normalizeSize)
-            if (maxSize == 0f) 1f else Math.sqrt((entrySize / maxSize).toDouble()).toFloat()
-        else entrySize
+        if (normalizeSize) if (maxSize == 0f) 1f else sqrt(entrySize / maxSize) else entrySize
     return reference * factor
   }
 
@@ -95,7 +91,7 @@ class BubbleChartRenderer(
         applyValueTextStyle(dataSet)
         val phaseX = max(0f, min(1f, mAnimator.phaseX))
         val phaseY = mAnimator.phaseY
-        mXBounds.set(mChart, dataSet as IBarLineScatterCandleBubbleDataSet<Entry>)
+        mXBounds[mChart] = dataSet as IBarLineScatterCandleBubbleDataSet<Entry>
         val positions =
             mChart
                 .getTransformer(dataSet.axisDependency)
@@ -139,7 +135,7 @@ class BubbleChartRenderer(
                 icon,
                 (x + iconsOffset.x).toInt(),
                 (y + iconsOffset.y).toInt(),
-                icon!!.intrinsicWidth,
+                icon.intrinsicWidth,
                 icon.intrinsicHeight)
           }
           j += 2
@@ -149,17 +145,20 @@ class BubbleChartRenderer(
     }
   }
 
-  override fun drawExtras(c: Canvas) {}
   private val _hsvBuffer = FloatArray(3)
-  override fun drawHighlighted(c: Canvas, indices: Array<Highlight>) {
-    val bubbleData = mChart.bubbleData
+
+  override fun drawExtras(c: Canvas) = Unit
+
+  override fun drawHighlighted(c: Canvas, indices: Array<Highlight?>?) {
+    val bubbleData = mChart.bubbleData ?: return
     val phaseY = mAnimator.phaseY
-    for (high in indices) {
+    indices?.forEach { high ->
+      if (high == null) return@forEach
       val set = bubbleData.getDataSetByIndex(high.dataSetIndex)
-      if (set == null || !set.isHighlightEnabled) continue
-      val entry = set.getEntryForXValue(high.x, high.y)
-      if (entry.y != high.y) continue
-      if (!isInBoundsX(entry, set)) continue
+      if (set == null || !set.isHighlightEnabled) return@forEach
+      val entry = set.getEntryForXValue(high.x, high.y) ?: return@forEach
+      if (entry.y != high.y) return@forEach
+      if (!isInBoundsX(entry, set)) return@forEach
       val trans = mChart.getTransformer(set.axisDependency)
       sizeBuffer[0] = 0f
       sizeBuffer[2] = 1f
@@ -177,9 +176,9 @@ class BubbleChartRenderer(
       val shapeHalf = getShapeSize(entry.size, set.maxSize, referenceSize, normalizeSize) / 2f
       if (!mViewPortHandler.isInBoundsTop(pointBuffer[1] + shapeHalf) ||
           !mViewPortHandler.isInBoundsBottom(pointBuffer[1] - shapeHalf))
-          continue
-      if (!mViewPortHandler.isInBoundsLeft(pointBuffer[0] + shapeHalf)) continue
-      if (!mViewPortHandler.isInBoundsRight(pointBuffer[0] - shapeHalf)) break
+          return@forEach
+      if (!mViewPortHandler.isInBoundsLeft(pointBuffer[0] + shapeHalf)) return@forEach
+      if (!mViewPortHandler.isInBoundsRight(pointBuffer[0] - shapeHalf)) return@forEach
       val originalColor = set.getColor(entry.x.toInt())
       Color.RGBToHSV(
           Color.red(originalColor),

@@ -87,7 +87,7 @@ E : Entry {
   override fun notifyDataSetChanged() {
     if (data != null) {
       calcMinMax()
-      mLegendRenderer.computeLegend(data)
+      mLegendRenderer.computeLegend(data!!)
       calculateOffsets()
     }
   }
@@ -97,7 +97,7 @@ E : Entry {
     var legendRight = 0f
     var legendBottom = 0f
     var legendTop = 0f
-    if (mLegend != null && mLegend.isEnabled && !mLegend.isDrawInsideEnabled) {
+    if (mLegend.isEnabled && !mLegend.isDrawInsideEnabled) {
       val fullLegendWidth =
           Math.min(mLegend.mNeededWidth, mViewPortHandler.chartWidth * mLegend.maxSizePercent)
       when (mLegend.orientation) {

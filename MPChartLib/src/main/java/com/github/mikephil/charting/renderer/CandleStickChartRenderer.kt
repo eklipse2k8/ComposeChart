@@ -8,22 +8,27 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.dataprovider.CandleDataProvider
 import com.github.mikephil.charting.interfaces.datasets.IBarLineScatterCandleBubbleDataSet
 import com.github.mikephil.charting.interfaces.datasets.ICandleDataSet
-import com.github.mikephil.charting.utils.*
+import com.github.mikephil.charting.utils.ColorTemplate
+import com.github.mikephil.charting.utils.MPPointF
+import com.github.mikephil.charting.utils.Utils
+import com.github.mikephil.charting.utils.ViewPortHandler
 
 class CandleStickChartRenderer(
     @JvmField var mChart: CandleDataProvider,
-    animator: ChartAnimator?,
-    viewPortHandler: ViewPortHandler?
+    animator: ChartAnimator,
+    viewPortHandler: ViewPortHandler
 ) : LineScatterCandleRadarRenderer(animator, viewPortHandler) {
   private val mShadowBuffers = FloatArray(8)
   private val mBodyBuffers = FloatArray(4)
   private val mRangeBuffers = FloatArray(4)
   private val mOpenBuffers = FloatArray(4)
   private val mCloseBuffers = FloatArray(4)
-  override fun initBuffers() {}
+
+  override fun initBuffers() = Unit
+
   override fun drawData(c: Canvas) {
-    val candleData = mChart.candleData
-    for (set in candleData.dataSets) {
+    val candleData = mChart.candleData?.dataSets ?: return
+    for (set in candleData) {
       if (set.isVisible) drawDataSet(c, set)
     }
   }
@@ -167,7 +172,7 @@ class CandleStickChartRenderer(
   override fun drawValues(c: Canvas) {
     // if values are drawn
     if (isDrawingValuesAllowed(mChart)) {
-      val dataSets = mChart.candleData.dataSets
+      val dataSets = mChart.candleData?.dataSets ?: return
       for (i in dataSets.indices) {
         val dataSet = dataSets[i]
         if (!shouldDrawValues(dataSet) || dataSet.entryCount < 1) continue
@@ -223,13 +228,16 @@ class CandleStickChartRenderer(
 
   override fun drawExtras(c: Canvas) {}
 
-  override fun drawHighlighted(c: Canvas, indices: Array<Highlight>) {
-    val candleData = mChart.candleData
-    for (high in indices) {
-      val set = candleData.getDataSetByIndex(high.dataSetIndex)
-      if (set == null || !set.isHighlightEnabled) continue
-      val e = set.getEntryForXValue(high.x, high.y)
-      if (!isInBoundsX(e, set)) continue
+  override fun drawHighlighted(c: Canvas, indices: Array<Highlight?>?) {
+    val candleData = mChart.candleData ?: return
+    indices?.forEach { high ->
+      val set = high?.let { candleData.getDataSetByIndex(it.dataSetIndex) }
+      if (set == null || !set.isHighlightEnabled) return@forEach
+
+      val e = set.getEntryForXValue(high.x, high.y) ?: return@forEach
+
+      if (!isInBoundsX(e, set)) return@forEach
+
       val lowValue = e.low * mAnimator.phaseY
       val highValue = e.high * mAnimator.phaseY
       val y = (lowValue + highValue) / 2f

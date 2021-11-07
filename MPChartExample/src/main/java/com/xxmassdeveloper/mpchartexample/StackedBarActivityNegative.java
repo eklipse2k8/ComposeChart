@@ -101,18 +101,18 @@ public class StackedBarActivityNegative extends DemoBase implements
 
         // IMPORTANT: When using negative values in stacked bars, always make sure the negative values are in the array first
         ArrayList<BarEntry> values = new ArrayList<>();
-        values.add(new BarEntry(5, new float[]{ -10, 10 }));
-        values.add(new BarEntry(15, new float[]{ -12, 13 }));
-        values.add(new BarEntry(25, new float[]{ -15, 15 }));
-        values.add(new BarEntry(35, new float[]{ -17, 17 }));
-        values.add(new BarEntry(45, new float[]{ -19, 20 }));
-        values.add(new BarEntry(45, new float[]{ -19, 20 }, getResources().getDrawable(R.drawable.star)));
-        values.add(new BarEntry(55, new float[]{ -19, 19 }));
-        values.add(new BarEntry(65, new float[]{ -16, 16 }));
-        values.add(new BarEntry(75, new float[]{ -13, 14 }));
-        values.add(new BarEntry(85, new float[]{ -10, 11 }));
-        values.add(new BarEntry(95, new float[]{ -5, 6 }));
-        values.add(new BarEntry(105, new float[]{ -1, 2 }));
+        values.add(new BarEntry(5, 0f, new float[]{ -10, 10 }));
+        values.add(new BarEntry(15, 0f, new float[]{ -12, 13 }));
+        values.add(new BarEntry(25, 0f, new float[]{ -15, 15 }));
+        values.add(new BarEntry(35, 0f, new float[]{ -17, 17 }));
+        values.add(new BarEntry(45, 0f, new float[]{ -19, 20 }));
+        values.add(new BarEntry(45, 0f, new float[]{ -19, 20 }, getResources().getDrawable(R.drawable.star)));
+        values.add(new BarEntry(55, 0f, new float[]{ -19, 19 }));
+        values.add(new BarEntry(65, 0f, new float[]{ -16, 16 }));
+        values.add(new BarEntry(75, 0f, new float[]{ -13, 14 }));
+        values.add(new BarEntry(85, 0f, new float[]{ -10, 11 }));
+        values.add(new BarEntry(95, 0f, new float[]{ -5, 6 }));
+        values.add(new BarEntry(105, 0f, new float[]{ -1, 2 }));
 
         BarDataSet set = new BarDataSet(values, "Age Distribution");
         set.setDrawIcons(false);

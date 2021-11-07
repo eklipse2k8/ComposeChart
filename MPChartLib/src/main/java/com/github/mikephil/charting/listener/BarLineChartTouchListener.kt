@@ -280,11 +280,11 @@ class BarLineChartTouchListener(
     // check if axis is inverted
     if (inverted()) {
       // if there is an inverted horizontalbarchart
-      if (chart is HorizontalBarChart) {
-        distanceX = -distanceX
-      } else {
+      //if (chart is HorizontalBarChart) {
+      //  distanceX = -distanceX
+      //} else {
         distanceY = -distanceY
-      }
+      //}
     }
     matrix.postTranslate(distanceX, distanceY)
     l?.onChartTranslate(event, distanceX, distanceY)

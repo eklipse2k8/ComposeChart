@@ -19,6 +19,7 @@ import com.github.mikephil.charting.jobs.AnimatedMoveViewJob.Companion.getInstan
 import com.github.mikephil.charting.jobs.AnimatedZoomJob.Companion.getInstance
 import com.github.mikephil.charting.jobs.MoveViewJob.Companion.getInstance
 import com.github.mikephil.charting.jobs.ZoomJob.Companion.getInstance
+import com.github.mikephil.charting.listener.AnyBarLineChart
 import com.github.mikephil.charting.listener.BarLineChartTouchListener
 import com.github.mikephil.charting.listener.OnDrawListener
 import com.github.mikephil.charting.renderer.XAxisRenderer
@@ -164,7 +165,7 @@ E : Entry {
     rendererRightYAxis = YAxisRenderer(mViewPortHandler, axisRight!!, mRightAxisTransformer)
     rendererXAxis = XAxisRenderer(mViewPortHandler, xAxis, mLeftAxisTransformer)
     setHighlighter(ChartHighlighter(this))
-    onTouchListener = BarLineChartTouchListener(this, mViewPortHandler.matrixTouch, 3f)
+    onTouchListener = BarLineChartTouchListener(this as AnyBarLineChart, mViewPortHandler.matrixTouch, 3f)
     mGridBackgroundPaint =
         Paint().apply {
           style = Paint.Style.FILL

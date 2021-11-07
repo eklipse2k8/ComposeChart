@@ -120,7 +120,7 @@ public class StackedBarActivity extends DemoBase implements OnSeekBarChangeListe
 
             values.add(new BarEntry(
                     i,
-                    new float[]{val1, val2, val3},
+                    0f, new float[]{val1, val2, val3},
                     getResources().getDrawable(R.drawable.star)));
         }
 

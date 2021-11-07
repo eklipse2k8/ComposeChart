@@ -74,8 +74,12 @@ abstract class BarLineScatterCandleBubbleRenderer(
       val high = chart.highestVisibleX
       val entryFrom = dataSet.getEntryForXValue(low, Float.NaN, DataSet.Rounding.DOWN)
       val entryTo = dataSet.getEntryForXValue(high, Float.NaN, DataSet.Rounding.UP)
-      min = dataSet.getEntryIndex(entryFrom)
-      max = dataSet.getEntryIndex(entryTo)
+      if (entryFrom != null) {
+        min = dataSet.getEntryIndex(entryFrom)
+      }
+      if (entryTo != null) {
+        max = dataSet.getEntryIndex(entryTo)
+      }
       range = ((max - min) * phaseX).toInt()
     }
   }

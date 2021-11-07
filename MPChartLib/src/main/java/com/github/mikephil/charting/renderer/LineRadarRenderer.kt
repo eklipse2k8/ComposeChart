@@ -9,7 +9,7 @@ import com.github.mikephil.charting.utils.Utils
 import com.github.mikephil.charting.utils.ViewPortHandler
 
 /** Created by Philipp Jahoda on 25/01/16. */
-abstract class LineRadarRenderer(animator: ChartAnimator?, viewPortHandler: ViewPortHandler?) :
+abstract class LineRadarRenderer(animator: ChartAnimator, viewPortHandler: ViewPortHandler) :
     LineScatterCandleRadarRenderer(animator, viewPortHandler) {
   /**
    * Draws the provided path in filled mode with the provided drawable.

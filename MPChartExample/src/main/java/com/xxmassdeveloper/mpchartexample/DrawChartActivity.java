@@ -4,11 +4,12 @@ package com.xxmassdeveloper.mpchartexample;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+
+import androidx.core.content.ContextCompat;
 
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
@@ -37,6 +38,8 @@ public class DrawChartActivity extends DemoBase implements OnChartValueSelectedL
         OnDrawListener {
 
     private LineChart chart;
+
+    private static final String TAG = DrawChartActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +117,7 @@ public class DrawChartActivity extends DemoBase implements OnChartValueSelectedL
                 break;
             }
             case R.id.actionToggleHighlight: {
-                if(chart.getData() != null) {
+                if (chart.getData() != null) {
                     chart.getData().setHighlightEnabled(!chart.getData().isHighlightEnabled());
                     chart.invalidate();
                 }
@@ -162,16 +165,20 @@ public class DrawChartActivity extends DemoBase implements OnChartValueSelectedL
     public void onNothingSelected() {
     }
 
-    /** callback for each new entry drawn with the finger */
+    /**
+     * callback for each new entry drawn with the finger
+     */
     @Override
     public void onEntryAdded(Entry entry) {
-        Log.i(Chart.LOG_TAG, entry.toString());
+        Log.i(TAG, entry.toString());
     }
 
-    /** callback when a DataSet has been drawn (when lifting the finger) */
+    /**
+     * callback when a DataSet has been drawn (when lifting the finger)
+     */
     @Override
     public void onDrawFinished(DataSet<?> dataSet) {
-        Log.i(Chart.LOG_TAG, "DataSet drawn. " + dataSet.toSimpleString());
+        Log.i(TAG, "DataSet drawn. " + dataSet.toSimpleString());
 
         // prepare the legend again
         chart.getLegendRenderer().computeLegend(chart.getData());
@@ -179,6 +186,6 @@ public class DrawChartActivity extends DemoBase implements OnChartValueSelectedL
 
     @Override
     public void onEntryMoved(Entry entry) {
-        Log.i(Chart.LOG_TAG, "Point moved " + entry.toString());
+        Log.i(TAG, "Point moved " + entry.toString());
     }
 }

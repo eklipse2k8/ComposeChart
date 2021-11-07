@@ -14,8 +14,8 @@ import kotlin.math.max
 
 class LineChartRenderer(
     @JvmField var mChart: LineDataProvider,
-    animator: ChartAnimator?,
-    viewPortHandler: ViewPortHandler?
+    animator: ChartAnimator,
+    viewPortHandler: ViewPortHandler
 ) : LineRadarRenderer(animator, viewPortHandler) {
   /** paint for the inner circle of the value indicators */
   protected var mCirclePaintInner: Paint
@@ -31,10 +31,12 @@ class LineChartRenderer(
 
   /** the bitmap configuration to be used */
   private var mBitmapConfig = Bitmap.Config.ARGB_8888
+
   private var cubicPath = Path()
+
   private var cubicFillPath = Path()
 
-  override fun initBuffers() {}
+  override fun initBuffers() = Unit
 
   override fun drawData(c: Canvas) {
     val width = mViewPortHandler.chartWidth.toInt()
@@ -49,9 +51,7 @@ class LineChartRenderer(
     }
     drawBitmap!!.eraseColor(Color.TRANSPARENT)
     val lineData = mChart.lineData
-    for (set in lineData.dataSets) {
-      if (set!!.isVisible) drawDataSet(c, set)
-    }
+    lineData?.dataSets?.forEach { set -> if (set.isVisible) drawDataSet(c, set) }
     c.drawBitmap(drawBitmap, 0f, 0f, mRenderPaint)
   }
 
@@ -385,10 +385,10 @@ class LineChartRenderer(
 
   override fun drawValues(c: Canvas) {
     if (isDrawingValuesAllowed(mChart)) {
-      val dataSets = mChart.lineData.dataSets
+      val dataSets = mChart.lineData?.dataSets ?: return
       for (i in dataSets.indices) {
         val dataSet = dataSets[i]
-        if (!shouldDrawValues(dataSet!!) || dataSet.entryCount < 1) continue
+        if (!shouldDrawValues(dataSet) || dataSet.entryCount < 1) continue
 
         // apply the text-styling defined by the DataSet
         applyValueTextStyle(dataSet)
@@ -396,7 +396,7 @@ class LineChartRenderer(
 
         // make sure the values do not interfear with the circles
         var valOffset = (dataSet.circleRadius * 1.75f).toInt()
-        if (!dataSet.isDrawCirclesEnabled) valOffset = valOffset / 2
+        if (!dataSet.isDrawCirclesEnabled) valOffset /= 2
         mXBounds[mChart] = dataSet
         val positions =
             trans.generateTransformedValuesLine(
@@ -457,10 +457,10 @@ class LineChartRenderer(
     val phaseY = mAnimator.phaseY
     mCirclesBuffer[0] = 0f
     mCirclesBuffer[1] = 0f
-    val dataSets = mChart.lineData.dataSets
+    val dataSets = mChart.lineData?.dataSets ?: return
     for (i in dataSets.indices) {
       val dataSet = dataSets[i]
-      if (!dataSet!!.isVisible || !dataSet.isDrawCirclesEnabled || dataSet.entryCount == 0) continue
+      if (!dataSet.isVisible || !dataSet.isDrawCirclesEnabled || dataSet.entryCount == 0) continue
       mCirclePaintInner.color = dataSet.circleHoleColor
       val trans = mChart.getTransformer(dataSet.axisDependency)
       mXBounds[mChart] = dataSet
@@ -507,13 +507,14 @@ class LineChartRenderer(
     }
   }
 
-  override fun drawHighlighted(c: Canvas, indices: Array<Highlight>) {
-    val lineData = mChart.lineData
-    for (high in indices) {
+  override fun drawHighlighted(c: Canvas, indices: Array<Highlight?>?) {
+    val lineData = mChart.lineData ?: return
+    indices?.forEach { high ->
+      if (high == null) return@forEach
       val set = lineData.getDataSetByIndex(high.dataSetIndex)
-      if (set == null || !set.isHighlightEnabled) continue
-      val e = set.getEntryForXValue(high.x, high.y)
-      if (!isInBoundsX(e, set)) continue
+      if (set == null || !set.isHighlightEnabled) return@forEach
+      val e = set.getEntryForXValue(high.x, high.y) ?: return@forEach
+      if (!isInBoundsX(e, set)) return@forEach
       val pix =
           mChart.getTransformer(set.axisDependency).getPixelForValues(e.x, e.y * mAnimator.phaseY)
       high.setDraw(pix.x.toFloat(), pix.y.toFloat())

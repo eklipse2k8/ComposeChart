@@ -14,9 +14,9 @@ public class DayAxisValueFormatter implements IAxisValueFormatter
             "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     };
 
-    private final BarLineChartBase<?> chart;
+    private final BarLineChartBase<?, ?, ?> chart;
 
-    public DayAxisValueFormatter(BarLineChartBase<?> chart) {
+    public DayAxisValueFormatter(BarLineChartBase<?, ?, ?> chart) {
         this.chart = chart;
     }
 

@@ -21,9 +21,9 @@ import kotlin.math.*
 
 class PieChartRenderer(
     private var mChart: PieChart,
-    animator: ChartAnimator?,
-    viewPortHandler: ViewPortHandler?
-) : DataRenderer(animator!!, viewPortHandler!!) {
+    animator: ChartAnimator,
+    viewPortHandler: ViewPortHandler
+) : DataRenderer(animator, viewPortHandler) {
   /** paint for the hole in the center of the pie chart and the transparent circle */
   var paintHole: Paint
     private set
@@ -205,9 +205,7 @@ class PieChartRenderer(
         if (drawRoundedSlices) {
           mPathBuffer.arcTo(roundedCircleBox, startAngleOuter + 180, -180f)
         }
-        if (circleBox != null) {
-          mPathBuffer.arcTo(circleBox, startAngleOuter, sweepAngleOuter)
-        }
+        mPathBuffer.arcTo(circleBox, startAngleOuter, sweepAngleOuter)
       }
 
       // API < 21 does not receive floats in addArc, but a RectF
@@ -463,7 +461,7 @@ class PieChartRenderer(
           var y = (labelRadius + iconsOffset.y) * sliceYBase + center.y
           y += iconsOffset.x
           Utils.drawImage(
-              c, icon, x.toInt(), y.toInt(), icon!!.intrinsicWidth, icon.intrinsicHeight)
+              c, icon, x.toInt(), y.toInt(), icon.intrinsicWidth, icon.intrinsicHeight)
         }
         xIndex++
       }
@@ -593,7 +591,7 @@ class PieChartRenderer(
 
   private var mDrawHighlightedRectF = RectF()
 
-  override fun drawHighlighted(c: Canvas, indices: Array<Highlight>) {
+  override fun drawHighlighted(c: Canvas, indices: Array<Highlight?>?) {
 
     /* Skip entirely if using rounded circle slices, because it doesn't make sense to highlight
      * in this way.
@@ -612,13 +610,12 @@ class PieChartRenderer(
     val userInnerRadius = if (drawInnerArc) radius * (mChart.holeRadius / 100f) else 0f
     val highlightedCircleBox = mDrawHighlightedRectF
     highlightedCircleBox[0f, 0f, 0f] = 0f
-    for (i in indices.indices) {
-
+    indices?.forEach { item ->
       // get the index to highlight
-      val index = indices[i].x.toInt()
-      if (index >= drawAngles.size) continue
-      val set: IPieDataSet? = mChart.data?.getDataSetByIndex(indices[i].dataSetIndex)
-      if (set == null || !set.isHighlightEnabled) continue
+      val index = item?.x?.toInt() ?: return@forEach
+      if (index >= drawAngles.size) return@forEach
+      val set: IPieDataSet? = mChart.data?.getDataSetByIndex(item.dataSetIndex)
+      if (set == null || !set.isHighlightEnabled) return@forEach
       val entryCount = set.entryCount
       var visibleAngleCount = 0
       for (j in 0 until entryCount) {
@@ -633,7 +630,7 @@ class PieChartRenderer(
       var innerRadius = userInnerRadius
       val shift = set.selectionShift
       val highlightedRadius = radius + shift
-      mChart.circleBox?.let { highlightedCircleBox.set(it) }
+      mChart.circleBox.let { highlightedCircleBox.set(it) }
       highlightedCircleBox.inset(-shift, -shift)
       val accountForSliceSpacing = sliceSpace > 0f && sliceAngle <= 180f
       var highlightColor = set.highlightColor

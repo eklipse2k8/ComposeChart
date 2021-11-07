@@ -145,7 +145,7 @@ public class BarChartActivity extends DemoBase implements OnSeekBarChangeListene
             float val = (float) (Math.random() * (range + 1));
 
             if (Math.random() * 100 < 25) {
-                values.add(new BarEntry(i, val, getResources().getDrawable(R.drawable.star)));
+                values.add(new BarEntry(i, val, null, getResources().getDrawable(R.drawable.star)));
             } else {
                 values.add(new BarEntry(i, val));
             }

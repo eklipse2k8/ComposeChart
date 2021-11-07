@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +14,9 @@ import android.view.WindowManager;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.components.Legend;
@@ -126,8 +128,10 @@ public class HorizontalBarChartActivity extends DemoBase implements OnSeekBarCha
 
         for (int i = 0; i < count; i++) {
             float val = (float) (Math.random() * range);
-            values.add(new BarEntry(i * spaceForBar, val,
-                    getResources().getDrawable(R.drawable.star)));
+            BarEntry entry = new BarEntry(i * spaceForBar, val, null,
+                    ResourcesCompat.getDrawable(getResources(), R.drawable.star, null)
+            );
+            values.add(entry);
         }
 
         BarDataSet set1;
@@ -193,7 +197,7 @@ public class HorizontalBarChartActivity extends DemoBase implements OnSeekBarCha
                 break;
             }
             case R.id.actionToggleHighlight: {
-                if(chart.getData() != null) {
+                if (chart.getData() != null) {
                     chart.getData().setHighlightEnabled(!chart.getData().isHighlightEnabled());
                     chart.invalidate();
                 }
@@ -215,7 +219,7 @@ public class HorizontalBarChartActivity extends DemoBase implements OnSeekBarCha
             }
             case R.id.actionToggleBarBorders: {
                 for (IBarDataSet set : chart.getData().getDataSets())
-                    ((BarDataSet)set).setBarBorderWidth(set.getBarBorderWidth() == 1.f ? 0.f : 1.f);
+                    ((BarDataSet) set).setBarBorderWidth(set.getBarBorderWidth() == 1.f ? 0.f : 1.f);
 
                 chart.invalidate();
                 break;
@@ -261,10 +265,12 @@ public class HorizontalBarChartActivity extends DemoBase implements OnSeekBarCha
     }
 
     @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {}
+    public void onStartTrackingTouch(SeekBar seekBar) {
+    }
 
     @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {}
+    public void onStopTrackingTouch(SeekBar seekBar) {
+    }
 
     private final RectF mOnValueSelectedRectF = new RectF();
 
@@ -287,5 +293,6 @@ public class HorizontalBarChartActivity extends DemoBase implements OnSeekBarCha
     }
 
     @Override
-    public void onNothingSelected() {}
+    public void onNothingSelected() {
+    }
 }

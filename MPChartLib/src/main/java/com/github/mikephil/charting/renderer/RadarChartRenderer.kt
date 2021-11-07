@@ -15,8 +15,8 @@ import com.github.mikephil.charting.utils.ViewPortHandler
 
 class RadarChartRenderer(
     private var mChart: RadarChart,
-    animator: ChartAnimator?,
-    viewPortHandler: ViewPortHandler?
+    animator: ChartAnimator,
+    viewPortHandler: ViewPortHandler
 ) : LineRadarRenderer(animator, viewPortHandler) {
   /** paint for drawing the web */
   var webPaint: Paint
@@ -30,7 +30,7 @@ class RadarChartRenderer(
 
   override fun drawData(c: Canvas) {
     val radarData = mChart.data ?: return
-    val mostEntries = radarData.maxEntryCountSet.entryCount
+    val mostEntries = radarData.maxEntryCountSet?.entryCount ?: return
     for (set in radarData.dataSets) {
       if (set.isVisible) {
         drawDataSet(c, set, mostEntries)
@@ -206,7 +206,7 @@ class RadarChartRenderer(
     MPPointF.recycleInstance(p2out)
   }
 
-  override fun drawHighlighted(c: Canvas, indices: Array<Highlight>) {
+  override fun drawHighlighted(c: Canvas, indices: Array<Highlight?>?) {
     val sliceangle = mChart.sliceAngle
 
     // calculate the factor that is needed for transforming the value to
@@ -215,11 +215,11 @@ class RadarChartRenderer(
     val center = mChart.centerOffsets ?: MPPointF.getInstance(0f, 0f)
     val pOut = MPPointF.getInstance(0f, 0f)
     val radarData = mChart.data
-    for (high in indices) {
-      val set = radarData?.getDataSetByIndex(high.dataSetIndex)
-      if (set == null || !set.isHighlightEnabled) continue
+    indices?.forEach { high ->
+      val set = high?.let { radarData?.getDataSetByIndex(it.dataSetIndex) } ?: return@forEach
+      if (!set.isHighlightEnabled) return@forEach
       val e = set.getEntryForIndex(high.x.toInt())
-      if (!isInBoundsX(e, set)) continue
+      if (!isInBoundsX(e, set)) return@forEach
       val y: Float = e.y - mChart.yChartMin
       Utils.getPosition(
           center,

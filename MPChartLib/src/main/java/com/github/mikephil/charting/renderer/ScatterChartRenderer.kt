@@ -14,13 +14,13 @@ import kotlin.math.min
 
 class ScatterChartRenderer(
     @JvmField var mChart: ScatterDataProvider,
-    animator: ChartAnimator?,
-    viewPortHandler: ViewPortHandler?
+    animator: ChartAnimator,
+    viewPortHandler: ViewPortHandler
 ) : LineScatterCandleRadarRenderer(animator, viewPortHandler) {
   override fun initBuffers() {}
 
   override fun drawData(c: Canvas) {
-    val scatterData = mChart.scatterData
+    val scatterData = mChart.scatterData ?: return
     for (set in scatterData.dataSets) {
       if (set.isVisible) drawDataSet(c, set)
     }
@@ -59,8 +59,8 @@ class ScatterChartRenderer(
   override fun drawValues(c: Canvas) {
     // if values are drawn
     if (isDrawingValuesAllowed(mChart)) {
-      val dataSets = mChart.scatterData.dataSets
-      for (i in 0 until mChart.scatterData.dataSetCount) {
+      val dataSets = mChart.scatterData?.dataSets ?: return
+      for (i in 0 until mChart.scatterData!!.dataSetCount) {
         val dataSet = dataSets[i]
         if (!shouldDrawValues(dataSet) || dataSet.entryCount < 1) continue
 
@@ -117,13 +117,14 @@ class ScatterChartRenderer(
 
   override fun drawExtras(c: Canvas) {}
 
-  override fun drawHighlighted(c: Canvas, indices: Array<Highlight>) {
-    val scatterData = mChart.scatterData
-    for (high in indices) {
+  override fun drawHighlighted(c: Canvas, indices: Array<Highlight?>?) {
+    val scatterData = mChart.scatterData ?: return
+    indices?.forEach { high ->
+      if (high == null) return@forEach
       val set = scatterData.getDataSetByIndex(high.dataSetIndex)
-      if (set == null || !set.isHighlightEnabled) continue
-      val e = set.getEntryForXValue(high.x, high.y)
-      if (!isInBoundsX(e, set)) continue
+      if (set == null || !set.isHighlightEnabled) return@forEach
+      val e = set.getEntryForXValue(high.x, high.y) ?: return@forEach
+      if (!isInBoundsX(e, set)) return@forEach
       val pix =
           mChart.getTransformer(set.axisDependency).getPixelForValues(e.x, e.y * mAnimator.phaseY)
       high.setDraw(pix.x.toFloat(), pix.y.toFloat())

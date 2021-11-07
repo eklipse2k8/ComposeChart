@@ -24,7 +24,7 @@ public class PieChartItem extends ChartItem {
     private final Typeface mTf;
     private final SpannableString mCenterText;
 
-    public PieChartItem(ChartData<?> cd, Context c) {
+    public PieChartItem(ChartData<?, ?> cd, Context c) {
         super(cd);
 
         mTf = Typeface.createFromAsset(c.getAssets(), "OpenSans-Regular.ttf");

@@ -127,7 +127,7 @@ public class HorizontalBarNegativeChartActivity extends DemoBase implements OnSe
 
         for (int i = 0; i < count; i++) {
             float val = (float) (Math.random() * range - range / 2);
-            values.add(new BarEntry(i * spaceForBar, val,
+            values.add(new BarEntry(i * spaceForBar, val, null,
                     getResources().getDrawable(R.drawable.star)));
         }
 

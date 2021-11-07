@@ -92,11 +92,11 @@ public class CombinedChartActivity extends DemoBase {
 
         CombinedData data = new CombinedData();
 
-        data.setData(generateLineData());
-        data.setData(generateBarData());
-        data.setData(generateBubbleData());
-        data.setData(generateScatterData());
-        data.setData(generateCandleData());
+//        data.setData(generateLineData());
+//        data.setData(generateBarData());
+//        data.setData(generateBubbleData());
+//        data.setData(generateScatterData());
+//        data.setData(generateCandleData());
         data.setValueTypeface(tfLight);
 
         xAxis.setAxisMaximum(data.getXMax() + 0.25f);
@@ -140,7 +140,7 @@ public class CombinedChartActivity extends DemoBase {
             entries1.add(new BarEntry(0, getRandom(25, 25)));
 
             // stacked
-            entries2.add(new BarEntry(0, new float[]{getRandom(13, 12), getRandom(13, 12)}));
+            entries2.add(new BarEntry(0, 0f, new float[]{getRandom(13, 12), getRandom(13, 12)}));
         }
 
         BarDataSet set1 = new BarDataSet(entries1, "Bar 1");
