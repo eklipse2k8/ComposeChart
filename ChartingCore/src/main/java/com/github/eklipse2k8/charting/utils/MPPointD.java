@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class MPPointD extends ObjectPool.Poolable {
 
-    private static ObjectPool<MPPointD> pool;
+    private static final ObjectPool<MPPointD> pool;
 
     static {
         pool = ObjectPool.create(64, new MPPointD(0,0));

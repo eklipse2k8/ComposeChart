@@ -221,7 +221,7 @@ class LineChartRenderer(
       if (mLineBuffer.size <= numberOfFloats) mLineBuffer = FloatArray(numberOfFloats * 2)
       val max = mXBounds.min + mXBounds.range
       for (j in mXBounds.min until max) {
-        var e = dataSet.getEntryForIndex(j) ?: continue
+        var e = dataSet.getEntryForIndex(j)
         mLineBuffer[0] = e.x
         mLineBuffer[1] = e.y * phaseY
         if (j < mXBounds.max) {
@@ -483,7 +483,7 @@ class LineChartRenderer(
       }
       val boundsRangeCount = mXBounds.range + mXBounds.min
       for (j in mXBounds.min..boundsRangeCount) {
-        val e = dataSet.getEntryForIndex(j) ?: break
+        val e = dataSet.getEntryForIndex(j)
         mCirclesBuffer[0] = e.x
         mCirclesBuffer[1] = e.y * phaseY
         trans.pointValuesToPixel(mCirclesBuffer)

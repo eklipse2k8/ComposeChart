@@ -181,10 +181,7 @@ public class RadarChartActivity extends DemoBase {
                 break;
             }
             case R.id.actionToggleRotate: {
-                if (chart.isRotationEnabled())
-                    chart.setRotationEnabled(false);
-                else
-                    chart.setRotationEnabled(true);
+                chart.setRotationEnabled(!chart.isRotationEnabled());
                 chart.invalidate();
                 break;
             }
@@ -194,10 +191,7 @@ public class RadarChartActivity extends DemoBase {
                         .getDataSets();
 
                 for (IRadarDataSet set : sets) {
-                    if (set.isDrawFilledEnabled())
-                        set.setDrawFilled(false);
-                    else
-                        set.setDrawFilled(true);
+                    set.setDrawFilled(!set.isDrawFilledEnabled());
                 }
                 chart.invalidate();
                 break;

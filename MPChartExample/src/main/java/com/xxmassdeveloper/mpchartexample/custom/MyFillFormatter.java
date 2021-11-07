@@ -11,7 +11,7 @@ import com.github.eklipse2k8.charting.interfaces.datasets.ILineDataSet;
 public class MyFillFormatter implements IFillFormatter
 {
 
-    private float fillPos;
+    private final float fillPos;
 
     public MyFillFormatter(float fillPos) {
         this.fillPos = fillPos;

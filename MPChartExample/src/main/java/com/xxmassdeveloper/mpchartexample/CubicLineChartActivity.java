@@ -192,10 +192,7 @@ public class CubicLineChartActivity extends DemoBase implements OnSeekBarChangeL
 
                     LineDataSet set = (LineDataSet) iSet;
 
-                    if (set.isDrawFilledEnabled())
-                        set.setDrawFilled(false);
-                    else
-                        set.setDrawFilled(true);
+                    set.setDrawFilled(!set.isDrawFilledEnabled());
                 }
                 chart.invalidate();
                 break;
@@ -207,10 +204,7 @@ public class CubicLineChartActivity extends DemoBase implements OnSeekBarChangeL
                 for (ILineDataSet iSet : sets) {
 
                     LineDataSet set = (LineDataSet) iSet;
-                    if (set.isDrawCirclesEnabled())
-                        set.setDrawCircles(false);
-                    else
-                        set.setDrawCircles(true);
+                    set.setDrawCircles(!set.isDrawCirclesEnabled());
                 }
                 chart.invalidate();
                 break;
@@ -258,10 +252,7 @@ public class CubicLineChartActivity extends DemoBase implements OnSeekBarChangeL
                 break;
             }
             case R.id.actionTogglePinch: {
-                if (chart.isPinchZoomEnabled())
-                    chart.setPinchZoom(false);
-                else
-                    chart.setPinchZoom(true);
+                chart.setPinchZoom(!chart.isPinchZoomEnabled());
 
                 chart.invalidate();
                 break;

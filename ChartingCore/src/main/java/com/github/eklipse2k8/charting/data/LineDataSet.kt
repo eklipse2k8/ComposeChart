@@ -146,7 +146,7 @@ class LineDataSet(yVals: MutableList<Entry>, label: String?) :
   }
 
   override val isDashedLineEnabled: Boolean
-    get() = if (dashPathEffect == null) false else true
+    get() = dashPathEffect != null
 
   /**
    * set this to true to enable the drawing of circle indicators for this DataSet, default true

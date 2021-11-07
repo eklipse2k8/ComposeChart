@@ -223,10 +223,7 @@ public class BarChartActivityMultiDataset extends DemoBase implements OnSeekBarC
                 break;
             }
             case R.id.actionTogglePinch: {
-                if (chart.isPinchZoomEnabled())
-                    chart.setPinchZoom(false);
-                else
-                    chart.setPinchZoom(true);
+                chart.setPinchZoom(!chart.isPinchZoomEnabled());
 
                 chart.invalidate();
                 break;

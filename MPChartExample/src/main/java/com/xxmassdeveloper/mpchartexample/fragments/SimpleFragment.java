@@ -65,7 +65,7 @@ public abstract class SimpleFragment extends Fragment {
             }
 
             BarDataSet ds = new BarDataSet(entries, getLabel(i));
-            ds.setColors(ColorTemplate.INSTANCE.VORDIPLOM_COLORS);
+            ds.setColors(ColorTemplate.VORDIPLOM_COLORS);
             sets.add(ds);
         }
 

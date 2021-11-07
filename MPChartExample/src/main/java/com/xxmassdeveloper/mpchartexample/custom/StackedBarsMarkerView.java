@@ -22,7 +22,7 @@ import com.xxmassdeveloper.mpchartexample.R;
 @SuppressLint("ViewConstructor")
 public class StackedBarsMarkerView extends MarkerView {
 
-    private TextView tvContent;
+    private final TextView tvContent;
 
     public StackedBarsMarkerView(Context context, int layoutResource) {
         super(context, layoutResource);

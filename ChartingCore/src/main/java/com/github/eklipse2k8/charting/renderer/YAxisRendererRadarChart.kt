@@ -136,7 +136,7 @@ class YAxisRendererRadarChart(
   private val mRenderLimitLinesPathBuffer = Path()
 
   override fun renderLimitLines(c: Canvas?) {
-    val limitLines = mYAxis.limitLines ?: return
+    val limitLines = mYAxis.limitLines
     val sliceangle = mChart.sliceAngle
 
     // calculate the factor that is needed for transforming the value to

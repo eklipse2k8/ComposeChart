@@ -441,7 +441,7 @@ abstract class AxisBase : ComponentBase() {
    * @return
    */
   val isGridDashedLineEnabled: Boolean
-    get() = if (gridDashPathEffect == null) false else true
+    get() = gridDashPathEffect != null
 
   /**
    * Enables the axis line to be drawn in dashed mode, e.g. like this "- - - - - -". THIS ONLY WORKS

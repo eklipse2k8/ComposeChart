@@ -197,10 +197,7 @@ public class PiePolylineChartActivity extends DemoBase implements OnSeekBarChang
                 break;
             }
             case R.id.actionToggleHole: {
-                if (chart.isDrawHoleEnabled())
-                    chart.setDrawHoleEnabled(false);
-                else
-                    chart.setDrawHoleEnabled(true);
+                chart.setDrawHoleEnabled(!chart.isDrawHoleEnabled());
                 chart.invalidate();
                 break;
             }
@@ -226,10 +223,7 @@ public class PiePolylineChartActivity extends DemoBase implements OnSeekBarChang
                 break;
             }
             case R.id.actionDrawCenter: {
-                if (chart.isDrawCenterTextEnabled())
-                    chart.setDrawCenterText(false);
-                else
-                    chart.setDrawCenterText(true);
+                chart.setDrawCenterText(!chart.isDrawCenterTextEnabled());
                 chart.invalidate();
                 break;
             }

@@ -23,7 +23,7 @@ public class ObjectPool<T extends ObjectPool.Poolable> {
     private int desiredCapacity;
     private Object[] objects;
     private int objectsPointer;
-    private T modelObject;
+    private final T modelObject;
     private float replenishPercentage;
 
 

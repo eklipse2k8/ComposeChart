@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class MPPointF extends ObjectPool.Poolable {
 
-    private static ObjectPool<MPPointF> pool;
+    private static final ObjectPool<MPPointF> pool;
 
     public float x;
     public float y;

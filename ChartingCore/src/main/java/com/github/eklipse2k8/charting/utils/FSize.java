@@ -14,7 +14,7 @@ public final class FSize extends ObjectPool.Poolable{
     public float width;
     public float height;
 
-    private static ObjectPool<FSize> pool;
+    private static final ObjectPool<FSize> pool;
 
     static {
         pool = ObjectPool.create(256, new FSize(0,0));

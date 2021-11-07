@@ -206,10 +206,7 @@ public class HorizontalBarChartActivity extends DemoBase implements OnSeekBarCha
                 break;
             }
             case R.id.actionTogglePinch: {
-                if (chart.isPinchZoomEnabled())
-                    chart.setPinchZoom(false);
-                else
-                    chart.setPinchZoom(true);
+                chart.setPinchZoom(!chart.isPinchZoomEnabled());
 
                 chart.invalidate();
                 break;

@@ -16,7 +16,7 @@ public class ObjectPoolTest {
 
     static class TestPoolable extends ObjectPool.Poolable{
 
-        private static ObjectPool<TestPoolable> pool;
+        private static final ObjectPool<TestPoolable> pool;
 
         static {
             pool = ObjectPool.create(4, new TestPoolable(0,0));
