@@ -58,47 +58,47 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     offsets.right = 0f
     offsets.top = 0f
     offsets.bottom = 0f
-    if (!mLegend.isEnabled || mLegend.isDrawInsideEnabled) return
-    when (mLegend.orientation) {
+    if (!legend.isEnabled || legend.isDrawInsideEnabled) return
+    when (legend.orientation) {
       LegendOrientation.VERTICAL ->
-          when (mLegend.horizontalAlignment) {
+          when (legend.horizontalAlignment) {
             LegendHorizontalAlignment.LEFT ->
                 offsets.left +=
-                    (mLegend.mNeededWidth.coerceAtMost(
-                        viewPortHandler.chartWidth * mLegend.maxSizePercent) + mLegend.xOffset)
+                    (legend.mNeededWidth.coerceAtMost(
+                        viewPortHandler.chartWidth * legend.maxSizePercent) + legend.xOffset)
             LegendHorizontalAlignment.RIGHT ->
                 offsets.right +=
-                    (mLegend.mNeededWidth.coerceAtMost(
-                        viewPortHandler.chartWidth * mLegend.maxSizePercent) + mLegend.xOffset)
+                    (legend.mNeededWidth.coerceAtMost(
+                        viewPortHandler.chartWidth * legend.maxSizePercent) + legend.xOffset)
             LegendHorizontalAlignment.CENTER ->
-                when (mLegend.verticalAlignment) {
+                when (legend.verticalAlignment) {
                   LegendVerticalAlignment.TOP ->
                       offsets.top +=
-                          (mLegend.mNeededHeight.coerceAtMost(
-                              viewPortHandler.chartHeight * mLegend.maxSizePercent) +
-                              mLegend.yOffset)
+                          (legend.mNeededHeight.coerceAtMost(
+                              viewPortHandler.chartHeight * legend.maxSizePercent) +
+                              legend.yOffset)
                   LegendVerticalAlignment.BOTTOM ->
                       offsets.bottom +=
-                          (mLegend.mNeededHeight.coerceAtMost(
-                              viewPortHandler.chartHeight * mLegend.maxSizePercent) +
-                              mLegend.yOffset)
+                          (legend.mNeededHeight.coerceAtMost(
+                              viewPortHandler.chartHeight * legend.maxSizePercent) +
+                              legend.yOffset)
                   else -> Unit
                 }
           }
       LegendOrientation.HORIZONTAL ->
-          when (mLegend.verticalAlignment) {
+          when (legend.verticalAlignment) {
             LegendVerticalAlignment.TOP -> {
               offsets.top +=
-                  (mLegend.mNeededHeight.coerceAtMost(
-                      viewPortHandler.chartHeight * mLegend.maxSizePercent) + mLegend.yOffset)
+                  (legend.mNeededHeight.coerceAtMost(
+                      viewPortHandler.chartHeight * legend.maxSizePercent) + legend.yOffset)
               if (axisLeft!!.isEnabled && axisLeft!!.isDrawLabelsEnabled)
                   offsets.top +=
                       axisLeft!!.getRequiredHeightSpace(rendererLeftYAxis!!.paintAxisLabels)
             }
             LegendVerticalAlignment.BOTTOM -> {
               offsets.bottom +=
-                  (mLegend.mNeededHeight.coerceAtMost(
-                      viewPortHandler.chartHeight * mLegend.maxSizePercent) + mLegend.yOffset)
+                  (legend.mNeededHeight.coerceAtMost(
+                      viewPortHandler.chartHeight * legend.maxSizePercent) + legend.yOffset)
               if (axisRight!!.isEnabled && axisRight!!.isDrawLabelsEnabled)
                   offsets.bottom +=
                       axisRight!!.getRequiredHeightSpace(rendererRightYAxis!!.paintAxisLabels)

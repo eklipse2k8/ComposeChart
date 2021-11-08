@@ -10,7 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.eklipse2k8.charting.charts.ScatterChart;
+import com.github.eklipse2k8.charting.charts.ScatterShape;
+import com.github.eklipse2k8.charting.charts.ScatterShapeKt;
 import com.github.eklipse2k8.charting.data.BarData;
 import com.github.eklipse2k8.charting.data.BarDataSet;
 import com.github.eklipse2k8.charting.data.BarEntry;
@@ -78,7 +79,7 @@ public abstract class SimpleFragment extends Fragment {
 
         ArrayList<IScatterDataSet> sets = new ArrayList<>();
 
-        ScatterChart.ScatterShape[] shapes = ScatterChart.ScatterShape.Companion.getAllDefaultShapes();
+        ScatterShape[] shapes = ScatterShapeKt.getAllDefaultShapes();
 
         for(int i = 0; i < dataSets; i++) {
 

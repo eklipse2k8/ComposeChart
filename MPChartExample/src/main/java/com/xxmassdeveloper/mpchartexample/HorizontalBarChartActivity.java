@@ -63,12 +63,8 @@ public class HorizontalBarChartActivity extends DemoBase implements OnSeekBarCha
 
         chart = findViewById(R.id.chart1);
         chart.setOnChartValueSelectedListener(this);
-        // chart.setHighlightEnabled(false);
-
         chart.setDrawBarShadow(false);
-
         chart.setDrawValueAboveBar(true);
-
         chart.getDescription().setEnabled(false);
 
         // if more than 60 entries are displayed in the chart, no values will be
@@ -95,14 +91,12 @@ public class HorizontalBarChartActivity extends DemoBase implements OnSeekBarCha
         yl.setDrawAxisLine(true);
         yl.setDrawGridLines(true);
         yl.setAxisMinimum(0f); // this replaces setStartAtZero(true)
-//        yl.setInverted(true);
 
         YAxis yr = chart.getAxisRight();
         yr.setTypeface(tfLight);
         yr.setDrawAxisLine(true);
         yr.setDrawGridLines(false);
         yr.setAxisMinimum(0f); // this replaces setStartAtZero(true)
-//        yr.setInverted(true);
 
         chart.setFitBars(true);
         chart.animateY(2500);

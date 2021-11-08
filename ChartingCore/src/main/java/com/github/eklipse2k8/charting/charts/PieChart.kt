@@ -35,19 +35,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   override val dataRenderer: DataRenderer = PieChartRenderer(this, mAnimator, viewPortHandler)
 
-  /**
-   * returns the circlebox, the boundingbox of the pie-chart slices
-   *
-   * @return
-   */
   /** rect object that represents the bounds of the piechart, needed for drawing the circle */
   val circleBox: RectF = RectF()
 
-  /**
-   * Returns true if drawing the entry labels is enabled, false if not.
-   *
-   * @return
-   */
   /** flag indicating if entry labels should be drawn or not */
   var isDrawEntryLabelsEnabled = true
     private set
@@ -55,77 +45,34 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   /**
    * returns an integer array of all the different angles the chart slices have the angles in the
    * returned array determine how much space (of 360°) each slice takes
-   *
-   * @return
    */
-  /** array that holds the width of each pie-slice in degrees */
   var drawAngles = FloatArray(1)
     private set
 
-  /**
-   * returns the absolute angles of the different chart slices (where the slices end)
-   *
-   * @return
-   */
-  /** array that holds the absolute angle in degrees of each slice */
+  /** returns the absolute angles of the different chart slices (where the slices end) */
   var absoluteAngles = FloatArray(1)
     private set
 
-  /**
-   * returns true if the hole in the center of the pie-chart is set to be visible, false if not
-   *
-   * @return
-   */
-  /**
-   * set this to true to draw the pie center empty
-   *
-   * @param enabled
-   */
   /** if true, the white hole inside the chart will be drawn */
   var isDrawHoleEnabled = true
 
-  /**
-   * Returns true if the inner tips of the slices are visible behind the hole, false if not.
-   *
-   * @return true if slices are visible behind the hole.
-   */
   /** if true, the hole will see-through to the inner tips of the slices */
   var isDrawSlicesUnderHoleEnabled = false
     private set
 
-  /**
-   * Returns true if using percentage values is enabled for the chart.
-   *
-   * @return
-   */
   /** if true, the values inside the piechart are drawn as percent values */
   var isUsePercentValuesEnabled = false
     private set
 
-  /**
-   * Returns true if the chart is set to draw each end of a pie-slice "rounded".
-   *
-   * @return
-   */
   /** if true, the slices of the piechart are rounded */
   var isDrawRoundedSlicesEnabled = false
     private set
 
   /** variable for the text that is drawn in the center of the pie-chart */
   private var mCenterText: CharSequence = ""
+
   private val mCenterTextOffset = MPPointF.getInstance(0f, 0f)
 
-  /**
-   * Returns the size of the hole radius in percent of the total radius.
-   *
-   * @return
-   */
-  /**
-   * sets the radius of the hole in the center of the piechart in percent of the maximum radius (max
-   * = the radius of the whole chart), default 50%
-   *
-   * @param percent
-   */
   /** indicates the size of the hole in the center of the piechart, default: radius / 2 */
   var holeRadius = 50f
 
@@ -136,22 +83,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    *
    * @param percent
    */
-  /** the radius of the transparent circle next to the chart-hole in the center */
   var transparentCircleRadius = 55f
 
-  /**
-   * returns true if drawing the center text is enabled
-   *
-   * @return
-   */
-  /** if enabled, centertext is drawn */
+  /** returns true if drawing the center text is enabled */
   var isDrawCenterTextEnabled = true
     private set
 
-  /**
-   * the rectangular radius of the bounding box for the center text, as a percentage of the pie hole
-   * default 1.f (100%)
-   */
   /**
    * the rectangular radius of the bounding box for the center text, as a percentage of the pie hole
    * default 1.f (100%)
@@ -356,27 +293,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   fun setDrawSlicesUnderHole(enable: Boolean) {
     isDrawSlicesUnderHoleEnabled = enable
   }
-  /**
-   * returns the text that is drawn in the center of the pie-chart
-   *
-   * @return
-   */
-  /**
-   * Sets the text String that is displayed in the center of the PieChart.
-   *
-   * @param text
-   */
+
+  /** returns the text that is drawn in the center of the pie-chart */
   var centerText: CharSequence?
     get() = mCenterText
     set(text) {
       mCenterText = text ?: ""
     }
 
-  /**
-   * set this to true to draw the text that is displayed in the center of the pie chart
-   *
-   * @param enabled
-   */
+  /** set this to true to draw the text that is displayed in the center of the pie chart */
   fun setDrawCenterText(enabled: Boolean) {
     isDrawCenterTextEnabled = enabled
   }
@@ -390,19 +315,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   override val radius: Float
     get() = min(circleBox.width() / 2f, circleBox.height() / 2f)
 
-  /**
-   * returns the center of the circlebox
-   *
-   * @return
-   */
+  /** returns the center of the circlebox */
   val centerCircleBox: MPPointF
     get() = MPPointF.getInstance(circleBox.centerX(), circleBox.centerY())
 
-  /**
-   * sets the typeface for the center-text paint
-   *
-   * @param t
-   */
+  /** sets the typeface for the center-text paint */
   fun setCenterTextTypeface(t: Typeface?) {
     (dataRenderer as PieChartRenderer).paintCenterText.typeface = t
   }
@@ -555,11 +472,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     set(value) {
       mMaxAngle = value.coerceIn(90f, 360f)
     }
-  /**
-   * The minimum angle slices on the chart are rendered with, default is 0f.
-   *
-   * @return minimum angle for slices
-   */
+
   /**
    * Set the angle to set minimum size for slices, you must call [.notifyDataSetChanged] and
    * [.invalidate] when changing this, only works if there is enough room for all slices to have the

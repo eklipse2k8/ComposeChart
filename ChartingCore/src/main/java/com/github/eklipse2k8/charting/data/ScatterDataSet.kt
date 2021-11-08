@@ -1,20 +1,10 @@
 package com.github.eklipse2k8.charting.data
 
-import com.github.eklipse2k8.charting.charts.ScatterChart.ScatterShape
+import com.github.eklipse2k8.charting.charts.ScatterShape
+import com.github.eklipse2k8.charting.charts.getRendererForShape
 import com.github.eklipse2k8.charting.interfaces.datasets.IScatterDataSet
 import com.github.eklipse2k8.charting.renderer.scatter.*
 import com.github.eklipse2k8.charting.utils.ColorTemplate
-
-fun getRendererForShape(shape: ScatterShape): IShapeRenderer =
-    when (shape) {
-      ScatterShape.SQUARE -> SquareShapeRenderer()
-      ScatterShape.CIRCLE -> CircleShapeRenderer()
-      ScatterShape.TRIANGLE -> TriangleShapeRenderer()
-      ScatterShape.CROSS -> CrossShapeRenderer()
-      ScatterShape.X -> XShapeRenderer()
-      ScatterShape.CHEVRON_UP -> ChevronUpShapeRenderer()
-      ScatterShape.CHEVRON_DOWN -> ChevronDownShapeRenderer()
-    }
 
 class ScatterDataSet(yVals: MutableList<Entry>, label: String) :
     LineScatterCandleRadarDataSet<Entry>(yVals, label), IScatterDataSet {

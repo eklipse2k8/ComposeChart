@@ -61,6 +61,7 @@ public class LineChartTime extends DemoBase implements OnSeekBarChangeListener {
         chart.getDescription().setEnabled(false);
 
         // enable touch gestures
+
         chart.setTouchEnabled(true);
 
         chart.setDragDecelerationFrictionCoef(0.9f);

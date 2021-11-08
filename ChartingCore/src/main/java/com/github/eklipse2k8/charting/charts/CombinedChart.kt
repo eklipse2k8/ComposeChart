@@ -26,17 +26,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     BarLineChartBase<CombinedData, IBarLineScatterCandleBubbleDataSet<Entry>, Entry>(
         context, attrs, defStyleAttr),
     CombinedDataProvider {
+
   /** if set to true, all values are drawn above their bars, instead of below their top */
   override var isDrawValueAboveBarEnabled = true
     private set
-  /** @return true the highlight operation is be full-bar oriented, false if single-value */
+
   /**
    * Set this to true to make the highlight operation full-bar oriented, false to make it highlight
    * single values (relevant only for stacked).
-   *
-   * @param enabled
    */
-  /** flag that indicates whether the highlight should be full-bar oriented, or single-value? */
   override var isHighlightFullBarEnabled = false
 
   /** if set to true, a grey area is drawn behind each bar that indicates the maximum value */
@@ -90,7 +88,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       } else {
         val h = highlighter.getHighlight(x, y)
         if (h == null || !isHighlightFullBarEnabled) h!!
-        else Highlight(h.x, h.y, h.xPx, h.yPx, h.dataSetIndex,  h.axis, -1)
+        else Highlight(h.x, h.y, h.xPx, h.yPx, h.dataSetIndex, h.axis, -1)
       }
 
   override val lineData: LineData?
@@ -126,11 +124,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   fun setDrawBarShadow(enabled: Boolean) {
     isDrawBarShadowEnabled = enabled
   }
-  /**
-   * Returns the currently set draw order.
-   *
-   * @return
-   */
+
   /**
    * Sets the order in which the provided data objects should be drawn. The earlier you place them
    * in the provided array, the further they will be in the background. e.g. if you provide new
@@ -147,7 +141,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   /** draws all MarkerViews on the highlighted positions */
   override fun drawMarkers(canvas: Canvas) {
-
     // if there is no marker view or drawing marker is disabled
     if (mMarker == null || !isDrawMarkersEnabled() || !valuesToHighlight()) return
     val indicesToHighlight = mIndicesToHighlight ?: return

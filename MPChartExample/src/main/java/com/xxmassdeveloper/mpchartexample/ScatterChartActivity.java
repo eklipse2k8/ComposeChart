@@ -16,6 +16,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.github.eklipse2k8.charting.charts.ScatterChart;
+import com.github.eklipse2k8.charting.charts.ScatterShape;
 import com.github.eklipse2k8.charting.components.Legend;
 import com.github.eklipse2k8.charting.components.XAxis;
 import com.github.eklipse2k8.charting.components.YAxis;
@@ -121,10 +122,10 @@ public class ScatterChartActivity extends DemoBase implements OnSeekBarChangeLis
 
         // create a dataset and give it a type
         ScatterDataSet set1 = new ScatterDataSet(values1, "DS 1");
-        set1.setScatterShape(ScatterChart.ScatterShape.SQUARE);
+        set1.setScatterShape(ScatterShape.SQUARE);
         set1.setColor(ColorTemplate.COLORFUL_COLORS[0]);
         ScatterDataSet set2 = new ScatterDataSet(values2, "DS 2");
-        set2.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+        set2.setScatterShape(ScatterShape.CIRCLE);
         set2.setScatterShapeHoleColor(ColorTemplate.COLORFUL_COLORS[3]);
         set2.setScatterShapeHoleRadius(3f);
         set2.setColor(ColorTemplate.COLORFUL_COLORS[1]);

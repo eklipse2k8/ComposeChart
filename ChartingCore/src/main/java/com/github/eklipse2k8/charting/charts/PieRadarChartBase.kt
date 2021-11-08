@@ -87,15 +87,15 @@ E : Entry {
     var legendRight = 0f
     var legendBottom = 0f
     var legendTop = 0f
-    if (mLegend.isEnabled && !mLegend.isDrawInsideEnabled) {
+    if (legend.isEnabled && !legend.isDrawInsideEnabled) {
       val fullLegendWidth =
-          Math.min(mLegend.mNeededWidth, viewPortHandler.chartWidth * mLegend.maxSizePercent)
-      when (mLegend.orientation) {
+          Math.min(legend.mNeededWidth, viewPortHandler.chartWidth * legend.maxSizePercent)
+      when (legend.orientation) {
         LegendOrientation.VERTICAL -> {
           var xLegendOffset = 0f
-          if (mLegend.horizontalAlignment === LegendHorizontalAlignment.LEFT ||
-              mLegend.horizontalAlignment === LegendHorizontalAlignment.RIGHT) {
-            if (mLegend.verticalAlignment === LegendVerticalAlignment.CENTER) {
+          if (legend.horizontalAlignment === LegendHorizontalAlignment.LEFT ||
+              legend.horizontalAlignment === LegendHorizontalAlignment.RIGHT) {
+            if (legend.verticalAlignment === LegendVerticalAlignment.CENTER) {
               // this is the space between the legend and the chart
               val spacing = convertDpToPixel(13f)
               xLegendOffset = fullLegendWidth + spacing
@@ -103,10 +103,10 @@ E : Entry {
               // this is the space between the legend and the chart
               val spacing = convertDpToPixel(8f)
               val legendWidth = fullLegendWidth + spacing
-              val legendHeight = mLegend.mNeededHeight + mLegend.mTextHeightMax
+              val legendHeight = legend.mNeededHeight + legend.mTextHeightMax
               val center = getCenter() ?: MPPointF.getInstance(0f, 0f)
               val bottomX =
-                  if (mLegend.horizontalAlignment === LegendHorizontalAlignment.RIGHT)
+                  if (legend.horizontalAlignment === LegendHorizontalAlignment.RIGHT)
                       width - legendWidth + 15f
                   else legendWidth - 15f
               val bottomY = legendHeight + 15f
@@ -124,28 +124,28 @@ E : Entry {
               MPPointF.recycleInstance(reference)
             }
           }
-          when (mLegend.horizontalAlignment) {
+          when (legend.horizontalAlignment) {
             LegendHorizontalAlignment.LEFT -> legendLeft = xLegendOffset
             LegendHorizontalAlignment.RIGHT -> legendRight = xLegendOffset
             LegendHorizontalAlignment.CENTER ->
-                when (mLegend.verticalAlignment) {
+                when (legend.verticalAlignment) {
                   LegendVerticalAlignment.TOP ->
                       legendTop =
                           min(
-                              mLegend.mNeededHeight,
-                              viewPortHandler.chartHeight * mLegend.maxSizePercent)
+                              legend.mNeededHeight,
+                              viewPortHandler.chartHeight * legend.maxSizePercent)
                   LegendVerticalAlignment.BOTTOM ->
                       legendBottom =
                           min(
-                              mLegend.mNeededHeight,
-                              viewPortHandler.chartHeight * mLegend.maxSizePercent)
+                              legend.mNeededHeight,
+                              viewPortHandler.chartHeight * legend.maxSizePercent)
                 }
           }
         }
         LegendOrientation.HORIZONTAL -> {
-          var yLegendOffset = 0f
-          if (mLegend.verticalAlignment === LegendVerticalAlignment.TOP ||
-              mLegend.verticalAlignment === LegendVerticalAlignment.BOTTOM) {
+          val yLegendOffset: Float
+          if (legend.verticalAlignment === LegendVerticalAlignment.TOP ||
+              legend.verticalAlignment === LegendVerticalAlignment.BOTTOM) {
 
             // It's possible that we do not need this offset anymore as it
             //   is available through the extraOffsets, but changing it can mean
@@ -153,9 +153,9 @@ E : Entry {
             val yOffset = requiredLegendOffset
             yLegendOffset =
                 min(
-                    mLegend.mNeededHeight + yOffset,
-                    viewPortHandler.chartHeight * mLegend.maxSizePercent)
-            when (mLegend.verticalAlignment) {
+                    legend.mNeededHeight + yOffset,
+                    viewPortHandler.chartHeight * legend.maxSizePercent)
+            when (legend.verticalAlignment) {
               LegendVerticalAlignment.TOP -> legendTop = yLegendOffset
               LegendVerticalAlignment.BOTTOM -> legendBottom = yLegendOffset
             }
@@ -272,16 +272,10 @@ E : Entry {
    * @return
    */
   abstract fun getIndexForAngle(angle: Float): Int
+
   /**
    * gets a normalized version of the current rotation angle of the pie chart, which will always be
    * between 0.0 < 360.0
-   *
-   * @return
-   */
-  /**
-   * Set an offset for the rotation of the RadarChart in degrees. Default 270f --> top (NORTH)
-   *
-   * @param angle
    */
   var rotationAngle: Float
     get() = mRotationAngle
@@ -290,11 +284,7 @@ E : Entry {
       mRotationAngle = getNormalizedAngle(rawRotationAngle)
     }
 
-  /**
-   * returns the diameter of the pie- or radar-chart
-   *
-   * @return
-   */
+  /** returns the diameter of the pie- or radar-chart */
   val diameter: Float
     get() {
       val content = viewPortHandler.contentRect
@@ -305,25 +295,13 @@ E : Entry {
       return Math.min(content.width(), content.height())
     }
 
-  /**
-   * Returns the radius of the chart in pixels.
-   *
-   * @return
-   */
+  /** Returns the radius of the chart in pixels. */
   abstract val radius: Float
 
-  /**
-   * Returns the required offset for the chart legend.
-   *
-   * @return
-   */
+  /** Returns the required offset for the chart legend. */
   protected abstract val requiredLegendOffset: Float
 
-  /**
-   * Returns the base offset needed for the chart without calculating the legend size.
-   *
-   * @return
-   */
+  /** Returns the base offset needed for the chart without calculating the legend size. */
   abstract val requiredBaseOffset: Float
 
   override val yChartMax: Float = 0f

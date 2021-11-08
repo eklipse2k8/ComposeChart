@@ -144,17 +144,23 @@ E : Entry {
   open var xAxis: XAxis = XAxis()
 
   /** if true, touch gestures are enabled on the chart */
-  protected var isTouchEnabled = true
+  var isTouchEnabled = true
+
 
   /**
    * Returns the Description object of the chart that is responsible for holding all information
    * related to the description text that is displayed in the bottom right corner of the chart (by
    * default).
    */
-  protected var description: Description? = Description()
+  var description: Description? = Description()
+    protected set
 
-  /** the legend object containing all data associated with the legend */
-  protected var mLegend: Legend = Legend()
+  /**
+   * Returns the Legend object of the chart. This method can be used to get an instance of the
+   * legend in order to customize the automatically generated Legend.
+   */
+  var legend: Legend = Legend()
+    protected set
 
   /** listener that is called when a value on the chart is selected */
   protected var mSelectionListener: OnChartValueSelectedListener? = null
@@ -202,7 +208,7 @@ E : Entry {
   val viewPortHandler = ViewPortHandler()
 
   /** Returns the renderer object responsible for rendering / drawing the Legend. */
-  val legendRenderer: LegendRenderer = LegendRenderer(viewPortHandler, mLegend)
+  val legendRenderer: LegendRenderer = LegendRenderer(viewPortHandler, legend)
 
   /** object responsible for rendering the data */
   protected abstract val dataRenderer: DataRenderer
@@ -819,16 +825,6 @@ E : Entry {
   @Deprecated("")
   open fun getMarkerView(): IMarker? {
     return getMarker()
-  }
-
-  /**
-   * Returns the Legend object of the chart. This method can be used to get an instance of the
-   * legend in order to customize the automatically generated Legend.
-   *
-   * @return
-   */
-  open fun getLegend(): Legend? {
-    return mLegend
   }
 
   override val contentRect: RectF?

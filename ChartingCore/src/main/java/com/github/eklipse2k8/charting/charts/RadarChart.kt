@@ -114,7 +114,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     mYAxisRenderer?.computeAxis(
         yAxis?.axisMinimum ?: 0f, yAxis?.axisMaximum ?: 0f, yAxis?.isInverted == true)
     mXAxisRenderer?.computeAxis(xAxis.axisMinimum, xAxis.axisMaximum, false)
-    if (!mLegend.isLegendCustom) legendRenderer.computeLegend(data!!)
+    if (!legend.isLegendCustom) legendRenderer.computeLegend(data!!)
     calculateOffsets()
   }
 

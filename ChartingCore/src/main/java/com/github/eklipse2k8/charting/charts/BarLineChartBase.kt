@@ -338,49 +338,49 @@ E : Entry {
     offsets.right = 0f
     offsets.top = 0f
     offsets.bottom = 0f
-    if (!mLegend.isEnabled || mLegend.isDrawInsideEnabled) return
-    when (mLegend.orientation) {
+    if (!legend.isEnabled || legend.isDrawInsideEnabled) return
+    when (legend.orientation) {
       LegendOrientation.VERTICAL ->
-          when (mLegend.horizontalAlignment) {
+          when (legend.horizontalAlignment) {
             LegendHorizontalAlignment.LEFT ->
                 offsets.left +=
                     (min(
-                        mLegend.mNeededWidth,
-                        viewPortHandler.chartWidth * mLegend.maxSizePercent) + mLegend.xOffset)
+                        legend.mNeededWidth,
+                        viewPortHandler.chartWidth * legend.maxSizePercent) + legend.xOffset)
             LegendHorizontalAlignment.RIGHT ->
                 offsets.right +=
                     (min(
-                        mLegend.mNeededWidth,
-                        viewPortHandler.chartWidth * mLegend.maxSizePercent) + mLegend.xOffset)
+                        legend.mNeededWidth,
+                        viewPortHandler.chartWidth * legend.maxSizePercent) + legend.xOffset)
             LegendHorizontalAlignment.CENTER ->
-                when (mLegend.verticalAlignment) {
+                when (legend.verticalAlignment) {
                   LegendVerticalAlignment.TOP ->
                       offsets.top +=
                           (min(
-                              mLegend.mNeededHeight,
-                              viewPortHandler.chartHeight * mLegend.maxSizePercent) +
-                              mLegend.yOffset)
+                              legend.mNeededHeight,
+                              viewPortHandler.chartHeight * legend.maxSizePercent) +
+                              legend.yOffset)
                   LegendVerticalAlignment.BOTTOM ->
                       offsets.bottom +=
                           (min(
-                              mLegend.mNeededHeight,
-                              viewPortHandler.chartHeight * mLegend.maxSizePercent) +
-                              mLegend.yOffset)
+                              legend.mNeededHeight,
+                              viewPortHandler.chartHeight * legend.maxSizePercent) +
+                              legend.yOffset)
                   else -> Unit
                 }
           }
       LegendOrientation.HORIZONTAL ->
-          when (mLegend.verticalAlignment) {
+          when (legend.verticalAlignment) {
             LegendVerticalAlignment.TOP ->
                 offsets.top +=
                     (min(
-                        mLegend.mNeededHeight,
-                        viewPortHandler.chartHeight * mLegend.maxSizePercent) + mLegend.yOffset)
+                        legend.mNeededHeight,
+                        viewPortHandler.chartHeight * legend.maxSizePercent) + legend.yOffset)
             LegendVerticalAlignment.BOTTOM ->
                 offsets.bottom +=
                     (min(
-                        mLegend.mNeededHeight,
-                        viewPortHandler.chartHeight * mLegend.maxSizePercent) + mLegend.yOffset)
+                        legend.mNeededHeight,
+                        viewPortHandler.chartHeight * legend.maxSizePercent) + legend.yOffset)
             else -> Unit
           }
     }
