@@ -30,7 +30,7 @@ public class ApproximatorTest {
 
         assertEquals(24, points.length);
 
-        Approximator a = new Approximator();
+        Approximator a = Approximator.INSTANCE;
 
         float[] reduced = a.reduceWithDouglasPeucker(points, 2);
 

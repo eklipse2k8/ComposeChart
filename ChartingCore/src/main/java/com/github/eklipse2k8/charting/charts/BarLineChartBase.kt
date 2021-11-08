@@ -344,28 +344,24 @@ E : Entry {
           when (legend.horizontalAlignment) {
             LegendHorizontalAlignment.LEFT ->
                 offsets.left +=
-                    (min(
-                        legend.mNeededWidth,
-                        viewPortHandler.chartWidth * legend.maxSizePercent) + legend.xOffset)
+                    (min(legend.mNeededWidth, viewPortHandler.chartWidth * legend.maxSizePercent) +
+                        legend.xOffset)
             LegendHorizontalAlignment.RIGHT ->
                 offsets.right +=
-                    (min(
-                        legend.mNeededWidth,
-                        viewPortHandler.chartWidth * legend.maxSizePercent) + legend.xOffset)
+                    (min(legend.mNeededWidth, viewPortHandler.chartWidth * legend.maxSizePercent) +
+                        legend.xOffset)
             LegendHorizontalAlignment.CENTER ->
                 when (legend.verticalAlignment) {
                   LegendVerticalAlignment.TOP ->
                       offsets.top +=
                           (min(
                               legend.mNeededHeight,
-                              viewPortHandler.chartHeight * legend.maxSizePercent) +
-                              legend.yOffset)
+                              viewPortHandler.chartHeight * legend.maxSizePercent) + legend.yOffset)
                   LegendVerticalAlignment.BOTTOM ->
                       offsets.bottom +=
                           (min(
                               legend.mNeededHeight,
-                              viewPortHandler.chartHeight * legend.maxSizePercent) +
-                              legend.yOffset)
+                              viewPortHandler.chartHeight * legend.maxSizePercent) + legend.yOffset)
                   else -> Unit
                 }
           }
@@ -374,19 +370,20 @@ E : Entry {
             LegendVerticalAlignment.TOP ->
                 offsets.top +=
                     (min(
-                        legend.mNeededHeight,
-                        viewPortHandler.chartHeight * legend.maxSizePercent) + legend.yOffset)
+                        legend.mNeededHeight, viewPortHandler.chartHeight * legend.maxSizePercent) +
+                        legend.yOffset)
             LegendVerticalAlignment.BOTTOM ->
                 offsets.bottom +=
                     (min(
-                        legend.mNeededHeight,
-                        viewPortHandler.chartHeight * legend.maxSizePercent) + legend.yOffset)
+                        legend.mNeededHeight, viewPortHandler.chartHeight * legend.maxSizePercent) +
+                        legend.yOffset)
             else -> Unit
           }
     }
   }
 
   private val mOffsetsBuffer = RectF()
+
   public override fun calculateOffsets() {
     if (!mCustomViewPortEnabled) {
       var offsetLeft = 0f
@@ -408,15 +405,14 @@ E : Entry {
       }
       if (xAxis.isEnabled && xAxis.isDrawLabelsEnabled) {
         val xLabelHeight = xAxis.mLabelRotatedHeight + xAxis.yOffset
-
         // offsets for x-labels
-        if (xAxis.position === XAxisPosition.BOTTOM) {
-          offsetBottom += xLabelHeight
-        } else if (xAxis.position === XAxisPosition.TOP) {
-          offsetTop += xLabelHeight
-        } else if (xAxis.position === XAxisPosition.BOTH_SIDED) {
-          offsetBottom += xLabelHeight
-          offsetTop += xLabelHeight
+        when {
+          xAxis.position === XAxisPosition.BOTTOM -> offsetBottom += xLabelHeight
+          xAxis.position === XAxisPosition.TOP -> offsetTop += xLabelHeight
+          xAxis.position === XAxisPosition.BOTH_SIDED -> {
+            offsetBottom += xLabelHeight
+            offsetTop += xLabelHeight
+          }
         }
       }
       offsetTop += extraTopOffset
@@ -432,15 +428,8 @@ E : Entry {
       if (mLogEnabled) {
         Log.i(
             TAG,
-            "offsetLeft: " +
-                offsetLeft +
-                ", offsetTop: " +
-                offsetTop +
-                ", offsetRight: " +
-                offsetRight +
-                ", offsetBottom: " +
-                offsetBottom)
-        Log.i(TAG, "Content: " + viewPortHandler.contentRect.toString())
+            "offsetLeft: $offsetLeft, offsetTop: $offsetTop, offsetRight: $offsetRight, offsetBottom: $offsetBottom")
+        Log.i(TAG, "Content: ${viewPortHandler.contentRect}")
       }
     }
     prepareOffsetMatrix()
@@ -778,8 +767,7 @@ E : Entry {
    */
   fun centerViewToY(yValue: Float, axis: AxisDependency) {
     val valsInView = getAxisRange(axis) / viewPortHandler.scaleY
-    val job =
-        getInstance(viewPortHandler, 0f, yValue + valsInView / 2f, getTransformer(axis), this)
+    val job = getInstance(viewPortHandler, 0f, yValue + valsInView / 2f, getTransformer(axis), this)
     addViewportJob(job)
   }
 

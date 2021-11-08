@@ -124,13 +124,13 @@ E : Entry {
     }
 
   /** default value-formatter, number of digits depends on provided chart-data */
-  protected var mDefaultValueFormatter = DefaultValueFormatter(0)
+  private var mDefaultValueFormatter = DefaultValueFormatter(0)
 
   /** paint object used for drawing the description text in the bottom right corner of the chart */
-  protected var mDescPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+  private var mDescPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
   /** paint object for drawing the information text when there are no values in the chart */
-  protected var mInfoPaint: Paint =
+  private var mInfoPaint: Paint =
       Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.rgb(247, 189, 51) // orange
         textAlign = Align.CENTER
@@ -145,7 +145,6 @@ E : Entry {
 
   /** if true, touch gestures are enabled on the chart */
   var isTouchEnabled = true
-
 
   /**
    * Returns the Description object of the chart that is responsible for holding all information

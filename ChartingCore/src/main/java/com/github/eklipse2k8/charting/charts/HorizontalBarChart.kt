@@ -75,13 +75,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
                   LegendVerticalAlignment.TOP ->
                       offsets.top +=
                           (legend.mNeededHeight.coerceAtMost(
-                              viewPortHandler.chartHeight * legend.maxSizePercent) +
-                              legend.yOffset)
+                              viewPortHandler.chartHeight * legend.maxSizePercent) + legend.yOffset)
                   LegendVerticalAlignment.BOTTOM ->
                       offsets.bottom +=
                           (legend.mNeededHeight.coerceAtMost(
-                              viewPortHandler.chartHeight * legend.maxSizePercent) +
-                              legend.yOffset)
+                              viewPortHandler.chartHeight * legend.maxSizePercent) + legend.yOffset)
                   else -> Unit
                 }
           }
@@ -127,8 +125,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       offsetBottom += axisRight!!.getRequiredHeightSpace(rendererRightYAxis!!.paintAxisLabels)
     }
     val xlabelwidth = xAxis.mLabelRotatedWidth.toFloat()
-    if (xAxis.isEnabled) {
 
+    if (xAxis.isEnabled) {
       // offsets for x-labels
       if (xAxis.position === XAxisPosition.BOTTOM) {
         offsetLeft += xlabelwidth
@@ -143,24 +141,19 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     offsetRight += extraRightOffset
     offsetBottom += extraBottomOffset
     offsetLeft += extraLeftOffset
+
     val minOffset = convertDpToPixel(minOffset)
     viewPortHandler.restrainViewPort(
         max(minOffset, offsetLeft),
         max(minOffset, offsetTop),
         max(minOffset, offsetRight),
         max(minOffset, offsetBottom))
+
     if (mLogEnabled) {
       Log.i(
           TAG,
-          "offsetLeft: " +
-              offsetLeft +
-              ", offsetTop: " +
-              offsetTop +
-              ", offsetRight: " +
-              offsetRight +
-              ", offsetBottom: " +
-              offsetBottom)
-      Log.i(TAG, "Content: " + viewPortHandler.contentRect.toString())
+          "offsetLeft: $offsetLeft, offsetTop: $offsetTop, offsetRight: $offsetRight, offsetBottom: $offsetBottom")
+      Log.i(TAG, "Content: ${viewPortHandler.contentRect}")
     }
     prepareOffsetMatrix()
     prepareValuePxMatrix()

@@ -1,7 +1,5 @@
 package com.github.eklipse2k8.charting.data.filter
 
-import android.annotation.TargetApi
-import android.os.Build
 import kotlin.math.abs
 import kotlin.math.sqrt
 
@@ -11,8 +9,7 @@ import kotlin.math.sqrt
  *
  * @author Philipp Baldauf & Phliipp Jahoda
  */
-class Approximator {
-  @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+object Approximator {
   fun reduceWithDouglasPeucker(points: FloatArray, tolerance: Float): FloatArray {
     var greatestIndex = 0
     var greatestDistance = 0f
@@ -59,7 +56,7 @@ class Approximator {
     return result
   }
 
-  private inner class Line(x1: Float, y1: Float, x2: Float, y2: Float) {
+  class Line(x1: Float, y1: Float, x2: Float, y2: Float) {
     val points: FloatArray = floatArrayOf(x1, y1, x2, y2)
     private val sxey: Float = x1 * y2
     private val exsy: Float = x2 * y1
