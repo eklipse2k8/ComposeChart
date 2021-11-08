@@ -81,7 +81,7 @@ E : Entry {
   protected abstract val highlighter: IHighlighter
 
   /** flag that indicates if logging is enabled or not */
-  protected var mLogEnabled = false
+  protected open var isLogEnabled = false
 
   /**
    * object that holds all data that was originally set for the chart, before it was modified or any
@@ -104,7 +104,7 @@ E : Entry {
 
       // let the chart know there is new data
       notifyDataSetChanged()
-      if (mLogEnabled) Log.i(TAG, "Data is set.")
+      if (isLogEnabled) Log.i(TAG, "Data is set.")
     }
 
   /** Flag that indicates if highlighting per tap (touch) is enabled */
@@ -234,7 +234,7 @@ E : Entry {
     setWillNotDraw(false)
     Utils.init(context)
 
-    if (mLogEnabled) Log.i(TAG, "Chart.init()")
+    if (isLogEnabled) Log.i(TAG, "Chart.init()")
   }
 
   /**
@@ -468,7 +468,7 @@ E : Entry {
     if (highlight == null) {
       mIndicesToHighlight = null
     } else {
-      if (mLogEnabled) Log.i(TAG, "Highlighted: $highlight")
+      if (isLogEnabled) Log.i(TAG, "Highlighted: $highlight")
       e = data!!.getEntryForHighlight(highlight)
       if (e == null) {
         mIndicesToHighlight = null
@@ -740,25 +740,6 @@ E : Entry {
     extraTopOffset = top
     extraRightOffset = right
     extraBottomOffset = bottom
-  }
-
-  /**
-   * Set this to true to enable logcat outputs for the chart. Beware that logcat output decreases
-   * rendering performance. Default: disabled.
-   *
-   * @param enabled
-   */
-  open fun setLogEnabled(enabled: Boolean) {
-    mLogEnabled = enabled
-  }
-
-  /**
-   * Returns true if log-output is enabled for the chart, fals if not.
-   *
-   * @return
-   */
-  open fun isLogEnabled(): Boolean {
-    return mLogEnabled
   }
 
   /**
@@ -1077,12 +1058,12 @@ E : Entry {
   }
 
   override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-    if (mLogEnabled) Log.i(TAG, "OnSizeChanged()")
+    if (isLogEnabled) Log.i(TAG, "OnSizeChanged()")
     if ((w > 0) && (h > 0) && (w < 10000) && (h < 10000)) {
-      if (mLogEnabled) Log.i(TAG, "Setting chart dimens, width: $w, height: $h")
+      if (isLogEnabled) Log.i(TAG, "Setting chart dimens, width: $w, height: $h")
       viewPortHandler.setChartDimens(w.toFloat(), h.toFloat())
     } else {
-      if (mLogEnabled) Log.w(TAG, "*Avoiding* setting chart dimens! width: $w, height: $h")
+      if (isLogEnabled) Log.w(TAG, "*Avoiding* setting chart dimens! width: $w, height: $h")
     }
 
     // This may cause the chart view to mutate properties affecting the view port --

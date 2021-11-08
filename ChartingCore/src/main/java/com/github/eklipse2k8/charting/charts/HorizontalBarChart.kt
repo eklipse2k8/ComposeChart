@@ -149,7 +149,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         max(minOffset, offsetRight),
         max(minOffset, offsetBottom))
 
-    if (mLogEnabled) {
+    if (isLogEnabled) {
       Log.i(
           TAG,
           "offsetLeft: $offsetLeft, offsetTop: $offsetTop, offsetRight: $offsetRight, offsetBottom: $offsetBottom")
@@ -215,7 +215,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    */
   override fun getHighlightByTouchPoint(x: Float, y: Float): Highlight? {
     return if (data == null) {
-      if (mLogEnabled) Log.e(TAG, "Can't select by touch. No data set.")
+      if (isLogEnabled) Log.e(TAG, "Can't select by touch. No data set.")
       null
     } else highlighter.getHighlight(y, x) // switch x and y
   }

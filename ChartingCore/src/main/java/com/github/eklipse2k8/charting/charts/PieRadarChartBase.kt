@@ -183,7 +183,7 @@ E : Entry {
     val offsetRight = minOffset.coerceAtLeast(legendRight)
     val offsetBottom = minOffset.coerceAtLeast(requiredBaseOffset.coerceAtLeast(legendBottom))
     viewPortHandler.restrainViewPort(offsetLeft, offsetTop, offsetRight, offsetBottom)
-    if (mLogEnabled)
+    if (isLogEnabled)
         Log.i(
             TAG,
             "offsetLeft: $offsetLeft, offsetTop: $offsetTop, offsetRight: $offsetRight, offsetBottom: $offsetBottom")

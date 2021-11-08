@@ -250,7 +250,7 @@ E : Entry {
     legendRenderer.renderLegend(canvas)
     drawDescription(canvas)
     drawMarkers(canvas)
-    if (mLogEnabled) {
+    if (isLogEnabled) {
       val drawtime = System.currentTimeMillis() - starttime
       totalTime += drawtime
       drawCycles += 1
@@ -266,7 +266,7 @@ E : Entry {
   }
 
   protected open fun prepareValuePxMatrix() {
-    if (mLogEnabled)
+    if (isLogEnabled)
         Log.i(
             TAG,
             "Preparing Value-Px Matrix, xmin: " +
@@ -288,10 +288,10 @@ E : Entry {
 
   override fun notifyDataSetChanged() {
     if (data == null) {
-      if (mLogEnabled) Log.i(TAG, "Preparing... DATA NOT SET.")
+      if (isLogEnabled) Log.i(TAG, "Preparing... DATA NOT SET.")
       return
     } else {
-      if (mLogEnabled) Log.i(TAG, "Preparing...")
+      if (isLogEnabled) Log.i(TAG, "Preparing...")
     }
     dataRenderer.initBuffers()
     calcMinMax()
@@ -425,7 +425,7 @@ E : Entry {
           max(minOffset, offsetTop),
           max(minOffset, offsetRight),
           max(minOffset, offsetBottom))
-      if (mLogEnabled) {
+      if (isLogEnabled) {
         Log.i(
             TAG,
             "offsetLeft: $offsetLeft, offsetTop: $offsetTop, offsetRight: $offsetRight, offsetBottom: $offsetBottom")
