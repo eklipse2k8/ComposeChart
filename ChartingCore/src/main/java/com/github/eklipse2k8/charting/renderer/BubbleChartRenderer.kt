@@ -82,7 +82,7 @@ class BubbleChartRenderer(
     // if values are drawn
     if (isDrawingValuesAllowed(mChart)) {
       val dataSets = bubbleData.dataSets
-      val lineHeight = Utils.calcTextHeight(mValuePaint, "1").toFloat()
+      val lineHeight = Utils.calcTextHeight(valuePaint, "1").toFloat()
       for (i in dataSets.indices) {
         val dataSet = dataSets[i]
         if (!shouldDrawValues(dataSet) || dataSet.entryCount < 1) continue

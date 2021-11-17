@@ -177,7 +177,7 @@ open class BarChartRenderer(
 
         // calculate the correct offset depending on the draw position of
         // the value
-        val valueTextHeight = Utils.calcTextHeight(mValuePaint, "8").toFloat()
+        val valueTextHeight = Utils.calcTextHeight(valuePaint, "8").toFloat()
         posOffset = if (drawValueAboveBar) -valueOffsetPlus else valueTextHeight + valueOffsetPlus
         negOffset = if (drawValueAboveBar) valueTextHeight + valueOffsetPlus else -valueOffsetPlus
         if (isInverted) {

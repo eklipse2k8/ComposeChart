@@ -33,7 +33,7 @@ abstract class DataRenderer(
 
   /** paint object for drawing values (text representing values of chart entries) */
   @JvmField
-  protected var mValuePaint: Paint =
+  protected var valuePaint: Paint =
       Paint(ANTI_ALIAS_FLAG).apply {
         color = Color.rgb(63, 63, 63)
         textAlign = CENTER
@@ -56,7 +56,7 @@ abstract class DataRenderer(
    *
    * @return
    */
-  protected val paintValues = mValuePaint
+  protected val paintValues = valuePaint
 
   protected open fun isDrawingValuesAllowed(chart: ChartInterface): Boolean {
     return chart.data!!.entryCount < chart.maxVisibleCount * viewPortHandler.scaleX
