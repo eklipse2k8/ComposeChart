@@ -1,58 +1,47 @@
+package com.github.eklipse2k8.charting.utils
 
-package com.github.eklipse2k8.charting.utils;
-
-import androidx.annotation.NonNull;
-
-import java.util.List;
+import android.os.Parcelable
+import com.github.eklipse2k8.charting.utils.ObjectPool.Poolable
+import kotlinx.parcelize.Parcelize
 
 /**
  * Point encapsulating two double values.
  *
  * @author Philipp Jahoda
  */
-public class MPPointD extends ObjectPool.Poolable {
+@Parcelize
+class MPPointD private constructor(var x: Double, var y: Double) : Poolable(), Parcelable {
+  companion object {
+    private val pool: ObjectPool<MPPointD> =
+        (ObjectPool.create(64, MPPointD(0.0, 0.0)) as ObjectPool<MPPointD>).apply {
+          replenishPercentage = 0.5f
+        }
 
-    @NonNull
-    private static final ObjectPool<MPPointD> pool;
-
-    static {
-        pool = ObjectPool.create(64, new MPPointD(0,0));
-        pool.setReplenishPercentage(0.5f);
+    @JvmStatic
+    fun getInstance(x: Double, y: Double): MPPointD {
+      val result = pool.get()
+      result.x = x
+      result.y = y
+      return result
     }
 
-    public static MPPointD getInstance(double x, double y){
-        MPPointD result = pool.get();
-        result.x = x;
-        result.y = y;
-        return result;
+    @JvmStatic
+    fun recycleInstance(instance: MPPointD) {
+      pool.recycle(instance)
     }
 
-    public static void recycleInstance(@NonNull MPPointD instance){
-        pool.recycle(instance);
+    @JvmStatic
+    fun recycleInstances(instances: List<MPPointD>) {
+      pool.recycle(instances)
     }
+  }
 
-    public static void recycleInstances(@NonNull List<MPPointD> instances){
-        pool.recycle(instances);
-    }
+  override fun instantiate(): Poolable {
+    return MPPointD(0.0, 0.0)
+  }
 
-    public double x;
-    public double y;
-
-    @NonNull
-    protected ObjectPool.Poolable instantiate(){
-        return new MPPointD(0,0);
-    }
-
-    private MPPointD(double x, double y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    /**
-     * returns a string representation of the object
-     */
-    @NonNull
-    public String toString() {
-        return "MPPointD, x: " + x + ", y: " + y;
-    }
+  /** returns a string representation of the object */
+  override fun toString(): String {
+    return "MPPointD, x: $x, y: $y"
+  }
 }

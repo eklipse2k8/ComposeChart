@@ -1,85 +1,68 @@
+package com.github.eklipse2k8.charting.utils
 
-package com.github.eklipse2k8.charting.utils;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import java.util.List;
+import android.os.Parcelable
+import com.github.eklipse2k8.charting.utils.ObjectPool.Poolable
+import kotlinx.parcelize.Parcelize
 
 /**
- * Class for describing width and height dimensions in some arbitrary
- * unit. Replacement for the android.Util.SizeF which is available only on API >= 21.
+ * Class for describing width and height dimensions in some arbitrary unit. Replacement for the
+ * android.Util.SizeF which is available only on API >= 21.
  */
-public final class FSize extends ObjectPool.Poolable{
+@Parcelize
+class FSize
+@JvmOverloads
+constructor(
+    var width: Float = 0f,
+    var height: Float = 0f,
+) : Poolable(), Parcelable {
+  // TODO : Encapsulate width & height
 
-    // TODO : Encapsulate width & height
-
-    public float width;
-    public float height;
-
-    @NonNull
-    private static final ObjectPool<FSize> pool;
-
-    static {
-        pool = ObjectPool.create(256, new FSize(0,0));
-        pool.setReplenishPercentage(0.5f);
-    }
-
-
-    @NonNull
-    protected ObjectPool.Poolable instantiate(){
-        return new FSize(0,0);
-    }
-
-    public static FSize getInstance(final float width, final float height){
-        FSize result = pool.get();
-        result.width = width;
-        result.height = height;
-        return result;
-    }
-
-    public static void recycleInstance(@NonNull FSize instance){
-        pool.recycle(instance);
-    }
-
-    public static void recycleInstances(@NonNull List<FSize> instances){
-        pool.recycle(instances);
-    }
-
-    public FSize() {
-    }
-
-    public FSize(final float width, final float height) {
-        this.width = width;
-        this.height = height;
-    }
-
-    @Override
-    public boolean equals(@Nullable final Object obj) {
-        if (obj == null) {
-            return false;
+  companion object {
+    private val pool: ObjectPool<FSize> =
+        (ObjectPool.create(256, FSize(0f, 0f)) as ObjectPool<FSize>).apply {
+          replenishPercentage = 0.5f
         }
-        if (this == obj) {
-            return true;
-        }
-        if (obj instanceof FSize) {
-            final FSize other = (FSize) obj;
-            return width == other.width && height == other.height;
-        }
-        return false;
+
+    @JvmStatic
+    fun getInstance(width: Float, height: Float): FSize {
+      val result = pool.get()
+      result.width = width
+      result.height = height
+      return result
     }
 
-    @NonNull
-    @Override
-    public String toString() {
-        return width + "x" + height;
+    @JvmStatic
+    fun recycleInstance(instance: FSize) {
+      pool.recycle(instance)
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return Float.floatToIntBits(width) ^ Float.floatToIntBits(height);
+    @JvmStatic
+    fun recycleInstances(instances: List<FSize>) {
+      pool.recycle(instances)
     }
+  }
+
+  override fun instantiate(): Poolable {
+    return FSize(0f, 0f)
+  }
+
+  override fun equals(obj: Any?): Boolean {
+    if (obj == null) {
+      return false
+    }
+    if (this === obj) {
+      return true
+    }
+    if (obj is FSize) {
+      return width == obj.width && height == obj.height
+    }
+    return false
+  }
+
+  override fun toString(): String {
+    return width.toString() + "x" + height
+  }
+
+  /** {@inheritDoc} */
+  override fun hashCode(): Int = width.toBits() xor height.toBits()
 }

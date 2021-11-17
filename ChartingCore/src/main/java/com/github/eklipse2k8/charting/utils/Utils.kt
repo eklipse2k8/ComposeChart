@@ -428,7 +428,7 @@ object Utils {
   private val mDrawableBoundsCache = Rect()
   fun drawImage(canvas: Canvas, drawable: Drawable?, x: Int, y: Int, width: Int, height: Int) {
     if (drawable == null) return
-    val drawOffset = MPPointF.getInstance()
+    val drawOffset = MPPointF.instance
     drawOffset.x = (x - width / 2).toFloat()
     drawOffset.y = (y - height / 2).toFloat()
     drawable.copyBounds(mDrawableBoundsCache)
