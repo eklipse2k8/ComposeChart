@@ -16,6 +16,8 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
+
 import com.github.eklipse2k8.charting.animation.Easing;
 import com.github.eklipse2k8.charting.charts.PieChart;
 import com.github.eklipse2k8.charting.components.Legend;
@@ -115,6 +117,7 @@ public class HalfPieChartActivity extends DemoBase {
         chart.invalidate();
     }
 
+    @NonNull
     private SpannableString generateCenterSpannableText() {
 
         SpannableString s = new SpannableString("MPAndroidChart\ndeveloped by Philipp Jahoda");
@@ -149,7 +152,7 @@ public class HalfPieChartActivity extends DemoBase {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewGithub: {

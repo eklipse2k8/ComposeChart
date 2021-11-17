@@ -7,6 +7,9 @@ import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.eklipse2k8.charting.charts.LineChart;
 import com.github.eklipse2k8.charting.components.XAxis;
 import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition;
@@ -19,7 +22,7 @@ public class LineChartItem extends ChartItem {
 
     private final Typeface mTf;
 
-    public LineChartItem(ChartData<?, ?> cd, Context c) {
+    public LineChartItem(ChartData<?, ?> cd, @NonNull Context c) {
         super(cd);
 
         mTf = Typeface.createFromAsset(c.getAssets(), "OpenSans-Regular.ttf");
@@ -30,9 +33,10 @@ public class LineChartItem extends ChartItem {
         return TYPE_LINECHART;
     }
 
+    @Nullable
     @SuppressLint("InflateParams")
     @Override
-    public View getView(int position, View convertView, Context c) {
+    public View getView(int position, @Nullable View convertView, Context c) {
 
         ViewHolder holder;
 

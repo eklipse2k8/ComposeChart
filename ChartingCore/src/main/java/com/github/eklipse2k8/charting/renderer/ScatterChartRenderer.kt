@@ -73,7 +73,8 @@ class ScatterChartRenderer(
                 .generateTransformedValuesScatter(
                     dataSet, mAnimator.phaseX, mAnimator.phaseY, mXBounds.min, mXBounds.max)
         val shapeSize = Utils.convertDpToPixel(dataSet.scatterShapeSize)
-        val iconsOffset = MPPointF.getInstance(dataSet.iconsOffset)
+        val iconsOffset =
+          dataSet.iconsOffset?.let { MPPointF.getInstance(it) } ?: MPPointF.getInstance(0f, 0f)
         iconsOffset.x = Utils.convertDpToPixel(iconsOffset.x)
         iconsOffset.y = Utils.convertDpToPixel(iconsOffset.y)
         var j = 0

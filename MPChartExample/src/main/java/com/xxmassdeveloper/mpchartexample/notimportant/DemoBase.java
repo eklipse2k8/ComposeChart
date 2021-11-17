@@ -70,7 +70,7 @@ public abstract class DemoBase extends AppCompatActivity implements ActivityComp
         }
     }
 
-    protected void requestStoragePermission(View view) {
+    protected void requestStoragePermission(@NonNull View view) {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             Snackbar.make(view, "Write permission is required to save image to gallery", Snackbar.LENGTH_INDEFINITE)
                     .setAction(android.R.string.ok, new View.OnClickListener() {
@@ -86,7 +86,7 @@ public abstract class DemoBase extends AppCompatActivity implements ActivityComp
         }
     }
 
-    protected void saveToGallery(Chart chart, String name) {
+    protected void saveToGallery(@NonNull Chart chart, String name) {
         if (chart.saveToGallery(name + "_" + System.currentTimeMillis(), 70))
             Toast.makeText(getApplicationContext(), "Saving SUCCESSFUL!",
                     Toast.LENGTH_SHORT).show();

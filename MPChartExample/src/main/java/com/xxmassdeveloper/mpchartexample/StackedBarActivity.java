@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
@@ -161,7 +163,7 @@ public class StackedBarActivity extends DemoBase implements OnSeekBarChangeListe
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewGithub: {
@@ -258,7 +260,7 @@ public class StackedBarActivity extends DemoBase implements OnSeekBarChangeListe
     public void onStopTrackingTouch(SeekBar seekBar) {}
 
     @Override
-    public void onValueSelected(Entry e, Highlight h) {
+    public void onValueSelected(Entry e, @NonNull Highlight h) {
 
         BarEntry entry = (BarEntry) e;
 
@@ -271,6 +273,7 @@ public class StackedBarActivity extends DemoBase implements OnSeekBarChangeListe
     @Override
     public void onNothingSelected() {}
 
+    @NonNull
     private int[] getColors() {
 
         // have as many colors as stack-values per entry

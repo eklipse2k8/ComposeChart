@@ -406,7 +406,7 @@ class BarLineChartTouchListener(
       val scaleX = if (chart.isScaleXEnabled) 1.4f else 1f
       val scaleY = if (chart.isScaleYEnabled) 1.4f else 1f
       chart.zoom(scaleX, scaleY, trans.x, trans.y)
-      if (chart.isLogEnabled())
+      if (chart.isLogEnabled)
           Log.i("BarlineChartTouch", "Double-Tap, Zooming In, x: " + trans.x + ", y: " + trans.y)
       l?.onChartScale(e, scaleX, scaleY)
       MPPointF.recycleInstance(trans)

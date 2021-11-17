@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+
 import com.github.eklipse2k8.charting.charts.LineChart;
 import com.github.eklipse2k8.charting.components.Legend;
 import com.github.eklipse2k8.charting.data.Entry;
@@ -57,7 +59,7 @@ public class LineChartActivityColored extends DemoBase {
             Color.rgb(250, 104, 104)
     };
 
-    private void setupChart(LineChart chart, LineData data, int color) {
+    private void setupChart(@NonNull LineChart chart, @NonNull LineData data, int color) {
 
         ((LineDataSet) data.getDataSetByIndex(0)).setCircleHoleColor(color);
 
@@ -103,6 +105,7 @@ public class LineChartActivityColored extends DemoBase {
         chart.animateX(2500);
     }
 
+    @NonNull
     private LineData getData(int count, float range) {
 
         ArrayList<Entry> values = new ArrayList<>();
@@ -136,7 +139,7 @@ public class LineChartActivityColored extends DemoBase {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewGithub: {

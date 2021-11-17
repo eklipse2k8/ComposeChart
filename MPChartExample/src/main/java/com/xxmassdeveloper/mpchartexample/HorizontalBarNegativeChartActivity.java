@@ -15,6 +15,8 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.github.eklipse2k8.charting.charts.HorizontalBarChart;
@@ -162,7 +164,7 @@ public class HorizontalBarNegativeChartActivity extends DemoBase implements OnSe
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewGithub: {
@@ -267,7 +269,7 @@ public class HorizontalBarNegativeChartActivity extends DemoBase implements OnSe
     private final RectF mOnValueSelectedRectF = new RectF();
 
     @Override
-    public void onValueSelected(Entry e, Highlight h) {
+    public void onValueSelected(@Nullable Entry e, @NonNull Highlight h) {
 
         if (e == null)
             return;

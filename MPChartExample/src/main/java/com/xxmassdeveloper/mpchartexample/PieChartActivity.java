@@ -20,6 +20,8 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.github.eklipse2k8.charting.animation.Easing;
@@ -180,7 +182,7 @@ public class PieChartActivity extends DemoBase implements OnSeekBarChangeListene
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewGithub: {
@@ -286,6 +288,7 @@ public class PieChartActivity extends DemoBase implements OnSeekBarChangeListene
         saveToGallery(chart, "PieChartActivity");
     }
 
+    @NonNull
     private SpannableString generateCenterSpannableText() {
 
         SpannableString s = new SpannableString("MPAndroidChart\ndeveloped by Philipp Jahoda");
@@ -299,7 +302,7 @@ public class PieChartActivity extends DemoBase implements OnSeekBarChangeListene
     }
 
     @Override
-    public void onValueSelected(Entry e, Highlight h) {
+    public void onValueSelected(@Nullable Entry e, @NonNull Highlight h) {
 
         if (e == null)
             return;

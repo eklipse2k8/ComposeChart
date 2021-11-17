@@ -11,6 +11,9 @@ import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.eklipse2k8.charting.charts.PieChart;
 import com.github.eklipse2k8.charting.components.Legend;
 import com.github.eklipse2k8.charting.data.ChartData;
@@ -22,9 +25,10 @@ import com.xxmassdeveloper.mpchartexample.R;
 public class PieChartItem extends ChartItem {
 
     private final Typeface mTf;
+    @NonNull
     private final SpannableString mCenterText;
 
-    public PieChartItem(ChartData<?, ?> cd, Context c) {
+    public PieChartItem(ChartData<?, ?> cd, @NonNull Context c) {
         super(cd);
 
         mTf = Typeface.createFromAsset(c.getAssets(), "OpenSans-Regular.ttf");
@@ -36,9 +40,10 @@ public class PieChartItem extends ChartItem {
         return TYPE_PIECHART;
     }
 
+    @Nullable
     @SuppressLint("InflateParams")
     @Override
-    public View getView(int position, View convertView, Context c) {
+    public View getView(int position, @Nullable View convertView, Context c) {
 
         ViewHolder holder;
 
@@ -88,6 +93,7 @@ public class PieChartItem extends ChartItem {
         return convertView;
     }
 
+    @NonNull
     private SpannableString generateCenterText() {
         SpannableString s = new SpannableString("MPAndroidChart\ncreated by\nPhilipp Jahoda");
         s.setSpan(new RelativeSizeSpan(1.6f), 0, 14, 0);

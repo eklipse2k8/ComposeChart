@@ -9,6 +9,8 @@ import android.graphics.DashPathEffect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
@@ -266,7 +268,7 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewGithub: {
@@ -434,7 +436,7 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
     public void onStopTrackingTouch(SeekBar seekBar) {}
 
     @Override
-    public void onValueSelected(Entry e, Highlight h) {
+    public void onValueSelected(@NonNull Entry e, Highlight h) {
         Log.i("Entry selected", e.toString());
         Log.i("LOW HIGH", "low: " + chart.getLowestVisibleX() + ", high: " + chart.getHighestVisibleX());
         Log.i("MIN MAX", "xMin: " + chart.getXChartMin() + ", xMax: " + chart.getXChartMax() + ", yMin: " + chart.getYChartMin() + ", yMax: " + chart.getYChartMax());

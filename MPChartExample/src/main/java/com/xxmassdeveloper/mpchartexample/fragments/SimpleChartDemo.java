@@ -7,6 +7,8 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -47,7 +49,7 @@ public class SimpleChartDemo extends DemoBase {
         b.setPositiveButton("OK", new OnClickListener() {
 
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(@NonNull DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
@@ -56,10 +58,11 @@ public class SimpleChartDemo extends DemoBase {
 
     private class PageAdapter extends FragmentPagerAdapter {
 
-        PageAdapter(FragmentManager fm) {
+        PageAdapter(@NonNull FragmentManager fm) {
             super(fm);
         }
 
+        @NonNull
         @Override
         public Fragment getItem(int pos) {
             Fragment f = null;
@@ -98,7 +101,7 @@ public class SimpleChartDemo extends DemoBase {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewGithub: {

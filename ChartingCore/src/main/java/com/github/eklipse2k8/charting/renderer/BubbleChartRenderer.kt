@@ -97,7 +97,8 @@ class BubbleChartRenderer(
                 .getTransformer(dataSet.axisDependency)
                 .generateTransformedValuesBubble(dataSet, phaseY, mXBounds.min, mXBounds.max)
         val alpha = if (phaseX == 1f) phaseY else phaseX
-        val iconsOffset = MPPointF.getInstance(dataSet.iconsOffset)
+        val iconsOffset =
+          dataSet.iconsOffset?.let { MPPointF.getInstance(it) } ?: MPPointF.getInstance(0f, 0f)
         iconsOffset.x = Utils.convertDpToPixel(iconsOffset.x)
         iconsOffset.y = Utils.convertDpToPixel(iconsOffset.y)
         var j = 0

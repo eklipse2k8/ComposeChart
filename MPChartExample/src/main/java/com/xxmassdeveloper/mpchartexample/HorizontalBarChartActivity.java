@@ -15,6 +15,8 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
@@ -161,7 +163,7 @@ public class HorizontalBarChartActivity extends DemoBase implements OnSeekBarCha
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewGithub: {
@@ -268,7 +270,7 @@ public class HorizontalBarChartActivity extends DemoBase implements OnSeekBarCha
     private final RectF mOnValueSelectedRectF = new RectF();
 
     @Override
-    public void onValueSelected(Entry e, Highlight h) {
+    public void onValueSelected(@Nullable Entry e, @NonNull Highlight h) {
 
         if (e == null)
             return;

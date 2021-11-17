@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
@@ -137,7 +139,7 @@ public class StackedBarActivityNegative extends DemoBase implements
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewGithub: {
@@ -228,7 +230,7 @@ public class StackedBarActivityNegative extends DemoBase implements
     }
 
     @Override
-    public void onValueSelected(Entry e, Highlight h) {
+    public void onValueSelected(Entry e, @NonNull Highlight h) {
         BarEntry entry = (BarEntry) e;
         Log.i("VAL SELECTED",
                 "Value: " + Math.abs(entry.getYVals()[h.getStackIndex()]));
@@ -241,6 +243,7 @@ public class StackedBarActivityNegative extends DemoBase implements
 
     private class CustomFormatter implements IValueFormatter, IAxisValueFormatter {
 
+        @NonNull
         private final DecimalFormat mFormat;
 
         CustomFormatter() {
@@ -248,12 +251,14 @@ public class StackedBarActivityNegative extends DemoBase implements
         }
 
         // data
+        @NonNull
         @Override
         public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
             return mFormat.format(Math.abs(value)) + "m";
         }
 
         // YAxis
+        @NonNull
         @Override
         public String getFormattedValue(float value, AxisBase axis) {
             return mFormat.format(Math.abs(value)) + "m";

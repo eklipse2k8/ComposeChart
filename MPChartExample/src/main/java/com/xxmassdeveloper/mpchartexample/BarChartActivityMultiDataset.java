@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
@@ -206,7 +208,7 @@ public class BarChartActivityMultiDataset extends DemoBase implements OnSeekBarC
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewGithub: {
@@ -283,7 +285,7 @@ public class BarChartActivityMultiDataset extends DemoBase implements OnSeekBarC
     public void onStopTrackingTouch(SeekBar seekBar) {}
 
     @Override
-    public void onValueSelected(Entry e, Highlight h) {
+    public void onValueSelected(@NonNull Entry e, @NonNull Highlight h) {
         Log.i("Activity", "Selected: " + e.toString() + ", dataSet: " + h.getDataSetIndex());
     }
 

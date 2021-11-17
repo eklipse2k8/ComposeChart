@@ -1,6 +1,9 @@
 
 package com.github.eklipse2k8.charting.utils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.util.List;
 
 /**
@@ -14,6 +17,7 @@ public final class FSize extends ObjectPool.Poolable{
     public float width;
     public float height;
 
+    @NonNull
     private static final ObjectPool<FSize> pool;
 
     static {
@@ -22,6 +26,7 @@ public final class FSize extends ObjectPool.Poolable{
     }
 
 
+    @NonNull
     protected ObjectPool.Poolable instantiate(){
         return new FSize(0,0);
     }
@@ -33,11 +38,11 @@ public final class FSize extends ObjectPool.Poolable{
         return result;
     }
 
-    public static void recycleInstance(FSize instance){
+    public static void recycleInstance(@NonNull FSize instance){
         pool.recycle(instance);
     }
 
-    public static void recycleInstances(List<FSize> instances){
+    public static void recycleInstances(@NonNull List<FSize> instances){
         pool.recycle(instances);
     }
 
@@ -50,7 +55,7 @@ public final class FSize extends ObjectPool.Poolable{
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -64,6 +69,7 @@ public final class FSize extends ObjectPool.Poolable{
         return false;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return width + "x" + height;

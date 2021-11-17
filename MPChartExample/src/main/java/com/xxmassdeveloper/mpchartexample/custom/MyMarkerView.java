@@ -5,6 +5,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.github.eklipse2k8.charting.components.MarkerView;
 import com.github.eklipse2k8.charting.data.CandleEntry;
 import com.github.eklipse2k8.charting.data.Entry;
@@ -23,7 +25,7 @@ public class MyMarkerView extends MarkerView {
 
     private final TextView tvContent;
 
-    public MyMarkerView(Context context, int layoutResource) {
+    public MyMarkerView(@NonNull Context context, int layoutResource) {
         super(context, layoutResource);
 
         tvContent = findViewById(R.id.tvContent);
@@ -47,6 +49,7 @@ public class MyMarkerView extends MarkerView {
         super.refreshContent(e, highlight);
     }
 
+    @NonNull
     @Override
     public MPPointF getOffset() {
         return new MPPointF(-(getWidth() / 2), -getHeight());

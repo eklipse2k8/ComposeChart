@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +39,7 @@ public abstract class SimpleFragment extends Fragment {
     protected Context context;
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
     }
@@ -47,12 +48,14 @@ public abstract class SimpleFragment extends Fragment {
 
     }
 
+    @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         tf = Typeface.createFromAsset(context.getAssets(), "OpenSans-Regular.ttf");
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
+    @NonNull
     protected BarData generateBarData(int dataSets, float range, int count) {
 
         ArrayList<IBarDataSet> sets = new ArrayList<>();
@@ -75,6 +78,7 @@ public abstract class SimpleFragment extends Fragment {
         return d;
     }
 
+    @NonNull
     protected ScatterData generateScatterData(int dataSets, float range, int count) {
 
         ArrayList<IScatterDataSet> sets = new ArrayList<>();
@@ -106,6 +110,7 @@ public abstract class SimpleFragment extends Fragment {
      * generates less data (1 DataSet, 4 values)
      * @return PieData
      */
+    @NonNull
     protected PieData generatePieData() {
 
         int count = 4;
@@ -128,6 +133,7 @@ public abstract class SimpleFragment extends Fragment {
         return d;
     }
 
+    @NonNull
     protected LineData generateLineData() {
 
         ArrayList<ILineDataSet> sets = new ArrayList<>();
@@ -152,6 +158,7 @@ public abstract class SimpleFragment extends Fragment {
         return d;
     }
 
+    @NonNull
     protected LineData getComplexity() {
 
         ArrayList<ILineDataSet> sets = new ArrayList<>();

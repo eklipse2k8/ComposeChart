@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
@@ -129,6 +131,7 @@ public class RealtimeLineChartActivity extends DemoBase implements
         }
     }
 
+    @NonNull
     private LineDataSet createSet() {
 
         LineDataSet set = new LineDataSet(null, "Dynamic Data");
@@ -189,7 +192,7 @@ public class RealtimeLineChartActivity extends DemoBase implements
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewGithub: {
@@ -229,7 +232,7 @@ public class RealtimeLineChartActivity extends DemoBase implements
     }
 
     @Override
-    public void onValueSelected(Entry e, Highlight h) {
+    public void onValueSelected(@NonNull Entry e, Highlight h) {
         Log.i("Entry selected", e.toString());
     }
 

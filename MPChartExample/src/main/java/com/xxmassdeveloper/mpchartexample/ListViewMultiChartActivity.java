@@ -104,6 +104,7 @@ public class ListViewMultiChartActivity extends DemoBase {
      *
      * @return Line data
      */
+    @NonNull
     private LineData generateDataLine(int cnt) {
 
         ArrayList<Entry> values1 = new ArrayList<>();
@@ -144,6 +145,7 @@ public class ListViewMultiChartActivity extends DemoBase {
      *
      * @return Bar data
      */
+    @NonNull
     private BarData generateDataBar(int cnt) {
 
         ArrayList<BarEntry> entries = new ArrayList<>();
@@ -166,6 +168,7 @@ public class ListViewMultiChartActivity extends DemoBase {
      *
      * @return Pie data
      */
+    @NonNull
     private PieData generateDataPie() {
 
         ArrayList<PieEntry> entries = new ArrayList<>();
@@ -190,7 +193,7 @@ public class ListViewMultiChartActivity extends DemoBase {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewGithub: {

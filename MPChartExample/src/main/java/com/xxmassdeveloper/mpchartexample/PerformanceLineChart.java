@@ -12,6 +12,8 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.github.eklipse2k8.charting.charts.LineChart;
 import com.github.eklipse2k8.charting.components.Legend;
 import com.github.eklipse2k8.charting.data.Entry;
@@ -105,7 +107,7 @@ public class PerformanceLineChart extends DemoBase implements OnSeekBarChangeLis
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewGithub: {

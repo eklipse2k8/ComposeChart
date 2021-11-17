@@ -81,7 +81,7 @@ E : Entry {
   protected abstract val highlighter: IHighlighter
 
   /** flag that indicates if logging is enabled or not */
-  protected open var isLogEnabled = false
+  var isLogEnabled = false
 
   /**
    * object that holds all data that was originally set for the chart, before it was modified or any
@@ -108,10 +108,10 @@ E : Entry {
     }
 
   /** Flag that indicates if highlighting per tap (touch) is enabled */
-  protected var mHighLightPerTapEnabled = true
+  private var highLightPerTapEnabled = true
 
   /** If set to true, chart continues to scroll after touch up */
-  private var mDragDecelerationEnabled = true
+  private var dragDecelerationEnabled = true
 
   /**
    * Deceleration friction coefficient in [0 ; 1] interval, higher values indicate that speed will
@@ -375,7 +375,7 @@ E : Entry {
    * @return
    */
   open fun isHighlightPerTapEnabled(): Boolean {
-    return mHighLightPerTapEnabled
+    return highLightPerTapEnabled
   }
 
   /**
@@ -385,7 +385,7 @@ E : Entry {
    * @param enabled
    */
   open fun setHighlightPerTapEnabled(enabled: Boolean) {
-    mHighLightPerTapEnabled = enabled
+    highLightPerTapEnabled = enabled
   }
 
   /**
@@ -546,7 +546,7 @@ E : Entry {
 
   /** If set to true, chart continues to scroll after touch up default: true */
   open fun isDragDecelerationEnabled(): Boolean {
-    return mDragDecelerationEnabled
+    return dragDecelerationEnabled
   }
 
   /**
@@ -555,7 +555,7 @@ E : Entry {
    * @param enabled
    */
   open fun setDragDecelerationEnabled(enabled: Boolean) {
-    mDragDecelerationEnabled = enabled
+    dragDecelerationEnabled = enabled
   }
 
   /**
@@ -720,11 +720,11 @@ E : Entry {
    *
    * @return
    */
-  open fun getCenter(): MPPointF? {
+  open fun getCenter(): MPPointF {
     return MPPointF.getInstance(width / 2f, height / 2f)
   }
 
-  override val centerOffsets: MPPointF?
+  override val centerOffsets: MPPointF
     get() = viewPortHandler.contentCenter
 
   /**

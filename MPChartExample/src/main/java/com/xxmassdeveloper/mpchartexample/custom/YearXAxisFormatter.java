@@ -1,5 +1,7 @@
 package com.xxmassdeveloper.mpchartexample.custom;
 
+import androidx.annotation.NonNull;
+
 import com.github.eklipse2k8.charting.components.AxisBase;
 import com.github.eklipse2k8.charting.formatter.IAxisValueFormatter;
 
@@ -19,7 +21,7 @@ public class YearXAxisFormatter implements IAxisValueFormatter
     }
 
     @Override
-    public String getFormattedValue(float value, AxisBase axis) {
+    public String getFormattedValue(float value, @NonNull AxisBase axis) {
 
         float percent = value / axis.mAxisRange;
         return mMonths[(int) (mMonths.length * percent)];

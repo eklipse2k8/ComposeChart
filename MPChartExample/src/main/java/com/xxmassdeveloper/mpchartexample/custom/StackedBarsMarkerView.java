@@ -5,6 +5,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.github.eklipse2k8.charting.components.MarkerView;
 import com.github.eklipse2k8.charting.data.BarEntry;
 import com.github.eklipse2k8.charting.data.Entry;
@@ -24,7 +26,7 @@ public class StackedBarsMarkerView extends MarkerView {
 
     private final TextView tvContent;
 
-    public StackedBarsMarkerView(Context context, int layoutResource) {
+    public StackedBarsMarkerView(@NonNull Context context, int layoutResource) {
         super(context, layoutResource);
 
         tvContent = findViewById(R.id.tvContent);
@@ -33,7 +35,7 @@ public class StackedBarsMarkerView extends MarkerView {
     // runs every time the MarkerView is redrawn, can be used to update the
     // content (user-interface)
     @Override
-    public void refreshContent(Entry e, Highlight highlight) {
+    public void refreshContent(Entry e, @NonNull Highlight highlight) {
 
         if (e instanceof BarEntry) {
 
@@ -54,6 +56,7 @@ public class StackedBarsMarkerView extends MarkerView {
         super.refreshContent(e, highlight);
     }
 
+    @NonNull
     @Override
     public MPPointF getOffset() {
         return new MPPointF(-(getWidth() / 2), -getHeight());

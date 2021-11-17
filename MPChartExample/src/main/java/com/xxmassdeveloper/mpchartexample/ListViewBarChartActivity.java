@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -70,7 +72,7 @@ public class ListViewBarChartActivity extends DemoBase {
         @SuppressLint("InflateParams")
         @NonNull
         @Override
-        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
             BarData data = getItem(position);
 
@@ -135,6 +137,7 @@ public class ListViewBarChartActivity extends DemoBase {
      *
      * @return Bar data
      */
+    @NonNull
     private BarData generateData(int cnt) {
 
         ArrayList<BarEntry> entries = new ArrayList<>();
@@ -162,7 +165,7 @@ public class ListViewBarChartActivity extends DemoBase {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewGithub: {

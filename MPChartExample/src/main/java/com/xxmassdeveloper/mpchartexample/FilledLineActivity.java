@@ -9,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+
 import com.github.eklipse2k8.charting.charts.LineChart;
 import com.github.eklipse2k8.charting.components.Legend;
 import com.github.eklipse2k8.charting.components.XAxis;
@@ -174,7 +176,7 @@ public class FilledLineActivity extends DemoBase {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewGithub: {

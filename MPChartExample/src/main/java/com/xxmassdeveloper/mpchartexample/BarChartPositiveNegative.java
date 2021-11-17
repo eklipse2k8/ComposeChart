@@ -9,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+
 import com.github.eklipse2k8.charting.charts.BarChart;
 import com.github.eklipse2k8.charting.components.AxisBase;
 import com.github.eklipse2k8.charting.components.XAxis;
@@ -98,7 +100,7 @@ public class BarChartPositiveNegative extends DemoBase {
         setData(data);
     }
 
-    private void setData(List<Data> dataList) {
+    private void setData(@NonNull List<Data> dataList) {
 
         ArrayList<BarEntry> values = new ArrayList<>();
         List<Integer> colors = new ArrayList<>();
@@ -162,12 +164,14 @@ public class BarChartPositiveNegative extends DemoBase {
     private class ValueFormatter implements IValueFormatter
     {
 
+        @NonNull
         private final DecimalFormat mFormat;
 
         ValueFormatter() {
             mFormat = new DecimalFormat("######.0");
         }
 
+        @NonNull
         @Override
         public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
             return mFormat.format(value);
@@ -181,7 +185,7 @@ public class BarChartPositiveNegative extends DemoBase {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewGithub: {

@@ -8,6 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+
 import com.github.eklipse2k8.charting.charts.BarChart;
 import com.github.eklipse2k8.charting.components.XAxis;
 import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition;
@@ -82,7 +84,7 @@ public class ScrollViewActivity extends DemoBase {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewGithub: {

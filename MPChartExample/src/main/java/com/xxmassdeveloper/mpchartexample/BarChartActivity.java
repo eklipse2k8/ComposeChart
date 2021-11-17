@@ -7,6 +7,9 @@ import android.content.pm.PackageManager;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
@@ -204,7 +207,7 @@ public class BarChartActivity extends DemoBase implements OnSeekBarChangeListene
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewGithub: {
@@ -300,7 +303,7 @@ public class BarChartActivity extends DemoBase implements OnSeekBarChangeListene
     private final RectF onValueSelectedRectF = new RectF();
 
     @Override
-    public void onValueSelected(Entry e, Highlight h) {
+    public void onValueSelected(@Nullable Entry e, Highlight h) {
 
         if (e == null)
             return;

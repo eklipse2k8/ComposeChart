@@ -3,6 +3,8 @@ package com.xxmassdeveloper.mpchartexample.custom;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import androidx.annotation.NonNull;
+
 import com.github.eklipse2k8.charting.interfaces.datasets.IScatterDataSet;
 import com.github.eklipse2k8.charting.renderer.scatter.IShapeRenderer;
 import com.github.eklipse2k8.charting.utils.ViewPortHandler;
@@ -15,7 +17,7 @@ public class CustomScatterShapeRenderer implements IShapeRenderer
 {
 
     @Override
-    public void renderShape(Canvas c, IScatterDataSet dataSet, ViewPortHandler viewPortHandler,
+    public void renderShape(@NonNull Canvas c, @NonNull IScatterDataSet dataSet, ViewPortHandler viewPortHandler,
                             float posX, float posY, Paint renderPaint) {
 
         final float shapeHalf = dataSet.getScatterShapeSize() / 2f;

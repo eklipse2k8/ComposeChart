@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.github.eklipse2k8.charting.charts.LineChart;
@@ -99,7 +100,7 @@ public class DrawChartActivity extends DemoBase implements OnChartValueSelectedL
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.actionToggleValues: {
@@ -151,7 +152,7 @@ public class DrawChartActivity extends DemoBase implements OnChartValueSelectedL
     }
 
     @Override
-    public void onValueSelected(Entry e, Highlight h) {
+    public void onValueSelected(@NonNull Entry e, @NonNull Highlight h) {
         Log.i("VAL SELECTED",
                 "Value: " + e.getY() + ", xIndex: " + e.getX()
                         + ", DataSet index: " + h.getDataSetIndex());
@@ -165,7 +166,7 @@ public class DrawChartActivity extends DemoBase implements OnChartValueSelectedL
      * callback for each new entry drawn with the finger
      */
     @Override
-    public void onEntryAdded(Entry entry) {
+    public void onEntryAdded(@NonNull Entry entry) {
         Log.i(TAG, entry.toString());
     }
 
@@ -173,7 +174,7 @@ public class DrawChartActivity extends DemoBase implements OnChartValueSelectedL
      * callback when a DataSet has been drawn (when lifting the finger)
      */
     @Override
-    public void onDrawFinished(DataSet<?> dataSet) {
+    public void onDrawFinished(@NonNull DataSet<?> dataSet) {
         Log.i(TAG, "DataSet drawn. " + dataSet.toSimpleString());
 
         // prepare the legend again
@@ -181,7 +182,7 @@ public class DrawChartActivity extends DemoBase implements OnChartValueSelectedL
     }
 
     @Override
-    public void onEntryMoved(Entry entry) {
+    public void onEntryMoved(@NonNull Entry entry) {
         Log.i(TAG, "Point moved " + entry.toString());
     }
 }

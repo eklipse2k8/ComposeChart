@@ -55,6 +55,7 @@ public class PieChartFrag extends SimpleFragment {
         return v;
     }
 
+    @NonNull
     private SpannableString generateCenterText() {
         SpannableString s = new SpannableString("Revenues\nQuarters 2015");
         s.setSpan(new RelativeSizeSpan(2f), 0, 8, 0);

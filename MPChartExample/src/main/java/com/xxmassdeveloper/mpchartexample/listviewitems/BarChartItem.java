@@ -6,6 +6,9 @@ import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.eklipse2k8.charting.charts.BarChart;
 import com.github.eklipse2k8.charting.components.XAxis;
 import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition;
@@ -18,7 +21,7 @@ public class BarChartItem extends ChartItem {
 
     private final Typeface mTf;
 
-    public BarChartItem(ChartData<?, ?> cd, Context c) {
+    public BarChartItem(ChartData<?, ?> cd, @NonNull Context c) {
         super(cd);
 
         mTf = Typeface.createFromAsset(c.getAssets(), "OpenSans-Regular.ttf");
@@ -29,9 +32,10 @@ public class BarChartItem extends ChartItem {
         return TYPE_BARCHART;
     }
 
+    @Nullable
     @SuppressLint("InflateParams")
     @Override
-    public View getView(int position, View convertView, Context c) {
+    public View getView(int position, @Nullable View convertView, Context c) {
 
         ViewHolder holder;
 

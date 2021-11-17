@@ -1,5 +1,7 @@
 package com.github.eklipse2k8.charting.test;
 
+import androidx.annotation.NonNull;
+
 import com.github.eklipse2k8.charting.utils.ObjectPool;
 
 import junit.framework.Assert;
@@ -16,6 +18,7 @@ public class ObjectPoolTest {
 
     static class TestPoolable extends ObjectPool.Poolable{
 
+        @NonNull
         private static final ObjectPool<TestPoolable> pool;
 
         static {
@@ -25,6 +28,7 @@ public class ObjectPoolTest {
         public int foo = 0;
         public int bar = 0;
 
+        @NonNull
         protected ObjectPool.Poolable instantiate(){
             return new TestPoolable(0,0);
         }
@@ -34,6 +38,7 @@ public class ObjectPoolTest {
             this.bar = bar;
         }
 
+        @NonNull
         public static TestPoolable getInstance(int foo, int bar){
             TestPoolable result = pool.get();
             result.foo = foo;
@@ -41,14 +46,15 @@ public class ObjectPoolTest {
             return result;
         }
 
-        public static void recycleInstance(TestPoolable instance){
+        public static void recycleInstance(@NonNull TestPoolable instance){
             pool.recycle(instance);
         }
 
-        public static void recycleInstances(List<TestPoolable> instances){
+        public static void recycleInstances(@NonNull List<TestPoolable> instances){
             pool.recycle(instances);
         }
 
+        @NonNull
         public static ObjectPool getPool(){
             return pool;
         }

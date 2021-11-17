@@ -114,7 +114,8 @@ class RadarChartRenderer(
 
       // apply the text-styling defined by the DataSet
       applyValueTextStyle(dataSet)
-      val iconsOffset = MPPointF.getInstance(dataSet.iconsOffset)
+      val iconsOffset =
+        dataSet.iconsOffset?.let { MPPointF.getInstance(it) } ?: MPPointF.getInstance(0f, 0f)
       iconsOffset.x = Utils.convertDpToPixel(iconsOffset.x)
       iconsOffset.y = Utils.convertDpToPixel(iconsOffset.y)
       for (j in 0 until dataSet.entryCount) {

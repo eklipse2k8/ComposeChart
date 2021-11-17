@@ -23,7 +23,7 @@ class MyAdapter extends ArrayAdapter<ContentItem> {
     private final Typeface mTypeFaceLight;
     private final Typeface mTypeFaceRegular;
 
-    MyAdapter(Context context, List<ContentItem> objects) {
+    MyAdapter(@NonNull Context context, List<ContentItem> objects) {
         super(context, 0, objects);
 
         mTypeFaceLight = Typeface.createFromAsset(context.getAssets(), "OpenSans-Light.ttf");

@@ -9,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+
 import com.github.eklipse2k8.charting.charts.CombinedChart;
 import com.github.eklipse2k8.charting.charts.CombinedChart.DrawOrder;
 import com.github.eklipse2k8.charting.components.AxisBase;
@@ -105,6 +107,7 @@ public class CombinedChartActivity extends DemoBase {
         chart.invalidate();
     }
 
+    @NonNull
     private LineData generateLineData() {
 
         LineData d = new LineData();
@@ -131,6 +134,7 @@ public class CombinedChartActivity extends DemoBase {
         return d;
     }
 
+    @NonNull
     private BarData generateBarData() {
 
         ArrayList<BarEntry> entries1 = new ArrayList<>();
@@ -170,6 +174,7 @@ public class CombinedChartActivity extends DemoBase {
         return d;
     }
 
+    @NonNull
     private ScatterData generateScatterData() {
 
         ScatterData d = new ScatterData();
@@ -189,6 +194,7 @@ public class CombinedChartActivity extends DemoBase {
         return d;
     }
 
+    @NonNull
     private CandleData generateCandleData() {
 
         CandleData d = new CandleData();
@@ -209,6 +215,7 @@ public class CombinedChartActivity extends DemoBase {
         return d;
     }
 
+    @NonNull
     private BubbleData generateBubbleData() {
 
         BubbleData bd = new BubbleData();
@@ -239,7 +246,7 @@ public class CombinedChartActivity extends DemoBase {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.viewGithub: {
                 Intent i = new Intent(Intent.ACTION_VIEW);

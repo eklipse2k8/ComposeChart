@@ -1,5 +1,7 @@
 package com.xxmassdeveloper.mpchartexample.custom;
 
+import androidx.annotation.NonNull;
+
 import com.github.eklipse2k8.charting.components.AxisBase;
 import com.github.eklipse2k8.charting.formatter.IAxisValueFormatter;
 import com.github.eklipse2k8.charting.utils.ViewPortHandler;
@@ -15,6 +17,7 @@ import java.text.DecimalFormat;
 public class MyCustomXAxisValueFormatter implements IAxisValueFormatter
 {
 
+    @NonNull
     private final DecimalFormat mFormat;
     private final ViewPortHandler mViewPortHandler;
 
