@@ -159,7 +159,7 @@ class LegendRenderer(
     labelPaint.color = mLegend.textColor
 
     // calculate all dimensions of the mLegend
-    mLegend.calculateDimensions(labelPaint, mViewPortHandler)
+    mLegend.calculateDimensions(labelPaint, viewPortHandler)
   }
 
   private var legendFontMetrics = Paint.FontMetrics()
@@ -193,20 +193,20 @@ class LegendRenderer(
       LegendHorizontalAlignment.LEFT -> {
         originPosX =
             if (orientation === LegendOrientation.VERTICAL) xoffset
-            else mViewPortHandler.contentLeft() + xoffset
+            else viewPortHandler.contentLeft() + xoffset
         if (direction === LegendDirection.RIGHT_TO_LEFT) originPosX += mLegend.mNeededWidth
       }
       LegendHorizontalAlignment.RIGHT -> {
         originPosX =
-            if (orientation === LegendOrientation.VERTICAL) mViewPortHandler.chartWidth - xoffset
-            else mViewPortHandler.contentRight() - xoffset
+            if (orientation === LegendOrientation.VERTICAL) viewPortHandler.chartWidth - xoffset
+            else viewPortHandler.contentRight() - xoffset
         if (direction === LegendDirection.LEFT_TO_RIGHT) originPosX -= mLegend.mNeededWidth
       }
       LegendHorizontalAlignment.CENTER -> {
         originPosX =
-            if (orientation === LegendOrientation.VERTICAL) mViewPortHandler.chartWidth / 2f
-            else mViewPortHandler.contentLeft()
-        +mViewPortHandler.contentWidth() / 2f
+            if (orientation === LegendOrientation.VERTICAL) viewPortHandler.chartWidth / 2f
+            else viewPortHandler.contentLeft()
+        +viewPortHandler.contentWidth() / 2f
         originPosX += if (direction === LegendDirection.LEFT_TO_RIGHT) +xoffset else -xoffset
 
         // Horizontally layed out legends do the center offset on a line basis,
@@ -230,9 +230,9 @@ class LegendRenderer(
             when (verticalAlignment) {
               LegendVerticalAlignment.TOP -> yoffset
               LegendVerticalAlignment.BOTTOM ->
-                  mViewPortHandler.chartHeight - yoffset - mLegend.mNeededHeight
+                  viewPortHandler.chartHeight - yoffset - mLegend.mNeededHeight
               LegendVerticalAlignment.CENTER ->
-                  (mViewPortHandler.chartHeight - mLegend.mNeededHeight) / 2f + yoffset
+                  (viewPortHandler.chartHeight - mLegend.mNeededHeight) / 2f + yoffset
             }
         var lineIndex = 0
         var i = 0
@@ -286,19 +286,19 @@ class LegendRenderer(
           LegendVerticalAlignment.TOP -> {
             posY =
                 if (horizontalAlignment === LegendHorizontalAlignment.CENTER) 0f
-                else mViewPortHandler.contentTop()
+                else viewPortHandler.contentTop()
             posY += yoffset
           }
           LegendVerticalAlignment.BOTTOM -> {
             posY =
                 if (horizontalAlignment === LegendHorizontalAlignment.CENTER)
-                    mViewPortHandler.chartHeight
-                else mViewPortHandler.contentBottom()
+                    viewPortHandler.chartHeight
+                else viewPortHandler.contentBottom()
             posY -= mLegend.mNeededHeight + yoffset
           }
           LegendVerticalAlignment.CENTER ->
               posY =
-                  (mViewPortHandler.chartHeight / 2f - mLegend.mNeededHeight / 2f + mLegend.yOffset)
+                  (viewPortHandler.chartHeight / 2f - mLegend.mNeededHeight / 2f + mLegend.yOffset)
         }
         var i = 0
         while (i < entries.size) {

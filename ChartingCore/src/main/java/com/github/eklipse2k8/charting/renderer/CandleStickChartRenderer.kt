@@ -193,8 +193,8 @@ class CandleStickChartRenderer(
         while (j < positions.size) {
           val x = positions[j]
           val y = positions[j + 1]
-          if (!mViewPortHandler.isInBoundsRight(x)) break
-          if (!mViewPortHandler.isInBoundsLeft(x) || !mViewPortHandler.isInBoundsY(y)) {
+          if (!viewPortHandler.isInBoundsRight(x)) break
+          if (!viewPortHandler.isInBoundsLeft(x) || !viewPortHandler.isInBoundsY(y)) {
             j += 2
             continue
           }

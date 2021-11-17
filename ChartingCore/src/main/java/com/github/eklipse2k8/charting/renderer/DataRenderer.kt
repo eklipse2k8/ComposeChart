@@ -59,7 +59,7 @@ abstract class DataRenderer(
   protected val paintValues = mValuePaint
 
   protected open fun isDrawingValuesAllowed(chart: ChartInterface): Boolean {
-    return chart.data!!.entryCount < chart.maxVisibleCount * mViewPortHandler.scaleX
+    return chart.data!!.entryCount < chart.maxVisibleCount * viewPortHandler.scaleX
   }
 
   /**
@@ -116,7 +116,7 @@ abstract class DataRenderer(
   ) {
     paintValues.color = color
     c.drawText(
-        formatter.getFormattedValue(value, entry!!, dataSetIndex, mViewPortHandler),
+        formatter.getFormattedValue(value, entry!!, dataSetIndex, viewPortHandler),
         x,
         y,
         paintValues)

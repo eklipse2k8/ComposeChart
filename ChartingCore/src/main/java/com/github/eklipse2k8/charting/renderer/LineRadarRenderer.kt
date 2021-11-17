@@ -23,10 +23,10 @@ abstract class LineRadarRenderer(animator: ChartAnimator, viewPortHandler: ViewP
       val save = c.save()
       c.clipPath(filledPath!!)
       drawable.setBounds(
-          mViewPortHandler.contentLeft().toInt(),
-          mViewPortHandler.contentTop().toInt(),
-          mViewPortHandler.contentRight().toInt(),
-          mViewPortHandler.contentBottom().toInt())
+          viewPortHandler.contentLeft().toInt(),
+          viewPortHandler.contentTop().toInt(),
+          viewPortHandler.contentRight().toInt(),
+          viewPortHandler.contentBottom().toInt())
       drawable.draw(c)
       c.restoreToCount(save)
     } else {

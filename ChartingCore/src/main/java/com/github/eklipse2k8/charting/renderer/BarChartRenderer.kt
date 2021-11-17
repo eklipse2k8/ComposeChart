@@ -73,13 +73,13 @@ open class BarChartRenderer(
         mBarShadowRectBuffer.left = x - barWidthHalf
         mBarShadowRectBuffer.right = x + barWidthHalf
         trans.rectValueToPixel(mBarShadowRectBuffer)
-        if (!mViewPortHandler.isInBoundsLeft(mBarShadowRectBuffer.right)) {
+        if (!viewPortHandler.isInBoundsLeft(mBarShadowRectBuffer.right)) {
           i++
           continue
         }
-        if (!mViewPortHandler.isInBoundsRight(mBarShadowRectBuffer.left)) break
-        mBarShadowRectBuffer.top = mViewPortHandler.contentTop()
-        mBarShadowRectBuffer.bottom = mViewPortHandler.contentBottom()
+        if (!viewPortHandler.isInBoundsRight(mBarShadowRectBuffer.left)) break
+        mBarShadowRectBuffer.top = viewPortHandler.contentTop()
+        mBarShadowRectBuffer.bottom = viewPortHandler.contentBottom()
         c.drawRect(mBarShadowRectBuffer, mShadowPaint)
         i++
       }
@@ -102,12 +102,12 @@ open class BarChartRenderer(
     var j = 0
     var pos = 0
     while (j < buffer.size()) {
-      if (!mViewPortHandler.isInBoundsLeft(buffer.buffer[j + 2])) {
+      if (!viewPortHandler.isInBoundsLeft(buffer.buffer[j + 2])) {
         j += 4
         pos++
         continue
       }
-      if (!mViewPortHandler.isInBoundsRight(buffer.buffer[j])) break
+      if (!viewPortHandler.isInBoundsRight(buffer.buffer[j])) break
       if (!isSingleColor) {
         // Set the color for the currently drawn value. If the index
         // is out of bounds, reuse colors.
@@ -198,9 +198,9 @@ open class BarChartRenderer(
           var j = 0
           while (j < buffer!!.buffer.size * mAnimator.phaseX) {
             val x = (buffer.buffer[j] + buffer.buffer[j + 2]) / 2f
-            if (!mViewPortHandler.isInBoundsRight(x)) break
-            if (!mViewPortHandler.isInBoundsY(buffer.buffer[j + 1]) ||
-                !mViewPortHandler.isInBoundsLeft(x)) {
+            if (!viewPortHandler.isInBoundsRight(x)) break
+            if (!viewPortHandler.isInBoundsY(buffer.buffer[j + 1]) ||
+                !viewPortHandler.isInBoundsLeft(x)) {
               j += 4
               continue
             }
@@ -247,9 +247,9 @@ open class BarChartRenderer(
             // non-stacked
             // in between
             if (vals == null) {
-              if (!mViewPortHandler.isInBoundsRight(x)) break
-              if (!mViewPortHandler.isInBoundsY(buffer.buffer[bufferIndex + 1]) ||
-                  !mViewPortHandler.isInBoundsLeft(x))
+              if (!viewPortHandler.isInBoundsRight(x)) break
+              if (!viewPortHandler.isInBoundsY(buffer.buffer[bufferIndex + 1]) ||
+                  !viewPortHandler.isInBoundsLeft(x))
                   continue
               if (dataSet.isDrawValuesEnabled) {
                 drawValue(
@@ -304,8 +304,8 @@ open class BarChartRenderer(
                 val `val` = vals[k / 2]
                 val drawBelow = `val` == 0.0f && negY == 0.0f && posY > 0.0f || `val` < 0.0f
                 val y = (transformed[k + 1] + if (drawBelow) negOffset else posOffset)
-                if (!mViewPortHandler.isInBoundsRight(x)) break
-                if (!mViewPortHandler.isInBoundsY(y) || !mViewPortHandler.isInBoundsLeft(x)) {
+                if (!viewPortHandler.isInBoundsRight(x)) break
+                if (!viewPortHandler.isInBoundsY(y) || !viewPortHandler.isInBoundsLeft(x)) {
                   k += 2
                   continue
                 }

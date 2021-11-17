@@ -56,20 +56,20 @@ class BubbleChartRenderer(
     val normalizeSize = dataSet.isNormalizeSizeEnabled
 
     // calcualte the full width of 1 step on the x-axis
-    val maxBubbleWidth = Math.abs(sizeBuffer[2] - sizeBuffer[0])
-    val maxBubbleHeight = Math.abs(mViewPortHandler.contentBottom() - mViewPortHandler.contentTop())
-    val referenceSize = Math.min(maxBubbleHeight, maxBubbleWidth)
+    val maxBubbleWidth = abs(sizeBuffer[2] - sizeBuffer[0])
+    val maxBubbleHeight = abs(viewPortHandler.contentBottom() - viewPortHandler.contentTop())
+    val referenceSize = min(maxBubbleHeight, maxBubbleWidth)
     for (j in mXBounds.min..mXBounds.range + mXBounds.min) {
       val entry = dataSet.getEntryForIndex(j)
       pointBuffer[0] = entry.x
       pointBuffer[1] = entry.y * phaseY
       trans.pointValuesToPixel(pointBuffer)
       val shapeHalf = getShapeSize(entry.size, dataSet.maxSize, referenceSize, normalizeSize) / 2f
-      if (!mViewPortHandler.isInBoundsTop(pointBuffer[1] + shapeHalf) ||
-          !mViewPortHandler.isInBoundsBottom(pointBuffer[1] - shapeHalf))
+      if (!viewPortHandler.isInBoundsTop(pointBuffer[1] + shapeHalf) ||
+          !viewPortHandler.isInBoundsBottom(pointBuffer[1] - shapeHalf))
           continue
-      if (!mViewPortHandler.isInBoundsLeft(pointBuffer[0] + shapeHalf)) continue
-      if (!mViewPortHandler.isInBoundsRight(pointBuffer[0] - shapeHalf)) break
+      if (!viewPortHandler.isInBoundsLeft(pointBuffer[0] + shapeHalf)) continue
+      if (!viewPortHandler.isInBoundsRight(pointBuffer[0] - shapeHalf)) break
       val color = dataSet.getColor(j)
       mRenderPaint.color = color
       c.drawCircle(pointBuffer[0], pointBuffer[1], shapeHalf, mRenderPaint)
@@ -112,8 +112,8 @@ class BubbleChartRenderer(
                   Color.blue(valueTextColor))
           val x = positions[j]
           val y = positions[j + 1]
-          if (!mViewPortHandler.isInBoundsRight(x)) break
-          if (!mViewPortHandler.isInBoundsLeft(x) || !mViewPortHandler.isInBoundsY(y)) {
+          if (!viewPortHandler.isInBoundsRight(x)) break
+          if (!viewPortHandler.isInBoundsLeft(x) || !viewPortHandler.isInBoundsY(y)) {
             j += 2
             continue
           }
@@ -168,18 +168,18 @@ class BubbleChartRenderer(
 
       // calcualte the full width of 1 step on the x-axis
       val maxBubbleWidth = abs(sizeBuffer[2] - sizeBuffer[0])
-      val maxBubbleHeight = abs(mViewPortHandler.contentBottom() - mViewPortHandler.contentTop())
+      val maxBubbleHeight = abs(viewPortHandler.contentBottom() - viewPortHandler.contentTop())
       val referenceSize = min(maxBubbleHeight, maxBubbleWidth)
       pointBuffer[0] = entry.x
       pointBuffer[1] = entry.y * phaseY
       trans.pointValuesToPixel(pointBuffer)
       high.setDraw(pointBuffer[0], pointBuffer[1])
       val shapeHalf = getShapeSize(entry.size, set.maxSize, referenceSize, normalizeSize) / 2f
-      if (!mViewPortHandler.isInBoundsTop(pointBuffer[1] + shapeHalf) ||
-          !mViewPortHandler.isInBoundsBottom(pointBuffer[1] - shapeHalf))
+      if (!viewPortHandler.isInBoundsTop(pointBuffer[1] + shapeHalf) ||
+          !viewPortHandler.isInBoundsBottom(pointBuffer[1] - shapeHalf))
           return@forEach
-      if (!mViewPortHandler.isInBoundsLeft(pointBuffer[0] + shapeHalf)) return@forEach
-      if (!mViewPortHandler.isInBoundsRight(pointBuffer[0] - shapeHalf)) return@forEach
+      if (!viewPortHandler.isInBoundsLeft(pointBuffer[0] + shapeHalf)) return@forEach
+      if (!viewPortHandler.isInBoundsRight(pointBuffer[0] - shapeHalf)) return@forEach
       val originalColor = set.getColor(entry.x.toInt())
       Color.RGBToHSV(
           Color.red(originalColor),

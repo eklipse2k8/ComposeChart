@@ -59,13 +59,13 @@ class HorizontalBarChartRenderer(
         mBarShadowRectBuffer.top = x - barWidthHalf
         mBarShadowRectBuffer.bottom = x + barWidthHalf
         trans.rectValueToPixel(mBarShadowRectBuffer)
-        if (!mViewPortHandler.isInBoundsTop(mBarShadowRectBuffer.bottom)) {
+        if (!viewPortHandler.isInBoundsTop(mBarShadowRectBuffer.bottom)) {
           i++
           continue
         }
-        if (!mViewPortHandler.isInBoundsBottom(mBarShadowRectBuffer.top)) break
-        mBarShadowRectBuffer.left = mViewPortHandler.contentLeft()
-        mBarShadowRectBuffer.right = mViewPortHandler.contentRight()
+        if (!viewPortHandler.isInBoundsBottom(mBarShadowRectBuffer.top)) break
+        mBarShadowRectBuffer.left = viewPortHandler.contentLeft()
+        mBarShadowRectBuffer.right = viewPortHandler.contentRight()
         c.drawRect(mBarShadowRectBuffer, mShadowPaint)
         i++
       }
@@ -88,8 +88,8 @@ class HorizontalBarChartRenderer(
     var j = 0
     var pos = 0
     while (j < buffer.size()) {
-      if (!mViewPortHandler.isInBoundsTop(buffer.buffer[j + 3])) break
-      if (!mViewPortHandler.isInBoundsBottom(buffer.buffer[j + 1])) {
+      if (!viewPortHandler.isInBoundsTop(buffer.buffer[j + 3])) break
+      if (!viewPortHandler.isInBoundsBottom(buffer.buffer[j + 1])) {
         j += 4
         pos++
         continue
@@ -163,18 +163,18 @@ class HorizontalBarChartRenderer(
           var j = 0
           while (j < buffer.buffer.size * mAnimator.phaseX) {
             val y = (buffer.buffer[j + 1] + buffer.buffer[j + 3]) / 2f
-            if (!mViewPortHandler.isInBoundsTop(buffer.buffer[j + 1])) break
-            if (!mViewPortHandler.isInBoundsX(buffer.buffer[j])) {
+            if (!viewPortHandler.isInBoundsTop(buffer.buffer[j + 1])) break
+            if (!viewPortHandler.isInBoundsX(buffer.buffer[j])) {
               j += 4
               continue
             }
-            if (!mViewPortHandler.isInBoundsBottom(buffer.buffer[j + 1])) {
+            if (!viewPortHandler.isInBoundsBottom(buffer.buffer[j + 1])) {
               j += 4
               continue
             }
             val entry = dataSet.getEntryForIndex(j / 4)
             val `val` = entry.y
-            val formattedValue = formatter!!.getFormattedValue(`val`, entry, i, mViewPortHandler)
+            val formattedValue = formatter!!.getFormattedValue(`val`, entry, i, viewPortHandler)
 
             // calculate the correct offset depending on the draw position of the value
             val valueTextWidth = Utils.calcTextWidth(mValuePaint, formattedValue).toFloat()
@@ -221,11 +221,11 @@ class HorizontalBarChartRenderer(
             // non-stacked
             // in between
             if (vals == null) {
-              if (!mViewPortHandler.isInBoundsTop(buffer.buffer[bufferIndex + 1])) break
-              if (!mViewPortHandler.isInBoundsX(buffer.buffer[bufferIndex])) continue
-              if (!mViewPortHandler.isInBoundsBottom(buffer.buffer[bufferIndex + 1])) continue
+              if (!viewPortHandler.isInBoundsTop(buffer.buffer[bufferIndex + 1])) break
+              if (!viewPortHandler.isInBoundsX(buffer.buffer[bufferIndex])) continue
+              if (!viewPortHandler.isInBoundsBottom(buffer.buffer[bufferIndex + 1])) continue
               val `val` = entry.y
-              val formattedValue = formatter!!.getFormattedValue(`val`, entry, i, mViewPortHandler)
+              val formattedValue = formatter!!.getFormattedValue(`val`, entry, i, viewPortHandler)
 
               // calculate the correct offset depending on the draw position of the value
               val valueTextWidth = Utils.calcTextWidth(mValuePaint, formattedValue).toFloat()
@@ -285,7 +285,7 @@ class HorizontalBarChartRenderer(
               while (k < transformed.size) {
                 val `val` = vals[k / 2]
                 val formattedValue =
-                    formatter!!.getFormattedValue(`val`, entry, i, mViewPortHandler)
+                    formatter!!.getFormattedValue(`val`, entry, i, viewPortHandler)
 
                 // calculate the correct offset depending on the draw position of the value
                 val valueTextWidth = Utils.calcTextWidth(mValuePaint, formattedValue).toFloat()
@@ -300,12 +300,12 @@ class HorizontalBarChartRenderer(
                 val drawBelow = `val` == 0.0f && negY == 0.0f && posY > 0.0f || `val` < 0.0f
                 val x = (transformed[k] + if (drawBelow) negOffset else posOffset)
                 val y = (buffer.buffer[bufferIndex + 1] + buffer.buffer[bufferIndex + 3]) / 2f
-                if (!mViewPortHandler.isInBoundsTop(y)) break
-                if (!mViewPortHandler.isInBoundsX(x)) {
+                if (!viewPortHandler.isInBoundsTop(y)) break
+                if (!viewPortHandler.isInBoundsX(x)) {
                   k += 2
                   continue
                 }
-                if (!mViewPortHandler.isInBoundsBottom(y)) {
+                if (!viewPortHandler.isInBoundsBottom(y)) {
                   k += 2
                   continue
                 }
@@ -357,7 +357,7 @@ class HorizontalBarChartRenderer(
   }
 
   override fun isDrawingValuesAllowed(chart: ChartInterface): Boolean {
-    return chart.data!!.entryCount < chart.maxVisibleCount * mViewPortHandler.scaleY
+    return chart.data!!.entryCount < chart.maxVisibleCount * viewPortHandler.scaleY
   }
 
   init {

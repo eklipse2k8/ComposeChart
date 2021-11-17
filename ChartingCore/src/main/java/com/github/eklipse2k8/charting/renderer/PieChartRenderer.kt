@@ -55,8 +55,8 @@ class PieChartRenderer(
   override fun initBuffers() = Unit
 
   override fun drawData(c: Canvas) {
-    val width = mViewPortHandler.chartWidth.toInt()
-    val height = mViewPortHandler.chartHeight.toInt()
+    val width = viewPortHandler.chartWidth.toInt()
+    val height = viewPortHandler.chartHeight.toInt()
     var drawBitmap = if (mDrawBitmap == null) null else mDrawBitmap!!.get()
     if (drawBitmap == null || drawBitmap.width != width || drawBitmap.height != height) {
       if (width > 0 && height > 0) {
@@ -128,7 +128,7 @@ class PieChartRenderer(
    */
   private fun getSliceSpace(dataSet: IPieDataSet): Float {
     if (!dataSet.isAutomaticallyDisableSliceSpacingEnabled) return dataSet.sliceSpace
-    val spaceSizeRatio = dataSet.sliceSpace / mViewPortHandler.smallestContentExtension
+    val spaceSizeRatio = dataSet.sliceSpace / viewPortHandler.smallestContentExtension
     val minValueRatio: Float = dataSet.yMin / mChart.data!!.yValueSum * 2
     return if (spaceSizeRatio > minValueRatio) 0f else dataSet.sliceSpace
   }

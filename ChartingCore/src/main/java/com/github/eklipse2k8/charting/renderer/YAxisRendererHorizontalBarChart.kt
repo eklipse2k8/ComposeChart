@@ -33,13 +33,13 @@ class YAxisRendererHorizontalBarChart(
     // zoom / contentrect bounds)
     var yMin = yMin
     var yMax = yMax
-    if (mViewPortHandler.contentHeight() > 10 && !mViewPortHandler.isFullyZoomedOutX) {
+    if (viewPortHandler.contentHeight() > 10 && !viewPortHandler.isFullyZoomedOutX) {
       val p1 =
           mTrans!!.getValuesByTouchPoint(
-              mViewPortHandler.contentLeft(), mViewPortHandler.contentTop())
+              viewPortHandler.contentLeft(), viewPortHandler.contentTop())
       val p2 =
           mTrans!!.getValuesByTouchPoint(
-              mViewPortHandler.contentRight(), mViewPortHandler.contentTop())
+              viewPortHandler.contentRight(), viewPortHandler.contentTop())
       if (!inverted) {
         yMin = p1.x.toFloat()
         yMax = p2.x.toFloat()
@@ -69,15 +69,15 @@ class YAxisRendererHorizontalBarChart(
     yPos =
         if (dependency === AxisDependency.LEFT) {
           if (labelPosition === YAxisLabelPosition.OUTSIDE_CHART) {
-            mViewPortHandler.contentTop() - baseYOffset
+            viewPortHandler.contentTop() - baseYOffset
           } else {
-            mViewPortHandler.contentTop() - baseYOffset
+            viewPortHandler.contentTop() - baseYOffset
           }
         } else {
           if (labelPosition === YAxisLabelPosition.OUTSIDE_CHART) {
-            mViewPortHandler.contentBottom() + textHeight + baseYOffset
+            viewPortHandler.contentBottom() + textHeight + baseYOffset
           } else {
-            mViewPortHandler.contentBottom() + textHeight + baseYOffset
+            viewPortHandler.contentBottom() + textHeight + baseYOffset
           }
         }
     drawYLabels(c, yPos, positions, mYAxis.yOffset)
@@ -89,17 +89,17 @@ class YAxisRendererHorizontalBarChart(
     mAxisLinePaint!!.strokeWidth = mYAxis.axisLineWidth
     if (mYAxis.axisDependency === AxisDependency.LEFT) {
       c!!.drawLine(
-          mViewPortHandler.contentLeft(),
-          mViewPortHandler.contentTop(),
-          mViewPortHandler.contentRight(),
-          mViewPortHandler.contentTop(),
+          viewPortHandler.contentLeft(),
+          viewPortHandler.contentTop(),
+          viewPortHandler.contentRight(),
+          viewPortHandler.contentTop(),
           mAxisLinePaint!!)
     } else {
       c!!.drawLine(
-          mViewPortHandler.contentLeft(),
-          mViewPortHandler.contentBottom(),
-          mViewPortHandler.contentRight(),
-          mViewPortHandler.contentBottom(),
+          viewPortHandler.contentLeft(),
+          viewPortHandler.contentBottom(),
+          viewPortHandler.contentRight(),
+          viewPortHandler.contentBottom(),
           mAxisLinePaint!!)
     }
   }
@@ -142,21 +142,21 @@ class YAxisRendererHorizontalBarChart(
     }
   override val gridClippingRect: RectF
     get() {
-      mGridClippingRect.set(mViewPortHandler.contentRect)
+      mGridClippingRect.set(viewPortHandler.contentRect)
       mGridClippingRect.inset(-mAxis.gridLineWidth, 0f)
       return mGridClippingRect
     }
 
   override fun linePath(p: Path, i: Int, positions: FloatArray): Path? {
-    p.moveTo(positions[i], mViewPortHandler.contentTop())
-    p.lineTo(positions[i], mViewPortHandler.contentBottom())
+    p.moveTo(positions[i], viewPortHandler.contentTop())
+    p.lineTo(positions[i], viewPortHandler.contentBottom())
     return p
   }
 
   protected var mDrawZeroLinePathBuffer = Path()
   override fun drawZeroLine(c: Canvas?) {
     val clipRestoreCount = c!!.save()
-    mZeroLineClippingRect.set(mViewPortHandler.contentRect)
+    mZeroLineClippingRect.set(viewPortHandler.contentRect)
     mZeroLineClippingRect.inset(-mYAxis.zeroLineWidth, 0f)
     c.clipRect(mLimitLineClippingRect)
 
@@ -166,8 +166,8 @@ class YAxisRendererHorizontalBarChart(
     mZeroLinePaint!!.strokeWidth = mYAxis.zeroLineWidth
     val zeroLinePath = mDrawZeroLinePathBuffer
     zeroLinePath.reset()
-    zeroLinePath.moveTo(pos.x.toFloat() - 1, mViewPortHandler.contentTop())
-    zeroLinePath.lineTo(pos.x.toFloat() - 1, mViewPortHandler.contentBottom())
+    zeroLinePath.moveTo(pos.x.toFloat() - 1, viewPortHandler.contentTop())
+    zeroLinePath.lineTo(pos.x.toFloat() - 1, viewPortHandler.contentBottom())
 
     // draw a path because lines don't support dashing on lower android versions
     c.drawPath(zeroLinePath, mZeroLinePaint!!)
@@ -198,14 +198,14 @@ class YAxisRendererHorizontalBarChart(
       val l = limitLines[i]
       if (!l.isEnabled) continue
       val clipRestoreCount = c!!.save()
-      mLimitLineClippingRect.set(mViewPortHandler.contentRect)
+      mLimitLineClippingRect.set(viewPortHandler.contentRect)
       mLimitLineClippingRect.inset(-l.lineWidth, 0f)
       c.clipRect(mLimitLineClippingRect)
       pts[0] = l.limit
       pts[2] = l.limit
       mTrans!!.pointValuesToPixel(pts)
-      pts[1] = mViewPortHandler.contentTop()
-      pts[3] = mViewPortHandler.contentBottom()
+      pts[1] = viewPortHandler.contentTop()
+      pts[3] = viewPortHandler.contentBottom()
       limitLinePath.moveTo(pts[0], pts[1])
       limitLinePath.lineTo(pts[2], pts[3])
       mLimitLinePaint!!.style = Paint.Style.STROKE
@@ -233,14 +233,14 @@ class YAxisRendererHorizontalBarChart(
           c.drawText(
               label,
               pts[0] + xOffset,
-              mViewPortHandler.contentTop() + yOffset + labelLineHeight,
+              viewPortHandler.contentTop() + yOffset + labelLineHeight,
               mLimitLinePaint!!)
         } else if (position === LimitLabelPosition.RIGHT_BOTTOM) {
           mLimitLinePaint!!.textAlign = Align.LEFT
           c.drawText(
               label,
               pts[0] + xOffset,
-              mViewPortHandler.contentBottom() - yOffset,
+              viewPortHandler.contentBottom() - yOffset,
               mLimitLinePaint!!)
         } else if (position === LimitLabelPosition.LEFT_TOP) {
           mLimitLinePaint!!.textAlign = Align.RIGHT
@@ -248,14 +248,14 @@ class YAxisRendererHorizontalBarChart(
           c.drawText(
               label,
               pts[0] - xOffset,
-              mViewPortHandler.contentTop() + yOffset + labelLineHeight,
+              viewPortHandler.contentTop() + yOffset + labelLineHeight,
               mLimitLinePaint!!)
         } else {
           mLimitLinePaint!!.textAlign = Align.RIGHT
           c.drawText(
               label,
               pts[0] - xOffset,
-              mViewPortHandler.contentBottom() - yOffset,
+              viewPortHandler.contentBottom() - yOffset,
               mLimitLinePaint!!)
         }
       }

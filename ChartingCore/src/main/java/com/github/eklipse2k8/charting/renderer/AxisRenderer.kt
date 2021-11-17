@@ -55,13 +55,13 @@ abstract class AxisRenderer(
     // zoom / contentrect bounds)
     var minVal = min
     var maxVal = max
-    if (mViewPortHandler.contentWidth() > 10 && !mViewPortHandler.isFullyZoomedOutY) {
+    if (viewPortHandler.contentWidth() > 10 && !viewPortHandler.isFullyZoomedOutY) {
       val p1 =
           mTrans!!.getValuesByTouchPoint(
-              mViewPortHandler.contentLeft(), mViewPortHandler.contentTop())
+              viewPortHandler.contentLeft(), viewPortHandler.contentTop())
       val p2 =
           mTrans!!.getValuesByTouchPoint(
-              mViewPortHandler.contentLeft(), mViewPortHandler.contentBottom())
+              viewPortHandler.contentLeft(), viewPortHandler.contentBottom())
       if (!inverted) {
         minVal = p2.y.toFloat()
         maxVal = p1.y.toFloat()

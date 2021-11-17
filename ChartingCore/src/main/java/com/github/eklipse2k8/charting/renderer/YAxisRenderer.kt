@@ -32,18 +32,18 @@ open class YAxisRenderer(
     if (dependency === AxisDependency.LEFT) {
       if (labelPosition === YAxisLabelPosition.OUTSIDE_CHART) {
         mAxisLabelPaint.textAlign = Align.RIGHT
-        xPos = mViewPortHandler.offsetLeft() - xoffset
+        xPos = viewPortHandler.offsetLeft() - xoffset
       } else {
         mAxisLabelPaint.textAlign = Align.LEFT
-        xPos = mViewPortHandler.offsetLeft() + xoffset
+        xPos = viewPortHandler.offsetLeft() + xoffset
       }
     } else {
       if (labelPosition === YAxisLabelPosition.OUTSIDE_CHART) {
         mAxisLabelPaint.textAlign = Align.LEFT
-        xPos = mViewPortHandler.contentRight() + xoffset
+        xPos = viewPortHandler.contentRight() + xoffset
       } else {
         mAxisLabelPaint.textAlign = Align.RIGHT
-        xPos = mViewPortHandler.contentRight() - xoffset
+        xPos = viewPortHandler.contentRight() - xoffset
       }
     }
     drawYLabels(c, xPos, positions, yoffset)
@@ -55,17 +55,17 @@ open class YAxisRenderer(
     mAxisLinePaint!!.strokeWidth = mYAxis.axisLineWidth
     if (mYAxis.axisDependency === AxisDependency.LEFT) {
       c!!.drawLine(
-          mViewPortHandler.contentLeft(),
-          mViewPortHandler.contentTop(),
-          mViewPortHandler.contentLeft(),
-          mViewPortHandler.contentBottom(),
+          viewPortHandler.contentLeft(),
+          viewPortHandler.contentTop(),
+          viewPortHandler.contentLeft(),
+          viewPortHandler.contentBottom(),
           mAxisLinePaint!!)
     } else {
       c!!.drawLine(
-          mViewPortHandler.contentRight(),
-          mViewPortHandler.contentTop(),
-          mViewPortHandler.contentRight(),
-          mViewPortHandler.contentBottom(),
+          viewPortHandler.contentRight(),
+          viewPortHandler.contentTop(),
+          viewPortHandler.contentRight(),
+          viewPortHandler.contentBottom(),
           mAxisLinePaint!!)
     }
   }
@@ -127,7 +127,7 @@ open class YAxisRenderer(
 
   open val gridClippingRect: RectF?
     get() {
-      mGridClippingRect.set(mViewPortHandler.contentRect)
+      mGridClippingRect.set(viewPortHandler.contentRect)
       mGridClippingRect.inset(0f, -mAxis.gridLineWidth)
       return mGridClippingRect
     }
@@ -141,8 +141,8 @@ open class YAxisRenderer(
    * @return
    */
   protected open fun linePath(p: Path, i: Int, positions: FloatArray): Path? {
-    p.moveTo(mViewPortHandler.offsetLeft(), positions[i + 1])
-    p.lineTo(mViewPortHandler.contentRight(), positions[i + 1])
+    p.moveTo(viewPortHandler.offsetLeft(), positions[i + 1])
+    p.lineTo(viewPortHandler.contentRight(), positions[i + 1])
     return p
   }
 
@@ -180,7 +180,7 @@ open class YAxisRenderer(
   /** Draws the zero line. */
   protected open fun drawZeroLine(c: Canvas?) {
     val clipRestoreCount = c!!.save()
-    mZeroLineClippingRect.set(mViewPortHandler.contentRect)
+    mZeroLineClippingRect.set(viewPortHandler.contentRect)
     mZeroLineClippingRect.inset(0f, -mYAxis.zeroLineWidth)
     c.clipRect(mZeroLineClippingRect)
 
@@ -193,8 +193,8 @@ open class YAxisRenderer(
     mZeroLinePaint!!.strokeWidth = mYAxis.zeroLineWidth
     val zeroLinePath = mDrawZeroLinePath
     zeroLinePath.reset()
-    zeroLinePath.moveTo(mViewPortHandler.contentLeft(), pos.y.toFloat())
-    zeroLinePath.lineTo(mViewPortHandler.contentRight(), pos.y.toFloat())
+    zeroLinePath.moveTo(viewPortHandler.contentLeft(), pos.y.toFloat())
+    zeroLinePath.lineTo(viewPortHandler.contentRight(), pos.y.toFloat())
 
     // draw a path because lines don't support dashing on lower android versions
     c.drawPath(zeroLinePath, mZeroLinePaint!!)
@@ -224,7 +224,7 @@ open class YAxisRenderer(
       val l = limitLines[i]
       if (!l.isEnabled) continue
       val clipRestoreCount = c!!.save()
-      mLimitLineClippingRect.set(mViewPortHandler.contentRect)
+      mLimitLineClippingRect.set(viewPortHandler.contentRect)
       mLimitLineClippingRect.inset(0f, -l.lineWidth)
       c.clipRect(mLimitLineClippingRect)
       mLimitLinePaint!!.style = Paint.Style.STROKE
@@ -233,8 +233,8 @@ open class YAxisRenderer(
       mLimitLinePaint!!.pathEffect = l.dashPathEffect
       pts[1] = l.limit
       mTrans?.pointValuesToPixel(pts)
-      limitLinePath.moveTo(mViewPortHandler.contentLeft(), pts[1])
-      limitLinePath.lineTo(mViewPortHandler.contentRight(), pts[1])
+      limitLinePath.moveTo(viewPortHandler.contentLeft(), pts[1])
+      limitLinePath.lineTo(viewPortHandler.contentRight(), pts[1])
       c.drawPath(limitLinePath, mLimitLinePaint!!)
       limitLinePath.reset()
       // c.drawLines(pts, mLimitLinePaint);
@@ -256,24 +256,24 @@ open class YAxisRenderer(
           mLimitLinePaint!!.textAlign = Align.RIGHT
           c.drawText(
               label,
-              mViewPortHandler.contentRight() - xOffset,
+              viewPortHandler.contentRight() - xOffset,
               pts[1] - yOffset + labelLineHeight,
               mLimitLinePaint!!)
         } else if (position === LimitLabelPosition.RIGHT_BOTTOM) {
           mLimitLinePaint!!.textAlign = Align.RIGHT
           c.drawText(
-              label, mViewPortHandler.contentRight() - xOffset, pts[1] + yOffset, mLimitLinePaint!!)
+              label, viewPortHandler.contentRight() - xOffset, pts[1] + yOffset, mLimitLinePaint!!)
         } else if (position === LimitLabelPosition.LEFT_TOP) {
           mLimitLinePaint!!.textAlign = Align.LEFT
           c.drawText(
               label,
-              mViewPortHandler.contentLeft() + xOffset,
+              viewPortHandler.contentLeft() + xOffset,
               pts[1] - yOffset + labelLineHeight,
               mLimitLinePaint!!)
         } else {
           mLimitLinePaint!!.textAlign = Align.LEFT
           c.drawText(
-              label, mViewPortHandler.offsetLeft() + xOffset, pts[1] + yOffset, mLimitLinePaint!!)
+              label, viewPortHandler.offsetLeft() + xOffset, pts[1] + yOffset, mLimitLinePaint!!)
         }
       }
       c.restoreToCount(clipRestoreCount)

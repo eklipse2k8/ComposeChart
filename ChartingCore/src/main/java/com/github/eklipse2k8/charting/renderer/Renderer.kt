@@ -9,5 +9,5 @@ import com.github.eklipse2k8.charting.utils.ViewPortHandler
  */
 abstract class Renderer(
     /** the component that handles the drawing area of the chart and it's offsets */
-    @JvmField protected var mViewPortHandler: ViewPortHandler
+    @JvmField protected var viewPortHandler: ViewPortHandler
 )

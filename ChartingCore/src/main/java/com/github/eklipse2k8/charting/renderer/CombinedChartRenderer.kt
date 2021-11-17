@@ -33,15 +33,15 @@ class CombinedChartRenderer(
     if (orders != null) {
       for (order in orders) {
         when (order) {
-          DrawOrder.BAR -> this.subRenderers.add(BarChartRenderer(chart, mAnimator, mViewPortHandler))
+          DrawOrder.BAR -> this.subRenderers.add(BarChartRenderer(chart, mAnimator, viewPortHandler))
           DrawOrder.BUBBLE ->
-            this.subRenderers.add(BubbleChartRenderer(chart, mAnimator, mViewPortHandler))
+            this.subRenderers.add(BubbleChartRenderer(chart, mAnimator, viewPortHandler))
           DrawOrder.LINE ->
-            this.subRenderers.add(LineChartRenderer(chart, mAnimator, mViewPortHandler))
+            this.subRenderers.add(LineChartRenderer(chart, mAnimator, viewPortHandler))
           DrawOrder.CANDLE ->
-            this.subRenderers.add(CandleStickChartRenderer(chart, mAnimator, mViewPortHandler))
+            this.subRenderers.add(CandleStickChartRenderer(chart, mAnimator, viewPortHandler))
           DrawOrder.SCATTER ->
-            this.subRenderers.add(ScatterChartRenderer(chart, mAnimator, mViewPortHandler))
+            this.subRenderers.add(ScatterChartRenderer(chart, mAnimator, viewPortHandler))
         }
       }
     }

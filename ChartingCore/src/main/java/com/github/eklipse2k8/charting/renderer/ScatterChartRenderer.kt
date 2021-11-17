@@ -30,7 +30,7 @@ class ScatterChartRenderer(
 
   private fun drawDataSet(c: Canvas?, dataSet: IScatterDataSet) {
     if (dataSet.entryCount < 1) return
-    val viewPortHandler = mViewPortHandler
+    val viewPortHandler = viewPortHandler
     val trans = mChart.getTransformer(dataSet.axisDependency)
     val phaseY = mAnimator.phaseY
     val renderer = dataSet.shapeRenderer
@@ -52,7 +52,8 @@ class ScatterChartRenderer(
           continue
       mRenderPaint.color = dataSet.getColor(i / 2)
       renderer.renderShape(
-          c!!, dataSet, mViewPortHandler, mPixelBuffer[0], mPixelBuffer[1], mRenderPaint)
+          c!!, dataSet,
+        this.viewPortHandler, mPixelBuffer[0], mPixelBuffer[1], mRenderPaint)
     }
   }
 
@@ -79,11 +80,11 @@ class ScatterChartRenderer(
         iconsOffset.y = Utils.convertDpToPixel(iconsOffset.y)
         var j = 0
         while (j < positions.size) {
-          if (!mViewPortHandler.isInBoundsRight(positions[j])) break
+          if (!viewPortHandler.isInBoundsRight(positions[j])) break
 
           // make sure the lines don't do shitty things outside bounds
-          if (!mViewPortHandler.isInBoundsLeft(positions[j]) ||
-              !mViewPortHandler.isInBoundsY(positions[j + 1])) {
+          if (!viewPortHandler.isInBoundsLeft(positions[j]) ||
+              !viewPortHandler.isInBoundsY(positions[j + 1])) {
             j += 2
             continue
           }
