@@ -22,6 +22,7 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true // this prevents "not mocked" error
     }
+    namespace 'com.github.eklipse2k8.charting'
 }
 
 dependencies {
