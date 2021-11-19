@@ -32,11 +32,11 @@ abstract class LineScatterCandleRadarRenderer(
   ) {
 
     // set color and stroke-width
-    mHighlightPaint.color = set.highLightColor
-    mHighlightPaint.strokeWidth = set.highlightLineWidth
+    highlightPaint.color = set.highLightColor
+    highlightPaint.strokeWidth = set.highlightLineWidth
 
     // draw highlighted lines (if enabled)
-    mHighlightPaint.pathEffect = set.dashPathEffectHighlight
+    highlightPaint.pathEffect = set.dashPathEffectHighlight
 
     // draw vertical highlight lines
     if (set.isVerticalHighlightIndicatorEnabled) {
@@ -45,7 +45,7 @@ abstract class LineScatterCandleRadarRenderer(
       mHighlightLinePath.reset()
       mHighlightLinePath.moveTo(x, viewPortHandler.contentTop())
       mHighlightLinePath.lineTo(x, viewPortHandler.contentBottom())
-      c.drawPath(mHighlightLinePath, mHighlightPaint)
+      c.drawPath(mHighlightLinePath, highlightPaint)
     }
 
     // draw horizontal highlight lines
@@ -55,7 +55,7 @@ abstract class LineScatterCandleRadarRenderer(
       mHighlightLinePath.reset()
       mHighlightLinePath.moveTo(viewPortHandler.contentLeft(), y)
       mHighlightLinePath.lineTo(viewPortHandler.contentRight(), y)
-      c.drawPath(mHighlightLinePath, mHighlightPaint)
+      c.drawPath(mHighlightLinePath, highlightPaint)
     }
   }
 }

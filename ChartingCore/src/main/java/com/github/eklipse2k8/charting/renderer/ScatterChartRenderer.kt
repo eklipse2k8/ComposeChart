@@ -32,14 +32,14 @@ class ScatterChartRenderer(
     if (dataSet.entryCount < 1) return
     val viewPortHandler = viewPortHandler
     val trans = mChart.getTransformer(dataSet.axisDependency)
-    val phaseY = mAnimator.phaseY
+    val phaseY = animator.phaseY
     val renderer = dataSet.shapeRenderer
     if (renderer == null) {
       Log.i("MISSING", "There's no IShapeRenderer specified for ScatterDataSet")
       return
     }
     val max: Int =
-        min(ceil(dataSet.entryCount.toDouble() * mAnimator.phaseX), dataSet.entryCount.toDouble())
+        min(ceil(dataSet.entryCount.toDouble() * animator.phaseX), dataSet.entryCount.toDouble())
             .toInt()
     for (i in 0 until max) {
       val e = dataSet.getEntryForIndex(i)
@@ -50,10 +50,10 @@ class ScatterChartRenderer(
       if (!viewPortHandler.isInBoundsLeft(mPixelBuffer[0]) ||
           !viewPortHandler.isInBoundsY(mPixelBuffer[1]))
           continue
-      mRenderPaint.color = dataSet.getColor(i / 2)
+      renderPaint.color = dataSet.getColor(i / 2)
       renderer.renderShape(
           c!!, dataSet,
-        this.viewPortHandler, mPixelBuffer[0], mPixelBuffer[1], mRenderPaint)
+        this.viewPortHandler, mPixelBuffer[0], mPixelBuffer[1], renderPaint)
     }
   }
 
@@ -72,7 +72,7 @@ class ScatterChartRenderer(
             mChart
                 .getTransformer(dataSet.axisDependency)
                 .generateTransformedValuesScatter(
-                    dataSet, mAnimator.phaseX, mAnimator.phaseY, mXBounds.min, mXBounds.max)
+                    dataSet, animator.phaseX, animator.phaseY, mXBounds.min, mXBounds.max)
         val shapeSize = Utils.convertDpToPixel(dataSet.scatterShapeSize)
         val iconsOffset =
           dataSet.iconsOffset?.let { MPPointF.getInstance(it) } ?: MPPointF.getInstance(0f, 0f)
@@ -128,7 +128,7 @@ class ScatterChartRenderer(
       val e = set.getEntryForXValue(high.x, high.y) ?: return@forEach
       if (!isInBoundsX(e, set)) return@forEach
       val pix =
-          mChart.getTransformer(set.axisDependency).getPixelForValues(e.x, e.y * mAnimator.phaseY)
+          mChart.getTransformer(set.axisDependency).getPixelForValues(e.x, e.y * animator.phaseY)
       high.setDraw(pix.x.toFloat(), pix.y.toFloat())
 
       // draw the lines

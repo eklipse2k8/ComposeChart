@@ -557,7 +557,7 @@ E : Entry {
    * @param scaleY
    */
   fun zoomToCenter(scaleX: Float, scaleY: Float) {
-    val center: MPPointF = centerOffsets ?: MPPointF.getInstance(0f, 0f)
+    val center: MPPointF = centerOffsets
     val save = mZoomMatrixBuffer
     viewPortHandler.zoom(scaleX, scaleY, center.x, -center.y, save)
     viewPortHandler.refresh(save, this, false)

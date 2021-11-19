@@ -117,7 +117,7 @@ class YAxisRendererRadarChart(
     mAxisLabelPaint.typeface = mYAxis.typeface
     mAxisLabelPaint.textSize = mYAxis.textSize
     mAxisLabelPaint.color = mYAxis.textColor
-    val center: MPPointF = mChart.centerOffsets ?: return
+    val center: MPPointF = mChart.centerOffsets
     val pOut = MPPointF.getInstance(0f, 0f)
     val factor = mChart.factor
     val from = if (mYAxis.isDrawBottomYLabelEntryEnabled) 0 else 1
@@ -142,7 +142,7 @@ class YAxisRendererRadarChart(
     // calculate the factor that is needed for transforming the value to
     // pixels
     val factor = mChart.factor
-    val center: MPPointF = mChart.centerOffsets ?: return
+    val center: MPPointF = mChart.centerOffsets
     val pOut = MPPointF.getInstance(0f, 0f)
     for (i in limitLines.indices) {
       val l = limitLines[i]

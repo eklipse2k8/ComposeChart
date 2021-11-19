@@ -42,7 +42,7 @@ abstract class BarLineScatterCandleBubbleRenderer(
   ): Boolean {
     if (e == null) return false
     val entryIndex = set.getEntryIndex(e).toFloat()
-    return entryIndex < set.entryCount * mAnimator.phaseX
+    return entryIndex < set.entryCount * animator.phaseX
   }
 
   /**
@@ -69,7 +69,7 @@ abstract class BarLineScatterCandleBubbleRenderer(
         chart: BarLineScatterCandleBubbleDataProvider,
         dataSet: IBarLineScatterCandleBubbleDataSet<Entry>
     ) {
-      val phaseX = max(0f, min(1f, mAnimator.phaseX))
+      val phaseX = max(0f, min(1f, animator.phaseX))
       val low = chart.lowestVisibleX
       val high = chart.highestVisibleX
       val entryFrom = dataSet.getEntryForXValue(low, Float.NaN, Rounding.DOWN)

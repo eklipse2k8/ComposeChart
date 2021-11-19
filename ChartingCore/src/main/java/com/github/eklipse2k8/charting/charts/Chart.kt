@@ -309,7 +309,7 @@ E : Entry {
   override fun onDraw(canvas: Canvas) {
     if (data == null) {
       if (mNoDataText.isNotEmpty()) {
-        val pt = getCenter() ?: return
+        val pt = getCenter()
         when (mInfoPaint.textAlign) {
           Align.LEFT -> {
             pt.x = 0f

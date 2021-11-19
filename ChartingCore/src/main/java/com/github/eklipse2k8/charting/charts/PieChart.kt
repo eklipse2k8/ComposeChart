@@ -124,7 +124,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     if (data == null) return
     val diameter = diameter
     val radius = diameter / 2f
-    val c: MPPointF = centerOffsets ?: MPPointF.getInstance(0f, 0f)
+    val c: MPPointF = centerOffsets
     val shift = data?.dataSet?.selectionShift ?: 0f
 
     // create the circle box that will contain the pie-chart (the bounds of

@@ -296,7 +296,7 @@ class BarLineChartTouchListener(
 
         // get the translation
         val t = getTrans(mTouchPointCenter.x, mTouchPointCenter.y)
-        val h = chart.viewPortHandler ?: return
+        val h = chart.viewPortHandler
 
         // take actions depending on the activated touch mode
         if (touchMode == PINCH_ZOOM) {

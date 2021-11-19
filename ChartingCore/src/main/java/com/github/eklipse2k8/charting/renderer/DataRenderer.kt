@@ -22,14 +22,14 @@ import com.github.eklipse2k8.charting.utils.ViewPortHandler
  * @author Philipp Jahoda
  */
 abstract class DataRenderer(
-    /** the animator object used to perform animations on the chart data */
-    @JvmField protected var mAnimator: ChartAnimator,
-    viewPortHandler: ViewPortHandler,
+  /** the animator object used to perform animations on the chart data */
+    @JvmField protected var animator: ChartAnimator,
+  viewPortHandler: ViewPortHandler,
 ) : Renderer(viewPortHandler) {
 
   /** main paint object used for rendering */
   @JvmField
-  protected var mRenderPaint: Paint = Paint(ANTI_ALIAS_FLAG).apply { style = FILL }
+  protected var renderPaint: Paint = Paint(ANTI_ALIAS_FLAG).apply { style = FILL }
 
   /** paint object for drawing values (text representing values of chart entries) */
   @JvmField
@@ -42,7 +42,7 @@ abstract class DataRenderer(
 
   /** paint used for highlighting values */
   @JvmField
-  protected var mHighlightPaint: Paint =
+  protected var highlightPaint: Paint =
       Paint(ANTI_ALIAS_FLAG).apply {
         style = STROKE
         strokeWidth = 2f

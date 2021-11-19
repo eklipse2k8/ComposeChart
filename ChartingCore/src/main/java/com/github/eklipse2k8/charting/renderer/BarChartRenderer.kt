@@ -14,32 +14,32 @@ import kotlin.math.ceil
 import kotlin.math.min
 
 open class BarChartRenderer(
-    @JvmField var mChart: BarDataProvider,
-    animator: ChartAnimator,
-    viewPortHandler: ViewPortHandler
+  @JvmField var chart: BarDataProvider,
+  animator: ChartAnimator,
+  viewPortHandler: ViewPortHandler
 ) : BarLineScatterCandleBubbleRenderer(animator, viewPortHandler) {
 
   /** the rect object that is used for drawing the bars */
-  @JvmField protected var mBarRect = RectF()
+  @JvmField protected var barRect = RectF()
 
-  protected lateinit var mBarBuffers: Array<BarBuffer?>
+  protected lateinit var barBuffers: Array<BarBuffer?>
 
   @JvmField protected var mShadowPaint: Paint
 
-  @JvmField protected var mBarBorderPaint: Paint
+  @JvmField protected var barBorderPaint: Paint
 
   override fun initBuffers() {
-    val barData = mChart.barData
-    mBarBuffers = barData?.dataSetCount?.let { arrayOfNulls(it) } ?: return
-    for (i in mBarBuffers.indices) {
+    val barData = chart.barData
+    barBuffers = barData?.dataSetCount?.let { arrayOfNulls(it) } ?: return
+    for (i in barBuffers.indices) {
       val set = barData.getDataSetByIndex(i) ?: continue
-      mBarBuffers[i] =
+      barBuffers[i] =
           BarBuffer(set.entryCount * 4 * if (set.isStacked) set.stackSize else 1, set.isStacked)
     }
   }
 
   override fun drawData(c: Canvas) {
-    val barData = mChart.barData ?: return
+    val barData = chart.barData ?: return
     for (i in 0 until barData.dataSetCount) {
       val set = barData.getDataSetByIndex(i) ?: continue
       if (set.isVisible) {
@@ -51,16 +51,16 @@ open class BarChartRenderer(
   private val mBarShadowRectBuffer = RectF()
 
   protected open fun drawDataSet(c: Canvas, dataSet: IBarDataSet, index: Int) {
-    val trans = mChart.getTransformer(dataSet.axisDependency)
-    mBarBorderPaint.color = dataSet.barBorderColor
-    mBarBorderPaint.strokeWidth = Utils.convertDpToPixel(dataSet.barBorderWidth)
+    val trans = chart.getTransformer(dataSet.axisDependency)
+    barBorderPaint.color = dataSet.barBorderColor
+    barBorderPaint.strokeWidth = Utils.convertDpToPixel(dataSet.barBorderWidth)
     val drawBorder = dataSet.barBorderWidth > 0f
-    val phaseX = mAnimator.phaseX
-    val phaseY = mAnimator.phaseY
-    val barData = mChart.barData ?: return
+    val phaseX = animator.phaseX
+    val phaseY = animator.phaseY
+    val barData = chart.barData ?: return
 
     // draw the bar shadow before the values
-    if (mChart.isDrawBarShadowEnabled) {
+    if (chart.isDrawBarShadowEnabled) {
       mShadowPaint.color = dataSet.barShadowColor
       val barWidth = barData.barWidth
       val barWidthHalf = barWidth / 2.0f
@@ -86,18 +86,18 @@ open class BarChartRenderer(
     }
 
     // initialize the buffer
-    val buffer = mBarBuffers[index] ?: return
+    val buffer = barBuffers[index] ?: return
     buffer.setPhases(phaseX, phaseY)
     buffer.setDataSet(index)
-    buffer.setInverted(mChart.isInverted(dataSet.axisDependency))
+    buffer.setInverted(chart.isInverted(dataSet.axisDependency))
     buffer.setBarWidth(barData.barWidth)
     buffer.feed(dataSet)
     trans.pointValuesToPixel(buffer.buffer)
     val isCustomFill = dataSet.fills?.isNotEmpty() == true
     val isSingleColor = dataSet.colors.size == 1
-    val isInverted = mChart.isInverted(dataSet.axisDependency)
+    val isInverted = chart.isInverted(dataSet.axisDependency)
     if (isSingleColor) {
-      mRenderPaint.color = dataSet.color
+      renderPaint.color = dataSet.color
     }
     var j = 0
     var pos = 0
@@ -111,14 +111,14 @@ open class BarChartRenderer(
       if (!isSingleColor) {
         // Set the color for the currently drawn value. If the index
         // is out of bounds, reuse colors.
-        mRenderPaint.color = dataSet.getColor(pos)
+        renderPaint.color = dataSet.getColor(pos)
       }
       if (isCustomFill) {
         dataSet
             .getFill(pos)
             ?.fillRect(
                 c,
-                mRenderPaint,
+                renderPaint,
                 buffer.buffer[j],
                 buffer.buffer[j + 1],
                 buffer.buffer[j + 2],
@@ -130,7 +130,7 @@ open class BarChartRenderer(
             buffer.buffer[j + 1],
             buffer.buffer[j + 2],
             buffer.buffer[j + 3],
-            mRenderPaint)
+            renderPaint)
       }
       if (drawBorder) {
         c.drawRect(
@@ -138,7 +138,7 @@ open class BarChartRenderer(
             buffer.buffer[j + 1],
             buffer.buffer[j + 2],
             buffer.buffer[j + 3],
-            mBarBorderPaint)
+            barBorderPaint)
       }
       j += 4
       pos++
@@ -154,26 +154,26 @@ open class BarChartRenderer(
   ) {
     val left = x - barWidthHalf
     val right = x + barWidthHalf
-    mBarRect[left, y1, right] = y2
-    trans.rectToPixelPhase(mBarRect, mAnimator.phaseY)
+    barRect[left, y1, right] = y2
+    trans.rectToPixelPhase(barRect, animator.phaseY)
   }
 
   override fun drawValues(c: Canvas) {
-    val dataSets = mChart.barData?.dataSets ?: return
+    val dataSets = chart.barData?.dataSets ?: return
 
     // if values are drawn
-    if (isDrawingValuesAllowed(mChart)) {
+    if (isDrawingValuesAllowed(chart)) {
       val valueOffsetPlus = Utils.convertDpToPixel(4.5f)
       var posOffset: Float
       var negOffset: Float
-      val drawValueAboveBar = mChart.isDrawValueAboveBarEnabled
-      for (i in 0 until mChart.barData!!.dataSetCount) {
+      val drawValueAboveBar = chart.isDrawValueAboveBarEnabled
+      for (i in 0 until chart.barData!!.dataSetCount) {
         val dataSet = dataSets[i]
         if (!shouldDrawValues(dataSet)) continue
 
         // apply the text-styling defined by the DataSet
         applyValueTextStyle(dataSet)
-        val isInverted = mChart.isInverted(dataSet.axisDependency)
+        val isInverted = chart.isInverted(dataSet.axisDependency)
 
         // calculate the correct offset depending on the draw position of
         // the value
@@ -186,8 +186,8 @@ open class BarChartRenderer(
         }
 
         // get the buffer
-        val buffer = mBarBuffers[i]
-        val phaseY = mAnimator.phaseY
+        val buffer = barBuffers[i]
+        val phaseY = animator.phaseY
         val iconsOffset =
             dataSet.iconsOffset?.let { MPPointF.getInstance(it) } ?: MPPointF.getInstance(0f, 0f)
         iconsOffset.x = Utils.convertDpToPixel(iconsOffset.x)
@@ -196,7 +196,7 @@ open class BarChartRenderer(
         // if only single values are drawn (sum)
         if (!dataSet.isStacked) {
           var j = 0
-          while (j < buffer!!.buffer.size * mAnimator.phaseX) {
+          while (j < buffer!!.buffer.size * animator.phaseX) {
             val x = (buffer.buffer[j] + buffer.buffer[j + 2]) / 2f
             if (!viewPortHandler.isInBoundsRight(x)) break
             if (!viewPortHandler.isInBoundsY(buffer.buffer[j + 1]) ||
@@ -234,10 +234,10 @@ open class BarChartRenderer(
 
           // if we have stacks
         } else {
-          val trans = mChart.getTransformer(dataSet.axisDependency)
+          val trans = chart.getTransformer(dataSet.axisDependency)
           var bufferIndex = 0
           var index = 0
-          while (index < dataSet.entryCount * mAnimator.phaseX) {
+          while (index < dataSet.entryCount * animator.phaseX) {
             val entry = dataSet.getEntryForIndex(index)
             val vals = entry.yVals
             val x = (buffer!!.buffer[bufferIndex] + buffer.buffer[bufferIndex + 2]) / 2f
@@ -335,20 +335,20 @@ open class BarChartRenderer(
   }
 
   override fun drawHighlighted(c: Canvas, indices: Array<Highlight?>?) {
-    val barData = mChart.barData
+    val barData = chart.barData
     indices?.forEach { high ->
       val set = high?.let { barData?.getDataSetByIndex(it.dataSetIndex) }
       if (set == null || !set.isHighlightEnabled) return@forEach
       val e = set.getEntryForXValue(high.x, high.y) ?: return@forEach
       if (!isInBoundsX(e, set)) return@forEach
-      val trans = mChart.getTransformer(set.axisDependency)
-      mHighlightPaint.color = set.highLightColor
-      mHighlightPaint.alpha = set.highLightAlpha
+      val trans = chart.getTransformer(set.axisDependency)
+      highlightPaint.color = set.highLightColor
+      highlightPaint.alpha = set.highLightAlpha
       val isStack = high.stackIndex >= 0 && e.isStacked
       val y1: Float
       val y2: Float
       if (isStack) {
-        if (mChart.isHighlightFullBarEnabled) {
+        if (chart.isHighlightFullBarEnabled) {
           y1 = e.positiveSum
           y2 = -e.negativeSum
         } else {
@@ -361,8 +361,8 @@ open class BarChartRenderer(
         y2 = 0f
       }
       prepareBarHighlight(e.x, y1, y2, (barData?.barWidth ?: 0f) / 2f, trans)
-      setHighlightDrawPos(high, mBarRect)
-      c.drawRect(mBarRect, mHighlightPaint)
+      setHighlightDrawPos(high, barRect)
+      c.drawRect(barRect, highlightPaint)
     }
   }
 
@@ -377,14 +377,14 @@ open class BarChartRenderer(
   override fun drawExtras(c: Canvas) {}
 
   init {
-    mHighlightPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    mHighlightPaint.style = Paint.Style.FILL
-    mHighlightPaint.color = Color.rgb(0, 0, 0)
+    highlightPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    highlightPaint.style = Paint.Style.FILL
+    highlightPaint.color = Color.rgb(0, 0, 0)
     // set alpha after color
-    mHighlightPaint.alpha = 120
+    highlightPaint.alpha = 120
     mShadowPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     mShadowPaint.style = Paint.Style.FILL
-    mBarBorderPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    mBarBorderPaint.style = Paint.Style.STROKE
+    barBorderPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    barBorderPaint.style = Paint.Style.STROKE
   }
 }

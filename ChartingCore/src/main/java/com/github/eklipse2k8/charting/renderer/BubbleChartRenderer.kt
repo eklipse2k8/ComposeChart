@@ -48,7 +48,7 @@ class BubbleChartRenderer(
   protected fun drawDataSet(c: Canvas, dataSet: IBubbleDataSet) {
     if (dataSet.entryCount < 1) return
     val trans = mChart.getTransformer(dataSet.axisDependency)
-    val phaseY = mAnimator.phaseY
+    val phaseY = animator.phaseY
     mXBounds[mChart] = dataSet as IBarLineScatterCandleBubbleDataSet<Entry>
     sizeBuffer[0] = 0f
     sizeBuffer[2] = 1f
@@ -71,8 +71,8 @@ class BubbleChartRenderer(
       if (!viewPortHandler.isInBoundsLeft(pointBuffer[0] + shapeHalf)) continue
       if (!viewPortHandler.isInBoundsRight(pointBuffer[0] - shapeHalf)) break
       val color = dataSet.getColor(j)
-      mRenderPaint.color = color
-      c.drawCircle(pointBuffer[0], pointBuffer[1], shapeHalf, mRenderPaint)
+      renderPaint.color = color
+      c.drawCircle(pointBuffer[0], pointBuffer[1], shapeHalf, renderPaint)
     }
   }
 
@@ -89,8 +89,8 @@ class BubbleChartRenderer(
 
         // apply the text-styling defined by the DataSet
         applyValueTextStyle(dataSet)
-        val phaseX = max(0f, min(1f, mAnimator.phaseX))
-        val phaseY = mAnimator.phaseY
+        val phaseX = max(0f, min(1f, animator.phaseX))
+        val phaseY = animator.phaseY
         mXBounds[mChart] = dataSet as IBarLineScatterCandleBubbleDataSet<Entry>
         val positions =
             mChart
@@ -152,7 +152,7 @@ class BubbleChartRenderer(
 
   override fun drawHighlighted(c: Canvas, indices: Array<Highlight?>?) {
     val bubbleData = mChart.bubbleData ?: return
-    val phaseY = mAnimator.phaseY
+    val phaseY = animator.phaseY
     indices?.forEach { high ->
       if (high == null) return@forEach
       val set = bubbleData.getDataSetByIndex(high.dataSetIndex)
@@ -188,15 +188,15 @@ class BubbleChartRenderer(
           _hsvBuffer)
       _hsvBuffer[2] *= 0.5f
       val color = Color.HSVToColor(Color.alpha(originalColor), _hsvBuffer)
-      mHighlightPaint.color = color
-      mHighlightPaint.strokeWidth = set.highlightCircleWidth
-      c.drawCircle(pointBuffer[0], pointBuffer[1], shapeHalf, mHighlightPaint)
+      highlightPaint.color = color
+      highlightPaint.strokeWidth = set.highlightCircleWidth
+      c.drawCircle(pointBuffer[0], pointBuffer[1], shapeHalf, highlightPaint)
     }
   }
 
   init {
-    mRenderPaint.style = Paint.Style.FILL
-    mHighlightPaint.style = Paint.Style.STROKE
-    mHighlightPaint.strokeWidth = Utils.convertDpToPixel(1.5f)
+    renderPaint.style = Paint.Style.FILL
+    highlightPaint.style = Paint.Style.STROKE
+    highlightPaint.strokeWidth = Utils.convertDpToPixel(1.5f)
   }
 }

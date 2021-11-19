@@ -35,11 +35,11 @@ class CandleStickChartRenderer(
 
   protected fun drawDataSet(c: Canvas, dataSet: ICandleDataSet) {
     val trans = mChart.getTransformer(dataSet.axisDependency)
-    val phaseY = mAnimator.phaseY
+    val phaseY = animator.phaseY
     val barSpace = dataSet.barSpace
     val showCandleBar = dataSet.showCandleBar
     mXBounds[mChart] = dataSet as IBarLineScatterCandleBubbleDataSet<Entry>
-    mRenderPaint.strokeWidth = dataSet.shadowWidth
+    renderPaint.strokeWidth = dataSet.shadowWidth
 
     // draw the body
     for (j in mXBounds.min..mXBounds.range + mXBounds.min) {
@@ -78,24 +78,24 @@ class CandleStickChartRenderer(
         // draw the shadows
         if (dataSet.shadowColorSameAsCandle) {
           if (open > close)
-              mRenderPaint.color =
+              renderPaint.color =
                   if (dataSet.decreasingColor == ColorTemplate.COLOR_NONE) dataSet.getColor(j)
                   else dataSet.decreasingColor
           else if (open < close)
-              mRenderPaint.color =
+              renderPaint.color =
                   if (dataSet.increasingColor == ColorTemplate.COLOR_NONE) dataSet.getColor(j)
                   else dataSet.increasingColor
           else
-              mRenderPaint.color =
+              renderPaint.color =
                   if (dataSet.neutralColor == ColorTemplate.COLOR_NONE) dataSet.getColor(j)
                   else dataSet.neutralColor
         } else {
-          mRenderPaint.color =
+          renderPaint.color =
               if (dataSet.shadowColor == ColorTemplate.COLOR_NONE) dataSet.getColor(j)
               else dataSet.shadowColor
         }
-        mRenderPaint.style = Paint.Style.STROKE
-        c.drawLines(mShadowBuffers, mRenderPaint)
+        renderPaint.style = Paint.Style.STROKE
+        c.drawLines(mShadowBuffers, renderPaint)
 
         // calculate the body
         mBodyBuffers[0] = xPos - 0.5f + barSpace
@@ -107,30 +107,30 @@ class CandleStickChartRenderer(
         // draw body differently for increasing and decreasing entry
         if (open > close) { // decreasing
           if (dataSet.decreasingColor == ColorTemplate.COLOR_NONE) {
-            mRenderPaint.color = dataSet.getColor(j)
+            renderPaint.color = dataSet.getColor(j)
           } else {
-            mRenderPaint.color = dataSet.decreasingColor
+            renderPaint.color = dataSet.decreasingColor
           }
-          mRenderPaint.style = dataSet.decreasingPaintStyle
+          renderPaint.style = dataSet.decreasingPaintStyle
           c.drawRect(
-              mBodyBuffers[0], mBodyBuffers[3], mBodyBuffers[2], mBodyBuffers[1], mRenderPaint)
+              mBodyBuffers[0], mBodyBuffers[3], mBodyBuffers[2], mBodyBuffers[1], renderPaint)
         } else if (open < close) {
           if (dataSet.increasingColor == ColorTemplate.COLOR_NONE) {
-            mRenderPaint.color = dataSet.getColor(j)
+            renderPaint.color = dataSet.getColor(j)
           } else {
-            mRenderPaint.color = dataSet.increasingColor
+            renderPaint.color = dataSet.increasingColor
           }
-          mRenderPaint.style = dataSet.increasingPaintStyle
+          renderPaint.style = dataSet.increasingPaintStyle
           c.drawRect(
-              mBodyBuffers[0], mBodyBuffers[1], mBodyBuffers[2], mBodyBuffers[3], mRenderPaint)
+              mBodyBuffers[0], mBodyBuffers[1], mBodyBuffers[2], mBodyBuffers[3], renderPaint)
         } else { // equal values
           if (dataSet.neutralColor == ColorTemplate.COLOR_NONE) {
-            mRenderPaint.color = dataSet.getColor(j)
+            renderPaint.color = dataSet.getColor(j)
           } else {
-            mRenderPaint.color = dataSet.neutralColor
+            renderPaint.color = dataSet.neutralColor
           }
           c.drawLine(
-              mBodyBuffers[0], mBodyBuffers[1], mBodyBuffers[2], mBodyBuffers[3], mRenderPaint)
+              mBodyBuffers[0], mBodyBuffers[1], mBodyBuffers[2], mBodyBuffers[3], renderPaint)
         }
       } else {
         mRangeBuffers[0] = xPos
@@ -159,12 +159,12 @@ class CandleStickChartRenderer(
                 else dataSet.increasingColor
             else if (dataSet.neutralColor == ColorTemplate.COLOR_NONE) dataSet.getColor(j)
             else dataSet.neutralColor
-        mRenderPaint.color = barColor
+        renderPaint.color = barColor
         c.drawLine(
-            mRangeBuffers[0], mRangeBuffers[1], mRangeBuffers[2], mRangeBuffers[3], mRenderPaint)
-        c.drawLine(mOpenBuffers[0], mOpenBuffers[1], mOpenBuffers[2], mOpenBuffers[3], mRenderPaint)
+            mRangeBuffers[0], mRangeBuffers[1], mRangeBuffers[2], mRangeBuffers[3], renderPaint)
+        c.drawLine(mOpenBuffers[0], mOpenBuffers[1], mOpenBuffers[2], mOpenBuffers[3], renderPaint)
         c.drawLine(
-            mCloseBuffers[0], mCloseBuffers[1], mCloseBuffers[2], mCloseBuffers[3], mRenderPaint)
+            mCloseBuffers[0], mCloseBuffers[1], mCloseBuffers[2], mCloseBuffers[3], renderPaint)
       }
     }
   }
@@ -183,7 +183,7 @@ class CandleStickChartRenderer(
         mXBounds[mChart] = dataSet as IBarLineScatterCandleBubbleDataSet<Entry>
         val positions =
             trans.generateTransformedValuesCandle(
-                dataSet, mAnimator.phaseX, mAnimator.phaseY, mXBounds.min, mXBounds.max)
+                dataSet, animator.phaseX, animator.phaseY, mXBounds.min, mXBounds.max)
         val yOffset = Utils.convertDpToPixel(5f)
         val iconsOffset =
           dataSet.iconsOffset?.let { MPPointF.getInstance(it) } ?: MPPointF.getInstance(0f, 0f)
@@ -239,8 +239,8 @@ class CandleStickChartRenderer(
 
       if (!isInBoundsX(e, set)) return@forEach
 
-      val lowValue = e.low * mAnimator.phaseY
-      val highValue = e.high * mAnimator.phaseY
+      val lowValue = e.low * animator.phaseY
+      val highValue = e.high * animator.phaseY
       val y = (lowValue + highValue) / 2f
       val pix = mChart.getTransformer(set.axisDependency).getPixelForValues(e.x, y)
       high.setDraw(pix.x.toFloat(), pix.y.toFloat())

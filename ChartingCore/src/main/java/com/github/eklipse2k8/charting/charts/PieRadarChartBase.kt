@@ -104,7 +104,7 @@ E : Entry {
               val spacing = convertDpToPixel(8f)
               val legendWidth = fullLegendWidth + spacing
               val legendHeight = legend.mNeededHeight + legend.mTextHeightMax
-              val center = getCenter() ?: MPPointF.getInstance(0f, 0f)
+              val center = getCenter()
               val bottomX =
                   if (legend.horizontalAlignment === LegendHorizontalAlignment.RIGHT)
                       width - legendWidth + 15f
@@ -198,7 +198,7 @@ E : Entry {
    * @return
    */
   fun getAngleForPoint(x: Float, y: Float): Float {
-    val c: MPPointF = centerOffsets ?: MPPointF.getInstance(0f, 0f)
+    val c: MPPointF = centerOffsets
     val tx = (x - c.x).toDouble()
     val ty = (y - c.y).toDouble()
     val length = sqrt(tx * tx + ty * ty)
@@ -243,7 +243,7 @@ E : Entry {
    * @return
    */
   fun distanceToCenter(x: Float, y: Float): Float {
-    val c: MPPointF = centerOffsets ?: MPPointF.getInstance(0f, 0f)
+    val c: MPPointF = centerOffsets
     val dist: Float
     val xDist: Float =
         if (x > c.x) {

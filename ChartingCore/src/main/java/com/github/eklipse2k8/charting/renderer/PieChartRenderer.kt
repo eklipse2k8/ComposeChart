@@ -130,8 +130,8 @@ class PieChartRenderer(
   private fun drawDataSet(dataSet: IPieDataSet) {
     var angle = 0f
     val rotationAngle = chart.rotationAngle
-    val phaseX = mAnimator.phaseX
-    val phaseY = mAnimator.phaseY
+    val phaseX = animator.phaseX
+    val phaseY = animator.phaseY
     val circleBox = chart.circleBox
     val entryCount = dataSet.entryCount
     val drawAngles = chart.drawAngles
@@ -167,7 +167,7 @@ class PieChartRenderer(
         continue
       }
       val accountForSliceSpacing = sliceSpace > 0f && sliceAngle <= 180f
-      mRenderPaint.color = dataSet.getColor(j)
+      renderPaint.color = dataSet.getColor(j)
       val sliceSpaceAngleOuter =
           if (visibleAngleCount == 1) 0f else sliceSpace / (Utils.FDEG2RAD * radius)
       val startAngleOuter = rotationAngle + (angle + sliceSpaceAngleOuter / 2f) * phaseY
@@ -278,7 +278,7 @@ class PieChartRenderer(
         }
       }
       pathBuffer.close()
-      bitmapCanvas!!.drawPath(pathBuffer, mRenderPaint)
+      bitmapCanvas!!.drawPath(pathBuffer, renderPaint)
       angle += sliceAngle * phaseX
     }
     MPPointF.recycleInstance(center)
@@ -292,8 +292,8 @@ class PieChartRenderer(
     var rotationAngle = chart.rotationAngle
     val drawAngles = chart.drawAngles
     val absoluteAngles = chart.absoluteAngles
-    val phaseX = mAnimator.phaseX
-    val phaseY = mAnimator.phaseY
+    val phaseX = animator.phaseX
+    val phaseY = animator.phaseY
     val roundedRadius = (radius - radius * chart.holeRadius / 100f) / 2f
     val holeRadiusPercent = chart.holeRadius / 100f
     var labelRadiusOffset = radius / 10f * 3.6f
@@ -502,7 +502,7 @@ class PieChartRenderer(
         val alpha = paintTransparentCircle.alpha
         val secondHoleRadius = radius * (chart.transparentCircleRadius / 100)
         paintTransparentCircle.alpha =
-            (alpha.toFloat() * mAnimator.phaseX * mAnimator.phaseY).toInt()
+            (alpha.toFloat() * animator.phaseX * animator.phaseY).toInt()
 
         // draw the transparent-circle
         holeCirclePath.reset()
@@ -590,8 +590,8 @@ class PieChartRenderer(
      */
     val drawInnerArc = chart.isDrawHoleEnabled && !chart.isDrawSlicesUnderHoleEnabled
     if (drawInnerArc && chart.isDrawRoundedSlicesEnabled) return
-    val phaseX = mAnimator.phaseX
-    val phaseY = mAnimator.phaseY
+    val phaseX = animator.phaseX
+    val phaseY = animator.phaseY
     var angle: Float
     val rotationAngle = chart.rotationAngle
     val drawAngles = chart.drawAngles
@@ -626,7 +626,7 @@ class PieChartRenderer(
       val accountForSliceSpacing = sliceSpace > 0f && sliceAngle <= 180f
       var highlightColor = set.highlightColor
       if (highlightColor == null) highlightColor = set.getColor(index)
-      mRenderPaint.color = highlightColor
+      renderPaint.color = highlightColor
       val sliceSpaceAngleOuter =
           if (visibleAngleCount == 1) 0f else sliceSpace / (Utils.FDEG2RAD * radius)
       val sliceSpaceAngleShifted =
@@ -708,7 +708,7 @@ class PieChartRenderer(
         }
       }
       pathBuffer.close()
-      bitmapCanvas?.drawPath(pathBuffer, mRenderPaint)
+      bitmapCanvas?.drawPath(pathBuffer, renderPaint)
     }
     MPPointF.recycleInstance(center)
   }

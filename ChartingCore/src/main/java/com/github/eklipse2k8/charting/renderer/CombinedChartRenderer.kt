@@ -33,15 +33,15 @@ class CombinedChartRenderer(
     if (orders != null) {
       for (order in orders) {
         when (order) {
-          DrawOrder.BAR -> this.subRenderers.add(BarChartRenderer(chart, mAnimator, viewPortHandler))
+          DrawOrder.BAR -> this.subRenderers.add(BarChartRenderer(chart, animator, viewPortHandler))
           DrawOrder.BUBBLE ->
-            this.subRenderers.add(BubbleChartRenderer(chart, mAnimator, viewPortHandler))
+            this.subRenderers.add(BubbleChartRenderer(chart, animator, viewPortHandler))
           DrawOrder.LINE ->
-            this.subRenderers.add(LineChartRenderer(chart, mAnimator, viewPortHandler))
+            this.subRenderers.add(LineChartRenderer(chart, animator, viewPortHandler))
           DrawOrder.CANDLE ->
-            this.subRenderers.add(CandleStickChartRenderer(chart, mAnimator, viewPortHandler))
+            this.subRenderers.add(CandleStickChartRenderer(chart, animator, viewPortHandler))
           DrawOrder.SCATTER ->
-            this.subRenderers.add(ScatterChartRenderer(chart, mAnimator, viewPortHandler))
+            this.subRenderers.add(ScatterChartRenderer(chart, animator, viewPortHandler))
         }
       }
     }
@@ -70,7 +70,7 @@ class CombinedChartRenderer(
     for (renderer in this.subRenderers) {
       var data: ChartData<*, *>? = null
       when (renderer) {
-        is BarChartRenderer -> data = renderer.mChart.barData
+        is BarChartRenderer -> data = renderer.chart.barData
         is LineChartRenderer -> data = renderer.mChart.lineData
         is CandleStickChartRenderer -> data = renderer.mChart.candleData
         is ScatterChartRenderer -> data = renderer.mChart.scatterData
