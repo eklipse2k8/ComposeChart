@@ -507,7 +507,7 @@ E : Entry {
   protected open fun drawMarkers(canvas: Canvas) {
     // if there is no marker view or drawing marker is disabled
     if (mMarker == null || !isDrawMarkersEnabled() || !valuesToHighlight()) return
-    mIndicesToHighlight?.forEachIndexed { i, highlight ->
+    mIndicesToHighlight?.forEachIndexed { _, highlight ->
       if (highlight == null) return@forEachIndexed
 
       val set = data?.getDataSetByIndex(highlight.dataSetIndex) ?: return@forEachIndexed

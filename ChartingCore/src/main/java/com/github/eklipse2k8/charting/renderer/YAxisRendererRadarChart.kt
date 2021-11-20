@@ -12,11 +12,11 @@ import kotlin.math.*
 class YAxisRendererRadarChart(
     viewPortHandler: ViewPortHandler,
     yAxis: YAxis,
-    @JvmField private val mChart: RadarChart
+    private val mChart: RadarChart
 ) : YAxisRenderer(viewPortHandler, yAxis, null) {
   override fun computeAxisValues(min: Float, max: Float) {
     val labelCount = mAxis.labelCount
-    val range = Math.abs(max - min).toDouble()
+    val range = abs(max - min).toDouble()
     if (labelCount == 0 || range <= 0 || java.lang.Double.isInfinite(range)) {
       mAxis.mEntries = floatArrayOf()
       mAxis.mCenteredEntries = floatArrayOf()
@@ -94,7 +94,7 @@ class YAxisRendererRadarChart(
 
     // set decimals
     if (interval < 1) {
-      mAxis.mDecimals = Math.ceil(-Math.log10(interval)).toInt()
+      mAxis.mDecimals = ceil(-log10(interval)).toInt()
     } else {
       mAxis.mDecimals = 0
     }
@@ -109,7 +109,7 @@ class YAxisRendererRadarChart(
     }
     mAxis.mAxisMinimum = mAxis.mEntries[0]
     mAxis.mAxisMaximum = mAxis.mEntries[n - 1]
-    mAxis.mAxisRange = Math.abs(mAxis.mAxisMaximum - mAxis.mAxisMinimum)
+    mAxis.mAxisRange = abs(mAxis.mAxisMaximum - mAxis.mAxisMinimum)
   }
 
   override fun renderAxisLabels(c: Canvas?) {
