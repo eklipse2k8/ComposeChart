@@ -3,6 +3,8 @@ package com.github.mikephil.charting.jobs;
 
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.utils.ObjectPool;
 import com.github.mikephil.charting.utils.Transformer;
 import com.github.mikephil.charting.utils.ViewPortHandler;
@@ -12,7 +14,7 @@ import com.github.mikephil.charting.utils.ViewPortHandler;
  */
 public class MoveViewJob extends ViewPortJob {
 
-    private static ObjectPool<MoveViewJob> pool;
+    private static final ObjectPool<MoveViewJob> pool;
 
     static {
         pool = ObjectPool.create(2, new MoveViewJob(null,0,0,null,null));
@@ -29,7 +31,7 @@ public class MoveViewJob extends ViewPortJob {
         return result;
     }
 
-    public static void recycleInstance(MoveViewJob instance){
+    public static void recycleInstance(@NonNull MoveViewJob instance){
         pool.recycle(instance);
     }
 
@@ -46,9 +48,10 @@ public class MoveViewJob extends ViewPortJob {
         mTrans.pointValuesToPixel(pts);
         mViewPortHandler.centerViewPort(pts, view);
 
-        this.recycleInstance(this);
+        recycleInstance(this);
     }
 
+    @NonNull
     @Override
     protected ObjectPool.Poolable instantiate() {
         return new MoveViewJob(mViewPortHandler, xValue, yValue, mTrans, view);

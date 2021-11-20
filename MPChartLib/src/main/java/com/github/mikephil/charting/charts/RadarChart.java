@@ -7,6 +7,9 @@ import android.graphics.Color;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.components.YAxis.AxisDependency;
 import com.github.mikephil.charting.data.RadarData;
@@ -65,6 +68,7 @@ public class RadarChart extends PieRadarChartBase<RadarData> {
     private YAxis mYAxis;
 
     protected YAxisRendererRadarChart mYAxisRenderer;
+    @Nullable
     protected XAxisRendererRadarChart mXAxisRenderer;
 
     public RadarChart(Context context) {
@@ -121,7 +125,7 @@ public class RadarChart extends PieRadarChartBase<RadarData> {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
         if (mData == null)

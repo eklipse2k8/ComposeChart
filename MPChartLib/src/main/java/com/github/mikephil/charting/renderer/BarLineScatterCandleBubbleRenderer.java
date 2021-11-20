@@ -1,5 +1,8 @@
 package com.github.mikephil.charting.renderer;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
@@ -16,6 +19,7 @@ public abstract class BarLineScatterCandleBubbleRenderer extends DataRenderer {
     /**
      * buffer for storing the current minimum and maximum visible x
      */
+    @NonNull
     protected XBounds mXBounds = new XBounds();
 
     public BarLineScatterCandleBubbleRenderer(ChartAnimator animator, ViewPortHandler viewPortHandler) {
@@ -28,7 +32,7 @@ public abstract class BarLineScatterCandleBubbleRenderer extends DataRenderer {
      * @param set
      * @return
      */
-    protected boolean shouldDrawValues(IDataSet set) {
+    protected boolean shouldDrawValues(@NonNull IDataSet set) {
         return set.isVisible() && (set.isDrawValuesEnabled() || set.isDrawIconsEnabled());
     }
 
@@ -39,18 +43,14 @@ public abstract class BarLineScatterCandleBubbleRenderer extends DataRenderer {
      * @param set
      * @return
      */
-    protected boolean isInBoundsX(Entry e, IBarLineScatterCandleBubbleDataSet set) {
+    protected boolean isInBoundsX(@Nullable Entry e, @NonNull IBarLineScatterCandleBubbleDataSet set) {
 
         if (e == null)
             return false;
 
         float entryIndex = set.getEntryIndex(e);
 
-        if (e == null || entryIndex >= set.getEntryCount() * mAnimator.getPhaseX()) {
-            return false;
-        } else {
-            return true;
-        }
+        return e != null && !(entryIndex >= set.getEntryCount() * mAnimator.getPhaseX());
     }
 
     /**
@@ -79,7 +79,7 @@ public abstract class BarLineScatterCandleBubbleRenderer extends DataRenderer {
          * @param chart
          * @param dataSet
          */
-        public void set(BarLineScatterCandleBubbleDataProvider chart, IBarLineScatterCandleBubbleDataSet dataSet) {
+        public void set(@NonNull BarLineScatterCandleBubbleDataProvider chart, @NonNull IBarLineScatterCandleBubbleDataSet dataSet) {
             float phaseX = Math.max(0.f, Math.min(1.f, mAnimator.getPhaseX()));
 
             float low = chart.getLowestVisibleX();

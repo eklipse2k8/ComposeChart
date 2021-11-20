@@ -5,6 +5,9 @@ import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.interfaces.datasets.ILineRadarDataSet;
 import com.github.mikephil.charting.utils.Utils;
 
@@ -26,6 +29,7 @@ public abstract class LineRadarDataSet<T extends Entry> extends LineScatterCandl
     /**
      * the drawable to be used for filling the line surface
      */
+    @Nullable
     protected Drawable mFillDrawable;
 
     /**
@@ -64,6 +68,7 @@ public abstract class LineRadarDataSet<T extends Entry> extends LineScatterCandl
         mFillDrawable = null;
     }
 
+    @Nullable
     @Override
     public Drawable getFillDrawable() {
         return mFillDrawable;
@@ -124,7 +129,7 @@ public abstract class LineRadarDataSet<T extends Entry> extends LineScatterCandl
         return mDrawFilled;
     }
 
-    protected void copy(LineRadarDataSet lineRadarDataSet) {
+    protected void copy(@NonNull LineRadarDataSet lineRadarDataSet) {
         super.copy(lineRadarDataSet);
         lineRadarDataSet.mDrawFilled = mDrawFilled;
         lineRadarDataSet.mFillAlpha = mFillAlpha;

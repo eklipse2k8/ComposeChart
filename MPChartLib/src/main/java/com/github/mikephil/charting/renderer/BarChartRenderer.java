@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.buffer.BarBuffer;
 import com.github.mikephil.charting.data.BarData;
@@ -30,6 +32,7 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
     /**
      * the rect object that is used for drawing the bars
      */
+    @NonNull
     protected RectF mBarRect = new RectF();
 
     protected BarBuffer[] mBarBuffers;
@@ -69,7 +72,7 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
     }
 
     @Override
-    public void drawData(Canvas c) {
+    public void drawData(@NonNull Canvas c) {
 
         BarData barData = mChart.getBarData();
 
@@ -83,9 +86,10 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
         }
     }
 
-    private RectF mBarShadowRectBuffer = new RectF();
+    @NonNull
+    private final RectF mBarShadowRectBuffer = new RectF();
 
-    protected void drawDataSet(Canvas c, IBarDataSet dataSet, int index) {
+    protected void drawDataSet(@NonNull Canvas c, @NonNull IBarDataSet dataSet, int index) {
 
         Transformer trans = mChart.getTransformer(dataSet.getAxisDependency());
 
@@ -188,7 +192,7 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
         }
     }
 
-    protected void prepareBarHighlight(float x, float y1, float y2, float barWidthHalf, Transformer trans) {
+    protected void prepareBarHighlight(float x, float y1, float y2, float barWidthHalf, @NonNull Transformer trans) {
 
         float left = x - barWidthHalf;
         float right = x + barWidthHalf;
@@ -201,7 +205,7 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
     }
 
     @Override
-    public void drawValues(Canvas c) {
+    public void drawValues(@NonNull Canvas c) {
 
         // if values are drawn
         if (isDrawingValuesAllowed(mChart)) {
@@ -430,7 +434,7 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
     }
 
     @Override
-    public void drawHighlighted(Canvas c, Highlight[] indices) {
+    public void drawHighlighted(@NonNull Canvas c, @NonNull Highlight[] indices) {
 
         BarData barData = mChart.getBarData();
 
@@ -451,7 +455,7 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
             mHighlightPaint.setColor(set.getHighLightColor());
             mHighlightPaint.setAlpha(set.getHighLightAlpha());
 
-            boolean isStack = (high.getStackIndex() >= 0  && e.isStacked()) ? true : false;
+            boolean isStack = high.getStackIndex() >= 0 && e.isStacked();
 
             final float y1;
             final float y2;
@@ -488,7 +492,7 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
      * Sets the drawing position of the highlight object based on the riven bar-rect.
      * @param high
      */
-    protected void setHighlightDrawPos(Highlight high, RectF bar) {
+    protected void setHighlightDrawPos(@NonNull Highlight high, @NonNull RectF bar) {
         high.setDraw(bar.centerX(), bar.top);
     }
 

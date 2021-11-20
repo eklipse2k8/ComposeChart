@@ -1,5 +1,8 @@
 package com.github.mikephil.charting.highlight;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.charts.PieRadarChartBase;
 
@@ -17,12 +20,14 @@ public abstract class PieRadarHighlighter<T extends PieRadarChartBase> implement
     /**
      * buffer for storing previously highlighted values
      */
+    @NonNull
     protected List<Highlight> mHighlightBuffer = new ArrayList<Highlight>();
 
     public PieRadarHighlighter(T chart) {
         this.mChart = chart;
     }
 
+    @Nullable
     @Override
     public Highlight getHighlight(float x, float y) {
 
@@ -62,5 +67,6 @@ public abstract class PieRadarHighlighter<T extends PieRadarChartBase> implement
      * @param y
      * @return
      */
+    @Nullable
     protected abstract Highlight getClosestHighlight(int index, float x, float y);
 }

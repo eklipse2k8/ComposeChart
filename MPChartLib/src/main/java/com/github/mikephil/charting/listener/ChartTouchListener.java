@@ -4,6 +4,9 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.highlight.Highlight;
 
@@ -19,6 +22,7 @@ public abstract class ChartTouchListener<T extends Chart<?>> extends GestureDete
     /**
      * the last touch gesture that has been performed
      **/
+    @NonNull
     protected ChartGesture mLastGesture = ChartGesture.NONE;
 
     // states
@@ -38,6 +42,7 @@ public abstract class ChartTouchListener<T extends Chart<?>> extends GestureDete
     /**
      * the last highlighted object (via touch)
      */
+    @Nullable
     protected Highlight mLastHighlighted;
 
     /**
@@ -50,7 +55,7 @@ public abstract class ChartTouchListener<T extends Chart<?>> extends GestureDete
      */
     protected T mChart;
 
-    public ChartTouchListener(T chart) {
+    public ChartTouchListener(@NonNull T chart) {
         this.mChart = chart;
 
         mGestureDetector = new GestureDetector(chart.getContext(), this);
@@ -105,6 +110,7 @@ public abstract class ChartTouchListener<T extends Chart<?>> extends GestureDete
      *
      * @return
      */
+    @NonNull
     public ChartGesture getLastGesture() {
         return mLastGesture;
     }
@@ -115,7 +121,7 @@ public abstract class ChartTouchListener<T extends Chart<?>> extends GestureDete
      *
      * @param e
      */
-    protected void performHighlight(Highlight h, MotionEvent e) {
+    protected void performHighlight(@Nullable Highlight h, MotionEvent e) {
 
         if (h == null || h.equalTo(mLastHighlighted)) {
             mChart.highlightValue(null, true);

@@ -3,6 +3,8 @@ package com.github.mikephil.charting.data;
 
 import android.graphics.Color;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.interfaces.datasets.IBarLineScatterCandleBubbleDataSet;
 
 import java.util.List;
@@ -41,7 +43,7 @@ public abstract class BarLineScatterCandleBubbleDataSet<T extends Entry>
         return mHighLightColor;
     }
 
-    protected void copy(BarLineScatterCandleBubbleDataSet barLineScatterCandleBubbleDataSet) {
+    protected void copy(@NonNull BarLineScatterCandleBubbleDataSet barLineScatterCandleBubbleDataSet) {
         super.copy(barLineScatterCandleBubbleDataSet);
         barLineScatterCandleBubbleDataSet.mHighLightColor = mHighLightColor;
     }

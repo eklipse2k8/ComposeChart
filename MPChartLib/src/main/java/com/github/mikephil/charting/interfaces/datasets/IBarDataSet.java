@@ -1,5 +1,7 @@
 package com.github.mikephil.charting.interfaces.datasets;
 
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.utils.Fill;
 
@@ -10,6 +12,7 @@ import java.util.List;
  */
 public interface IBarDataSet extends IBarLineScatterCandleBubbleDataSet<BarEntry> {
 
+    @Nullable
     List<Fill> getFills();
 
     Fill getFill(int index);

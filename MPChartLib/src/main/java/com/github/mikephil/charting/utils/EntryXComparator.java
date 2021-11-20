@@ -1,5 +1,7 @@
 package com.github.mikephil.charting.utils;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.data.Entry;
 
 import java.util.Comparator;
@@ -10,7 +12,7 @@ import java.util.Comparator;
  */
 public class EntryXComparator implements Comparator<Entry> {
     @Override
-    public int compare(Entry entry1, Entry entry2) {
+    public int compare(@NonNull Entry entry1, @NonNull Entry entry2) {
         float diff = entry1.getX() - entry2.getX();
 
         if (diff == 0f) return 0;

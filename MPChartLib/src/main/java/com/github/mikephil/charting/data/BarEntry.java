@@ -3,6 +3,9 @@ package com.github.mikephil.charting.data;
 import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.highlight.Range;
 
 /**
@@ -140,6 +143,7 @@ public class BarEntry extends Entry {
     /**
      * Returns an exact copy of the BarEntry.
      */
+    @NonNull
     public BarEntry copy() {
 
         BarEntry copied = new BarEntry(getX(), getY(), getData());
@@ -267,7 +271,7 @@ public class BarEntry extends Entry {
      * @param vals
      * @return
      */
-    private static float calcSum(float[] vals) {
+    private static float calcSum(@Nullable float[] vals) {
 
         if (vals == null)
             return 0f;

@@ -15,6 +15,9 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -49,23 +52,28 @@ public class PieChartRenderer extends DataRenderer {
      * paint object for the text that can be displayed in the center of the
      * chart
      */
-    private TextPaint mCenterTextPaint;
+    private final TextPaint mCenterTextPaint;
 
     /**
      * paint object used for drwing the slice-text
      */
-    private Paint mEntryLabelsPaint;
+    private final Paint mEntryLabelsPaint;
 
     private StaticLayout mCenterTextLayout;
+    @Nullable
     private CharSequence mCenterTextLastValue;
-    private RectF mCenterTextLastBounds = new RectF();
-    private RectF[] mRectBuffer = {new RectF(), new RectF(), new RectF()};
+    @NonNull
+    private final RectF mCenterTextLastBounds = new RectF();
+    @NonNull
+    private final RectF[] mRectBuffer = {new RectF(), new RectF(), new RectF()};
 
     /**
      * Bitmap for drawing the center hole
      */
+    @Nullable
     protected WeakReference<Bitmap> mDrawBitmap;
 
+    @Nullable
     protected Canvas mBitmapCanvas;
 
     public PieChartRenderer(PieChart chart, ChartAnimator animator,
@@ -151,11 +159,13 @@ public class PieChartRenderer extends DataRenderer {
         }
     }
 
-    private Path mPathBuffer = new Path();
-    private RectF mInnerRectBuffer = new RectF();
+    @NonNull
+    private final Path mPathBuffer = new Path();
+    @NonNull
+    private final RectF mInnerRectBuffer = new RectF();
 
     protected float calculateMinimumRadiusForSpacedSlice(
-            MPPointF center,
+            @NonNull MPPointF center,
             float radius,
             float angle,
             float arcStartPointX,
@@ -200,7 +210,7 @@ public class PieChartRenderer extends DataRenderer {
      * @param dataSet
      * @return
      */
-    protected float getSliceSpace(IPieDataSet dataSet) {
+    protected float getSliceSpace(@NonNull IPieDataSet dataSet) {
 
         if (!dataSet.isAutomaticallyDisableSliceSpacingEnabled())
             return dataSet.getSliceSpace();
@@ -213,7 +223,7 @@ public class PieChartRenderer extends DataRenderer {
         return sliceSpace;
     }
 
-    protected void drawDataSet(Canvas c, IPieDataSet dataSet) {
+    protected void drawDataSet(Canvas c, @NonNull IPieDataSet dataSet) {
 
         float angle = 0;
         float rotationAngle = mChart.getRotationAngle();
@@ -405,7 +415,7 @@ public class PieChartRenderer extends DataRenderer {
     }
 
     @Override
-    public void drawValues(Canvas c) {
+    public void drawValues(@NonNull Canvas c) {
 
         MPPointF center = mChart.getCenterCircleBox();
 
@@ -667,18 +677,19 @@ public class PieChartRenderer extends DataRenderer {
      * @param x
      * @param y
      */
-    protected void drawEntryLabel(Canvas c, String label, float x, float y) {
+    protected void drawEntryLabel(@NonNull Canvas c, String label, float x, float y) {
         c.drawText(label, x, y, mEntryLabelsPaint);
     }
 
     @Override
-    public void drawExtras(Canvas c) {
+    public void drawExtras(@NonNull Canvas c) {
         drawHole(c);
         c.drawBitmap(mDrawBitmap.get(), 0, 0, null);
         drawCenterText(c);
     }
 
-    private Path mHoleCirclePath = new Path();
+    @NonNull
+    private final Path mHoleCirclePath = new Path();
 
     /**
      * draws the hole in the center of the chart and the transparent circle /
@@ -721,12 +732,13 @@ public class PieChartRenderer extends DataRenderer {
         }
     }
 
+    @NonNull
     protected Path mDrawCenterTextPathBuffer = new Path();
     /**
      * draws the description text in the center of the pie chart makes most
      * sense when center-hole is enabled
      */
-    protected void drawCenterText(Canvas c) {
+    protected void drawCenterText(@NonNull Canvas c) {
 
         CharSequence centerText = mChart.getCenterText();
 
@@ -794,9 +806,10 @@ public class PieChartRenderer extends DataRenderer {
         }
     }
 
+    @NonNull
     protected RectF mDrawHighlightedRectF = new RectF();
     @Override
-    public void drawHighlighted(Canvas c, Highlight[] indices) {
+    public void drawHighlighted(Canvas c, @NonNull Highlight[] indices) {
 
         /* Skip entirely if using rounded circle slices, because it doesn't make sense to highlight
          * in this way.

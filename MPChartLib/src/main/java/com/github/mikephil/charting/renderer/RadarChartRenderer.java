@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.drawable.Drawable;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.charts.RadarChart;
 import com.github.mikephil.charting.data.RadarData;
@@ -55,7 +57,7 @@ public class RadarChartRenderer extends LineRadarRenderer {
     }
 
     @Override
-    public void drawData(Canvas c) {
+    public void drawData(@NonNull Canvas c) {
 
         RadarData radarData = mChart.getData();
 
@@ -69,6 +71,7 @@ public class RadarChartRenderer extends LineRadarRenderer {
         }
     }
 
+    @NonNull
     protected Path mDrawDataSetSurfacePathBuffer = new Path();
     /**
      * Draws the RadarDataSet
@@ -77,7 +80,7 @@ public class RadarChartRenderer extends LineRadarRenderer {
      * @param dataSet
      * @param mostEntries the entry count of the dataset with the most entries
      */
-    protected void drawDataSet(Canvas c, IRadarDataSet dataSet, int mostEntries) {
+    protected void drawDataSet(@NonNull Canvas c, @NonNull IRadarDataSet dataSet, int mostEntries) {
 
         float phaseX = mAnimator.getPhaseX();
         float phaseY = mAnimator.getPhaseY();
@@ -147,7 +150,7 @@ public class RadarChartRenderer extends LineRadarRenderer {
     }
 
     @Override
-    public void drawValues(Canvas c) {
+    public void drawValues(@NonNull Canvas c) {
 
         float phaseX = mAnimator.getPhaseX();
         float phaseY = mAnimator.getPhaseY();
@@ -232,11 +235,11 @@ public class RadarChartRenderer extends LineRadarRenderer {
     }
 
     @Override
-    public void drawExtras(Canvas c) {
+    public void drawExtras(@NonNull Canvas c) {
         drawWeb(c);
     }
 
-    protected void drawWeb(Canvas c) {
+    protected void drawWeb(@NonNull Canvas c) {
 
         float sliceangle = mChart.getSliceAngle();
 
@@ -296,7 +299,7 @@ public class RadarChartRenderer extends LineRadarRenderer {
     }
 
     @Override
-    public void drawHighlighted(Canvas c, Highlight[] indices) {
+    public void drawHighlighted(@NonNull Canvas c, @NonNull Highlight[] indices) {
 
         float sliceangle = mChart.getSliceAngle();
 
@@ -361,9 +364,10 @@ public class RadarChartRenderer extends LineRadarRenderer {
         MPPointF.recycleInstance(pOut);
     }
 
+    @NonNull
     protected Path mDrawHighlightCirclePathBuffer = new Path();
-    public void drawHighlightCircle(Canvas c,
-                                    MPPointF point,
+    public void drawHighlightCircle(@NonNull Canvas c,
+                                    @NonNull MPPointF point,
                                     float innerRadius,
                                     float outerRadius,
                                     int fillColor,

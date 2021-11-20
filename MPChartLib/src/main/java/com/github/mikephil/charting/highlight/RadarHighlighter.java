@@ -1,5 +1,7 @@
 package com.github.mikephil.charting.highlight;
 
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.charts.RadarChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.interfaces.datasets.IDataSet;
@@ -17,6 +19,7 @@ public class RadarHighlighter extends PieRadarHighlighter<RadarChart> {
         super(chart);
     }
 
+    @Nullable
     @Override
     protected Highlight getClosestHighlight(int index, float x, float y) {
 

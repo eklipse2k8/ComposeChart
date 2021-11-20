@@ -21,6 +21,9 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.formatter.DefaultValueFormatter;
 import com.github.mikephil.charting.formatter.IValueFormatter;
 
@@ -54,7 +57,7 @@ public abstract class Utils {
      * @param context
      */
     @SuppressWarnings("deprecation")
-    public static void init(Context context) {
+    public static void init(@Nullable Context context) {
 
         if (context == null) {
             // noinspection deprecation
@@ -82,7 +85,7 @@ public abstract class Utils {
      * @param res
      */
     @Deprecated
-    public static void init(Resources res) {
+    public static void init(@NonNull Resources res) {
 
         mMetrics = res.getDisplayMetrics();
 
@@ -144,11 +147,12 @@ public abstract class Utils {
      * @param demoText
      * @return
      */
-    public static int calcTextWidth(Paint paint, String demoText) {
+    public static int calcTextWidth(@NonNull Paint paint, String demoText) {
         return (int) paint.measureText(demoText);
     }
 
-    private static Rect mCalcTextHeightRect = new Rect();
+    @NonNull
+    private static final Rect mCalcTextHeightRect = new Rect();
     /**
      * calculates the approximate height of a text, depending on a demo text
      * avoid repeated calls (e.g. inside drawing methods)
@@ -157,7 +161,7 @@ public abstract class Utils {
      * @param demoText
      * @return
      */
-    public static int calcTextHeight(Paint paint, String demoText) {
+    public static int calcTextHeight(@NonNull Paint paint, @NonNull String demoText) {
 
         Rect r = mCalcTextHeightRect;
         r.set(0,0,0,0);
@@ -165,22 +169,23 @@ public abstract class Utils {
         return r.height();
     }
 
-    private static Paint.FontMetrics mFontMetrics = new Paint.FontMetrics();
+    @NonNull
+    private static final Paint.FontMetrics mFontMetrics = new Paint.FontMetrics();
 
-    public static float getLineHeight(Paint paint) {
+    public static float getLineHeight(@NonNull Paint paint) {
         return getLineHeight(paint, mFontMetrics);
     }
 
-    public static float getLineHeight(Paint paint, Paint.FontMetrics fontMetrics){
+    public static float getLineHeight(@NonNull Paint paint, @NonNull Paint.FontMetrics fontMetrics){
         paint.getFontMetrics(fontMetrics);
         return fontMetrics.descent - fontMetrics.ascent;
     }
 
-    public static float getLineSpacing(Paint paint) {
+    public static float getLineSpacing(@NonNull Paint paint) {
         return getLineSpacing(paint, mFontMetrics);
     }
 
-    public static float getLineSpacing(Paint paint, Paint.FontMetrics fontMetrics){
+    public static float getLineSpacing(@NonNull Paint paint, @NonNull Paint.FontMetrics fontMetrics){
         paint.getFontMetrics(fontMetrics);
         return fontMetrics.ascent - fontMetrics.top + fontMetrics.bottom;
     }
@@ -194,14 +199,16 @@ public abstract class Utils {
      * @param demoText
      * @return A Recyclable FSize instance
      */
-    public static FSize calcTextSize(Paint paint, String demoText) {
+    @NonNull
+    public static FSize calcTextSize(@NonNull Paint paint, @NonNull String demoText) {
 
         FSize result = FSize.getInstance(0,0);
         calcTextSize(paint, demoText, result);
         return result;
     }
 
-    private static Rect mCalcTextSizeRect = new Rect();
+    @NonNull
+    private static final Rect mCalcTextSizeRect = new Rect();
     /**
      * calculates the approximate size of a text, depending on a demo text
      * avoid repeated calls (e.g. inside drawing methods)
@@ -210,7 +217,7 @@ public abstract class Utils {
      * @param demoText
      * @param outputFSize An output variable, modified by the function.
      */
-    public static void calcTextSize(Paint paint, String demoText, FSize outputFSize) {
+    public static void calcTextSize(@NonNull Paint paint, @NonNull String demoText, @NonNull FSize outputFSize) {
 
         Rect r = mCalcTextSizeRect;
         r.set(0,0,0,0);
@@ -225,18 +232,21 @@ public abstract class Utils {
      * Math.pow(...) is very expensive, so avoid calling it and create it
      * yourself.
      */
-    private static final int POW_10[] = {
+    private static final int[] POW_10 = {
             1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000
     };
 
-    private static IValueFormatter mDefaultValueFormatter = generateDefaultValueFormatter();
+    @NonNull
+    private static final IValueFormatter mDefaultValueFormatter = generateDefaultValueFormatter();
 
+    @NonNull
     private static IValueFormatter generateDefaultValueFormatter() {
         final DefaultValueFormatter formatter = new DefaultValueFormatter(1);
         return formatter;
     }
 
     /// - returns: The default value formatter used for all chart components that needs a default
+    @NonNull
     public static IValueFormatter getDefaultValueFormatter()
     {
         return mDefaultValueFormatter;
@@ -252,6 +262,7 @@ public abstract class Utils {
      * @param separateThousands set this to true to separate thousands values
      * @return
      */
+    @NonNull
     public static String formatNumber(float number, int digitCount, boolean separateThousands) {
         return formatNumber(number, digitCount, separateThousands, '.');
     }
@@ -266,6 +277,7 @@ public abstract class Utils {
      * @param separateChar      a caracter to be paced between the "thousands"
      * @return
      */
+    @NonNull
     public static String formatNumber(float number, int digitCount, boolean separateThousands,
                                       char separateChar) {
 
@@ -276,10 +288,7 @@ public abstract class Utils {
             return "0";
         }
 
-        boolean zero = false;
-        if (number < 1 && number > -1) {
-            zero = true;
-        }
+        boolean zero = number < 1 && number > -1;
 
         if (number < 0) {
             neg = true;
@@ -388,7 +397,8 @@ public abstract class Utils {
      * @param integers
      * @return
      */
-    public static int[] convertIntegers(List<Integer> integers) {
+    @NonNull
+    public static int[] convertIntegers(@NonNull List<Integer> integers) {
 
         int[] ret = new int[integers.size()];
 
@@ -397,7 +407,7 @@ public abstract class Utils {
         return ret;
     }
 
-    public static void copyIntegers(List<Integer> from, int[] to){
+    public static void copyIntegers(@NonNull List<Integer> from, @NonNull int[] to){
         int count = to.length < from.size() ? to.length : from.size();
         for(int i = 0 ; i < count ; i++){
             to[i] = from.get(i);
@@ -410,7 +420,8 @@ public abstract class Utils {
      * @param strings
      * @return
      */
-    public static String[] convertStrings(List<String> strings) {
+    @NonNull
+    public static String[] convertStrings(@NonNull List<String> strings) {
 
         String[] ret = new String[strings.size()];
 
@@ -421,7 +432,7 @@ public abstract class Utils {
         return ret;
     }
 
-    public static void copyStrings(List<String> from, String[] to){
+    public static void copyStrings(@NonNull List<String> from, @NonNull String[] to){
         int count = to.length < from.size() ? to.length : from.size();
         for(int i = 0 ; i < count ; i++){
             to[i] = from.get(i);
@@ -455,20 +466,21 @@ public abstract class Utils {
      * @param angle  in degrees, converted to radians internally
      * @return
      */
-    public static MPPointF getPosition(MPPointF center, float dist, float angle) {
+    @NonNull
+    public static MPPointF getPosition(@NonNull MPPointF center, float dist, float angle) {
 
         MPPointF p = MPPointF.getInstance(0,0);
         getPosition(center, dist, angle, p);
         return p;
     }
 
-    public static void getPosition(MPPointF center, float dist, float angle, MPPointF outputPoint){
+    public static void getPosition(@NonNull MPPointF center, float dist, float angle, @NonNull MPPointF outputPoint){
         outputPoint.x = (float) (center.x + dist * Math.cos(Math.toRadians(angle)));
         outputPoint.y = (float) (center.y + dist * Math.sin(Math.toRadians(angle)));
     }
 
-    public static void velocityTrackerPointerUpCleanUpIfNecessary(MotionEvent ev,
-                                                                  VelocityTracker tracker) {
+    public static void velocityTrackerPointerUpCleanUpIfNecessary(@NonNull MotionEvent ev,
+                                                                  @NonNull VelocityTracker tracker) {
 
         // Check the dot product of current velocities.
         // If the pointer that left was opposing another velocity vector, clear.
@@ -500,7 +512,7 @@ public abstract class Utils {
      * @param view
      */
     @SuppressLint("NewApi")
-    public static void postInvalidateOnAnimation(View view) {
+    public static void postInvalidateOnAnimation(@NonNull View view) {
         if (Build.VERSION.SDK_INT >= 16)
             view.postInvalidateOnAnimation();
         else
@@ -525,10 +537,11 @@ public abstract class Utils {
         return angle % 360.f;
     }
 
-    private static Rect mDrawableBoundsCache = new Rect();
+    @NonNull
+    private static final Rect mDrawableBoundsCache = new Rect();
 
-    public static void drawImage(Canvas canvas,
-                                 Drawable drawable,
+    public static void drawImage(@NonNull Canvas canvas,
+                                 @NonNull Drawable drawable,
                                  int x, int y,
                                  int width, int height) {
 
@@ -550,12 +563,14 @@ public abstract class Utils {
         canvas.restoreToCount(saveId);
     }
 
-    private static Rect mDrawTextRectBuffer = new Rect();
-    private static Paint.FontMetrics mFontMetricsBuffer = new Paint.FontMetrics();
+    @NonNull
+    private static final Rect mDrawTextRectBuffer = new Rect();
+    @NonNull
+    private static final Paint.FontMetrics mFontMetricsBuffer = new Paint.FontMetrics();
 
-    public static void drawXAxisValue(Canvas c, String text, float x, float y,
-                                      Paint paint,
-                                      MPPointF anchor, float angleDegrees) {
+    public static void drawXAxisValue(@NonNull Canvas c, @NonNull String text, float x, float y,
+                                      @NonNull Paint paint,
+                                      @NonNull MPPointF anchor, float angleDegrees) {
 
         float drawOffsetX = 0.f;
         float drawOffsetY = 0.f;
@@ -619,10 +634,10 @@ public abstract class Utils {
         paint.setTextAlign(originalTextAlign);
     }
 
-    public static void drawMultilineText(Canvas c, StaticLayout textLayout,
+    public static void drawMultilineText(@NonNull Canvas c, @NonNull StaticLayout textLayout,
                                          float x, float y,
-                                         TextPaint paint,
-                                         MPPointF anchor, float angleDegrees) {
+                                         @NonNull TextPaint paint,
+                                         @NonNull MPPointF anchor, float angleDegrees) {
 
         float drawOffsetX = 0.f;
         float drawOffsetY = 0.f;
@@ -696,11 +711,11 @@ public abstract class Utils {
         paint.setTextAlign(originalTextAlign);
     }
 
-    public static void drawMultilineText(Canvas c, String text,
+    public static void drawMultilineText(@NonNull Canvas c, @NonNull String text,
                                          float x, float y,
-                                         TextPaint paint,
-                                         FSize constrainedToSize,
-                                         MPPointF anchor, float angleDegrees) {
+                                         @NonNull TextPaint paint,
+                                         @NonNull FSize constrainedToSize,
+                                         @NonNull MPPointF anchor, float angleDegrees) {
 
         StaticLayout textLayout = new StaticLayout(
                 text, 0, text.length(),
@@ -720,7 +735,8 @@ public abstract class Utils {
      * @param degrees
      * @return A Recyclable FSize instance
      */
-    public static FSize getSizeOfRotatedRectangleByDegrees(FSize rectangleSize, float degrees) {
+    @NonNull
+    public static FSize getSizeOfRotatedRectangleByDegrees(@NonNull FSize rectangleSize, float degrees) {
         final float radians = degrees * FDEG2RAD;
         return getSizeOfRotatedRectangleByRadians(rectangleSize.width, rectangleSize.height,
                 radians);
@@ -734,7 +750,8 @@ public abstract class Utils {
      * @param radians
      * @return A Recyclable FSize instance
      */
-    public static FSize getSizeOfRotatedRectangleByRadians(FSize rectangleSize, float radians) {
+    @NonNull
+    public static FSize getSizeOfRotatedRectangleByRadians(@NonNull FSize rectangleSize, float radians) {
         return getSizeOfRotatedRectangleByRadians(rectangleSize.width, rectangleSize.height,
                 radians);
     }
@@ -748,6 +765,7 @@ public abstract class Utils {
      * @param degrees
      * @return A Recyclable FSize instance
      */
+    @NonNull
     public static FSize getSizeOfRotatedRectangleByDegrees(float rectangleWidth, float
             rectangleHeight, float degrees) {
         final float radians = degrees * FDEG2RAD;
@@ -763,6 +781,7 @@ public abstract class Utils {
      * @param radians
      * @return A Recyclable FSize instance
      */
+    @NonNull
     public static FSize getSizeOfRotatedRectangleByRadians(float rectangleWidth, float
             rectangleHeight, float radians) {
         return FSize.getInstance(

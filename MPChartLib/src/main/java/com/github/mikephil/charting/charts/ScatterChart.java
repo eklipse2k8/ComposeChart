@@ -4,6 +4,9 @@ package com.github.mikephil.charting.charts;
 import android.content.Context;
 import android.util.AttributeSet;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.data.ScatterData;
 import com.github.mikephil.charting.interfaces.dataprovider.ScatterDataProvider;
 import com.github.mikephil.charting.renderer.ScatterChartRenderer;
@@ -40,6 +43,7 @@ public class ScatterChart extends BarLineChartBase<ScatterData> implements Scatt
         getXAxis().setSpaceMax(0.5f);
     }
 
+    @Nullable
     @Override
     public ScatterData getScatterData() {
         return mData;
@@ -65,11 +69,13 @@ public class ScatterChart extends BarLineChartBase<ScatterData> implements Scatt
             this.shapeIdentifier = shapeIdentifier;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return shapeIdentifier;
         }
 
+        @NonNull
         public static ScatterShape[] getAllDefaultShapes() {
             return new ScatterShape[]{SQUARE, CIRCLE, TRIANGLE, CROSS, X, CHEVRON_UP, CHEVRON_DOWN};
         }

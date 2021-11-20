@@ -8,6 +8,9 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.highlight.Highlight;
@@ -30,7 +33,8 @@ public class PieChart extends PieRadarChartBase<PieData> {
      * rect object that represents the bounds of the piechart, needed for
      * drawing the circle
      */
-    private RectF mCircleBox = new RectF();
+    @NonNull
+    private final RectF mCircleBox = new RectF();
 
     /**
      * flag indicating if entry labels should be drawn or not
@@ -40,11 +44,13 @@ public class PieChart extends PieRadarChartBase<PieData> {
     /**
      * array that holds the width of each pie-slice in degrees
      */
+    @NonNull
     private float[] mDrawAngles = new float[1];
 
     /**
      * array that holds the absolute angle in degrees of each slice
      */
+    @NonNull
     private float[] mAbsoluteAngles = new float[1];
 
     /**
@@ -70,9 +76,11 @@ public class PieChart extends PieRadarChartBase<PieData> {
     /**
      * variable for the text that is drawn in the center of the pie-chart
      */
+    @Nullable
     private CharSequence mCenterText = "";
 
-    private MPPointF mCenterTextOffset = MPPointF.getInstance(0, 0);
+    @NonNull
+    private final MPPointF mCenterTextOffset = MPPointF.getInstance(0, 0);
 
     /**
      * indicates the size of the hole in the center of the piechart, default:
@@ -123,7 +131,7 @@ public class PieChart extends PieRadarChartBase<PieData> {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
         if (mData == null)
@@ -175,8 +183,9 @@ public class PieChart extends PieRadarChartBase<PieData> {
         calcAngles();
     }
 
+    @NonNull
     @Override
-    protected float[] getMarkerPosition(Highlight highlight) {
+    protected float[] getMarkerPosition(@NonNull Highlight highlight) {
 
         MPPointF center = getCenterCircleBox();
         float r = getRadius();
@@ -335,6 +344,7 @@ public class PieChart extends PieRadarChartBase<PieData> {
      *
      * @return
      */
+    @NonNull
     @Deprecated
     @Override
     public XAxis getXAxis() {
@@ -380,6 +390,7 @@ public class PieChart extends PieRadarChartBase<PieData> {
      *
      * @return
      */
+    @NonNull
     public float[] getDrawAngles() {
         return mDrawAngles;
     }
@@ -390,6 +401,7 @@ public class PieChart extends PieRadarChartBase<PieData> {
      *
      * @return
      */
+    @NonNull
     public float[] getAbsoluteAngles() {
         return mAbsoluteAngles;
     }
@@ -445,7 +457,7 @@ public class PieChart extends PieRadarChartBase<PieData> {
      *
      * @param text
      */
-    public void setCenterText(CharSequence text) {
+    public void setCenterText(@Nullable CharSequence text) {
         if (text == null)
             mCenterText = "";
         else
@@ -457,6 +469,7 @@ public class PieChart extends PieRadarChartBase<PieData> {
      *
      * @return
      */
+    @Nullable
     public CharSequence getCenterText() {
         return mCenterText;
     }
@@ -503,6 +516,7 @@ public class PieChart extends PieRadarChartBase<PieData> {
      *
      * @return
      */
+    @NonNull
     public RectF getCircleBox() {
         return mCircleBox;
     }
@@ -512,6 +526,7 @@ public class PieChart extends PieRadarChartBase<PieData> {
      *
      * @return
      */
+    @NonNull
     public MPPointF getCenterCircleBox() {
         return MPPointF.getInstance(mCircleBox.centerX(), mCircleBox.centerY());
     }
@@ -560,6 +575,7 @@ public class PieChart extends PieRadarChartBase<PieData> {
      *
      * @return
      */
+    @NonNull
     public MPPointF getCenterTextOffset() {
         return MPPointF.getInstance(mCenterTextOffset.x, mCenterTextOffset.y);
     }

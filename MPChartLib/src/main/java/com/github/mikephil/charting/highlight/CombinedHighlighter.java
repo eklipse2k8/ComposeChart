@@ -1,5 +1,8 @@
 package com.github.mikephil.charting.highlight;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarLineScatterCandleBubbleData;
 import com.github.mikephil.charting.data.ChartData;
@@ -19,15 +22,17 @@ public class CombinedHighlighter extends ChartHighlighter<CombinedDataProvider> 
     /**
      * bar highlighter for supporting stacked highlighting
      */
+    @Nullable
     protected BarHighlighter barHighlighter;
 
-    public CombinedHighlighter(CombinedDataProvider chart, BarDataProvider barChart) {
+    public CombinedHighlighter(CombinedDataProvider chart, @NonNull BarDataProvider barChart) {
         super(chart);
 
         // if there is BarData, create a BarHighlighter
         barHighlighter = barChart.getBarData() == null ? null : new BarHighlighter(barChart);
     }
 
+    @NonNull
     @Override
     protected List<Highlight> getHighlightsAtXValue(float xVal, float x, float y) {
 

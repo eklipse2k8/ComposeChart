@@ -2,6 +2,9 @@ package com.github.mikephil.charting.data;
 
 import android.graphics.DashPathEffect;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.interfaces.datasets.ILineScatterCandleRadarDataSet;
 import com.github.mikephil.charting.utils.Utils;
 
@@ -19,6 +22,7 @@ public abstract class LineScatterCandleRadarDataSet<T extends Entry> extends Bar
     protected float mHighlightLineWidth = 0.5f;
 
     /** the path effect for dashed highlight-lines */
+    @Nullable
     protected DashPathEffect mHighlightDashPathEffect = null;
 
 
@@ -102,15 +106,16 @@ public abstract class LineScatterCandleRadarDataSet<T extends Entry> extends Bar
      * @return
      */
     public boolean isDashedHighlightLineEnabled() {
-        return mHighlightDashPathEffect == null ? false : true;
+        return mHighlightDashPathEffect != null;
     }
 
+    @Nullable
     @Override
     public DashPathEffect getDashPathEffectHighlight() {
         return mHighlightDashPathEffect;
     }
 
-    protected void copy(LineScatterCandleRadarDataSet lineScatterCandleRadarDataSet) {
+    protected void copy(@NonNull LineScatterCandleRadarDataSet lineScatterCandleRadarDataSet) {
         super.copy(lineScatterCandleRadarDataSet);
         lineScatterCandleRadarDataSet.mDrawHorizontalHighlightIndicator = mDrawHorizontalHighlightIndicator;
         lineScatterCandleRadarDataSet.mDrawVerticalHighlightIndicator = mDrawVerticalHighlightIndicator;

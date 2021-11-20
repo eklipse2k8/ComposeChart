@@ -1,6 +1,9 @@
 
 package com.github.mikephil.charting.data;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.charts.ScatterChart;
 import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet;
 import com.github.mikephil.charting.renderer.scatter.ChevronDownShapeRenderer;
@@ -26,6 +29,7 @@ public class ScatterDataSet extends LineScatterCandleRadarDataSet<Entry> impleme
     /**
      * Renderer responsible for rendering this DataSet, default: square
      */
+    @Nullable
     protected IShapeRenderer mShapeRenderer = new SquareShapeRenderer();
 
     /**
@@ -45,6 +49,7 @@ public class ScatterDataSet extends LineScatterCandleRadarDataSet<Entry> impleme
         super(yVals, label);
     }
 
+    @NonNull
     @Override
     public DataSet<Entry> copy() {
         List<Entry> entries = new ArrayList<Entry>();
@@ -56,7 +61,7 @@ public class ScatterDataSet extends LineScatterCandleRadarDataSet<Entry> impleme
         return copied;
     }
 
-    protected void copy(ScatterDataSet scatterDataSet) {
+    protected void copy(@NonNull ScatterDataSet scatterDataSet) {
         super.copy(scatterDataSet);
         scatterDataSet.mShapeSize = mShapeSize;
         scatterDataSet.mShapeRenderer = mShapeRenderer;
@@ -85,7 +90,7 @@ public class ScatterDataSet extends LineScatterCandleRadarDataSet<Entry> impleme
      *
      * @param shape
      */
-    public void setScatterShape(ScatterChart.ScatterShape shape) {
+    public void setScatterShape(@NonNull ScatterChart.ScatterShape shape) {
         mShapeRenderer = getRendererForShape(shape);
     }
 
@@ -99,6 +104,7 @@ public class ScatterDataSet extends LineScatterCandleRadarDataSet<Entry> impleme
         mShapeRenderer = shapeRenderer;
     }
 
+    @Nullable
     @Override
     public IShapeRenderer getShapeRenderer() {
         return mShapeRenderer;
@@ -133,7 +139,8 @@ public class ScatterDataSet extends LineScatterCandleRadarDataSet<Entry> impleme
         return mScatterShapeHoleColor;
     }
 
-    public static IShapeRenderer getRendererForShape(ScatterChart.ScatterShape shape) {
+    @Nullable
+    public static IShapeRenderer getRendererForShape(@NonNull ScatterChart.ScatterShape shape) {
 
         switch (shape) {
             case SQUARE:

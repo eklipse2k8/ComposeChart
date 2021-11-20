@@ -5,6 +5,9 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Typeface;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.formatter.IValueFormatter;
@@ -26,11 +29,13 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     /**
      * List representing all colors that are used for this DataSet
      */
+    @Nullable
     protected List<Integer> mColors = null;
 
     /**
      * List representing all colors that are used for drawing the actual values for this DataSet
      */
+    @Nullable
     protected List<Integer> mValueColors = null;
 
     /**
@@ -51,6 +56,7 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     /**
      * custom formatter that is used instead of the auto-formatter if set
      */
+    @Nullable
     protected transient IValueFormatter mValueFormatter;
 
     /**
@@ -61,6 +67,7 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     private Legend.LegendForm mForm = Legend.LegendForm.DEFAULT;
     private float mFormSize = Float.NaN;
     private float mFormLineWidth = Float.NaN;
+    @Nullable
     private DashPathEffect mFormLineDashEffect = null;
 
     /**
@@ -122,11 +129,13 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
      * ###### ###### COLOR GETTING RELATED METHODS ##### ######
      */
 
+    @Nullable
     @Override
     public List<Integer> getColors() {
         return mColors;
     }
 
+    @Nullable
     public List<Integer> getValueColors() {
         return mValueColors;
     }
@@ -167,7 +176,7 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
      *
      * @param colors
      */
-    public void setColors(int... colors) {
+    public void setColors(@NonNull int... colors) {
         this.mColors = ColorTemplate.createColors(colors);
     }
 
@@ -181,7 +190,7 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
      *
      * @param colors
      */
-    public void setColors(int[] colors, Context c) {
+    public void setColors(@NonNull int[] colors, @NonNull Context c) {
 
         if (mColors == null) {
             mColors = new ArrayList<>();
@@ -232,7 +241,7 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
      * @param colors
      * @param alpha
      */
-    public void setColors(int[] colors, int alpha) {
+    public void setColors(@NonNull int[] colors, int alpha) {
         resetColors();
         for (int color : colors) {
             addColor(Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color)));
@@ -274,7 +283,7 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     }
 
     @Override
-    public void setValueFormatter(IValueFormatter f) {
+    public void setValueFormatter(@Nullable IValueFormatter f) {
 
         if (f == null)
             return;
@@ -282,6 +291,7 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
             mValueFormatter = f;
     }
 
+    @Nullable
     @Override
     public IValueFormatter getValueFormatter() {
         if (needsFormatter())
@@ -366,6 +376,7 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
         mFormLineDashEffect = dashPathEffect;
     }
 
+    @Nullable
     @Override
     public DashPathEffect getFormLineDashEffect() {
         return mFormLineDashEffect;
@@ -392,7 +403,7 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     }
 
     @Override
-    public void setIconsOffset(MPPointF offsetDp) {
+    public void setIconsOffset(@NonNull MPPointF offsetDp) {
 
         mIconsOffset.x = offsetDp.x;
         mIconsOffset.y = offsetDp.y;
@@ -486,7 +497,7 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
         return false;
     }
 
-    protected void copy(BaseDataSet baseDataSet) {
+    protected void copy(@NonNull BaseDataSet baseDataSet) {
         baseDataSet.mAxisDependency = mAxisDependency;
         baseDataSet.mColors = mColors;
         baseDataSet.mDrawIcons = mDrawIcons;

@@ -7,6 +7,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.charts.PieRadarChartBase;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.MPPointF;
@@ -21,25 +23,27 @@ import java.util.ArrayList;
  */
 public class PieRadarChartTouchListener extends ChartTouchListener<PieRadarChartBase<?>> {
 
-    private MPPointF mTouchStartPoint = MPPointF.getInstance(0,0);
+    @NonNull
+    private final MPPointF mTouchStartPoint = MPPointF.getInstance(0,0);
 
     /**
      * the angle where the dragging started
      */
     private float mStartAngle = 0f;
 
-    private ArrayList<AngularVelocitySample> _velocitySamples = new ArrayList<AngularVelocitySample>();
+    @NonNull
+    private final ArrayList<AngularVelocitySample> _velocitySamples = new ArrayList<AngularVelocitySample>();
 
     private long mDecelerationLastTime = 0;
     private float mDecelerationAngularVelocity = 0.f;
 
-    public PieRadarChartTouchListener(PieRadarChartBase<?> chart) {
+    public PieRadarChartTouchListener(@NonNull PieRadarChartBase<?> chart) {
         super(chart);
     }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    public boolean onTouch(View v, MotionEvent event) {
+    public boolean onTouch(View v, @NonNull MotionEvent event) {
 
         if (mGestureDetector.onTouchEvent(event))
             return true;
@@ -135,7 +139,7 @@ public class PieRadarChartTouchListener extends ChartTouchListener<PieRadarChart
     }
 
     @Override
-    public boolean onSingleTapUp(MotionEvent e) {
+    public boolean onSingleTapUp(@NonNull MotionEvent e) {
 
         mLastGesture = ChartGesture.SINGLE_TAP;
 

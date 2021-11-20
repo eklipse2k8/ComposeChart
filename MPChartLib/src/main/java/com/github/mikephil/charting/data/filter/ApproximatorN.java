@@ -1,6 +1,8 @@
 
 package com.github.mikephil.charting.data.filter;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 
 /**
@@ -9,7 +11,8 @@ import java.util.ArrayList;
  */
 public class ApproximatorN
 {
-    public float[] reduceWithDouglasPeucker(float[] points, float resultCount) {
+    @NonNull
+    public float[] reduceWithDouglasPeucker(@NonNull float[] points, float resultCount) {
 
         int pointCount = points.length / 2;
 
@@ -111,16 +114,16 @@ public class ApproximatorN
             }
         }
 
-        boolean equals(final Line rhs) {
+        boolean equals(@NonNull final Line rhs) {
             return (start == rhs.start) && (end == rhs.end) && index == rhs.index;
         }
 
-        boolean lessThan(final Line rhs) {
+        boolean lessThan(@NonNull final Line rhs) {
             return distance < rhs.distance;
         }
     }
 
-    private static int insertionIndex(Line line, ArrayList<Line> queue) {
+    private static int insertionIndex(@NonNull Line line, @NonNull ArrayList<Line> queue) {
         int min = 0;
         int max = queue.size();
 

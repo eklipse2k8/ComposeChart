@@ -1,5 +1,8 @@
 package com.github.mikephil.charting.highlight;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
@@ -20,7 +23,8 @@ public class HorizontalBarHighlighter extends BarHighlighter {
 		super(chart);
 	}
 
-	@Override
+	@Nullable
+    @Override
 	public Highlight getHighlight(float x, float y) {
 
 		BarData barData = mChart.getBarData();
@@ -45,8 +49,9 @@ public class HorizontalBarHighlighter extends BarHighlighter {
 		return high;
 	}
 
-	@Override
-	protected List<Highlight> buildHighlights(IDataSet set, int dataSetIndex, float xVal, DataSet.Rounding rounding) {
+	@NonNull
+    @Override
+	protected List<Highlight> buildHighlights(@NonNull IDataSet set, int dataSetIndex, float xVal, DataSet.Rounding rounding) {
 
 		ArrayList<Highlight> highlights = new ArrayList<>();
 

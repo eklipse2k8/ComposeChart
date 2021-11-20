@@ -4,6 +4,9 @@ import android.graphics.DashPathEffect;
 import android.graphics.PointF;
 import android.graphics.Typeface;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.DataSet;
@@ -86,6 +89,7 @@ public interface IDataSet<T extends Entry> {
      *
      *
      */
+    @Nullable
     T getEntryForXValue(float xValue, float closestToY, DataSet.Rounding rounding);
 
     /**
@@ -101,6 +105,7 @@ public interface IDataSet<T extends Entry> {
      * @param closestToY If there are multiple y-values for the specified x-value,
      * @return
      */
+    @Nullable
     T getEntryForXValue(float xValue, float closestToY);
 
     /**
@@ -112,6 +117,7 @@ public interface IDataSet<T extends Entry> {
      * @param xValue
      * @return
      */
+    @NonNull
     List<T> getEntriesForXValue(float xValue);
 
     /**
@@ -275,6 +281,7 @@ public interface IDataSet<T extends Entry> {
      *
      * @return
      */
+    @Nullable
     List<Integer> getColors();
 
     /**
@@ -325,6 +332,7 @@ public interface IDataSet<T extends Entry> {
      *
      * @return
      */
+    @Nullable
     IValueFormatter getValueFormatter();
 
     /**
@@ -418,6 +426,7 @@ public interface IDataSet<T extends Entry> {
      * <p/>
      * Return `null` to use the default legend form line dash effect.
      */
+    @Nullable
     DashPathEffect getFormLineDashEffect();
 
     /**

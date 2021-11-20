@@ -1,6 +1,8 @@
 
 package com.github.mikephil.charting.matrix;
 
+import androidx.annotation.NonNull;
+
 /**
  * Simple 3D vector class. Handles basic vector math for 3D vectors.
  */
@@ -26,11 +28,11 @@ public final class Vector3 {
         set(xValue, yValue, zValue);
     }
 
-    public Vector3(Vector3 other) {
+    public Vector3(@NonNull Vector3 other) {
         set(other);
     }
 
-    public final void add(Vector3 other) {
+    public final void add(@NonNull Vector3 other) {
         x += other.x;
         y += other.y;
         z += other.z;
@@ -42,13 +44,13 @@ public final class Vector3 {
         z += otherZ;
     }
 
-    public final void subtract(Vector3 other) {
+    public final void subtract(@NonNull Vector3 other) {
         x -= other.x;
         y -= other.y;
         z -= other.z;
     }
 
-    public final void subtractMultiple(Vector3 other, float multiplicator)
+    public final void subtractMultiple(@NonNull Vector3 other, float multiplicator)
     {
         x -= other.x * multiplicator;
         y -= other.y * multiplicator;
@@ -61,7 +63,7 @@ public final class Vector3 {
         z *= magnitude;
     }
 
-    public final void multiply(Vector3 other) {
+    public final void multiply(@NonNull Vector3 other) {
         x *= other.x;
         y *= other.y;
         z *= other.z;
@@ -75,7 +77,7 @@ public final class Vector3 {
         }
     }
 
-    public final void set(Vector3 other) {
+    public final void set(@NonNull Vector3 other) {
         x = other.x;
         y = other.y;
         z = other.z;
@@ -87,11 +89,12 @@ public final class Vector3 {
         z = zValue;
     }
 
-    public final float dot(Vector3 other) {
+    public final float dot(@NonNull Vector3 other) {
         return (x * other.x) + (y * other.y) + (z * other.z);
     }
 
-    public final Vector3 cross(Vector3 other) {
+    @NonNull
+    public final Vector3 cross(@NonNull Vector3 other) {
         return new Vector3(y * other.z - z * other.y,
                 z * other.x - x * other.z,
                 x * other.y - y * other.x);
@@ -105,7 +108,7 @@ public final class Vector3 {
         return (x * x) + (y * y) + (z * z);
     }
 
-    public final float distance2(Vector3 other) {
+    public final float distance2(@NonNull Vector3 other) {
         float dx = x - other.x;
         float dy = y - other.y;
         float dz = z - other.z;
@@ -129,7 +132,7 @@ public final class Vector3 {
         set(0.0f, 0.0f, 0.0f);
     }
 
-    public final boolean pointsInSameDirection(Vector3 other) {
+    public final boolean pointsInSameDirection(@NonNull Vector3 other) {
         return this.dot(other) > 0;
     }
 

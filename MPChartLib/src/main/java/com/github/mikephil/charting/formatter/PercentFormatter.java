@@ -1,6 +1,8 @@
 
 package com.github.mikephil.charting.formatter;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.utils.ViewPortHandler;
@@ -32,12 +34,14 @@ public class PercentFormatter implements IValueFormatter, IAxisValueFormatter
     }
 
     // IValueFormatter
+    @NonNull
     @Override
     public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
         return mFormat.format(value) + " %";
     }
 
     // IAxisValueFormatter
+    @NonNull
     @Override
     public String getFormattedValue(float value, AxisBase axis) {
         return mFormat.format(value) + " %";

@@ -1,6 +1,9 @@
 
 package com.github.mikephil.charting.highlight;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.components.YAxis;
 
 /**
@@ -38,7 +41,7 @@ public class Highlight {
     /**
      * the index of the dataset the highlighted value is in
      */
-    private int mDataSetIndex;
+    private final int mDataSetIndex;
 
     /**
      * index which value of a stacked bar entry is highlighted, default -1
@@ -222,19 +225,17 @@ public class Highlight {
      * @param h
      * @return
      */
-    public boolean equalTo(Highlight h) {
+    public boolean equalTo(@Nullable Highlight h) {
 
         if (h == null)
             return false;
         else {
-            if (this.mDataSetIndex == h.mDataSetIndex && this.mX == h.mX
-                    && this.mStackIndex == h.mStackIndex && this.mDataIndex == h.mDataIndex)
-                return true;
-            else
-                return false;
+            return this.mDataSetIndex == h.mDataSetIndex && this.mX == h.mX
+                    && this.mStackIndex == h.mStackIndex && this.mDataIndex == h.mDataIndex;
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Highlight, x: " + mX + ", y: " + mY + ", dataSetIndex: " + mDataSetIndex

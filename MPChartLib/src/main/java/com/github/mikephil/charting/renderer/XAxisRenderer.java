@@ -8,6 +8,8 @@ import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.RectF;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.XAxis.XAxisPosition;
@@ -102,7 +104,7 @@ public class XAxisRenderer extends AxisRenderer {
     }
 
     @Override
-    public void renderAxisLabels(Canvas c) {
+    public void renderAxisLabels(@NonNull Canvas c) {
 
         if (!mXAxis.isEnabled() || !mXAxis.isDrawLabelsEnabled())
             return;
@@ -146,7 +148,7 @@ public class XAxisRenderer extends AxisRenderer {
     }
 
     @Override
-    public void renderAxisLine(Canvas c) {
+    public void renderAxisLine(@NonNull Canvas c) {
 
         if (!mXAxis.isDrawAxisLineEnabled() || !mXAxis.isEnabled())
             return;
@@ -177,7 +179,7 @@ public class XAxisRenderer extends AxisRenderer {
      *
      * @param pos
      */
-    protected void drawLabels(Canvas c, float pos, MPPointF anchor) {
+    protected void drawLabels(@NonNull Canvas c, float pos, @NonNull MPPointF anchor) {
 
         final float labelRotationAngleDegrees = mXAxis.getLabelRotationAngle();
         boolean centeringEnabled = mXAxis.isCenterAxisLabelsEnabled();
@@ -227,13 +229,15 @@ public class XAxisRenderer extends AxisRenderer {
         }
     }
 
-    protected void drawLabel(Canvas c, String formattedLabel, float x, float y, MPPointF anchor, float angleDegrees) {
+    protected void drawLabel(@NonNull Canvas c, @NonNull String formattedLabel, float x, float y, @NonNull MPPointF anchor, float angleDegrees) {
         Utils.drawXAxisValue(c, formattedLabel, x, y, mAxisLabelPaint, anchor, angleDegrees);
     }
+    @NonNull
     protected Path mRenderGridLinesPath = new Path();
+    @NonNull
     protected float[] mRenderGridLinesBuffer = new float[2];
     @Override
-    public void renderGridLines(Canvas c) {
+    public void renderGridLines(@NonNull Canvas c) {
 
         if (!mXAxis.isDrawGridLinesEnabled() || !mXAxis.isEnabled())
             return;
@@ -266,6 +270,7 @@ public class XAxisRenderer extends AxisRenderer {
         c.restoreToCount(clipRestoreCount);
     }
 
+    @NonNull
     protected RectF mGridClippingRect = new RectF();
 
     public RectF getGridClippingRect() {
@@ -282,7 +287,7 @@ public class XAxisRenderer extends AxisRenderer {
      * @param y
      * @param gridLinePath
      */
-    protected void drawGridLine(Canvas c, float x, float y, Path gridLinePath) {
+    protected void drawGridLine(@NonNull Canvas c, float x, float y, @NonNull Path gridLinePath) {
 
         gridLinePath.moveTo(x, mViewPortHandler.contentBottom());
         gridLinePath.lineTo(x, mViewPortHandler.contentTop());
@@ -293,7 +298,9 @@ public class XAxisRenderer extends AxisRenderer {
         gridLinePath.reset();
     }
 
+    @NonNull
     protected float[] mRenderLimitLinesBuffer = new float[2];
+    @NonNull
     protected RectF mLimitLineClippingRect = new RectF();
 
     /**
@@ -302,7 +309,7 @@ public class XAxisRenderer extends AxisRenderer {
      * @param c
      */
     @Override
-    public void renderLimitLines(Canvas c) {
+    public void renderLimitLines(@NonNull Canvas c) {
 
         List<LimitLine> limitLines = mXAxis.getLimitLines();
 
@@ -337,10 +344,12 @@ public class XAxisRenderer extends AxisRenderer {
         }
     }
 
+    @NonNull
     float[] mLimitLineSegmentsBuffer = new float[4];
-    private Path mLimitLinePath = new Path();
+    @NonNull
+    private final Path mLimitLinePath = new Path();
 
-    public void renderLimitLineLine(Canvas c, LimitLine limitLine, float[] position) {
+    public void renderLimitLineLine(@NonNull Canvas c, @NonNull LimitLine limitLine, float[] position) {
         mLimitLineSegmentsBuffer[0] = position[0];
         mLimitLineSegmentsBuffer[1] = mViewPortHandler.contentTop();
         mLimitLineSegmentsBuffer[2] = position[0];
@@ -358,7 +367,7 @@ public class XAxisRenderer extends AxisRenderer {
         c.drawPath(mLimitLinePath, mLimitLinePaint);
     }
 
-    public void renderLimitLineLabel(Canvas c, LimitLine limitLine, float[] position, float yOffset) {
+    public void renderLimitLineLabel(@NonNull Canvas c, @NonNull LimitLine limitLine, float[] position, float yOffset) {
         String label = limitLine.getLabel();
 
         // if drawing the limit-value label is enabled

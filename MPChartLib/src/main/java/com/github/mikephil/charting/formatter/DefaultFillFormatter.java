@@ -1,6 +1,8 @@
 package com.github.mikephil.charting.formatter;
 
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
@@ -14,7 +16,7 @@ public class DefaultFillFormatter implements IFillFormatter
 {
 
     @Override
-    public float getFillLinePosition(ILineDataSet dataSet, LineDataProvider dataProvider) {
+    public float getFillLinePosition(@NonNull ILineDataSet dataSet, @NonNull LineDataProvider dataProvider) {
 
         float fillMin = 0f;
         float chartMaxY = dataProvider.getYChartMax();

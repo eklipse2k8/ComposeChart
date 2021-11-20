@@ -8,6 +8,8 @@ import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.Typeface;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.data.ChartData;
@@ -73,6 +75,7 @@ public class LegendRenderer extends Renderer {
     }
 
 
+    @NonNull
     protected List<LegendEntry> computedEntries = new ArrayList<>(16);
 
     /**
@@ -80,7 +83,7 @@ public class LegendRenderer extends Renderer {
      *
      * @param data
      */
-    public void computeLegend(ChartData<?> data) {
+    public void computeLegend(@NonNull ChartData<?> data) {
 
         if (!mLegend.isLegendCustom()) {
 
@@ -230,9 +233,10 @@ public class LegendRenderer extends Renderer {
         mLegend.calculateDimensions(mLegendLabelPaint, mViewPortHandler);
     }
 
+    @NonNull
     protected Paint.FontMetrics legendFontMetrics = new Paint.FontMetrics();
 
-    public void renderLegend(Canvas c) {
+    public void renderLegend(@NonNull Canvas c) {
 
         if (!mLegend.isEnabled())
             return;
@@ -475,7 +479,8 @@ public class LegendRenderer extends Renderer {
         }
     }
 
-    private Path mLineFormPath = new Path();
+    @NonNull
+    private final Path mLineFormPath = new Path();
 
     /**
      * Draws the Legend-form at the given position with the color at the given
@@ -488,10 +493,10 @@ public class LegendRenderer extends Renderer {
      * @param legend the legend context
      */
     protected void drawForm(
-            Canvas c,
+            @NonNull Canvas c,
             float x, float y,
-            LegendEntry entry,
-            Legend legend) {
+            @NonNull LegendEntry entry,
+            @NonNull Legend legend) {
 
         if (entry.formColor == ColorTemplate.COLOR_SKIP ||
                 entry.formColor == ColorTemplate.COLOR_NONE ||
@@ -564,7 +569,7 @@ public class LegendRenderer extends Renderer {
      * @param y
      * @param label the label to draw
      */
-    protected void drawLabel(Canvas c, float x, float y, String label) {
+    protected void drawLabel(@NonNull Canvas c, float x, float y, String label) {
         c.drawText(label, x, y, mLegendLabelPaint);
     }
 }

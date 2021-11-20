@@ -4,6 +4,9 @@ package com.github.mikephil.charting.data;
 import android.graphics.Typeface;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.components.YAxis.AxisDependency;
 import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
@@ -66,7 +69,7 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      *
      * @param dataSets
      */
-    public ChartData(T... dataSets) {
+    public ChartData(@NonNull T... dataSets) {
         mDataSets = arrayToList(dataSets);
         notifyDataChanged();
     }
@@ -77,7 +80,8 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      * @param array
      * @return
      */
-    private List<T> arrayToList(T[] array) {
+    @NonNull
+    private List<T> arrayToList(@NonNull T[] array) {
 
         List<T> list = new ArrayList<>();
 
@@ -296,7 +300,7 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      * @param ignorecase if true, the search is not case-sensitive
      * @return
      */
-    protected int getDataSetIndexByLabel(List<T> dataSets, String label,
+    protected int getDataSetIndexByLabel(@NonNull List<T> dataSets, @NonNull String label,
                                          boolean ignorecase) {
 
         if (ignorecase) {
@@ -317,6 +321,7 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      *
      * @return
      */
+    @NonNull
     public String[] getDataSetLabels() {
 
         String[] types = new String[mDataSets.size()];
@@ -334,7 +339,8 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      * @param highlight
      * @return the entry that is highlighted
      */
-    public Entry getEntryForHighlight(Highlight highlight) {
+    @Nullable
+    public Entry getEntryForHighlight(@NonNull Highlight highlight) {
         if (highlight.getDataSetIndex() >= mDataSets.size())
             return null;
         else {
@@ -351,7 +357,8 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      * @param ignorecase
      * @return
      */
-    public T getDataSetByLabel(String label, boolean ignorecase) {
+    @Nullable
+    public T getDataSetByLabel(@NonNull String label, boolean ignorecase) {
 
         int index = getDataSetIndexByLabel(mDataSets, label, ignorecase);
 
@@ -361,6 +368,7 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
             return mDataSets.get(index);
     }
 
+    @Nullable
     public T getDataSetByIndex(int index) {
 
         if (mDataSets == null || index < 0 || index >= mDataSets.size())
@@ -374,7 +382,7 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      *
      * @param d
      */
-    public void addDataSet(T d) {
+    public void addDataSet(@Nullable T d) {
 
         if (d == null)
             return;
@@ -391,7 +399,7 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      *
      * @param d
      */
-    public boolean removeDataSet(T d) {
+    public boolean removeDataSet(@Nullable T d) {
 
         if (d == null)
             return false;
@@ -429,7 +437,7 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      * @param e
      * @param dataSetIndex
      */
-    public void addEntry(Entry e, int dataSetIndex) {
+    public void addEntry(@NonNull Entry e, int dataSetIndex) {
 
         if (mDataSets.size() > dataSetIndex && dataSetIndex >= 0) {
 
@@ -451,7 +459,7 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      * @param e
      * @param axis
      */
-    protected void calcMinMax(Entry e, AxisDependency axis) {
+    protected void calcMinMax(@NonNull Entry e, AxisDependency axis) {
 
         if (mYMax < e.getY())
             mYMax = e.getY();
@@ -482,7 +490,7 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      *
      * @param d
      */
-    protected void calcMinMax(T d) {
+    protected void calcMinMax(@NonNull T d) {
 
         if (mYMax < d.getYMax())
             mYMax = d.getYMax();
@@ -514,7 +522,7 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      * @param e
      * @param dataSetIndex
      */
-    public boolean removeEntry(Entry e, int dataSetIndex) {
+    public boolean removeEntry(@Nullable Entry e, int dataSetIndex) {
 
         // entry null, outofbounds
         if (e == null || dataSetIndex >= mDataSets.size())
@@ -565,7 +573,8 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      * @param e
      * @return
      */
-    public T getDataSetForEntry(Entry e) {
+    @Nullable
+    public T getDataSetForEntry(@Nullable Entry e) {
 
         if (e == null)
             return null;
@@ -589,6 +598,7 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      *
      * @return
      */
+    @Nullable
     public int[] getColors() {
 
         if (mDataSets == null)
@@ -632,7 +642,8 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      *
      * @return
      */
-    protected T getFirstLeft(List<T> sets) {
+    @Nullable
+    protected T getFirstLeft(@NonNull List<T> sets) {
         for (T dataSet : sets) {
             if (dataSet.getAxisDependency() == AxisDependency.LEFT)
                 return dataSet;
@@ -646,7 +657,8 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      *
      * @return
      */
-    public T getFirstRight(List<T> sets) {
+    @Nullable
+    public T getFirstRight(@NonNull List<T> sets) {
         for (T dataSet : sets) {
             if (dataSet.getAxisDependency() == AxisDependency.RIGHT)
                 return dataSet;
@@ -659,7 +671,7 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      *
      * @param f
      */
-    public void setValueFormatter(IValueFormatter f) {
+    public void setValueFormatter(@Nullable IValueFormatter f) {
         if (f == null)
             return;
         else {
@@ -803,6 +815,7 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      *
      * @return
      */
+    @Nullable
     public T getMaxEntryCountSet() {
 
         if (mDataSets == null || mDataSets.isEmpty())

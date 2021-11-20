@@ -1,5 +1,7 @@
 package com.github.mikephil.charting.interfaces.dataprovider;
 
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.components.YAxis.AxisDependency;
 import com.github.mikephil.charting.data.BarLineScatterCandleBubbleData;
 import com.github.mikephil.charting.utils.Transformer;
@@ -12,5 +14,6 @@ public interface BarLineScatterCandleBubbleDataProvider extends ChartInterface {
     float getLowestVisibleX();
     float getHighestVisibleX();
 
+    @Nullable
     BarLineScatterCandleBubbleData getData();
 }

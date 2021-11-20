@@ -17,6 +17,9 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore.Images;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -76,6 +79,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * object that holds all data that was originally set for the chart, before
      * it was modified or any filtering algorithms had been applied
      */
+    @Nullable
     protected T mData = null;
 
     /**
@@ -99,6 +103,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
     /**
      * default value-formatter, number of digits depends on provided chart-data
      */
+    @NonNull
     protected DefaultValueFormatter mDefaultValueFormatter = new DefaultValueFormatter(0);
 
     /**
@@ -116,6 +121,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
     /**
      * the object representing the labels on the x-axis
      */
+    @Nullable
     protected XAxis mXAxis;
 
     /**
@@ -155,6 +161,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
     /**
      * object responsible for rendering the data
      */
+    @Nullable
     protected DataRenderer mRenderer;
 
     protected IHighlighter mHighlighter;
@@ -162,6 +169,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
     /**
      * object that manages the bounds and drawing constraints of the chart
      */
+    @NonNull
     protected ViewPortHandler mViewPortHandler = new ViewPortHandler();
 
     /**
@@ -280,7 +288,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      *
      * @param data
      */
-    public void setData(T data) {
+    public void setData(@Nullable T data) {
 
         mData = data;
         mOffsetsCalculated = false;
@@ -337,10 +345,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
             return true;
         else {
 
-            if (mData.getEntryCount() <= 0)
-                return true;
-            else
-                return false;
+            return mData.getEntryCount() <= 0;
         }
     }
 
@@ -391,7 +396,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
     private boolean mOffsetsCalculated = false;
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         // super.onDraw(canvas);
 
         if (mData == null) {
@@ -431,7 +436,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
     /**
      * Draws the description text in the bottom right corner of the chart (per default)
      */
-    protected void drawDescription(Canvas c) {
+    protected void drawDescription(@NonNull Canvas c) {
 
         // check if description should be drawn
         if (mDescription != null && mDescription.isEnabled()) {
@@ -467,6 +472,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * array of Highlight objects that reference the highlighted slices in the
      * chart
      */
+    @Nullable
     protected Highlight[] mIndicesToHighlight;
 
     /**
@@ -495,6 +501,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      *
      * @return
      */
+    @Nullable
     public Highlight[] getHighlighted() {
         return mIndicesToHighlight;
     }
@@ -526,9 +533,8 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @return
      */
     public boolean valuesToHighlight() {
-        return mIndicesToHighlight == null || mIndicesToHighlight.length <= 0
-                || mIndicesToHighlight[0] == null ? false
-                : true;
+        return mIndicesToHighlight != null && mIndicesToHighlight.length > 0
+                && mIndicesToHighlight[0] != null;
     }
 
     /**
@@ -536,7 +542,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      *
      * @param highs
      */
-    protected void setLastHighlighted(Highlight[] highs) {
+    protected void setLastHighlighted(@Nullable Highlight[] highs) {
 
         if (highs == null || highs.length <= 0 || highs[0] == null) {
             mChartTouchListener.setLastHighlighted(null);
@@ -683,7 +689,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @param high         - the highlight object
      * @param callListener - call the listener
      */
-    public void highlightValue(Highlight high, boolean callListener) {
+    public void highlightValue(@Nullable Highlight high, boolean callListener) {
 
         Entry e = null;
 
@@ -692,7 +698,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
         else {
 
             if (mLogEnabled)
-                Log.i(LOG_TAG, "Highlighted: " + high.toString());
+                Log.i(LOG_TAG, "Highlighted: " + high);
 
             e = mData.getEntryForHighlight(high);
             if (e == null) {
@@ -732,6 +738,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @param y
      * @return
      */
+    @Nullable
     public Highlight getHighlightByTouchPoint(float x, float y) {
 
         if (mData == null) {
@@ -818,7 +825,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @param high
      * @return
      */
-    protected float[] getMarkerPosition(Highlight high) {
+    protected float[] getMarkerPosition(@NonNull Highlight high) {
         return new float[]{high.getDrawX(), high.getDrawY()};
     }
 
@@ -1012,6 +1019,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      *
      * @return
      */
+    @Nullable
     public XAxis getXAxis() {
         return mXAxis;
     }
@@ -1022,6 +1030,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      *
      * @return
      */
+    @NonNull
     public IValueFormatter getDefaultValueFormatter() {
         return mDefaultValueFormatter;
     }
@@ -1093,6 +1102,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      *
      * @return
      */
+    @NonNull
     public MPPointF getCenter() {
         return MPPointF.getInstance(getWidth() / 2f, getHeight() / 2f);
     }
@@ -1104,6 +1114,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      *
      * @return
      */
+    @NonNull
     @Override
     public MPPointF getCenterOffsets() {
         return mViewPortHandler.getContentCenter();
@@ -1321,6 +1332,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      *
      * @return
      */
+    @NonNull
     @Override
     public RectF getContentRect() {
         return mViewPortHandler.getContentRect();
@@ -1401,6 +1413,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @param which e.g. Chart.PAINT_LEGEND_LABEL
      * @return
      */
+    @Nullable
     public Paint getPaint(int which) {
         switch (which) {
             case PAINT_INFO:
@@ -1448,6 +1461,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      *
      * @return
      */
+    @Nullable
     public T getData() {
         return mData;
     }
@@ -1458,6 +1472,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      *
      * @return
      */
+    @NonNull
     public ViewPortHandler getViewPortHandler() {
         return mViewPortHandler;
     }
@@ -1467,6 +1482,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      *
      * @return
      */
+    @Nullable
     public DataRenderer getRenderer() {
         return mRenderer;
     }
@@ -1476,7 +1492,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      *
      * @param renderer
      */
-    public void setRenderer(DataRenderer renderer) {
+    public void setRenderer(@Nullable DataRenderer renderer) {
 
         if (renderer != null)
             mRenderer = renderer;
@@ -1501,6 +1517,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      *
      * @return
      */
+    @NonNull
     @Override
     public MPPointF getCenterOfView() {
         return getCenter();
@@ -1580,7 +1597,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @param quality         e.g. 50, min = 0, max = 100
      * @return returns true if saving was successful, false if not
      */
-    public boolean saveToGallery(String fileName, String subFolderPath, String fileDescription, Bitmap.CompressFormat
+    public boolean saveToGallery(@NonNull String fileName, String subFolderPath, String fileDescription, @NonNull Bitmap.CompressFormat
             format, int quality) {
         // restrain quality
         if (quality < 0 || quality > 100)
@@ -1659,7 +1676,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @param quality  e.g. 50, min = 0, max = 100
      * @return returns true if saving was successful, false if not
      */
-    public boolean saveToGallery(String fileName, int quality) {
+    public boolean saveToGallery(@NonNull String fileName, int quality) {
         return saveToGallery(fileName, "", "MPAndroidChart-Library Save", Bitmap.CompressFormat.PNG, quality);
     }
 
@@ -1670,13 +1687,14 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @param fileName e.g. "my_image"
      * @return returns true if saving was successful, false if not
      */
-    public boolean saveToGallery(String fileName) {
+    public boolean saveToGallery(@NonNull String fileName) {
         return saveToGallery(fileName, "", "MPAndroidChart-Library Save", Bitmap.CompressFormat.PNG, 40);
     }
 
     /**
      * tasks to be done after the view is setup
      */
+    @NonNull
     protected ArrayList<Runnable> mJobs = new ArrayList<Runnable>();
 
     public void removeViewportJob(Runnable job) {
@@ -1708,6 +1726,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      *
      * @return
      */
+    @NonNull
     public ArrayList<Runnable> getJobs() {
         return mJobs;
     }
@@ -1795,7 +1814,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      *
      * @param view
      */
-    private void unbindDrawables(View view) {
+    private void unbindDrawables(@NonNull View view) {
 
         if (view.getBackground() != null) {
             view.getBackground().setCallback(null);

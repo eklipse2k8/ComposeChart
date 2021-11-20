@@ -3,6 +3,8 @@ package com.github.mikephil.charting.components;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.utils.Utils;
 
 /**
@@ -21,7 +23,7 @@ public class YAxis extends AxisBase {
     /**
      * indicates if the bottom y-label entry is drawn or not
      */
-    private boolean mDrawBottomYLabelEntry = true;
+    private final boolean mDrawBottomYLabelEntry = true;
 
     /**
      * indicates if the top y-label entry is drawn or not
@@ -88,7 +90,7 @@ public class YAxis extends AxisBase {
     /**
      * the side this axis object represents
      */
-    private AxisDependency mAxisDependency;
+    private final AxisDependency mAxisDependency;
 
     /**
      * the minimum width that the axis should take (in dp).
@@ -340,7 +342,7 @@ public class YAxis extends AxisBase {
      * @param p
      * @return
      */
-    public float getRequiredWidthSpace(Paint p) {
+    public float getRequiredWidthSpace(@NonNull Paint p) {
 
         p.setTextSize(mTextSize);
 
@@ -367,7 +369,7 @@ public class YAxis extends AxisBase {
      * @param p
      * @return
      */
-    public float getRequiredHeightSpace(Paint p) {
+    public float getRequiredHeightSpace(@NonNull Paint p) {
 
         p.setTextSize(mTextSize);
 
@@ -381,11 +383,8 @@ public class YAxis extends AxisBase {
      * @return
      */
     public boolean needsOffset() {
-        if (isEnabled() && isDrawLabelsEnabled() && getLabelPosition() == YAxisLabelPosition
-                .OUTSIDE_CHART)
-            return true;
-        else
-            return false;
+        return isEnabled() && isDrawLabelsEnabled() && getLabelPosition() == YAxisLabelPosition
+                .OUTSIDE_CHART;
     }
 
     /**

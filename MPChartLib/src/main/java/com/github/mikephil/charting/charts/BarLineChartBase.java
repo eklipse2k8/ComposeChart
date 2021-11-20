@@ -14,6 +14,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.components.XAxis.XAxisPosition;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.components.YAxis.AxisDependency;
@@ -133,6 +136,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
     protected Transformer mLeftAxisTransformer;
     protected Transformer mRightAxisTransformer;
 
+    @Nullable
     protected XAxisRenderer mXAxisRenderer;
 
     // /** the approximator object used for data filtering */
@@ -186,7 +190,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
     private long drawCycles = 0;
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
         if (mData == null)
@@ -392,7 +396,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
                 .RIGHT));
     }
 
-    protected void calculateLegendOffsets(RectF offsets) {
+    protected void calculateLegendOffsets(@NonNull RectF offsets) {
 
         offsets.left = 0.f;
         offsets.right = 0.f;
@@ -466,7 +470,8 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
         }
     }
 
-    private RectF mOffsetsBuffer = new RectF();
+    @NonNull
+    private final RectF mOffsetsBuffer = new RectF();
 
     @Override
     public void calculateOffsets() {
@@ -529,7 +534,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
             if (mLogEnabled) {
                 Log.i(LOG_TAG, "offsetLeft: " + offsetLeft + ", offsetTop: " + offsetTop
                         + ", offsetRight: " + offsetRight + ", offsetBottom: " + offsetBottom);
-                Log.i(LOG_TAG, "Content: " + mViewPortHandler.getContentRect().toString());
+                Log.i(LOG_TAG, "Content: " + mViewPortHandler.getContentRect());
             }
         }
 
@@ -540,7 +545,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
     /**
      * draws the grid background
      */
-    protected void drawGridBackground(Canvas c) {
+    protected void drawGridBackground(@NonNull Canvas c) {
 
         if (mDrawGridBackground) {
 
@@ -596,6 +601,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
      * VIEWPORT
      */
 
+    @NonNull
     protected Matrix mZoomMatrixBuffer = new Matrix();
 
     /**
@@ -727,6 +733,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
         MPPointD.recycleInstance(origin);
     }
 
+    @NonNull
     protected Matrix mFitScreenMatrixBuffer = new Matrix();
 
     /**
@@ -1031,6 +1038,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
         return mDrawListener;
     }
 
+    @NonNull
     protected float[] mGetPositionBuffer = new float[2];
 
     /**
@@ -1041,7 +1049,8 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
      * @param e
      * @return
      */
-    public MPPointF getPosition(Entry e, AxisDependency axis) {
+    @Nullable
+    public MPPointF getPosition(@Nullable Entry e, AxisDependency axis) {
 
         if (e == null)
             return null;
@@ -1322,13 +1331,14 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
      * @param y
      * @return
      */
+    @NonNull
     public MPPointD getValuesByTouchPoint(float x, float y, AxisDependency axis) {
         MPPointD result = MPPointD.getInstance(0, 0);
         getValuesByTouchPoint(x, y, axis, result);
         return result;
     }
 
-    public void getValuesByTouchPoint(float x, float y, AxisDependency axis, MPPointD outputPoint) {
+    public void getValuesByTouchPoint(float x, float y, AxisDependency axis, @NonNull MPPointD outputPoint) {
         getTransformer(axis).getValuesByTouchPoint(x, y, outputPoint);
     }
 
@@ -1341,6 +1351,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
      * @param y
      * @return
      */
+    @NonNull
     public MPPointD getPixelForValues(float x, float y, AxisDependency axis) {
         return getTransformer(axis).getPixelForValues(x, y);
     }
@@ -1352,6 +1363,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
      * @param y
      * @return
      */
+    @Nullable
     public Entry getEntryByTouchPoint(float x, float y) {
         Highlight h = getHighlightByTouchPoint(x, y);
         if (h != null) {
@@ -1367,6 +1379,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
      * @param y
      * @return
      */
+    @Nullable
     public IBarLineScatterCandleBubbleDataSet getDataSetByTouchPoint(float x, float y) {
         Highlight h = getHighlightByTouchPoint(x, y);
         if (h != null) {
@@ -1378,6 +1391,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
     /**
      * buffer for storing lowest visible x point
      */
+    @NonNull
     protected MPPointD posForGetLowestVisibleX = MPPointD.getInstance(0, 0);
 
     /**
@@ -1397,6 +1411,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
     /**
      * buffer for storing highest visible x point
      */
+    @NonNull
     protected MPPointD posForGetHighestVisibleX = MPPointD.getInstance(0, 0);
 
     /**
@@ -1538,6 +1553,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
         return mViewPortHandler.hasNoDragOffset();
     }
 
+    @Nullable
     public XAxisRenderer getRendererXAxis() {
         return mXAxisRenderer;
     }
@@ -1595,9 +1611,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
     public boolean isAnyAxisInverted() {
         if (mAxisLeft.isInverted())
             return true;
-        if (mAxisRight.isInverted())
-            return true;
-        return false;
+        return mAxisRight.isInverted();
     }
 
     /**
@@ -1631,6 +1645,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
         }
     }
 
+    @Nullable
     @Override
     public Paint getPaint(int which) {
         Paint p = super.getPaint(which);
@@ -1645,6 +1660,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
         return null;
     }
 
+    @NonNull
     protected float[] mOnSizeChangedBuffer = new float[2];
 
     @Override

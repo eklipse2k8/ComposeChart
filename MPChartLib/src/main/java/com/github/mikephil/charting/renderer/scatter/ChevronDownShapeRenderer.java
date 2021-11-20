@@ -3,6 +3,8 @@ package com.github.mikephil.charting.renderer.scatter;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet;
 import com.github.mikephil.charting.utils.Utils;
 import com.github.mikephil.charting.utils.ViewPortHandler;
@@ -16,8 +18,8 @@ public class ChevronDownShapeRenderer implements IShapeRenderer
 
 
     @Override
-    public void renderShape(Canvas c, IScatterDataSet dataSet, ViewPortHandler viewPortHandler,
-                     float posX, float posY, Paint renderPaint) {
+    public void renderShape(@NonNull Canvas c, @NonNull IScatterDataSet dataSet, ViewPortHandler viewPortHandler,
+                            float posX, float posY, @NonNull Paint renderPaint) {
 
         final float shapeHalf = dataSet.getScatterShapeSize() / 2f;
 

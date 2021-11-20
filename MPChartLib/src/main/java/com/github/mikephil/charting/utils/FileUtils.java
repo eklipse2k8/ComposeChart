@@ -2,8 +2,12 @@
 package com.github.mikephil.charting.utils;
 
 import android.content.res.AssetManager;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
@@ -15,6 +19,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +39,8 @@ public class FileUtils {
      * @param path the name of the file on the sd-card (+ path if needed)
      * @return
      */
-    public static List<Entry> loadEntriesFromFile(String path) {
+    @NonNull
+    public static List<Entry> loadEntriesFromFile(@NonNull String path) {
 
         File sdcard = Environment.getExternalStorageDirectory();
 
@@ -106,14 +112,16 @@ public class FileUtils {
      * @param path the name of the file in the assets folder (+ path if needed)
      * @return
      */
-    public static List<Entry> loadEntriesFromAssets(AssetManager am, String path) {
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @NonNull
+    public static List<Entry> loadEntriesFromAssets(@NonNull AssetManager am, String path) {
 
         List<Entry> entries = new ArrayList<Entry>();
 
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(
-                    new InputStreamReader(am.open(path), "UTF-8"));
+                    new InputStreamReader(am.open(path), StandardCharsets.UTF_8));
 
             String line = reader.readLine();
 
@@ -194,7 +202,7 @@ public class FileUtils {
      * @param entries
      * @param path
      */
-    public static void saveToSdCard(List<Entry> entries, String path) {
+    public static void saveToSdCard(@NonNull List<Entry> entries, @NonNull String path) {
 
         File sdcard = Environment.getExternalStorageDirectory();
 
@@ -227,14 +235,16 @@ public class FileUtils {
         }
     }
 
-    public static List<BarEntry> loadBarEntriesFromAssets(AssetManager am, String path) {
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @NonNull
+    public static List<BarEntry> loadBarEntriesFromAssets(@NonNull AssetManager am, String path) {
 
         List<BarEntry> entries = new ArrayList<BarEntry>();
 
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(
-                    new InputStreamReader(am.open(path), "UTF-8"));
+                    new InputStreamReader(am.open(path), StandardCharsets.UTF_8));
 
             String line = reader.readLine();
 

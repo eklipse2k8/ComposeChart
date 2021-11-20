@@ -1,6 +1,8 @@
 
 package com.github.mikephil.charting.formatter;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
@@ -48,9 +50,10 @@ public class DefaultValueFormatter implements IValueFormatter
             b.append("0");
         }
 
-        mFormat = new DecimalFormat("###,###,###,##0" + b.toString());
+        mFormat = new DecimalFormat("###,###,###,##0" + b);
     }
 
+    @NonNull
     @Override
     public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
 

@@ -5,6 +5,9 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.components.XAxis.XAxisPosition;
 import com.github.mikephil.charting.components.YAxis.AxisDependency;
 import com.github.mikephil.charting.data.BarEntry;
@@ -58,9 +61,10 @@ public class HorizontalBarChart extends BarChart {
         mXAxisRenderer = new XAxisRendererHorizontalBarChart(mViewPortHandler, mXAxis, mLeftAxisTransformer, this);
     }
 
-    private RectF mOffsetsBuffer = new RectF();
+    @NonNull
+    private final RectF mOffsetsBuffer = new RectF();
 
-    protected void calculateLegendOffsets(RectF offsets) {
+    protected void calculateLegendOffsets(@NonNull RectF offsets) {
 
         offsets.left = 0.f;
         offsets.right = 0.f;
@@ -196,7 +200,7 @@ public class HorizontalBarChart extends BarChart {
             Log.i(LOG_TAG, "offsetLeft: " + offsetLeft + ", offsetTop: " + offsetTop + ", offsetRight: " +
                     offsetRight + ", offsetBottom: "
                     + offsetBottom);
-            Log.i(LOG_TAG, "Content: " + mViewPortHandler.getContentRect().toString());
+            Log.i(LOG_TAG, "Content: " + mViewPortHandler.getContentRect());
         }
 
         prepareOffsetMatrix();
@@ -211,13 +215,14 @@ public class HorizontalBarChart extends BarChart {
                 mXAxis.mAxisMinimum);
     }
 
+    @NonNull
     @Override
-    protected float[] getMarkerPosition(Highlight high) {
+    protected float[] getMarkerPosition(@NonNull Highlight high) {
         return new float[]{high.getDrawY(), high.getDrawX()};
     }
 
     @Override
-    public void getBarBounds(BarEntry e, RectF outputRect) {
+    public void getBarBounds(@NonNull BarEntry e, @NonNull RectF outputRect) {
 
         RectF bounds = outputRect;
         IBarDataSet set = mData.getDataSetForEntry(e);
@@ -243,6 +248,7 @@ public class HorizontalBarChart extends BarChart {
 
     }
 
+    @NonNull
     protected float[] mGetPositionBuffer = new float[2];
 
     /**
@@ -252,8 +258,9 @@ public class HorizontalBarChart extends BarChart {
      * @param axis
      * @return
      */
+    @Nullable
     @Override
-    public MPPointF getPosition(Entry e, AxisDependency axis) {
+    public MPPointF getPosition(@Nullable Entry e, AxisDependency axis) {
 
         if (e == null)
             return null;
@@ -275,6 +282,7 @@ public class HorizontalBarChart extends BarChart {
      * @param y
      * @return
      */
+    @Nullable
     @Override
     public Highlight getHighlightByTouchPoint(float x, float y) {
 

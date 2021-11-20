@@ -6,6 +6,9 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.formatter.DefaultFillFormatter;
 import com.github.mikephil.charting.formatter.IFillFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
@@ -25,6 +28,7 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
     /**
      * List representing all colors that are used for the circles
      */
+    @Nullable
     private List<Integer> mCircleColors = null;
 
     /**
@@ -50,11 +54,13 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
     /**
      * the path effect of this DataSet that makes dashed lines possible
      */
+    @Nullable
     private DashPathEffect mDashPathEffect = null;
 
     /**
      * formatter for customizing the position of the fill-line
      */
+    @Nullable
     private IFillFormatter mFillFormatter = new DefaultFillFormatter();
 
     /**
@@ -82,6 +88,7 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
         mCircleColors.add(Color.rgb(140, 234, 255));
     }
 
+    @NonNull
     @Override
     public DataSet<Entry> copy() {
         List<Entry> entries = new ArrayList<Entry>();
@@ -93,7 +100,7 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
         return copied;
     }
 
-    protected void copy(LineDataSet lineDataSet) {
+    protected void copy(@NonNull LineDataSet lineDataSet) {
         super.copy(lineDataSet);
         lineDataSet.mCircleColors = mCircleColors;
         lineDataSet.mCircleHoleColor = mCircleHoleColor;
@@ -233,9 +240,10 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
 
     @Override
     public boolean isDashedLineEnabled() {
-        return mDashPathEffect == null ? false : true;
+        return mDashPathEffect != null;
     }
 
+    @Nullable
     @Override
     public DashPathEffect getDashPathEffect() {
         return mDashPathEffect;
@@ -275,6 +283,7 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
      *
      * @return
      */
+    @Nullable
     public List<Integer> getCircleColors() {
         return mCircleColors;
     }
@@ -311,7 +320,7 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
      *
      * @param colors
      */
-    public void setCircleColors(int... colors) {
+    public void setCircleColors(@NonNull int... colors) {
         this.mCircleColors = ColorTemplate.createColors(colors);
     }
 
@@ -325,7 +334,7 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
      *
      * @param colors
      */
-    public void setCircleColors(int[] colors, Context c) {
+    public void setCircleColors(@NonNull int[] colors, @NonNull Context c) {
 
         List<Integer> clrs = mCircleColors;
         if (clrs == null) {
@@ -395,7 +404,7 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
      *
      * @param formatter
      */
-    public void setFillFormatter(IFillFormatter formatter) {
+    public void setFillFormatter(@Nullable IFillFormatter formatter) {
 
         if (formatter == null)
             mFillFormatter = new DefaultFillFormatter();
@@ -403,6 +412,7 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
             mFillFormatter = formatter;
     }
 
+    @Nullable
     @Override
     public IFillFormatter getFillFormatter() {
         return mFillFormatter;

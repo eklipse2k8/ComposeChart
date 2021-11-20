@@ -3,6 +3,8 @@ package com.github.mikephil.charting.utils;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 /**
@@ -10,7 +12,7 @@ import java.util.List;
  */
 public class MPPointF extends ObjectPool.Poolable {
 
-    private static ObjectPool<MPPointF> pool;
+    private static final ObjectPool<MPPointF> pool;
 
     public float x;
     public float y;
@@ -39,18 +41,18 @@ public class MPPointF extends ObjectPool.Poolable {
         return pool.get();
     }
 
-    public static MPPointF getInstance(MPPointF copy) {
+    public static MPPointF getInstance(@NonNull MPPointF copy) {
         MPPointF result = pool.get();
         result.x = copy.x;
         result.y = copy.y;
         return result;
     }
 
-    public static void recycleInstance(MPPointF instance){
+    public static void recycleInstance(@NonNull MPPointF instance){
         pool.recycle(instance);
     }
 
-    public static void recycleInstances(List<MPPointF> instances){
+    public static void recycleInstances(@NonNull List<MPPointF> instances){
         pool.recycle(instances);
     }
 
@@ -58,7 +60,8 @@ public class MPPointF extends ObjectPool.Poolable {
         /**
          * Return a new point from the data in the specified parcel.
          */
-        public MPPointF createFromParcel(Parcel in) {
+        @NonNull
+        public MPPointF createFromParcel(@NonNull Parcel in) {
             MPPointF r = new MPPointF(0,0);
             r.my_readFromParcel(in);
             return r;
@@ -67,6 +70,7 @@ public class MPPointF extends ObjectPool.Poolable {
         /**
          * Return an array of rectangles of the specified size.
          */
+        @NonNull
         public MPPointF[] newArray(int size) {
             return new MPPointF[size];
         }
@@ -79,7 +83,7 @@ public class MPPointF extends ObjectPool.Poolable {
      *
      * @param in The parcel to read the point's coordinates from
      */
-    public void my_readFromParcel(Parcel in) {
+    public void my_readFromParcel(@NonNull Parcel in) {
         x = in.readFloat();
         y = in.readFloat();
     }
@@ -92,6 +96,7 @@ public class MPPointF extends ObjectPool.Poolable {
         return this.y;
     }
 
+    @NonNull
     @Override
     protected ObjectPool.Poolable instantiate() {
         return new MPPointF(0,0);

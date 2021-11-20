@@ -1,5 +1,8 @@
 package com.github.mikephil.charting.utils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.util.List;
 
 /**
@@ -23,7 +26,7 @@ public class ObjectPool<T extends ObjectPool.Poolable> {
     private int desiredCapacity;
     private Object[] objects;
     private int objectsPointer;
-    private T modelObject;
+    private final T modelObject;
     private float replenishPercentage;
 
 
@@ -43,6 +46,7 @@ public class ObjectPool<T extends ObjectPool.Poolable> {
      * @param object An instance of the object that the pool should recycle.
      * @return
      */
+    @NonNull
     public static synchronized ObjectPool create(int withCapacity, Poolable object){
         ObjectPool result = new ObjectPool(withCapacity, object);
         result.poolId = ids;
@@ -110,6 +114,7 @@ public class ObjectPool<T extends ObjectPool.Poolable> {
      *
      * @return An instance of Poolable object T
      */
+    @NonNull
     public synchronized T get(){
 
         if(this.objectsPointer == -1 && this.replenishPercentage > 0.0f){
@@ -129,7 +134,7 @@ public class ObjectPool<T extends ObjectPool.Poolable> {
      *
      * @param object An object of type T to recycle
      */
-    public synchronized void recycle(T object){
+    public synchronized void recycle(@NonNull T object){
         if(object.currentOwnerId != Poolable.NO_OWNER){
             if(object.currentOwnerId == this.poolId){
                 throw new IllegalArgumentException("The object passed is already stored in this pool!");
@@ -154,7 +159,7 @@ public class ObjectPool<T extends ObjectPool.Poolable> {
      *
      * @param objects A list of objects of type T to recycle
      */
-    public synchronized void recycle(List<T> objects){
+    public synchronized void recycle(@NonNull List<T> objects){
         while(objects.size() + this.objectsPointer + 1 > this.desiredCapacity){
             this.resizePool();
         }
@@ -212,6 +217,7 @@ public class ObjectPool<T extends ObjectPool.Poolable> {
         public static int NO_OWNER = -1;
         int currentOwnerId = NO_OWNER;
 
+        @Nullable
         protected abstract Poolable instantiate();
 
     }

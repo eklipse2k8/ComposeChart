@@ -3,6 +3,9 @@ package com.github.mikephil.charting.data;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarLineScatterCandleBubbleDataSet;
@@ -140,6 +143,7 @@ public class CombinedData extends BarLineScatterCandleBubbleData<IBarLineScatter
      *
      * @return
      */
+    @NonNull
     public List<BarLineScatterCandleBubbleData> getAllData() {
 
         List<BarLineScatterCandleBubbleData> data = new ArrayList<BarLineScatterCandleBubbleData>();
@@ -183,8 +187,9 @@ public class CombinedData extends BarLineScatterCandleBubbleData<IBarLineScatter
      * @param highlight
      * @return the entry that is highlighted
      */
+    @Nullable
     @Override
-    public Entry getEntryForHighlight(Highlight highlight) {
+    public Entry getEntryForHighlight(@NonNull Highlight highlight) {
 
         if (highlight.getDataIndex() >= getAllData().size())
             return null;
@@ -213,7 +218,8 @@ public class CombinedData extends BarLineScatterCandleBubbleData<IBarLineScatter
      * @param highlight current highlight
      * @return dataset related to highlight
      */
-    public IBarLineScatterCandleBubbleDataSet<? extends Entry> getDataSetByHighlight(Highlight highlight) {
+    @Nullable
+    public IBarLineScatterCandleBubbleDataSet<? extends Entry> getDataSetByHighlight(@NonNull Highlight highlight) {
         if (highlight.getDataIndex() >= getAllData().size())
             return null;
 

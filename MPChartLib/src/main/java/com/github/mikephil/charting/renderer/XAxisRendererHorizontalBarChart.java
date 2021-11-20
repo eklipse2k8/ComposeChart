@@ -7,6 +7,8 @@ import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.RectF;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
@@ -85,7 +87,7 @@ public class XAxisRendererHorizontalBarChart extends XAxisRenderer {
     }
 
     @Override
-    public void renderAxisLabels(Canvas c) {
+    public void renderAxisLabels(@NonNull Canvas c) {
 
         if (!mXAxis.isEnabled() || !mXAxis.isDrawLabelsEnabled())
             return;
@@ -131,7 +133,7 @@ public class XAxisRendererHorizontalBarChart extends XAxisRenderer {
     }
 
     @Override
-    protected void drawLabels(Canvas c, float pos, MPPointF anchor) {
+    protected void drawLabels(@NonNull Canvas c, float pos, @NonNull MPPointF anchor) {
 
         final float labelRotationAngleDegrees = mXAxis.getLabelRotationAngle();
         boolean centeringEnabled = mXAxis.isCenterAxisLabelsEnabled();
@@ -162,6 +164,7 @@ public class XAxisRendererHorizontalBarChart extends XAxisRenderer {
         }
     }
 
+    @NonNull
     @Override
     public RectF getGridClippingRect() {
         mGridClippingRect.set(mViewPortHandler.getContentRect());
@@ -170,7 +173,7 @@ public class XAxisRendererHorizontalBarChart extends XAxisRenderer {
     }
 
     @Override
-    protected void drawGridLine(Canvas c, float x, float y, Path gridLinePath) {
+    protected void drawGridLine(@NonNull Canvas c, float x, float y, @NonNull Path gridLinePath) {
 
         gridLinePath.moveTo(mViewPortHandler.contentRight(), y);
         gridLinePath.lineTo(mViewPortHandler.contentLeft(), y);
@@ -182,7 +185,7 @@ public class XAxisRendererHorizontalBarChart extends XAxisRenderer {
     }
 
     @Override
-    public void renderAxisLine(Canvas c) {
+    public void renderAxisLine(@NonNull Canvas c) {
 
         if (!mXAxis.isDrawAxisLineEnabled() || !mXAxis.isEnabled())
             return;
@@ -207,6 +210,7 @@ public class XAxisRendererHorizontalBarChart extends XAxisRenderer {
         }
     }
 
+    @NonNull
     protected Path mRenderLimitLinesPathBuffer = new Path();
     /**
 	 * Draws the LimitLines associated with this axis to the screen.
@@ -215,7 +219,7 @@ public class XAxisRendererHorizontalBarChart extends XAxisRenderer {
 	 * @param c
 	 */
 	@Override
-	public void renderLimitLines(Canvas c) {
+	public void renderLimitLines(@NonNull Canvas c) {
 
 		List<LimitLine> limitLines = mXAxis.getLimitLines();
 

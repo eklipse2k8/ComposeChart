@@ -11,6 +11,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.animation.Easing.EasingFunction;
 import com.github.mikephil.charting.components.Legend;
@@ -293,14 +295,15 @@ public abstract class PieRadarChartBase<T extends ChartData<? extends IDataSet<?
      * @param angle  in degrees, converted to radians internally
      * @return
      */
-    public MPPointF getPosition(MPPointF center, float dist, float angle) {
+    @NonNull
+    public MPPointF getPosition(@NonNull MPPointF center, float dist, float angle) {
 
         MPPointF p = MPPointF.getInstance(0, 0);
         getPosition(center, dist, angle, p);
         return p;
     }
 
-    public void getPosition(MPPointF center, float dist, float angle, MPPointF outputPoint) {
+    public void getPosition(@NonNull MPPointF center, float dist, float angle, @NonNull MPPointF outputPoint) {
         outputPoint.x = (float) (center.x + dist * Math.cos(Math.toRadians(angle)));
         outputPoint.y = (float) (center.y + dist * Math.sin(Math.toRadians(angle)));
     }

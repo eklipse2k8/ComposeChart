@@ -4,6 +4,8 @@ package com.github.mikephil.charting.utils;
 import android.content.res.Resources;
 import android.graphics.Color;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +63,7 @@ public class ColorTemplate {
      * @param hex
      * @return
      */
-    public static int rgb(String hex) {
+    public static int rgb(@NonNull String hex) {
         int color = (int) Long.parseLong(hex.replace("#", ""), 16);
         int r = (color >> 16) & 0xFF;
         int g = (color >> 8) & 0xFF;
@@ -97,7 +99,8 @@ public class ColorTemplate {
      * @param colors an integer array of resource id's of colors
      * @return
      */
-    public static List<Integer> createColors(Resources r, int[] colors) {
+    @NonNull
+    public static List<Integer> createColors(@NonNull Resources r, @NonNull int[] colors) {
 
         List<Integer> result = new ArrayList<Integer>();
 
@@ -115,7 +118,8 @@ public class ColorTemplate {
      * @param colors
      * @return
      */
-    public static List<Integer> createColors(int[] colors) {
+    @NonNull
+    public static List<Integer> createColors(@NonNull int[] colors) {
 
         List<Integer> result = new ArrayList<Integer>();
 

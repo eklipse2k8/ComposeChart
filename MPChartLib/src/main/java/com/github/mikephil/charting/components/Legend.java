@@ -3,6 +3,9 @@ package com.github.mikephil.charting.components;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.FSize;
 import com.github.mikephil.charting.utils.Utils;
@@ -71,12 +74,14 @@ public class Legend extends ComponentBase {
     /**
      * The legend entries array
      */
+    @Nullable
     private LegendEntry[] mEntries = new LegendEntry[]{};
 
     /**
      * Entries that will be appended to the end of the auto calculated entries after calculating the legend.
      * (if the legend has already been calculated, you will need to call notifyDataSetChanged() to let the changes take effect)
      */
+    @Nullable
     private LegendEntry[] mExtraEntries;
 
     /**
@@ -113,6 +118,7 @@ public class Legend extends ComponentBase {
     /**
      * Line dash path effect used for shapes that consist of lines.
      */
+    @Nullable
     private DashPathEffect mFormLineDashEffect = null;
 
     /**
@@ -157,7 +163,7 @@ public class Legend extends ComponentBase {
      *
      * @param entries
      */
-    public Legend(LegendEntry[] entries) {
+    public Legend(@Nullable LegendEntry[] entries) {
         this();
 
         if (entries == null) {
@@ -172,10 +178,11 @@ public class Legend extends ComponentBase {
      *
      * @param entries
      */
-    public void setEntries(List<LegendEntry> entries) {
+    public void setEntries(@NonNull List<LegendEntry> entries) {
         mEntries = entries.toArray(new LegendEntry[entries.size()]);
     }
 
+    @Nullable
     public LegendEntry[] getEntries() {
         return mEntries;
     }
@@ -187,7 +194,7 @@ public class Legend extends ComponentBase {
      * @param p the paint object used for rendering the text
      * @return
      */
-    public float getMaximumEntryWidth(Paint p) {
+    public float getMaximumEntryWidth(@NonNull Paint p) {
 
         float max = 0f;
         float maxFormSize = 0f;
@@ -218,7 +225,7 @@ public class Legend extends ComponentBase {
      * @param p the paint object used for rendering the text
      * @return
      */
-    public float getMaximumEntryHeight(Paint p) {
+    public float getMaximumEntryHeight(@NonNull Paint p) {
 
         float max = 0f;
 
@@ -235,16 +242,17 @@ public class Legend extends ComponentBase {
         return max;
     }
 
+    @Nullable
     public LegendEntry[] getExtraEntries() {
 
         return mExtraEntries;
     }
 
-    public void setExtra(List<LegendEntry> entries) {
+    public void setExtra(@NonNull List<LegendEntry> entries) {
         mExtraEntries = entries.toArray(new LegendEntry[entries.size()]);
     }
 
-    public void setExtra(LegendEntry[] entries) {
+    public void setExtra(@Nullable LegendEntry[] entries) {
         if (entries == null)
             entries = new LegendEntry[]{};
         mExtraEntries = entries;
@@ -256,7 +264,7 @@ public class Legend extends ComponentBase {
      * (if the legend has already been calculated, you will need to call notifyDataSetChanged()
      *   to let the changes take effect)
      */
-    public void setExtra(int[] colors, String[] labels) {
+    public void setExtra(@NonNull int[] colors, @NonNull String[] labels) {
 
         List<LegendEntry> entries = new ArrayList<>();
 
@@ -299,7 +307,7 @@ public class Legend extends ComponentBase {
      * Call resetCustom() to re-enable automatic calculation (and then
      *   notifyDataSetChanged() is needed to auto-calculate the legend again)
      */
-    public void setCustom(List<LegendEntry> entries) {
+    public void setCustom(@NonNull List<LegendEntry> entries) {
 
         mEntries = entries.toArray(new LegendEntry[entries.size()]);
         mIsLegendCustom = true;
@@ -478,6 +486,7 @@ public class Legend extends ComponentBase {
     /**
      * @return The line dash path effect used for shapes that consist of lines.
      */
+    @Nullable
     public DashPathEffect getFormLineDashEffect() {
         return mFormLineDashEffect;
     }
@@ -626,18 +635,24 @@ public class Legend extends ComponentBase {
         mMaxSizePercent = maxSize;
     }
 
-    private List<FSize> mCalculatedLabelSizes = new ArrayList<>(16);
-    private List<Boolean> mCalculatedLabelBreakPoints = new ArrayList<>(16);
-    private List<FSize> mCalculatedLineSizes = new ArrayList<>(16);
+    @NonNull
+    private final List<FSize> mCalculatedLabelSizes = new ArrayList<>(16);
+    @NonNull
+    private final List<Boolean> mCalculatedLabelBreakPoints = new ArrayList<>(16);
+    @NonNull
+    private final List<FSize> mCalculatedLineSizes = new ArrayList<>(16);
 
+    @NonNull
     public List<FSize> getCalculatedLabelSizes() {
         return mCalculatedLabelSizes;
     }
 
+    @NonNull
     public List<Boolean> getCalculatedLabelBreakPoints() {
         return mCalculatedLabelBreakPoints;
     }
 
+    @NonNull
     public List<FSize> getCalculatedLineSizes() {
         return mCalculatedLineSizes;
     }
@@ -649,7 +664,7 @@ public class Legend extends ComponentBase {
      *
      * @param labelpaint
      */
-    public void calculateDimensions(Paint labelpaint, ViewPortHandler viewPortHandler) {
+    public void calculateDimensions(@NonNull Paint labelpaint, @NonNull ViewPortHandler viewPortHandler) {
 
         float defaultFormSize = Utils.convertDpToPixel(mFormSize);
         float stackSpace = Utils.convertDpToPixel(mStackSpace);

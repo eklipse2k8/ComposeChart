@@ -3,6 +3,8 @@ package com.github.mikephil.charting.renderer;
 import android.graphics.Canvas;
 import android.graphics.Path;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.interfaces.datasets.ILineScatterCandleRadarDataSet;
 import com.github.mikephil.charting.utils.ViewPortHandler;
@@ -15,7 +17,8 @@ public abstract class LineScatterCandleRadarRenderer extends BarLineScatterCandl
     /**
      * path that is used for drawing highlight-lines (drawLines(...) cannot be used because of dashes)
      */
-    private Path mHighlightLinePath = new Path();
+    @NonNull
+    private final Path mHighlightLinePath = new Path();
 
     public LineScatterCandleRadarRenderer(ChartAnimator animator, ViewPortHandler viewPortHandler) {
         super(animator, viewPortHandler);
@@ -29,7 +32,7 @@ public abstract class LineScatterCandleRadarRenderer extends BarLineScatterCandl
      * @param y y-position of the highlight line intersection
      * @param set the currently drawn dataset
      */
-    protected void drawHighlightLines(Canvas c, float x, float y, ILineScatterCandleRadarDataSet set) {
+    protected void drawHighlightLines(@NonNull Canvas c, float x, float y, @NonNull ILineScatterCandleRadarDataSet set) {
 
         // set color and stroke-width
         mHighlightPaint.setColor(set.getHighLightColor());

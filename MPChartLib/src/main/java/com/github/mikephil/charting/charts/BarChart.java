@@ -5,6 +5,9 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarEntry;
@@ -86,6 +89,7 @@ public class BarChart extends BarLineChartBase<BarData> implements BarDataProvid
      * @param y
      * @return
      */
+    @Nullable
     @Override
     public Highlight getHighlightByTouchPoint(float x, float y) {
 
@@ -110,7 +114,8 @@ public class BarChart extends BarLineChartBase<BarData> implements BarDataProvid
      * @param e
      * @return
      */
-    public RectF getBarBounds(BarEntry e) {
+    @NonNull
+    public RectF getBarBounds(@NonNull BarEntry e) {
 
         RectF bounds = new RectF();
         getBarBounds(e, bounds);
@@ -125,7 +130,7 @@ public class BarChart extends BarLineChartBase<BarData> implements BarDataProvid
      * @param e
      * @return
      */
-    public void getBarBounds(BarEntry e, RectF outputRect) {
+    public void getBarBounds(@NonNull BarEntry e, RectF outputRect) {
 
         RectF bounds = outputRect;
 
@@ -220,6 +225,7 @@ public class BarChart extends BarLineChartBase<BarData> implements BarDataProvid
         highlightValue(new Highlight(x, dataSetIndex, stackIndex), false);
     }
 
+    @Nullable
     @Override
     public BarData getBarData() {
         return mData;

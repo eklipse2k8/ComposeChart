@@ -1,6 +1,8 @@
 
 package com.github.mikephil.charting.data;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IRadarDataSet;
 
@@ -52,7 +54,7 @@ public class RadarData extends ChartData<IRadarDataSet> {
     }
 
     @Override
-    public Entry getEntryForHighlight(Highlight highlight) {
+    public Entry getEntryForHighlight(@NonNull Highlight highlight) {
         return getDataSetByIndex(highlight.getDataSetIndex()).getEntryForIndex((int) highlight.getX());
     }
 }

@@ -1,6 +1,8 @@
 
 package com.github.mikephil.charting.utils;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 /**
@@ -10,7 +12,7 @@ import java.util.List;
  */
 public class MPPointD extends ObjectPool.Poolable {
 
-    private static ObjectPool<MPPointD> pool;
+    private static final ObjectPool<MPPointD> pool;
 
     static {
         pool = ObjectPool.create(64, new MPPointD(0,0));
@@ -24,17 +26,18 @@ public class MPPointD extends ObjectPool.Poolable {
         return result;
     }
 
-    public static void recycleInstance(MPPointD instance){
+    public static void recycleInstance(@NonNull MPPointD instance){
         pool.recycle(instance);
     }
 
-    public static void recycleInstances(List<MPPointD> instances){
+    public static void recycleInstances(@NonNull List<MPPointD> instances){
         pool.recycle(instances);
     }
 
     public double x;
     public double y;
 
+    @NonNull
     protected ObjectPool.Poolable instantiate(){
         return new MPPointD(0,0);
     }
@@ -47,6 +50,7 @@ public class MPPointD extends ObjectPool.Poolable {
     /**
      * returns a string representation of the object
      */
+    @NonNull
     public String toString() {
         return "MPPointD, x: " + x + ", y: " + y;
     }

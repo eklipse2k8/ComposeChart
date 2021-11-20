@@ -4,6 +4,8 @@ package com.github.mikephil.charting.data;
 import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;
 
+import androidx.annotation.Nullable;
+
 /**
  * Subclass of Entry that holds all values for one entry in a CandleStickChart.
  * 
@@ -131,6 +133,7 @@ public class CandleEntry extends Entry {
         return super.getY();
     }
 
+    @Nullable
     public CandleEntry copy() {
 
         CandleEntry c = new CandleEntry(getX(), mShadowHigh, mShadowLow, mOpen,

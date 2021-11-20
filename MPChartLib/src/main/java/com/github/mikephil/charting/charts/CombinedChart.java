@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BubbleData;
 import com.github.mikephil.charting.data.CandleData;
@@ -45,6 +47,7 @@ public class CombinedChart extends BarLineChartBase<CombinedData> implements Com
      */
     private boolean mDrawBarShadow = false;
 
+    @Nullable
     protected DrawOrder[] mDrawOrder;
 
     /**
@@ -84,6 +87,7 @@ public class CombinedChart extends BarLineChartBase<CombinedData> implements Com
         mRenderer = new CombinedChartRenderer(this, mAnimator, mViewPortHandler);
     }
 
+    @Nullable
     @Override
     public CombinedData getCombinedData() {
         return mData;
@@ -106,6 +110,7 @@ public class CombinedChart extends BarLineChartBase<CombinedData> implements Com
      * @param y
      * @return
      */
+    @Nullable
     @Override
     public Highlight getHighlightByTouchPoint(float x, float y) {
 
@@ -123,6 +128,7 @@ public class CombinedChart extends BarLineChartBase<CombinedData> implements Com
         }
     }
 
+    @Nullable
     @Override
     public LineData getLineData() {
         if (mData == null)
@@ -130,6 +136,7 @@ public class CombinedChart extends BarLineChartBase<CombinedData> implements Com
         return mData.getLineData();
     }
 
+    @Nullable
     @Override
     public BarData getBarData() {
         if (mData == null)
@@ -137,6 +144,7 @@ public class CombinedChart extends BarLineChartBase<CombinedData> implements Com
         return mData.getBarData();
     }
 
+    @Nullable
     @Override
     public ScatterData getScatterData() {
         if (mData == null)
@@ -144,6 +152,7 @@ public class CombinedChart extends BarLineChartBase<CombinedData> implements Com
         return mData.getScatterData();
     }
 
+    @Nullable
     @Override
     public CandleData getCandleData() {
         if (mData == null)
@@ -151,6 +160,7 @@ public class CombinedChart extends BarLineChartBase<CombinedData> implements Com
         return mData.getCandleData();
     }
 
+    @Nullable
     @Override
     public BubbleData getBubbleData() {
         if (mData == null)
@@ -212,6 +222,7 @@ public class CombinedChart extends BarLineChartBase<CombinedData> implements Com
      *
      * @return
      */
+    @Nullable
     public DrawOrder[] getDrawOrder() {
         return mDrawOrder;
     }
@@ -224,7 +235,7 @@ public class CombinedChart extends BarLineChartBase<CombinedData> implements Com
      *
      * @param order
      */
-    public void setDrawOrder(DrawOrder[] order) {
+    public void setDrawOrder(@Nullable DrawOrder[] order) {
         if (order == null || order.length <= 0)
             return;
         mDrawOrder = order;

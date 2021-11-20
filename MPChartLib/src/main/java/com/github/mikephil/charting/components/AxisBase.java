@@ -5,6 +5,9 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.formatter.DefaultAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.utils.Utils;
@@ -22,6 +25,7 @@ public abstract class AxisBase extends ComponentBase {
     /**
      * custom formatter that is used instead of the auto-formatter if set
      */
+    @Nullable
     protected IAxisValueFormatter mAxisValueFormatter;
 
     private int mGridColor = Color.GRAY;
@@ -35,11 +39,13 @@ public abstract class AxisBase extends ComponentBase {
     /**
      * the actual array of entries
      */
+    @NonNull
     public float[] mEntries = new float[]{};
 
     /**
      * axis label entries only used for centered labels
      */
+    @NonNull
     public float[] mCenteredEntries = new float[]{};
 
     /**
@@ -95,11 +101,13 @@ public abstract class AxisBase extends ComponentBase {
     /**
      * the path effect of the axis line that makes dashed lines possible
      */
+    @Nullable
     private DashPathEffect mAxisLineDashPathEffect = null;
 
     /**
      * the path effect of the grid lines that makes dashed lines possible
      */
+    @Nullable
     private DashPathEffect mGridDashPathEffect = null;
 
     /**
@@ -531,7 +539,7 @@ public abstract class AxisBase extends ComponentBase {
      *
      * @param f
      */
-    public void setValueFormatter(IAxisValueFormatter f) {
+    public void setValueFormatter(@Nullable IAxisValueFormatter f) {
 
         if (f == null)
             mAxisValueFormatter = new DefaultAxisValueFormatter(mDecimals);
@@ -544,6 +552,7 @@ public abstract class AxisBase extends ComponentBase {
      *
      * @return
      */
+    @Nullable
     public IAxisValueFormatter getValueFormatter() {
 
         if (mAxisValueFormatter == null ||
@@ -593,7 +602,7 @@ public abstract class AxisBase extends ComponentBase {
      * @return
      */
     public boolean isGridDashedLineEnabled() {
-        return mGridDashPathEffect == null ? false : true;
+        return mGridDashPathEffect != null;
     }
 
     /**
@@ -601,6 +610,7 @@ public abstract class AxisBase extends ComponentBase {
      *
      * @return
      */
+    @Nullable
     public DashPathEffect getGridDashPathEffect() {
         return mGridDashPathEffect;
     }
@@ -645,7 +655,7 @@ public abstract class AxisBase extends ComponentBase {
      * @return
      */
     public boolean isAxisLineDashedLineEnabled() {
-        return mAxisLineDashPathEffect == null ? false : true;
+        return mAxisLineDashPathEffect != null;
     }
 
     /**
@@ -653,6 +663,7 @@ public abstract class AxisBase extends ComponentBase {
      *
      * @return
      */
+    @Nullable
     public DashPathEffect getAxisLineDashPathEffect() {
         return mAxisLineDashPathEffect;
     }

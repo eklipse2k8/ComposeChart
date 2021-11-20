@@ -2,6 +2,9 @@ package com.github.mikephil.charting.interfaces.dataprovider;
 
 import android.graphics.RectF;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.data.ChartData;
 import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.MPPointF;
@@ -55,14 +58,19 @@ public interface ChartInterface {
 
     int getHeight();
 
+    @NonNull
     MPPointF getCenterOfView();
 
+    @NonNull
     MPPointF getCenterOffsets();
 
+    @NonNull
     RectF getContentRect();
 
+    @NonNull
     IValueFormatter getDefaultValueFormatter();
 
+    @Nullable
     ChartData getData();
 
     int getMaxVisibleCount();

@@ -2,6 +2,9 @@ package com.github.mikephil.charting.renderer;
 
 import android.graphics.Canvas;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.CombinedChart;
@@ -103,10 +106,11 @@ public class CombinedChartRenderer extends DataRenderer {
             renderer.drawExtras(c);
     }
 
+    @NonNull
     protected List<Highlight> mHighlightBuffer = new ArrayList<Highlight>();
 
     @Override
-    public void drawHighlighted(Canvas c, Highlight[] indices) {
+    public void drawHighlighted(Canvas c, @NonNull Highlight[] indices) {
 
         Chart chart = mChart.get();
         if (chart == null) return;
@@ -145,6 +149,7 @@ public class CombinedChartRenderer extends DataRenderer {
      * @param index
      * @return
      */
+    @Nullable
     public DataRenderer getSubRenderer(int index) {
         if (index >= mRenderers.size() || index < 0)
             return null;

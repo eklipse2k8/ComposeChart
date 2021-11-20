@@ -4,6 +4,9 @@ package com.github.mikephil.charting.jobs;
 import android.graphics.Matrix;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.utils.ObjectPool;
@@ -15,7 +18,7 @@ import com.github.mikephil.charting.utils.ViewPortHandler;
  */
 public class ZoomJob extends ViewPortJob {
 
-    private static ObjectPool<ZoomJob> pool;
+    private static final ObjectPool<ZoomJob> pool;
 
     static {
         pool = ObjectPool.create(1, new ZoomJob(null, 0, 0, 0, 0, null, null, null));
@@ -36,7 +39,7 @@ public class ZoomJob extends ViewPortJob {
         return result;
     }
 
-    public static void recycleInstance(ZoomJob instance) {
+    public static void recycleInstance(@NonNull ZoomJob instance) {
         pool.recycle(instance);
     }
 
@@ -54,6 +57,7 @@ public class ZoomJob extends ViewPortJob {
         this.axisDependency = axis;
     }
 
+    @NonNull
     protected Matrix mRunMatrixBuffer = new Matrix();
 
     @Override
@@ -80,6 +84,7 @@ public class ZoomJob extends ViewPortJob {
         recycleInstance(this);
     }
 
+    @Nullable
     @Override
     protected ObjectPool.Poolable instantiate() {
         return new ZoomJob(null, 0, 0, 0, 0, null, null, null);

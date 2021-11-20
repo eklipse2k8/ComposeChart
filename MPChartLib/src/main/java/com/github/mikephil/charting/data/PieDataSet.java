@@ -3,6 +3,8 @@ package com.github.mikephil.charting.data;
 
 import com.github.mikephil.charting.interfaces.datasets.IPieDataSet;
 import com.github.mikephil.charting.utils.Utils;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ public class PieDataSet extends DataSet<PieEntry> implements IPieDataSet {
     private float mValueLinePart1Length = 0.3f;
     private float mValueLinePart2Length = 0.4f;
     private boolean mValueLineVariableLength = true;
+    @Nullable
     private Integer mHighlightColor = null;
 
     public PieDataSet(List<PieEntry> yVals, String label) {
@@ -37,6 +40,7 @@ public class PieDataSet extends DataSet<PieEntry> implements IPieDataSet {
 //        mShift = Utils.convertDpToPixel(12f);
     }
 
+    @NonNull
     @Override
     public DataSet<PieEntry> copy() {
         List<PieEntry> entries = new ArrayList<>();
@@ -48,12 +52,12 @@ public class PieDataSet extends DataSet<PieEntry> implements IPieDataSet {
         return copied;
     }
 
-    protected void copy(PieDataSet pieDataSet) {
+    protected void copy(@NonNull PieDataSet pieDataSet) {
         super.copy(pieDataSet);
     }
 
     @Override
-    protected void calcMinMax(PieEntry e) {
+    protected void calcMinMax(@Nullable PieEntry e) {
 
         if (e == null)
             return;

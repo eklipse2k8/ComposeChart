@@ -6,6 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
@@ -23,7 +26,8 @@ import java.lang.ref.WeakReference;
 public class MarkerView extends RelativeLayout implements IMarker {
 
     private MPPointF mOffset = new MPPointF();
-    private MPPointF mOffset2 = new MPPointF();
+    @NonNull
+    private final MPPointF mOffset2 = new MPPointF();
     private WeakReference<Chart> mWeakChart;
 
     /**
@@ -75,10 +79,12 @@ public class MarkerView extends RelativeLayout implements IMarker {
         mWeakChart = new WeakReference<>(chart);
     }
 
+    @Nullable
     public Chart getChartView() {
         return mWeakChart == null ? null : mWeakChart.get();
     }
 
+    @NonNull
     @Override
     public MPPointF getOffsetForDrawingAtPoint(float posX, float posY) {
 
@@ -116,7 +122,7 @@ public class MarkerView extends RelativeLayout implements IMarker {
     }
 
     @Override
-    public void draw(Canvas canvas, float posX, float posY) {
+    public void draw(@NonNull Canvas canvas, float posX, float posY) {
 
         MPPointF offset = getOffsetForDrawingAtPoint(posX, posY);
 

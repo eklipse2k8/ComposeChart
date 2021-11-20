@@ -33,6 +33,7 @@ public class Fill
     @Nullable
     private Integer mColor = null;
 
+    @Nullable
     private Integer mFinalColor = null;
 
     /**
@@ -110,6 +111,7 @@ public class Fill
         calculateFinalColor();
     }
 
+    @Nullable
     public int[] getGradientColors()
     {
         return mGradientColors;
@@ -120,6 +122,7 @@ public class Fill
         this.mGradientColors = colors;
     }
 
+    @Nullable
     public float[] getGradientPositions()
     {
         return mGradientPositions;
@@ -158,7 +161,7 @@ public class Fill
         }
     }
 
-    public void fillRect(Canvas c, Paint paint,
+    public void fillRect(@NonNull Canvas c, @NonNull Paint paint,
                          float left, float top, float right, float bottom,
                          Direction gradientDirection)
     {
@@ -206,13 +209,9 @@ public class Fill
                 LinearGradient gradient = new LinearGradient(
                         (int) (gradientDirection == Direction.RIGHT
                                 ? right
-                                : gradientDirection == Direction.LEFT
-                                ? left
                                 : left),
                         (int) (gradientDirection == Direction.UP
                                 ? bottom
-                                : gradientDirection == Direction.DOWN
-                                ? top
                                 : top),
                         (int) (gradientDirection == Direction.RIGHT
                                 ? left
@@ -245,7 +244,7 @@ public class Fill
         }
     }
 
-    public void fillPath(Canvas c, Path path, Paint paint,
+    public void fillPath(@NonNull Canvas c, Path path, @NonNull Paint paint,
                          @Nullable RectF clipRect)
     {
         switch (mType)

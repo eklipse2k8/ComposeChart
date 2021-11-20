@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.graphics.Paint.Style;
 import android.graphics.drawable.Drawable;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.data.BubbleData;
 import com.github.mikephil.charting.data.BubbleEntry;
@@ -44,7 +46,7 @@ public class BubbleChartRenderer extends BarLineScatterCandleBubbleRenderer {
     }
 
     @Override
-    public void drawData(Canvas c) {
+    public void drawData(@NonNull Canvas c) {
 
         BubbleData bubbleData = mChart.getBubbleData();
 
@@ -55,8 +57,10 @@ public class BubbleChartRenderer extends BarLineScatterCandleBubbleRenderer {
         }
     }
 
-    private float[] sizeBuffer = new float[4];
-    private float[] pointBuffer = new float[2];
+    @NonNull
+    private final float[] sizeBuffer = new float[4];
+    @NonNull
+    private final float[] pointBuffer = new float[2];
 
     protected float getShapeSize(float entrySize, float maxSize, float reference, boolean normalizeSize) {
         final float factor = normalizeSize ? ((maxSize == 0f) ? 1f : (float) Math.sqrt(entrySize / maxSize)) :
@@ -65,7 +69,7 @@ public class BubbleChartRenderer extends BarLineScatterCandleBubbleRenderer {
         return shapeSize;
     }
 
-    protected void drawDataSet(Canvas c, IBubbleDataSet dataSet) {
+    protected void drawDataSet(@NonNull Canvas c, @NonNull IBubbleDataSet dataSet) {
 
         if (dataSet.getEntryCount() < 1)
             return;
@@ -116,7 +120,7 @@ public class BubbleChartRenderer extends BarLineScatterCandleBubbleRenderer {
     }
 
     @Override
-    public void drawValues(Canvas c) {
+    public void drawValues(@NonNull Canvas c) {
 
         BubbleData bubbleData = mChart.getBubbleData();
 
@@ -199,10 +203,11 @@ public class BubbleChartRenderer extends BarLineScatterCandleBubbleRenderer {
     public void drawExtras(Canvas c) {
     }
 
-    private float[] _hsvBuffer = new float[3];
+    @NonNull
+    private final float[] _hsvBuffer = new float[3];
 
     @Override
-    public void drawHighlighted(Canvas c, Highlight[] indices) {
+    public void drawHighlighted(@NonNull Canvas c, @NonNull Highlight[] indices) {
 
         BubbleData bubbleData = mChart.getBubbleData();
 

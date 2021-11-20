@@ -1,6 +1,8 @@
 
 package com.github.mikephil.charting.formatter;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.utils.ViewPortHandler;
@@ -24,7 +26,7 @@ public class LargeValueFormatter implements IValueFormatter, IAxisValueFormatter
             "", "k", "m", "b", "t"
     };
     private int mMaxLength = 5;
-    private DecimalFormat mFormat;
+    private final DecimalFormat mFormat;
     private String mText = "";
 
     public LargeValueFormatter() {
@@ -42,12 +44,14 @@ public class LargeValueFormatter implements IValueFormatter, IAxisValueFormatter
     }
 
     // IValueFormatter
+    @NonNull
     @Override
     public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
         return makePretty(value) + mText;
     }
 
     // IAxisValueFormatter
+    @NonNull
     @Override
     public String getFormattedValue(float value, AxisBase axis) {
         return makePretty(value) + mText;
@@ -80,6 +84,7 @@ public class LargeValueFormatter implements IValueFormatter, IAxisValueFormatter
      * Formats each number properly. Special thanks to Roman Gromov
      * (https://github.com/romangromov) for this piece of code.
      */
+    @NonNull
     private String makePretty(double number) {
 
         String r = mFormat.format(number);

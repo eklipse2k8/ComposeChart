@@ -1,5 +1,7 @@
 package com.github.mikephil.charting.formatter;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.utils.ViewPortHandler;
@@ -18,14 +20,14 @@ public class StackedValueFormatter implements IValueFormatter
     /**
      * if true, all stack values of the stacked bar entry are drawn, else only top
      */
-    private boolean mDrawWholeStack;
+    private final boolean mDrawWholeStack;
 
     /**
      * a string that should be appended behind the value
      */
-    private String mAppendix;
+    private final String mAppendix;
 
-    private DecimalFormat mFormat;
+    private final DecimalFormat mFormat;
 
     /**
      * Constructor.
@@ -45,9 +47,10 @@ public class StackedValueFormatter implements IValueFormatter
             b.append("0");
         }
 
-        this.mFormat = new DecimalFormat("###,###,###,##0" + b.toString());
+        this.mFormat = new DecimalFormat("###,###,###,##0" + b);
     }
 
+    @NonNull
     @Override
     public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
 

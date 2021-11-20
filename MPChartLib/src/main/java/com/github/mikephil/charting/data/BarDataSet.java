@@ -3,6 +3,9 @@ package com.github.mikephil.charting.data;
 
 import android.graphics.Color;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.Fill;
 
@@ -41,9 +44,10 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
      */
     private String[] mStackLabels = new String[]{};
 
+    @Nullable
     protected List<Fill> mFills = null;
 
-    public BarDataSet(List<BarEntry> yVals, String label) {
+    public BarDataSet(@NonNull List<BarEntry> yVals, String label) {
         super(yVals, label);
 
         mHighLightColor = Color.rgb(0, 0, 0);
@@ -52,6 +56,7 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
         calcEntryCountIncludingStacks(yVals);
     }
 
+    @NonNull
     @Override
     public DataSet<BarEntry> copy() {
         List<BarEntry> entries = new ArrayList<BarEntry>();
@@ -63,7 +68,7 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
         return copied;
     }
 
-    protected void copy(BarDataSet barDataSet) {
+    protected void copy(@NonNull BarDataSet barDataSet) {
         super.copy(barDataSet);
         barDataSet.mStackSize = mStackSize;
         barDataSet.mBarShadowColor = mBarShadowColor;
@@ -72,6 +77,7 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
         barDataSet.mHighLightAlpha = mHighLightAlpha;
     }
 
+    @Nullable
     @Override
     public List<Fill> getFills() {
         return mFills;
@@ -86,6 +92,7 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
      * This method is deprecated.
      * Use getFills() instead.
      */
+    @Nullable
     @Deprecated
     public List<Fill> getGradients() {
         return mFills;
@@ -137,7 +144,7 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
      * Calculates the total number of entries this DataSet represents, including
      * stacks. All values belonging to a stack are calculated separately.
      */
-    private void calcEntryCountIncludingStacks(List<BarEntry> yVals) {
+    private void calcEntryCountIncludingStacks(@NonNull List<BarEntry> yVals) {
 
         mEntryCountStacks = 0;
 
@@ -156,7 +163,7 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
      * calculates the maximum stacksize that occurs in the Entries array of this
      * DataSet
      */
-    private void calcStackSize(List<BarEntry> yVals) {
+    private void calcStackSize(@NonNull List<BarEntry> yVals) {
 
         for (int i = 0; i < yVals.size(); i++) {
 
@@ -168,7 +175,7 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
     }
 
     @Override
-    protected void calcMinMax(BarEntry e) {
+    protected void calcMinMax(@Nullable BarEntry e) {
 
         if (e != null && !Float.isNaN(e.getY())) {
 
@@ -199,7 +206,7 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
 
     @Override
     public boolean isStacked() {
-        return mStackSize > 1 ? true : false;
+        return mStackSize > 1;
     }
 
     /**

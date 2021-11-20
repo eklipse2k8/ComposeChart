@@ -3,6 +3,8 @@ package com.github.mikephil.charting.data;
 
 import android.graphics.Color;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.interfaces.datasets.IRadarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
@@ -99,6 +101,7 @@ public class RadarDataSet extends LineRadarDataSet<RadarEntry> implements IRadar
         mHighlightCircleStrokeWidth = strokeWidth;
     }
 
+    @NonNull
     @Override
     public DataSet<RadarEntry> copy() {
         List<RadarEntry> entries = new ArrayList<RadarEntry>();
@@ -110,7 +113,7 @@ public class RadarDataSet extends LineRadarDataSet<RadarEntry> implements IRadar
         return copied;
     }
 
-    protected void copy(RadarDataSet radarDataSet) {
+    protected void copy(@NonNull RadarDataSet radarDataSet) {
         super.copy(radarDataSet);
         radarDataSet.mDrawHighlightCircleEnabled = mDrawHighlightCircleEnabled;
         radarDataSet.mHighlightCircleFillColor = mHighlightCircleFillColor;

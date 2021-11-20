@@ -4,6 +4,8 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.utils.ObjectPool;
 import com.github.mikephil.charting.utils.Transformer;
 import com.github.mikephil.charting.utils.ViewPortHandler;
@@ -14,7 +16,7 @@ import com.github.mikephil.charting.utils.ViewPortHandler;
 @SuppressLint("NewApi")
 public class AnimatedMoveViewJob extends AnimatedViewPortJob {
 
-    private static ObjectPool<AnimatedMoveViewJob> pool;
+    private static final ObjectPool<AnimatedMoveViewJob> pool;
 
     static {
         pool = ObjectPool.create(4, new AnimatedMoveViewJob(null,0,0,null,null,0,0,0));
@@ -35,7 +37,7 @@ public class AnimatedMoveViewJob extends AnimatedViewPortJob {
         return result;
     }
 
-    public static void recycleInstance(AnimatedMoveViewJob instance){
+    public static void recycleInstance(@NonNull AnimatedMoveViewJob instance){
         pool.recycle(instance);
     }
 
@@ -58,6 +60,7 @@ public class AnimatedMoveViewJob extends AnimatedViewPortJob {
         recycleInstance(this);
     }
 
+    @NonNull
     @Override
     protected ObjectPool.Poolable instantiate() {
         return new AnimatedMoveViewJob(null,0,0,null,null,0,0,0);

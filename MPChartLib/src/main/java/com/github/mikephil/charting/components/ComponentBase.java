@@ -4,6 +4,8 @@ package com.github.mikephil.charting.components;
 import android.graphics.Color;
 import android.graphics.Typeface;
 
+import androidx.annotation.Nullable;
+
 import com.github.mikephil.charting.utils.Utils;
 
 /**
@@ -31,6 +33,7 @@ public abstract class ComponentBase {
     /**
      * the typeface used for the labels
      */
+    @Nullable
     protected Typeface mTypeface = null;
 
     /**
@@ -93,6 +96,7 @@ public abstract class ComponentBase {
      *
      * @return
      */
+    @Nullable
     public Typeface getTypeface() {
         return mTypeface;
     }

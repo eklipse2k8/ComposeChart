@@ -6,6 +6,8 @@ import android.graphics.Paint.Align;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.buffer.BarBuffer;
 import com.github.mikephil.charting.buffer.HorizontalBarBuffer;
@@ -51,10 +53,11 @@ public class HorizontalBarChartRenderer extends BarChartRenderer {
         }
     }
 
-    private RectF mBarShadowRectBuffer = new RectF();
+    @NonNull
+    private final RectF mBarShadowRectBuffer = new RectF();
 
     @Override
-    protected void drawDataSet(Canvas c, IBarDataSet dataSet, int index) {
+    protected void drawDataSet(@NonNull Canvas c, @NonNull IBarDataSet dataSet, int index) {
 
         Transformer trans = mChart.getTransformer(dataSet.getAxisDependency());
 
@@ -158,7 +161,7 @@ public class HorizontalBarChartRenderer extends BarChartRenderer {
     }
 
     @Override
-    public void drawValues(Canvas c) {
+    public void drawValues(@NonNull Canvas c) {
         // if values are drawn
         if (isDrawingValuesAllowed(mChart)) {
 
@@ -412,13 +415,13 @@ public class HorizontalBarChartRenderer extends BarChartRenderer {
         }
     }
 
-    protected void drawValue(Canvas c, String valueText, float x, float y, int color) {
+    protected void drawValue(@NonNull Canvas c, String valueText, float x, float y, int color) {
         mValuePaint.setColor(color);
         c.drawText(valueText, x, y, mValuePaint);
     }
 
     @Override
-    protected void prepareBarHighlight(float x, float y1, float y2, float barWidthHalf, Transformer trans) {
+    protected void prepareBarHighlight(float x, float y1, float y2, float barWidthHalf, @NonNull Transformer trans) {
 
         float top = x - barWidthHalf;
         float bottom = x + barWidthHalf;
@@ -431,12 +434,12 @@ public class HorizontalBarChartRenderer extends BarChartRenderer {
     }
 
     @Override
-    protected void setHighlightDrawPos(Highlight high, RectF bar) {
+    protected void setHighlightDrawPos(@NonNull Highlight high, @NonNull RectF bar) {
         high.setDraw(bar.centerY(), bar.right);
     }
 
     @Override
-    protected boolean isDrawingValuesAllowed(ChartInterface chart) {
+    protected boolean isDrawingValuesAllowed(@NonNull ChartInterface chart) {
         return chart.getData().getEntryCount() < chart.getMaxVisibleCount()
                 * mViewPortHandler.getScaleY();
     }

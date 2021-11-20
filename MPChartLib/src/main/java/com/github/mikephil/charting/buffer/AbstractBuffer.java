@@ -1,6 +1,8 @@
 
 package com.github.mikephil.charting.buffer;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 /**
@@ -16,6 +18,7 @@ public abstract class AbstractBuffer<T> {
     protected int index = 0;
 
     /** float-buffer that holds the data points to draw, order: x,y,x,y,... */
+    @NonNull
     public final float[] buffer;
 
     /** animation phase x-axis */

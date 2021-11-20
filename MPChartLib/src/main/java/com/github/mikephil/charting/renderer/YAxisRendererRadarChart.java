@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.PointF;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.charts.RadarChart;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.YAxis;
@@ -15,7 +17,7 @@ import java.util.List;
 
 public class YAxisRendererRadarChart extends YAxisRenderer {
 
-    private RadarChart mChart;
+    private final RadarChart mChart;
 
     public YAxisRendererRadarChart(ViewPortHandler viewPortHandler, YAxis yAxis, RadarChart chart) {
         super(viewPortHandler, yAxis, null);
@@ -145,7 +147,7 @@ public class YAxisRendererRadarChart extends YAxisRenderer {
     }
 
     @Override
-    public void renderAxisLabels(Canvas c) {
+    public void renderAxisLabels(@NonNull Canvas c) {
 
         if (!mYAxis.isEnabled() || !mYAxis.isDrawLabelsEnabled())
             return;
@@ -179,9 +181,10 @@ public class YAxisRendererRadarChart extends YAxisRenderer {
         MPPointF.recycleInstance(pOut);
     }
 
-    private Path mRenderLimitLinesPathBuffer = new Path();
+    @NonNull
+    private final Path mRenderLimitLinesPathBuffer = new Path();
     @Override
-    public void renderLimitLines(Canvas c) {
+    public void renderLimitLines(@NonNull Canvas c) {
 
         List<LimitLine> limitLines = mYAxis.getLimitLines();
 

@@ -3,6 +3,8 @@ package com.github.mikephil.charting.data;
 
 import android.graphics.Paint;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.interfaces.datasets.ICandleDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.Utils;
@@ -77,6 +79,7 @@ public class CandleDataSet extends LineScatterCandleRadarDataSet<CandleEntry> im
         super(yVals, label);
     }
 
+    @NonNull
     @Override
     public DataSet<CandleEntry> copy() {
         List<CandleEntry> entries = new ArrayList<CandleEntry>();
@@ -88,7 +91,7 @@ public class CandleDataSet extends LineScatterCandleRadarDataSet<CandleEntry> im
         return copied;
     }
 
-    protected void copy(CandleDataSet candleDataSet) {
+    protected void copy(@NonNull CandleDataSet candleDataSet) {
         super.copy(candleDataSet);
         candleDataSet.mShadowWidth = mShadowWidth;
         candleDataSet.mShowCandleBar = mShowCandleBar;
@@ -104,7 +107,7 @@ public class CandleDataSet extends LineScatterCandleRadarDataSet<CandleEntry> im
     }
 
     @Override
-    protected void calcMinMax(CandleEntry e) {
+    protected void calcMinMax(@NonNull CandleEntry e) {
 
         if (e.getLow() < mYMin)
             mYMin = e.getLow();
@@ -116,7 +119,7 @@ public class CandleDataSet extends LineScatterCandleRadarDataSet<CandleEntry> im
     }
 
     @Override
-    protected void calcMinMaxY(CandleEntry e) {
+    protected void calcMinMaxY(@NonNull CandleEntry e) {
 
         if (e.getHigh() < mYMin)
             mYMin = e.getHigh();
