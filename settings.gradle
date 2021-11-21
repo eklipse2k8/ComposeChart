@@ -1,2 +1,3 @@
 include 'ChartingCore'
 include 'MPChartExample'
+include ':chartdemo'
