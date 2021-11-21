@@ -13,13 +13,13 @@ class XAxisRendererRadarChart(
     private val mChart: RadarChart
 ) : XAxisRenderer(viewPortHandler, xAxis, null) {
 
-  override fun renderAxisLabels(c: Canvas?) {
-    if (!mXAxis.isEnabled || !mXAxis.isDrawLabelsEnabled) return
-    val labelRotationAngleDegrees = mXAxis.labelRotationAngle
+  override fun renderAxisLabels(canvas: Canvas?) {
+    if (!xAxis.isEnabled || !xAxis.isDrawLabelsEnabled) return
+    val labelRotationAngleDegrees = xAxis.labelRotationAngle
     val drawLabelAnchor = MPPointF.getInstance(0.5f, 0.25f)
-    mAxisLabelPaint.typeface = mXAxis.typeface
-    mAxisLabelPaint.textSize = mXAxis.textSize
-    mAxisLabelPaint.color = mXAxis.textColor
+    axisLabelPaint.typeface = xAxis.typeface
+    axisLabelPaint.textSize = xAxis.textSize
+    axisLabelPaint.color = xAxis.textColor
     val sliceangle = mChart.sliceAngle
 
     // calculate the factor that is needed for transforming the value to
@@ -28,15 +28,15 @@ class XAxisRendererRadarChart(
     val center = mChart.centerOffsets
     val pOut = MPPointF.getInstance(0f, 0f)
     for (i in 0 until mChart.data?.maxEntryCountSet?.entryCount!!) {
-      val label = mXAxis.valueFormatter!!.getFormattedValue(i.toFloat(), mXAxis)
+      val label = xAxis.valueFormatter!!.getFormattedValue(i.toFloat(), xAxis)
       val angle = (sliceangle * i + mChart.rotationAngle) % 360f
       Utils.getPosition(
-          center, mChart.yRange * factor + mXAxis.mLabelRotatedWidth / 2f, angle, pOut)
+          center, mChart.yRange * factor + xAxis.mLabelRotatedWidth / 2f, angle, pOut)
       drawLabel(
-          c,
+          canvas,
           label,
           pOut.x,
-          pOut.y - mXAxis.mLabelRotatedHeight / 2f,
+          pOut.y - xAxis.mLabelRotatedHeight / 2f,
           drawLabelAnchor,
           labelRotationAngleDegrees)
     }
@@ -48,9 +48,9 @@ class XAxisRendererRadarChart(
   /**
    * XAxis LimitLines on RadarChart not yet supported.
    *
-   * @param c
+   * @param canvas
    */
-  override fun renderLimitLines(c: Canvas?) {
+  override fun renderLimitLines(canvas: Canvas?) {
     // this space intentionally left blank
   }
 }

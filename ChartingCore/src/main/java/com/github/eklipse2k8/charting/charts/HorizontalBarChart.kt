@@ -48,7 +48,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     rendererRightYAxis =
         YAxisRendererHorizontalBarChart(viewPortHandler, axisRight, rightAxisTransformer)
     rendererXAxis =
-        XAxisRendererHorizontalBarChart(viewPortHandler, xAxis, leftAxisTransformer, this)
+        XAxisRendererHorizontalBarChart(viewPortHandler, xAxis, leftAxisTransformer)
   }
 
   private val mOffsetsBuffer = RectF()

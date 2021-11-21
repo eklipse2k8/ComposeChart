@@ -20,26 +20,41 @@ abstract class AxisRenderer(
     /** transformer to transform values to screen pixels and return */
     transformer: Transformer?,
     /** base axis this axis renderer works with */
-    @JvmField protected var mAxis: AxisBase
+    @JvmField protected var axis: AxisBase
 ) : Renderer(viewPortHandler) {
 
   /** transformer to transform values to screen pixels and return */
-  @JvmField protected var mTrans: Transformer? = transformer
+  @JvmField protected var transformer: Transformer? = transformer
 
   /** paint object for the grid lines */
-  @JvmField protected var mGridPaint: Paint? = null
+  @JvmField
+  protected var gridPaint: Paint =
+      Paint().apply {
+        color = Color.GRAY
+        strokeWidth = 1f
+        style = Paint.Style.STROKE
+        alpha = 90
+      }
 
   /** paint for the x-label values */
-  @JvmField protected var mAxisLabelPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+  @JvmField protected var axisLabelPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
   /** paint for the line surrounding the chart */
-  @JvmField protected var mAxisLinePaint: Paint? = null
+  @JvmField
+  protected var axisLinePaint: Paint =
+      Paint().apply {
+        color = Color.BLACK
+        strokeWidth = 1f
+        style = Paint.Style.STROKE
+      }
 
   /** paint used for the limit lines */
-  @JvmField protected var mLimitLinePaint: Paint? = null
+  @JvmField
+  protected var limitLinePaint: Paint =
+      Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
 
   /** Returns the Paint object used for drawing the axis (labels). */
-  val paintAxisLabels = mAxisLabelPaint
+  val paintAxisLabels = axisLabelPaint
 
   /**
    * Computes the axis values.
@@ -50,17 +65,17 @@ abstract class AxisRenderer(
    * - the maximum value in the data object for this axis
    */
   open fun computeAxis(min: Float, max: Float, inverted: Boolean) {
-    if (mTrans == null) return
+    if (transformer == null) return
     // calculate the starting and entry point of the y-labels (depending on
     // zoom / contentrect bounds)
     var minVal = min
     var maxVal = max
     if (viewPortHandler.contentWidth() > 10 && !viewPortHandler.isFullyZoomedOutY) {
       val p1 =
-          mTrans!!.getValuesByTouchPoint(
+          transformer!!.getValuesByTouchPoint(
               viewPortHandler.contentLeft(), viewPortHandler.contentTop())
       val p2 =
-          mTrans!!.getValuesByTouchPoint(
+          transformer!!.getValuesByTouchPoint(
               viewPortHandler.contentLeft(), viewPortHandler.contentBottom())
       if (!inverted) {
         minVal = p2.y.toFloat()
@@ -81,12 +96,12 @@ abstract class AxisRenderer(
    * @return
    */
   protected open fun computeAxisValues(min: Float, max: Float) {
-    val labelCount = mAxis.labelCount
+    val labelCount = axis.labelCount
     val range = abs(max - min).toDouble()
     if (labelCount == 0 || range <= 0 || range.isInfinite()) {
-      mAxis.mEntries = floatArrayOf()
-      mAxis.mCenteredEntries = floatArrayOf()
-      mAxis.mEntryCount = 0
+      axis.mEntries = floatArrayOf()
+      axis.mCenteredEntries = floatArrayOf()
+      axis.mEntryCount = 0
       return
     }
 
@@ -96,8 +111,8 @@ abstract class AxisRenderer(
 
     // If granularity is enabled, then do not allow the interval to go below specified granularity.
     // This is used to avoid repeated values when rounding values for display.
-    if (mAxis.isGranularityEnabled)
-        interval = if (interval < mAxis.granularity) mAxis.granularity.toDouble() else interval
+    if (axis.isGranularityEnabled)
+        interval = if (interval < axis.granularity) axis.granularity.toDouble() else interval
 
     // Normalize interval
     val intervalMagnitude = Utils.roundToNextSignificant(10.0.pow(log10(interval))).toDouble()
@@ -108,19 +123,19 @@ abstract class AxisRenderer(
       interval =
           if (floor(10.0 * intervalMagnitude) == 0.0) interval else floor(10.0 * intervalMagnitude)
     }
-    var n = if (mAxis.isCenterAxisLabelsEnabled) 1 else 0
+    var n = if (axis.isCenterAxisLabelsEnabled) 1 else 0
 
     // force label count
-    if (mAxis.isForceLabelsEnabled) {
+    if (axis.isForceLabelsEnabled) {
       interval = (range.toFloat() / (labelCount - 1).toFloat()).toDouble()
-      mAxis.mEntryCount = labelCount
-      if (mAxis.mEntries.size < labelCount) {
+      axis.mEntryCount = labelCount
+      if (axis.mEntries.size < labelCount) {
         // Ensure stops contains at least numStops elements.
-        mAxis.mEntries = FloatArray(labelCount)
+        axis.mEntries = FloatArray(labelCount)
       }
       var v = min
       for (i in 0 until labelCount) {
-        mAxis.mEntries[i] = v
+        axis.mEntries[i] = v
         v += interval.toFloat()
       }
       n = labelCount
@@ -128,7 +143,7 @@ abstract class AxisRenderer(
       // no forced count
     } else {
       var first = if (interval == 0.0) 0.0 else ceil(min / interval) * interval
-      if (mAxis.isCenterAxisLabelsEnabled) {
+      if (axis.isCenterAxisLabelsEnabled) {
         first -= interval
       }
       val last = if (interval == 0.0) 0.0 else (floor(max / interval) * interval).nextUp()
@@ -142,17 +157,17 @@ abstract class AxisRenderer(
       } else if (last == first && n == 0) {
         n = 1
       }
-      mAxis.mEntryCount = n
-      if (mAxis.mEntries.size < n) {
+      axis.mEntryCount = n
+      if (axis.mEntries.size < n) {
         // Ensure stops contains at least numStops elements.
-        mAxis.mEntries = FloatArray(n)
+        axis.mEntries = FloatArray(n)
       }
       f = first
       var i = 0
       while (i < n) {
         if (f == 0.0) // Fix for negative zero case (Where value == -0.0, and 0.0 == -0.0)
          f = 0.0
-        mAxis.mEntries[i] = f.toFloat()
+        axis.mEntries[i] = f.toFloat()
         f += interval
         ++i
       }
@@ -160,17 +175,17 @@ abstract class AxisRenderer(
 
     // set decimals
     if (interval < 1) {
-      mAxis.mDecimals = ceil(-log10(interval)).toInt()
+      axis.mDecimals = ceil(-log10(interval)).toInt()
     } else {
-      mAxis.mDecimals = 0
+      axis.mDecimals = 0
     }
-    if (mAxis.isCenterAxisLabelsEnabled) {
-      if (mAxis.mCenteredEntries.size < n) {
-        mAxis.mCenteredEntries = FloatArray(n)
+    if (axis.isCenterAxisLabelsEnabled) {
+      if (axis.mCenteredEntries.size < n) {
+        axis.mCenteredEntries = FloatArray(n)
       }
       val offset = interval.toFloat() / 2f
       for (i in 0 until n) {
-        mAxis.mCenteredEntries[i] = mAxis.mEntries[i] + offset
+        axis.mCenteredEntries[i] = axis.mEntries[i] + offset
       }
     }
   }
@@ -178,45 +193,28 @@ abstract class AxisRenderer(
   /**
    * Draws the axis labels to the screen.
    *
-   * @param c
+   * @param canvas
    */
-  abstract fun renderAxisLabels(c: Canvas?)
+  abstract fun renderAxisLabels(canvas: Canvas?)
 
   /**
    * Draws the grid lines belonging to the axis.
    *
-   * @param c
+   * @param canvas
    */
-  abstract fun renderGridLines(c: Canvas?)
+  abstract fun renderGridLines(canvas: Canvas?)
 
   /**
    * Draws the line that goes alongside the axis.
    *
-   * @param c
+   * @param canvas
    */
-  abstract fun renderAxisLine(c: Canvas?)
+  abstract fun renderAxisLine(canvas: Canvas?)
 
   /**
    * Draws the LimitLines associated with this axis to the screen.
    *
-   * @param c
+   * @param canvas
    */
-  abstract fun renderLimitLines(c: Canvas?)
-
-  init {
-    mGridPaint =
-        Paint().apply {
-          color = Color.GRAY
-          strokeWidth = 1f
-          style = Paint.Style.STROKE
-          alpha = 90
-        }
-    mAxisLinePaint =
-        Paint().apply {
-          color = Color.BLACK
-          strokeWidth = 1f
-          style = Paint.Style.STROKE
-        }
-    mLimitLinePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
-  }
+  abstract fun renderLimitLines(canvas: Canvas?)
 }

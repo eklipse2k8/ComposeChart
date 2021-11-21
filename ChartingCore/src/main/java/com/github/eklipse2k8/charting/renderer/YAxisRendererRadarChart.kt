@@ -15,12 +15,12 @@ class YAxisRendererRadarChart(
     private val mChart: RadarChart
 ) : YAxisRenderer(viewPortHandler, yAxis, null) {
   override fun computeAxisValues(min: Float, max: Float) {
-    val labelCount = mAxis.labelCount
+    val labelCount = axis.labelCount
     val range = abs(max - min).toDouble()
     if (labelCount == 0 || range <= 0 || java.lang.Double.isInfinite(range)) {
-      mAxis.mEntries = floatArrayOf()
-      mAxis.mCenteredEntries = floatArrayOf()
-      mAxis.mEntryCount = 0
+      axis.mEntries = floatArrayOf()
+      axis.mCenteredEntries = floatArrayOf()
+      axis.mEntryCount = 0
       return
     }
 
@@ -30,8 +30,8 @@ class YAxisRendererRadarChart(
 
     // If granularity is enabled, then do not allow the interval to go below specified granularity.
     // This is used to avoid repeated values when rounding values for display.
-    if (mAxis.isGranularityEnabled)
-        interval = if (interval < mAxis.granularity) mAxis.granularity.toDouble() else interval
+    if (axis.isGranularityEnabled)
+        interval = if (interval < axis.granularity) axis.granularity.toDouble() else interval
 
     // Normalize interval
     val intervalMagnitude = Utils.roundToNextSignificant(10.0.pow(log10(interval))).toDouble()
@@ -42,20 +42,20 @@ class YAxisRendererRadarChart(
       interval =
           if (floor(10.0 * intervalMagnitude) == 0.0) interval else floor(10.0 * intervalMagnitude)
     }
-    val centeringEnabled = mAxis.isCenterAxisLabelsEnabled
+    val centeringEnabled = axis.isCenterAxisLabelsEnabled
     var n = if (centeringEnabled) 1 else 0
 
     // force label count
-    if (mAxis.isForceLabelsEnabled) {
+    if (axis.isForceLabelsEnabled) {
       val step = range.toFloat() / (labelCount - 1).toFloat()
-      mAxis.mEntryCount = labelCount
-      if (mAxis.mEntries.size < labelCount) {
+      axis.mEntryCount = labelCount
+      if (axis.mEntries.size < labelCount) {
         // Ensure stops contains at least numStops elements.
-        mAxis.mEntries = FloatArray(labelCount)
+        axis.mEntries = FloatArray(labelCount)
       }
       var v = min
       for (i in 0 until labelCount) {
-        mAxis.mEntries[i] = v
+        axis.mEntries[i] = v
         v += step
       }
       n = labelCount
@@ -76,17 +76,17 @@ class YAxisRendererRadarChart(
         }
       }
       n++
-      mAxis.mEntryCount = n
-      if (mAxis.mEntries.size < n) {
+      axis.mEntryCount = n
+      if (axis.mEntries.size < n) {
         // Ensure stops contains at least numStops elements.
-        mAxis.mEntries = FloatArray(n)
+        axis.mEntries = FloatArray(n)
       }
       f = first
       var i = 0
       while (i < n) {
         if (f == 0.0) // Fix for negative zero case (Where value == -0.0, and 0.0 == -0.0)
          f = 0.0
-        mAxis.mEntries[i] = f.toFloat()
+        axis.mEntries[i] = f.toFloat()
         f += interval
         ++i
       }
@@ -94,40 +94,40 @@ class YAxisRendererRadarChart(
 
     // set decimals
     if (interval < 1) {
-      mAxis.mDecimals = ceil(-log10(interval)).toInt()
+      axis.mDecimals = ceil(-log10(interval)).toInt()
     } else {
-      mAxis.mDecimals = 0
+      axis.mDecimals = 0
     }
     if (centeringEnabled) {
-      if (mAxis.mCenteredEntries.size < n) {
-        mAxis.mCenteredEntries = FloatArray(n)
+      if (axis.mCenteredEntries.size < n) {
+        axis.mCenteredEntries = FloatArray(n)
       }
-      val offset = (mAxis.mEntries[1] - mAxis.mEntries[0]) / 2f
+      val offset = (axis.mEntries[1] - axis.mEntries[0]) / 2f
       for (i in 0 until n) {
-        mAxis.mCenteredEntries[i] = mAxis.mEntries[i] + offset
+        axis.mCenteredEntries[i] = axis.mEntries[i] + offset
       }
     }
-    mAxis.mAxisMinimum = mAxis.mEntries[0]
-    mAxis.mAxisMaximum = mAxis.mEntries[n - 1]
-    mAxis.mAxisRange = abs(mAxis.mAxisMaximum - mAxis.mAxisMinimum)
+    axis.mAxisMinimum = axis.mEntries[0]
+    axis.mAxisMaximum = axis.mEntries[n - 1]
+    axis.mAxisRange = abs(axis.mAxisMaximum - axis.mAxisMinimum)
   }
 
-  override fun renderAxisLabels(c: Canvas?) {
-    if (!mYAxis.isEnabled || !mYAxis.isDrawLabelsEnabled) return
-    mAxisLabelPaint.typeface = mYAxis.typeface
-    mAxisLabelPaint.textSize = mYAxis.textSize
-    mAxisLabelPaint.color = mYAxis.textColor
+  override fun renderAxisLabels(canvas: Canvas?) {
+    if (!yAxis.isEnabled || !yAxis.isDrawLabelsEnabled) return
+    axisLabelPaint.typeface = yAxis.typeface
+    axisLabelPaint.textSize = yAxis.textSize
+    axisLabelPaint.color = yAxis.textColor
     val center: MPPointF = mChart.centerOffsets
     val pOut = MPPointF.getInstance(0f, 0f)
     val factor = mChart.factor
-    val from = if (mYAxis.isDrawBottomYLabelEntryEnabled) 0 else 1
-    val to = if (mYAxis.isDrawTopYLabelEntryEnabled) mYAxis.mEntryCount else mYAxis.mEntryCount - 1
-    val xOffset = mYAxis.labelXOffset
+    val from = if (yAxis.isDrawBottomYLabelEntryEnabled) 0 else 1
+    val to = if (yAxis.isDrawTopYLabelEntryEnabled) yAxis.mEntryCount else yAxis.mEntryCount - 1
+    val xOffset = yAxis.labelXOffset
     for (j in from until to) {
-      val r = (mYAxis.mEntries[j] - mYAxis.mAxisMinimum) * factor
+      val r = (yAxis.mEntries[j] - yAxis.mAxisMinimum) * factor
       Utils.getPosition(center, r, mChart.rotationAngle, pOut)
-      val label = mYAxis.getFormattedLabel(j)
-      c!!.drawText(label!!, pOut.x + xOffset, pOut.y, mAxisLabelPaint)
+      val label = yAxis.getFormattedLabel(j)
+      canvas!!.drawText(label!!, pOut.x + xOffset, pOut.y, axisLabelPaint)
     }
     MPPointF.recycleInstance(center)
     MPPointF.recycleInstance(pOut)
@@ -135,8 +135,8 @@ class YAxisRendererRadarChart(
 
   private val mRenderLimitLinesPathBuffer = Path()
 
-  override fun renderLimitLines(c: Canvas?) {
-    val limitLines = mYAxis.limitLines
+  override fun renderLimitLines(canvas: Canvas?) {
+    val limitLines = yAxis.limitLines
     val sliceangle = mChart.sliceAngle
 
     // calculate the factor that is needed for transforming the value to
@@ -147,9 +147,9 @@ class YAxisRendererRadarChart(
     for (i in limitLines.indices) {
       val l = limitLines[i]
       if (!l.isEnabled) continue
-      mLimitLinePaint!!.color = l.lineColor
-      mLimitLinePaint!!.pathEffect = l.dashPathEffect
-      mLimitLinePaint!!.strokeWidth = l.lineWidth
+      limitLinePaint!!.color = l.lineColor
+      limitLinePaint!!.pathEffect = l.dashPathEffect
+      limitLinePaint!!.strokeWidth = l.lineWidth
       val r: Float = (l.limit - mChart.yChartMin) * factor
       val limitPath = mRenderLimitLinesPathBuffer
       limitPath.reset()
@@ -159,7 +159,7 @@ class YAxisRendererRadarChart(
         if (j == 0) limitPath.moveTo(pOut.x, pOut.y) else limitPath.lineTo(pOut.x, pOut.y)
       }
       limitPath.close()
-      c!!.drawPath(limitPath, mLimitLinePaint!!)
+      canvas!!.drawPath(limitPath, limitLinePaint!!)
     }
     MPPointF.recycleInstance(center)
     MPPointF.recycleInstance(pOut)
