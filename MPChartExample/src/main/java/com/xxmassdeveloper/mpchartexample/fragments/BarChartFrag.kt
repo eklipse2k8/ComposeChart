@@ -38,7 +38,7 @@ class BarChartFrag : SimpleFragment(R.layout.frag_simple_bar), OnChartGestureLis
           setChartView(chart) // For bounds control
         }
 
-    chart.setMarker(mv)
+    chart.marker = mv
 
     view.findViewById<FrameLayout>(R.id.parentLayout).apply {
       // programmatically add the chart

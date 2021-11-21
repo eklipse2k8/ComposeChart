@@ -194,7 +194,7 @@ interface IDataSet<E : Entry> {
   var label: String?
 
   /** the axis this DataSet should be plotted against. (either LEFT or RIGHT). Default: LEFT */
-  var axisDependency: AxisDependency?
+  var axisDependency: AxisDependency
 
   /** returns all the colors that are set for this DataSet */
   val colors: MutableList<Int>

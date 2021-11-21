@@ -22,7 +22,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     BarLineChartBase<BubbleData, IBubbleDataSet, BubbleEntry>(context, attrs, defStyleAttr),
     BubbleDataProvider {
 
-  override val dataRenderer: DataRenderer = BubbleChartRenderer(this, mAnimator, viewPortHandler)
+  override val dataRenderer: DataRenderer = BubbleChartRenderer(this, animator, viewPortHandler)
 
   override val bubbleData: BubbleData?
     get() = data

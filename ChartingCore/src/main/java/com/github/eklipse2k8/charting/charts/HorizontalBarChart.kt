@@ -36,7 +36,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     BarChart(context, attrs, defStyleAttr) {
 
   override val dataRenderer: DataRenderer =
-      HorizontalBarChartRenderer(this, mAnimator, viewPortHandler)
+      HorizontalBarChartRenderer(this, animator, viewPortHandler)
 
   override val highlighter = HorizontalBarHighlighter(this)
 
@@ -44,11 +44,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     leftAxisTransformer = TransformerHorizontalBarChart(viewPortHandler)
     rightAxisTransformer = TransformerHorizontalBarChart(viewPortHandler)
     rendererLeftYAxis =
-        YAxisRendererHorizontalBarChart(viewPortHandler, axisLeft!!, leftAxisTransformer)
+        YAxisRendererHorizontalBarChart(viewPortHandler, axisLeft, leftAxisTransformer)
     rendererRightYAxis =
-        YAxisRendererHorizontalBarChart(viewPortHandler, axisRight!!, rightAxisTransformer)
+        YAxisRendererHorizontalBarChart(viewPortHandler, axisRight, rightAxisTransformer)
     rendererXAxis =
-        XAxisRendererHorizontalBarChart(viewPortHandler, xAxis, leftAxisTransformer!!, this)
+        XAxisRendererHorizontalBarChart(viewPortHandler, xAxis, leftAxisTransformer, this)
   }
 
   private val mOffsetsBuffer = RectF()
@@ -89,17 +89,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
               offsets.top +=
                   (legend.mNeededHeight.coerceAtMost(
                       viewPortHandler.chartHeight * legend.maxSizePercent) + legend.yOffset)
-              if (axisLeft!!.isEnabled && axisLeft!!.isDrawLabelsEnabled)
+              if (axisLeft.isEnabled && axisLeft.isDrawLabelsEnabled)
                   offsets.top +=
-                      axisLeft!!.getRequiredHeightSpace(rendererLeftYAxis!!.paintAxisLabels)
+                      axisLeft.getRequiredHeightSpace(rendererLeftYAxis.paintAxisLabels)
             }
             LegendVerticalAlignment.BOTTOM -> {
               offsets.bottom +=
                   (legend.mNeededHeight.coerceAtMost(
                       viewPortHandler.chartHeight * legend.maxSizePercent) + legend.yOffset)
-              if (axisRight!!.isEnabled && axisRight!!.isDrawLabelsEnabled)
+              if (axisRight.isEnabled && axisRight.isDrawLabelsEnabled)
                   offsets.bottom +=
-                      axisRight!!.getRequiredHeightSpace(rendererRightYAxis!!.paintAxisLabels)
+                      axisRight.getRequiredHeightSpace(rendererRightYAxis.paintAxisLabels)
             }
             else -> {}
           }
@@ -118,11 +118,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     offsetBottom += mOffsetsBuffer.bottom
 
     // offsets for y-labels
-    if (axisLeft!!.needsOffset()) {
-      offsetTop += axisLeft!!.getRequiredHeightSpace(rendererLeftYAxis!!.paintAxisLabels)
+    if (axisLeft.needsOffset()) {
+      offsetTop += axisLeft.getRequiredHeightSpace(rendererLeftYAxis.paintAxisLabels)
     }
-    if (axisRight!!.needsOffset()) {
-      offsetBottom += axisRight!!.getRequiredHeightSpace(rendererRightYAxis!!.paintAxisLabels)
+    if (axisRight.needsOffset()) {
+      offsetBottom += axisRight.getRequiredHeightSpace(rendererRightYAxis.paintAxisLabels)
     }
     val xlabelwidth = xAxis.mLabelRotatedWidth.toFloat()
 
@@ -160,10 +160,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   override fun prepareValuePxMatrix() {
-    rightAxisTransformer!!.prepareMatrixValuePx(
-        axisRight!!.mAxisMinimum, axisRight!!.mAxisRange, xAxis.mAxisRange, xAxis.mAxisMinimum)
-    leftAxisTransformer!!.prepareMatrixValuePx(
-        axisLeft!!.mAxisMinimum, axisLeft!!.mAxisRange, xAxis.mAxisRange, xAxis.mAxisMinimum)
+    rightAxisTransformer.prepareMatrixValuePx(
+        axisRight.mAxisMinimum, axisRight.mAxisRange, xAxis.mAxisRange, xAxis.mAxisMinimum)
+    leftAxisTransformer.prepareMatrixValuePx(
+        axisLeft.mAxisMinimum, axisLeft.mAxisRange, xAxis.mAxisRange, xAxis.mAxisMinimum)
   }
 
   override fun getMarkerPosition(high: Highlight): FloatArray {
@@ -187,7 +187,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     getTransformer(set.axisDependency).rectValueToPixel(outputRect)
   }
 
-  override var mGetPositionBuffer = FloatArray(2)
+  override var getPositionBuffer = FloatArray(2)
 
   /**
    * Returns a recyclable MPPointF instance.
@@ -196,9 +196,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    * @param axis
    * @return
    */
-  override fun getPosition(e: Entry?, axis: AxisDependency?): MPPointF? {
+  override fun getPosition(e: Entry?, axis: AxisDependency): MPPointF? {
     if (e == null) return null
-    val vals = mGetPositionBuffer
+    val vals = getPositionBuffer
     vals[0] = e.y
     vals[1] = e.x
     getTransformer(axis).pointValuesToPixel(vals)

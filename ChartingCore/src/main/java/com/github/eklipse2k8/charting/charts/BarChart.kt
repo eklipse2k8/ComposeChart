@@ -40,7 +40,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   private var mFitBars = false
 
-  override val dataRenderer: DataRenderer = BarChartRenderer(this, mAnimator, viewPortHandler)
+  override val dataRenderer: DataRenderer = BarChartRenderer(this, animator, viewPortHandler)
 
   override val highlighter = BarHighlighter(this)
 
@@ -60,9 +60,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
 
     // calculate axis range (min / max) according to provided data
-    axisLeft?.calculate(
+    axisLeft.calculate(
         localData.getYMin(YAxis.AxisDependency.LEFT), localData.getYMax(YAxis.AxisDependency.LEFT))
-    axisRight?.calculate(
+    axisRight.calculate(
         localData.getYMin(YAxis.AxisDependency.RIGHT),
         localData.getYMax(YAxis.AxisDependency.RIGHT))
   }

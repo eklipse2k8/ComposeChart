@@ -14,7 +14,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import com.github.eklipse2k8.charting.animation.ChartAnimator
 import com.github.eklipse2k8.charting.animation.Easing.EasingFunction
 import com.github.eklipse2k8.charting.components.Description
@@ -24,7 +23,6 @@ import com.github.eklipse2k8.charting.components.XAxis
 import com.github.eklipse2k8.charting.data.ChartData
 import com.github.eklipse2k8.charting.data.Entry
 import com.github.eklipse2k8.charting.formatter.DefaultValueFormatter
-import com.github.eklipse2k8.charting.formatter.IValueFormatter
 import com.github.eklipse2k8.charting.highlight.Highlight
 import com.github.eklipse2k8.charting.highlight.IHighlighter
 import com.github.eklipse2k8.charting.interfaces.dataprovider.ChartInterface
@@ -98,8 +96,8 @@ E : Entry {
       // calculate how many digits are needed
       setupDefaultFormatter(value.yMin, value.yMax)
       value.dataSets.forEach { set ->
-        if (set.needsFormatter() || set.valueFormatter === mDefaultValueFormatter)
-            set.valueFormatter = mDefaultValueFormatter
+        if (set.needsFormatter() || set.valueFormatter === defaultValueFormatter)
+            set.valueFormatter = defaultValueFormatter
       }
 
       // let the chart know there is new data
@@ -124,13 +122,13 @@ E : Entry {
     }
 
   /** default value-formatter, number of digits depends on provided chart-data */
-  private var mDefaultValueFormatter = DefaultValueFormatter(0)
+  override val defaultValueFormatter = DefaultValueFormatter(0)
 
   /** paint object used for drawing the description text in the bottom right corner of the chart */
-  private var mDescPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+  private var descPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
   /** paint object for drawing the information text when there are no values in the chart */
-  private var mInfoPaint: Paint =
+  private var infoPaint: Paint =
       Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.rgb(247, 189, 51) // orange
         textAlign = Align.CENTER
@@ -141,7 +139,7 @@ E : Entry {
    * Returns the object representing all x-labels, this method can be used to acquire the XAxis
    * object and modify it (e.g. change the position of the labels, styling, etc.)
    */
-  open var xAxis: XAxis = XAxis()
+  val xAxis: XAxis = XAxis()
 
   /** if true, touch gestures are enabled on the chart */
   var isTouchEnabled = true
@@ -151,15 +149,13 @@ E : Entry {
    * related to the description text that is displayed in the bottom right corner of the chart (by
    * default).
    */
-  var description: Description? = Description()
-    protected set
+  val description: Description = Description()
 
   /**
    * Returns the Legend object of the chart. This method can be used to get an instance of the
    * legend in order to customize the automatically generated Legend.
    */
-  var legend: Legend = Legend()
-    protected set
+  val legend: Legend = Legend()
 
   /** listener that is called when a value on the chart is selected */
   private var mSelectionListener: OnChartValueSelectedListener? = null
@@ -195,7 +191,7 @@ E : Entry {
   protected var onTouchListener: ChartTouchListener<*>? = null
 
   /** text that is displayed when the chart is empty */
-  private var mNoDataText = "No chart data available."
+  private var noDataText = "No chart data available."
 
   /**
    * Returns the ViewPortHandler of the chart that is responsible for the content area of the chart
@@ -210,22 +206,19 @@ E : Entry {
   protected abstract val dataRenderer: DataRenderer
 
   /** object responsible for animations */
-  protected var mAnimator: ChartAnimator = ChartAnimator { postInvalidate() }
+  val animator: ChartAnimator = ChartAnimator { postInvalidate() }
 
   /** array of Highlight objects that reference the highlighted slices in the chart */
-  protected var mIndicesToHighlight: Array<Highlight?>? = null
-
-  /** The maximum distance in dp away from an entry causing it to highlight. */
-  private var mMaxHighlightDistance = convertDpToPixel(500f)
+  protected var mIndicesToHighlight: Array<Highlight?>? = emptyArray()
 
   /** if set to true, the marker view is drawn when a value is clicked */
-  private var mDrawMarkers = true
+  private var drawMarkers = true
 
   /** the view that represents the marker */
-  protected var mMarker: IMarker? = null
+  var marker: IMarker? = null
 
-  /** tasks to be done after the view is setup */
-  protected var mJobs = ArrayList<Runnable>()
+  /** Returns all jobs that are scheduled to be executed after onSizeChanged(...). */
+  private val jobs: MutableList<Runnable> = mutableListOf()
 
   init {
     setWillNotDraw(false)
@@ -297,7 +290,7 @@ E : Entry {
     val digits = getDecimals(reference)
 
     // setup the formatter with a new number of digits
-    mDefaultValueFormatter.setup(digits)
+    defaultValueFormatter.setup(digits)
   }
 
   /** flag that indicates if offsets calculation has already been done or not */
@@ -305,18 +298,18 @@ E : Entry {
 
   override fun onDraw(canvas: Canvas) {
     if (data == null) {
-      if (mNoDataText.isNotEmpty()) {
+      if (noDataText.isNotEmpty()) {
         val pt = getCenter()
-        when (mInfoPaint.textAlign) {
+        when (infoPaint.textAlign) {
           Align.LEFT -> {
             pt.x = 0f
-            canvas.drawText(mNoDataText, pt.x, pt.y, mInfoPaint)
+            canvas.drawText(noDataText, pt.x, pt.y, infoPaint)
           }
           Align.RIGHT -> {
             pt.x *= 2.0f
-            canvas.drawText(mNoDataText, pt.x, pt.y, mInfoPaint)
+            canvas.drawText(noDataText, pt.x, pt.y, infoPaint)
           }
-          else -> canvas.drawText(mNoDataText, pt.x, pt.y, mInfoPaint)
+          else -> canvas.drawText(noDataText, pt.x, pt.y, infoPaint)
         }
       }
       return
@@ -330,19 +323,18 @@ E : Entry {
   /** Draws the description text in the bottom right corner of the chart (per default) */
   protected open fun drawDescription(c: Canvas) {
     // check if description should be drawn
-    val description = description ?: return
     if (description.isEnabled) {
-      mDescPaint.typeface = description.typeface
-      mDescPaint.textSize = description.textSize
-      mDescPaint.color = description.textColor
-      mDescPaint.textAlign = description.textAlign
+      descPaint.typeface = description.typeface
+      descPaint.textSize = description.textSize
+      descPaint.color = description.textColor
+      descPaint.textAlign = description.textAlign
 
       // if no position specified, draw on default position
       val position = description.position
-      val x = position?.x ?: width - viewPortHandler.offsetRight() - description.xOffset
-      val y = position?.y ?: height - viewPortHandler.offsetBottom() - description.yOffset
+      val x = position?.x ?: (width - viewPortHandler.offsetRight() - description.xOffset)
+      val y = position?.y ?: (height - viewPortHandler.offsetBottom() - description.yOffset)
 
-      c.drawText(description.text, x, y, mDescPaint)
+      c.drawText(description.text, x, y, descPaint)
     }
   }
 
@@ -350,10 +342,9 @@ E : Entry {
    * Sets the maximum distance in screen dp a touch can be away from an entry to cause it to get
    * highlighted. Default: 500dp
    */
-  override var maxHighlightDistance: Float
-    get() = mMaxHighlightDistance
+  override var maxHighlightDistance: Float = convertDpToPixel(500f)
     set(value) {
-      mMaxHighlightDistance = convertDpToPixel(value)
+      field = convertDpToPixel(value)
     }
 
   /**
@@ -503,7 +494,7 @@ E : Entry {
   /** draws all MarkerViews on the highlighted positions */
   protected open fun drawMarkers(canvas: Canvas) {
     // if there is no marker view or drawing marker is disabled
-    if (mMarker == null || !isDrawMarkersEnabled() || !valuesToHighlight()) return
+    if (marker == null || !isDrawMarkersEnabled() || !valuesToHighlight()) return
     mIndicesToHighlight?.forEachIndexed { _, highlight ->
       if (highlight == null) return@forEachIndexed
 
@@ -512,17 +503,17 @@ E : Entry {
       val entryIndex = e?.let { set.getEntryIndex(it) } ?: -1
 
       // make sure entry not null
-      if (e == null || entryIndex > set.entryCount * mAnimator.phaseX) return@forEachIndexed
+      if (e == null || entryIndex > set.entryCount * animator.phaseX) return@forEachIndexed
       val pos = getMarkerPosition(highlight)
 
       // check bounds
       if (!viewPortHandler.isInBounds(pos[0], pos[1])) return@forEachIndexed
 
       // callbacks to update the content
-      mMarker!!.refreshContent(e, highlight)
+      marker!!.refreshContent(e, highlight)
 
       // draw the marker
-      mMarker!!.draw(canvas, pos[0], pos[1])
+      marker!!.draw(canvas, pos[0], pos[1])
     }
   }
 
@@ -534,11 +525,6 @@ E : Entry {
    */
   protected open fun getMarkerPosition(high: Highlight): FloatArray {
     return floatArrayOf(high.drawX, high.drawY)
-  }
-
-  /** Returns the animator responsible for animating chart values. */
-  open fun getAnimator(): ChartAnimator {
-    return mAnimator
   }
 
   /** If set to true, chart continues to scroll after touch up default: true */
@@ -571,7 +557,7 @@ E : Entry {
       easingX: EasingFunction?,
       easingY: EasingFunction?
   ) {
-    mAnimator.animateXY(durationMillisX, durationMillisY, easingX!!, easingY!!)
+    animator.animateXY(durationMillisX, durationMillisY, easingX!!, easingY!!)
   }
 
   /**
@@ -584,7 +570,7 @@ E : Entry {
    * @param easing a custom easing function to be used on the animation phase
    */
   open fun animateXY(durationMillisX: Int, durationMillisY: Int, easing: EasingFunction?) {
-    mAnimator.animateXY(durationMillisX, durationMillisY, easing!!)
+    animator.animateXY(durationMillisX, durationMillisY, easing!!)
   }
 
   /**
@@ -596,7 +582,7 @@ E : Entry {
    * @param easing a custom easing function to be used on the animation phase
    */
   open fun animateX(durationMillis: Int, easing: EasingFunction?) {
-    mAnimator.animateX(durationMillis, easing!!)
+    animator.animateX(durationMillis, easing!!)
   }
 
   /**
@@ -608,7 +594,7 @@ E : Entry {
    * @param easing a custom easing function to be used on the animation phase
    */
   open fun animateY(durationMillis: Int, easing: EasingFunction?) {
-    mAnimator.animateY(durationMillis, easing!!)
+    animator.animateY(durationMillis, easing!!)
   }
 
   /**
@@ -619,7 +605,7 @@ E : Entry {
    * @param durationMillis
    */
   open fun animateX(durationMillis: Int) {
-    mAnimator.animateX(durationMillis)
+    animator.animateX(durationMillis)
   }
 
   /**
@@ -630,7 +616,7 @@ E : Entry {
    * @param durationMillis
    */
   open fun animateY(durationMillis: Int) {
-    mAnimator.animateY(durationMillis)
+    animator.animateY(durationMillis)
   }
 
   /**
@@ -642,11 +628,8 @@ E : Entry {
    * @param durationMillisY
    */
   open fun animateXY(durationMillisX: Int, durationMillisY: Int) {
-    mAnimator.animateXY(durationMillisX, durationMillisY)
+    animator.animateXY(durationMillisX, durationMillisY)
   }
-
-  override val defaultValueFormatter: IValueFormatter?
-    get() = mDefaultValueFormatter
 
   /**
    * set a selection listener for the chart
@@ -725,7 +708,7 @@ E : Entry {
    * @param text
    */
   open fun setNoDataText(text: String) {
-    mNoDataText = text
+    noDataText = text
   }
 
   /**
@@ -734,7 +717,7 @@ E : Entry {
    * @param color
    */
   open fun setNoDataTextColor(color: Int) {
-    mInfoPaint.color = color
+    infoPaint.color = color
   }
 
   /**
@@ -743,7 +726,7 @@ E : Entry {
    * @param tf
    */
   open fun setNoDataTextTypeface(tf: Typeface?) {
-    mInfoPaint.typeface = tf
+    infoPaint.typeface = tf
   }
 
   /**
@@ -752,35 +735,7 @@ E : Entry {
    * @param align
    */
   open fun setNoDataTextAlignment(align: Align?) {
-    mInfoPaint.textAlign = align
-  }
-
-  /**
-   * sets the marker that is displayed when a value is clicked on the chart
-   *
-   * @param marker
-   */
-  open fun setMarker(marker: IMarker) {
-    mMarker = marker
-  }
-
-  /**
-   * returns the marker that is set as a marker view for the chart
-   *
-   * @return
-   */
-  open fun getMarker(): IMarker? {
-    return mMarker
-  }
-
-  @Deprecated("")
-  open fun setMarkerView(v: IMarker) {
-    setMarker(v)
-  }
-
-  @Deprecated("")
-  open fun getMarkerView(): IMarker? {
-    return getMarker()
+    infoPaint.textAlign = align
   }
 
   override val contentRect: RectF?
@@ -806,8 +761,8 @@ E : Entry {
    */
   open fun setPaint(p: Paint, which: Int) {
     when (which) {
-      PAINT_INFO -> mInfoPaint = p
-      PAINT_DESCRIPTION -> mDescPaint = p
+      PAINT_INFO -> infoPaint = p
+      PAINT_DESCRIPTION -> descPaint = p
     }
   }
 
@@ -817,13 +772,12 @@ E : Entry {
    * @param which e.g. Chart.PAINT_LEGEND_LABEL
    * @return
    */
-  open fun getPaint(which: Int): Paint? {
-    when (which) {
-      PAINT_INFO -> return mInfoPaint
-      PAINT_DESCRIPTION -> return mDescPaint
-    }
-    return null
-  }
+  open fun getPaint(which: Int): Paint? =
+      when (which) {
+        PAINT_INFO -> infoPaint
+        PAINT_DESCRIPTION -> descPaint
+        else -> null
+      }
 
   @Deprecated("")
   open fun isDrawMarkerViewsEnabled(): Boolean {
@@ -842,7 +796,7 @@ E : Entry {
    * @return
    */
   open fun isDrawMarkersEnabled(): Boolean {
-    return mDrawMarkers
+    return drawMarkers
   }
 
   /**
@@ -852,7 +806,7 @@ E : Entry {
    * @param enabled
    */
   open fun setDrawMarkers(enabled: Boolean) {
-    mDrawMarkers = enabled
+    drawMarkers = enabled
   }
 
   override val centerOfView: MPPointF?
@@ -989,11 +943,11 @@ E : Entry {
   }
 
   open fun removeViewportJob(job: Runnable) {
-    mJobs.remove(job)
+    jobs.remove(job)
   }
 
   open fun clearAllViewportJobs() {
-    mJobs.clear()
+    jobs.clear()
   }
 
   /**
@@ -1006,17 +960,8 @@ E : Entry {
     if (viewPortHandler.hasChartDimens()) {
       post(job)
     } else {
-      mJobs.add(job)
+      jobs.add(job)
     }
-  }
-
-  /**
-   * Returns all jobs that are scheduled to be executed after onSizeChanged(...).
-   *
-   * @return
-   */
-  open fun getJobs(): ArrayList<Runnable>? {
-    return mJobs
   }
 
   override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
@@ -1045,10 +990,10 @@ E : Entry {
     // This may cause the chart view to mutate properties affecting the view port --
     //   lets do this before we try to run any pending jobs on the view port itself
     notifyDataSetChanged()
-    for (r: Runnable? in mJobs) {
+    for (r: Runnable? in jobs) {
       post(r)
     }
-    mJobs.clear()
+    jobs.clear()
     super.onSizeChanged(w, h, oldw, oldh)
   }
 

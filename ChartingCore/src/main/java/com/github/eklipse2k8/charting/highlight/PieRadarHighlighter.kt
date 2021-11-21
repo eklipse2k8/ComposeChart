@@ -20,7 +20,7 @@ abstract class PieRadarHighlighter<T : PieRadarChartBase<*, *, *>>(
     } else {
       var angle = mChart.getAngleForPoint(x, y)
       if (mChart is PieChart) {
-        angle /= mChart.getAnimator().phaseY
+        angle /= mChart.animator.phaseY
       }
       val index = mChart.getIndexForAngle(angle)
 

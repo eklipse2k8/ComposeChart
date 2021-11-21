@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import android.graphics.Typeface
 import android.util.AttributeSet
-import com.github.eklipse2k8.charting.components.XAxis
 import com.github.eklipse2k8.charting.data.PieData
 import com.github.eklipse2k8.charting.data.PieEntry
 import com.github.eklipse2k8.charting.highlight.Highlight
@@ -33,7 +32,7 @@ class PieChart
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     PieRadarChartBase<PieData, IPieDataSet, PieEntry>(context, attrs, defStyleAttr) {
 
-  override val dataRenderer: DataRenderer = PieChartRenderer(this, mAnimator, viewPortHandler)
+  override val dataRenderer: DataRenderer = PieChartRenderer(this, animator, viewPortHandler)
 
   /** rect object that represents the bounds of the piechart, needed for drawing the circle */
   val circleBox: RectF = RectF()
@@ -156,12 +155,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     val x =
         r *
             cos(
-                ((rotationAngle + absoluteAngles[entryIndex] - offset) * mAnimator.phaseY)
+                ((rotationAngle + absoluteAngles[entryIndex] - offset) * animator.phaseY)
                     .toRadians()) + center.x
     val y =
         r *
             sin(
-                ((rotationAngle + absoluteAngles[entryIndex] - offset) * mAnimator.phaseY)
+                ((rotationAngle + absoluteAngles[entryIndex] - offset) * animator.phaseY)
                     .toRadians()) + center.y
     MPPointF.recycleInstance(center)
     return floatArrayOf(x, y)
@@ -256,10 +255,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   private fun calcAngle(value: Float, yValueSum: Float = data?.yValueSum ?: 0f): Float {
     return value / yValueSum * mMaxAngle
   }
-
-  override var xAxis: XAxis
-    get() = throw UnsupportedOperationException("PieChart has no XAxis")
-    set(value) = throw UnsupportedOperationException("PieChart has no XAxis")
 
   override fun getIndexForAngle(angle: Float): Int {
     // take the current angle of the chart into consideration

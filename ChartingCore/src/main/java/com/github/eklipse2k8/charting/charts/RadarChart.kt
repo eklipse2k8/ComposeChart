@@ -28,7 +28,7 @@ class RadarChart
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     PieRadarChartBase<RadarData, IRadarDataSet, RadarEntry>(context, attrs, defStyleAttr) {
 
-  override val dataRenderer: DataRenderer = RadarChartRenderer(this, mAnimator, viewPortHandler)
+  override val dataRenderer: DataRenderer = RadarChartRenderer(this, animator, viewPortHandler)
 
   /** width of the main web lines */
   private var mWebLineWidth = 2.5f

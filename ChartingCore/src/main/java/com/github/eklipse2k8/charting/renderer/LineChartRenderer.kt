@@ -102,10 +102,10 @@ class LineChartRenderer(
     renderPaint.pathEffect = null
   }
 
-  private fun drawCubicBezier(dataSet: ILineDataSet?) {
+  private fun drawCubicBezier(dataSet: ILineDataSet) {
     val phaseY = animator.phaseY
-    val trans = mChart.getTransformer(dataSet?.axisDependency)
-    mXBounds[mChart] = dataSet ?: return
+    val trans = mChart.getTransformer(dataSet.axisDependency)
+    mXBounds[mChart] = dataSet
     val intensity = dataSet.cubicIntensity
     cubicPath.reset()
 
@@ -311,8 +311,8 @@ class LineChartRenderer(
     val startingIndex = bounds.min
     val endingIndex = bounds.range + bounds.min
     val indexInterval = 128
-    var currentStartIndex = 0
-    var currentEndIndex = indexInterval
+    var currentStartIndex: Int
+    var currentEndIndex: Int
     var iterations = 0
 
     // Doing this iteratively in order to avoid OutOfMemory errors that can happen on large bounds

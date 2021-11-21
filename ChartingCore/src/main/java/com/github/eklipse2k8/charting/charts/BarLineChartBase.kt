@@ -83,18 +83,25 @@ E : Entry {
   var isScaleYEnabled = true
 
   /** paint object for the (by default) lightgrey background of the grid */
-  private var gridBackgroundPaint: Paint? = null
+  private var gridBackgroundPaint: Paint =
+      Paint().apply {
+        style = Paint.Style.FILL
+        color = Color.rgb(240, 240, 240) // light
+      }
 
-  private var mBorderPaint: Paint? = null
+  private var borderPaint: Paint =
+      Paint().apply {
+        style = Paint.Style.STROKE
+        color = Color.BLACK
+        strokeWidth = convertDpToPixel(1f)
+      }
 
   /** flag indicating if the grid background should be drawn or not */
-  private var mDrawGridBackground = false
+  private var drawGridBackground = false
 
   /**
    * When enabled, the borders rectangle will be rendered. If this is enabled, there is no point
    * drawing the axis-lines of x- and y-axis.
-   *
-   * @return
    */
   var isDrawBordersEnabled = false
     protected set
@@ -125,47 +132,29 @@ E : Entry {
     protected set
 
   /** the object representing the labels on the left y-axis */
-  var axisLeft: YAxis? = null
-    protected set
+  val axisLeft: YAxis = YAxis(AxisDependency.LEFT)
 
   /** the object representing the labels on the right y-axis */
-  var axisRight: YAxis? = null
-    protected set
+  val axisRight: YAxis = YAxis(AxisDependency.RIGHT)
+
+  protected var leftAxisTransformer: Transformer = Transformer(viewPortHandler)
+
+  protected var rightAxisTransformer: Transformer = Transformer(viewPortHandler)
 
   /** Sets a custom axis renderer for the left axis and overwrites the existing one. */
-  var rendererLeftYAxis: YAxisRenderer? = null
+  var rendererLeftYAxis: YAxisRenderer =
+      YAxisRenderer(viewPortHandler, axisLeft, leftAxisTransformer)
 
   /** Sets a custom axis renderer for the right acis and overwrites the existing one. */
-  var rendererRightYAxis: YAxisRenderer? = null
+  var rendererRightYAxis: YAxisRenderer =
+      YAxisRenderer(viewPortHandler, axisRight, rightAxisTransformer)
 
-  protected var leftAxisTransformer: Transformer? = null
-
-  protected var rightAxisTransformer: Transformer? = null
-
-  var rendererXAxis: XAxisRenderer? = null
+  var rendererXAxis: XAxisRenderer = XAxisRenderer(viewPortHandler, xAxis, leftAxisTransformer)
     protected set
 
   init {
-    axisLeft = YAxis(AxisDependency.LEFT)
-    axisRight = YAxis(AxisDependency.RIGHT)
-    leftAxisTransformer = Transformer(viewPortHandler)
-    rightAxisTransformer = Transformer(viewPortHandler)
-    rendererLeftYAxis = YAxisRenderer(viewPortHandler, axisLeft!!, leftAxisTransformer)
-    rendererRightYAxis = YAxisRenderer(viewPortHandler, axisRight!!, rightAxisTransformer)
-    rendererXAxis = XAxisRenderer(viewPortHandler, xAxis, leftAxisTransformer)
     onTouchListener =
         BarLineChartTouchListener(this as AnyBarChart, viewPortHandler.matrixTouch, 3f)
-    gridBackgroundPaint =
-        Paint().apply {
-          style = Paint.Style.FILL
-          color = Color.rgb(240, 240, 240) // light
-        }
-    mBorderPaint =
-        Paint().apply {
-          style = Paint.Style.STROKE
-          color = Color.BLACK
-          strokeWidth = convertDpToPixel(1f)
-        }
   }
 
   // for performance tracking
@@ -183,34 +172,34 @@ E : Entry {
     if (isAutoScaleMinMaxEnabled) {
       autoScale()
     }
-    if (axisLeft!!.isEnabled)
-        rendererLeftYAxis!!.computeAxis(
-            axisLeft!!.mAxisMinimum, axisLeft!!.mAxisMaximum, axisLeft!!.isInverted)
-    if (axisRight!!.isEnabled)
-        rendererRightYAxis!!.computeAxis(
-            axisRight!!.mAxisMinimum, axisRight!!.mAxisMaximum, axisRight!!.isInverted)
-    if (xAxis.isEnabled) rendererXAxis!!.computeAxis(xAxis.mAxisMinimum, xAxis.mAxisMaximum, false)
-    rendererXAxis!!.renderAxisLine(canvas)
-    rendererLeftYAxis!!.renderAxisLine(canvas)
-    rendererRightYAxis!!.renderAxisLine(canvas)
-    if (xAxis.isDrawGridLinesBehindDataEnabled) rendererXAxis!!.renderGridLines(canvas)
-    if (axisLeft!!.isDrawGridLinesBehindDataEnabled) rendererLeftYAxis!!.renderGridLines(canvas)
-    if (axisRight!!.isDrawGridLinesBehindDataEnabled) rendererRightYAxis!!.renderGridLines(canvas)
+    if (axisLeft.isEnabled)
+        rendererLeftYAxis.computeAxis(
+            axisLeft.mAxisMinimum, axisLeft.mAxisMaximum, axisLeft.isInverted)
+    if (axisRight.isEnabled)
+        rendererRightYAxis.computeAxis(
+            axisRight.mAxisMinimum, axisRight.mAxisMaximum, axisRight.isInverted)
+    if (xAxis.isEnabled) rendererXAxis.computeAxis(xAxis.mAxisMinimum, xAxis.mAxisMaximum, false)
+    rendererXAxis.renderAxisLine(canvas)
+    rendererLeftYAxis.renderAxisLine(canvas)
+    rendererRightYAxis.renderAxisLine(canvas)
+    if (xAxis.isDrawGridLinesBehindDataEnabled) rendererXAxis.renderGridLines(canvas)
+    if (axisLeft.isDrawGridLinesBehindDataEnabled) rendererLeftYAxis.renderGridLines(canvas)
+    if (axisRight.isDrawGridLinesBehindDataEnabled) rendererRightYAxis.renderGridLines(canvas)
     if (xAxis.isEnabled && xAxis.isDrawLimitLinesBehindDataEnabled)
-        rendererXAxis!!.renderLimitLines(canvas)
-    if (axisLeft!!.isEnabled && axisLeft!!.isDrawLimitLinesBehindDataEnabled)
-        rendererLeftYAxis!!.renderLimitLines(canvas)
-    if (axisRight!!.isEnabled && axisRight!!.isDrawLimitLinesBehindDataEnabled)
-        rendererRightYAxis!!.renderLimitLines(canvas)
+        rendererXAxis.renderLimitLines(canvas)
+    if (axisLeft.isEnabled && axisLeft.isDrawLimitLinesBehindDataEnabled)
+        rendererLeftYAxis.renderLimitLines(canvas)
+    if (axisRight.isEnabled && axisRight.isDrawLimitLinesBehindDataEnabled)
+        rendererRightYAxis.renderLimitLines(canvas)
     var clipRestoreCount = canvas.save()
     if (isClipDataToContentEnabled) {
       // make sure the data cannot be drawn outside the content-rect
       canvas.clipRect(viewPortHandler.contentRect)
     }
     dataRenderer.drawData(canvas)
-    if (!xAxis.isDrawGridLinesBehindDataEnabled) rendererXAxis!!.renderGridLines(canvas)
-    if (!axisLeft!!.isDrawGridLinesBehindDataEnabled) rendererLeftYAxis!!.renderGridLines(canvas)
-    if (!axisRight!!.isDrawGridLinesBehindDataEnabled) rendererRightYAxis!!.renderGridLines(canvas)
+    if (!xAxis.isDrawGridLinesBehindDataEnabled) rendererXAxis.renderGridLines(canvas)
+    if (!axisLeft.isDrawGridLinesBehindDataEnabled) rendererLeftYAxis.renderGridLines(canvas)
+    if (!axisRight.isDrawGridLinesBehindDataEnabled) rendererRightYAxis.renderGridLines(canvas)
 
     // if highlighting is enabled
     if (valuesToHighlight()) dataRenderer.drawHighlighted(canvas, mIndicesToHighlight)
@@ -219,14 +208,14 @@ E : Entry {
     canvas.restoreToCount(clipRestoreCount)
     dataRenderer.drawExtras(canvas)
     if (xAxis.isEnabled && !xAxis.isDrawLimitLinesBehindDataEnabled)
-        rendererXAxis!!.renderLimitLines(canvas)
-    if (axisLeft!!.isEnabled && !axisLeft!!.isDrawLimitLinesBehindDataEnabled)
-        rendererLeftYAxis!!.renderLimitLines(canvas)
-    if (axisRight!!.isEnabled && !axisRight!!.isDrawLimitLinesBehindDataEnabled)
-        rendererRightYAxis!!.renderLimitLines(canvas)
-    rendererXAxis!!.renderAxisLabels(canvas)
-    rendererLeftYAxis!!.renderAxisLabels(canvas)
-    rendererRightYAxis!!.renderAxisLabels(canvas)
+        rendererXAxis.renderLimitLines(canvas)
+    if (axisLeft.isEnabled && !axisLeft.isDrawLimitLinesBehindDataEnabled)
+        rendererLeftYAxis.renderLimitLines(canvas)
+    if (axisRight.isEnabled && !axisRight.isDrawLimitLinesBehindDataEnabled)
+        rendererRightYAxis.renderLimitLines(canvas)
+    rendererXAxis.renderAxisLabels(canvas)
+    rendererLeftYAxis.renderAxisLabels(canvas)
+    rendererRightYAxis.renderAxisLabels(canvas)
     if (isClipValuesToContentEnabled) {
       clipRestoreCount = canvas.save()
       canvas.clipRect(viewPortHandler.contentRect)
@@ -254,24 +243,20 @@ E : Entry {
   }
 
   protected open fun prepareValuePxMatrix() {
-    if (isLogEnabled)
-        Log.i(
-            TAG,
-            "Preparing Value-Px Matrix, xmin: " +
-                xAxis.mAxisMinimum +
-                ", xmax: " +
-                xAxis.mAxisMaximum +
-                ", xdelta: " +
-                xAxis.mAxisRange)
-    rightAxisTransformer!!.prepareMatrixValuePx(
-        xAxis.mAxisMinimum, xAxis.mAxisRange, axisRight!!.mAxisRange, axisRight!!.mAxisMinimum)
-    leftAxisTransformer!!.prepareMatrixValuePx(
-        xAxis.mAxisMinimum, xAxis.mAxisRange, axisLeft!!.mAxisRange, axisLeft!!.mAxisMinimum)
+    if (isLogEnabled) {
+      Log.i(
+          TAG,
+          "Preparing Value-Px Matrix, xmin: ${xAxis.mAxisMinimum}, xmax: ${xAxis.mAxisMaximum}, xdelta: ${xAxis.mAxisRange}")
+    }
+    rightAxisTransformer.prepareMatrixValuePx(
+        xAxis.mAxisMinimum, xAxis.mAxisRange, axisRight.mAxisRange, axisRight.mAxisMinimum)
+    leftAxisTransformer.prepareMatrixValuePx(
+        xAxis.mAxisMinimum, xAxis.mAxisRange, axisLeft.mAxisRange, axisLeft.mAxisMinimum)
   }
 
   protected fun prepareOffsetMatrix() {
-    rightAxisTransformer!!.prepareMatrixOffset(axisRight!!.isInverted)
-    leftAxisTransformer!!.prepareMatrixOffset(axisLeft!!.isInverted)
+    rightAxisTransformer.prepareMatrixOffset(axisRight.isInverted)
+    leftAxisTransformer.prepareMatrixOffset(axisLeft.isInverted)
   }
 
   override fun notifyDataSetChanged() {
@@ -283,11 +268,10 @@ E : Entry {
     }
     dataRenderer.initBuffers()
     calcMinMax()
-    rendererLeftYAxis!!.computeAxis(
-        axisLeft!!.mAxisMinimum, axisLeft!!.mAxisMaximum, axisLeft!!.isInverted)
-    rendererRightYAxis!!.computeAxis(
-        axisRight!!.mAxisMinimum, axisRight!!.mAxisMaximum, axisRight!!.isInverted)
-    rendererXAxis!!.computeAxis(xAxis.mAxisMinimum, xAxis.mAxisMaximum, false)
+    rendererLeftYAxis.computeAxis(axisLeft.mAxisMinimum, axisLeft.mAxisMaximum, axisLeft.isInverted)
+    rendererRightYAxis.computeAxis(
+        axisRight.mAxisMinimum, axisRight.mAxisMaximum, axisRight.isInverted)
+    rendererXAxis.computeAxis(xAxis.mAxisMinimum, xAxis.mAxisMaximum, false)
     legendRenderer.computeLegend(data!!)
     calculateOffsets()
   }
@@ -296,18 +280,17 @@ E : Entry {
    * Performs auto scaling of the axis by recalculating the minimum and maximum y-values based on
    * the entries currently in view.
    */
-  protected fun autoScale() {
+  private fun autoScale() {
     val fromX = lowestVisibleX
     val toX = highestVisibleX
     data!!.calcMinMaxY(fromX, toX)
     xAxis.calculate(data!!.xMin, data!!.xMax)
 
     // calculate axis range (min / max) according to provided data
-    if (axisLeft!!.isEnabled)
-        axisLeft!!.calculate(
-            data!!.getYMin(AxisDependency.LEFT), data!!.getYMax(AxisDependency.LEFT))
-    if (axisRight!!.isEnabled)
-        axisRight!!.calculate(
+    if (axisLeft.isEnabled)
+        axisLeft.calculate(data!!.getYMin(AxisDependency.LEFT), data!!.getYMax(AxisDependency.LEFT))
+    if (axisRight.isEnabled)
+        axisRight.calculate(
             data!!.getYMin(AxisDependency.RIGHT), data!!.getYMax(AxisDependency.RIGHT))
     calculateOffsets()
   }
@@ -316,9 +299,8 @@ E : Entry {
     xAxis.calculate(data!!.xMin, data!!.xMax)
 
     // calculate axis range (min / max) according to provided data
-    axisLeft!!.calculate(data!!.getYMin(AxisDependency.LEFT), data!!.getYMax(AxisDependency.LEFT))
-    axisRight!!.calculate(
-        data!!.getYMin(AxisDependency.RIGHT), data!!.getYMax(AxisDependency.RIGHT))
+    axisLeft.calculate(data!!.getYMin(AxisDependency.LEFT), data!!.getYMax(AxisDependency.LEFT))
+    axisRight.calculate(data!!.getYMin(AxisDependency.RIGHT), data!!.getYMax(AxisDependency.RIGHT))
   }
 
   protected open fun calculateLegendOffsets(offsets: RectF) {
@@ -373,7 +355,7 @@ E : Entry {
   private val mOffsetsBuffer = RectF()
 
   public override fun calculateOffsets() {
-    if (!mCustomViewPortEnabled) {
+    if (!customViewPortEnabled) {
       var offsetLeft = 0f
       var offsetRight = 0f
       var offsetTop = 0f
@@ -385,11 +367,11 @@ E : Entry {
       offsetBottom += mOffsetsBuffer.bottom
 
       // offsets for y-labels
-      if (axisLeft!!.needsOffset()) {
-        offsetLeft += axisLeft!!.getRequiredWidthSpace(rendererLeftYAxis!!.paintAxisLabels)
+      if (axisLeft.needsOffset()) {
+        offsetLeft += axisLeft.getRequiredWidthSpace(rendererLeftYAxis.paintAxisLabels)
       }
-      if (axisRight!!.needsOffset()) {
-        offsetRight += axisRight!!.getRequiredWidthSpace(rendererRightYAxis!!.paintAxisLabels)
+      if (axisRight.needsOffset()) {
+        offsetRight += axisRight.getRequiredWidthSpace(rendererRightYAxis.paintAxisLabels)
       }
       if (xAxis.isEnabled && xAxis.isDrawLabelsEnabled) {
         val xLabelHeight = xAxis.mLabelRotatedHeight + xAxis.yOffset
@@ -426,24 +408,24 @@ E : Entry {
 
   /** draws the grid background */
   private fun drawGridBackground(c: Canvas) {
-    if (mDrawGridBackground) {
+    if (drawGridBackground) {
       // draw the grid background
-      c.drawRect(viewPortHandler.contentRect, gridBackgroundPaint!!)
+      c.drawRect(viewPortHandler.contentRect, gridBackgroundPaint)
     }
     if (isDrawBordersEnabled) {
-      c.drawRect(viewPortHandler.contentRect, mBorderPaint!!)
+      c.drawRect(viewPortHandler.contentRect, borderPaint)
     }
   }
 
   /**
    * Returns the Transformer class that contains all matrices and is responsible for transforming
    * values into pixels on the screen and backwards.
-   *
-   * @return
    */
-  override fun getTransformer(axis: AxisDependency?): Transformer {
-    return if (axis === AxisDependency.LEFT) leftAxisTransformer!! else rightAxisTransformer!!
-  }
+  override fun getTransformer(axis: AxisDependency): Transformer =
+      when (axis) {
+        AxisDependency.LEFT -> leftAxisTransformer
+        AxisDependency.RIGHT -> rightAxisTransformer
+      }
 
   override fun onTouchEvent(event: MotionEvent): Boolean {
     super.onTouchEvent(event)
@@ -530,7 +512,7 @@ E : Entry {
    * @param yValue
    * @param axis the axis relative to which the zoom should take place
    */
-  fun zoom(scaleX: Float, scaleY: Float, xValue: Float, yValue: Float, axis: AxisDependency?) {
+  fun zoom(scaleX: Float, scaleY: Float, xValue: Float, yValue: Float, axis: AxisDependency) {
     val job =
         getInstance(
             viewPortHandler, scaleX, scaleY, xValue, yValue, getTransformer(axis), axis, this)
@@ -567,7 +549,7 @@ E : Entry {
       scaleY: Float,
       xValue: Float,
       yValue: Float,
-      axis: AxisDependency?,
+      axis: AxisDependency,
       duration: Long
   ) {
     val origin =
@@ -577,7 +559,7 @@ E : Entry {
             viewPortHandler,
             this,
             getTransformer(axis),
-            getAxis(axis!!),
+            getAxis(axis),
             xAxis.mAxisRange,
             scaleX,
             scaleY,
@@ -592,11 +574,11 @@ E : Entry {
     MPPointD.recycleInstance(origin)
   }
 
-  private var mFitScreenMatrixBuffer = Matrix()
+  private var fitScreenMatrixBuffer = Matrix()
 
   /** Resets all zooming and dragging and makes the chart fit exactly it's bounds. */
   fun fitScreen() {
-    val save = mFitScreenMatrixBuffer
+    val save = fitScreenMatrixBuffer
     viewPortHandler.fitScreen(save)
     viewPortHandler.refresh(save, this, false)
     calculateOffsets()
@@ -810,7 +792,7 @@ E : Entry {
   }
 
   /** flag that indicates if a custom viewport offset has been set */
-  private var mCustomViewPortEnabled = false
+  private var customViewPortEnabled = false
 
   /**
    * Sets custom offsets for the current ViewPort (the offsets on the sides of the actual chart
@@ -824,7 +806,7 @@ E : Entry {
    * @param bottom
    */
   fun setViewPortOffsets(left: Float, top: Float, right: Float, bottom: Float) {
-    mCustomViewPortEnabled = true
+    customViewPortEnabled = true
     post {
       viewPortHandler.restrainViewPort(left, top, right, bottom)
       prepareOffsetMatrix()
@@ -837,11 +819,10 @@ E : Entry {
    * calculate all offsets automatically.
    */
   fun resetViewPortOffsets() {
-    mCustomViewPortEnabled = false
+    customViewPortEnabled = false
     calculateOffsets()
   }
-  /** ################ ################ ################ ################ */
-  /** CODE BELOW IS GETTERS AND SETTERS */
+
   /**
    * Returns the range of the specified axis.
    *
@@ -849,7 +830,7 @@ E : Entry {
    * @return
    */
   protected fun getAxisRange(axis: AxisDependency): Float {
-    return if (axis === AxisDependency.LEFT) axisLeft!!.mAxisRange else axisRight!!.mAxisRange
+    return if (axis === AxisDependency.LEFT) axisLeft.mAxisRange else axisRight.mAxisRange
   }
 
   /**
@@ -861,7 +842,7 @@ E : Entry {
     this.drawListener = drawListener
   }
 
-  protected open var mGetPositionBuffer = FloatArray(2)
+  protected open var getPositionBuffer = FloatArray(2)
 
   /**
    * Returns a recyclable MPPointF instance. Returns the position (in pixels) the provided Entry has
@@ -870,12 +851,12 @@ E : Entry {
    * @param e
    * @return
    */
-  open fun getPosition(e: Entry?, axis: AxisDependency?): MPPointF? {
+  open fun getPosition(e: Entry?, axis: AxisDependency): MPPointF? {
     if (e == null) return null
-    mGetPositionBuffer[0] = e.x
-    mGetPositionBuffer[1] = e.y
-    getTransformer(axis).pointValuesToPixel(mGetPositionBuffer)
-    return MPPointF.getInstance(mGetPositionBuffer[0], mGetPositionBuffer[1])
+    getPositionBuffer[0] = e.x
+    getPositionBuffer[1] = e.y
+    getTransformer(axis).pointValuesToPixel(getPositionBuffer)
+    return MPPointF.getInstance(getPositionBuffer[0], getPositionBuffer[1])
   }
 
   /**
@@ -894,18 +875,12 @@ E : Entry {
    * @param color
    */
   fun setGridBackgroundColor(color: Int) {
-    gridBackgroundPaint!!.color = color
+    gridBackgroundPaint.color = color
   }
-  /**
-   * Returns true if dragging is enabled for the chart, false if not.
-   *
-   * @return
-   */
+
   /**
    * Set this to true to enable dragging (moving the chart with the finger) for the chart (this does
    * not effect scaling).
-   *
-   * @param enabled
    */
   var isDragEnabled: Boolean
     get() = isDragXEnabled || isDragYEnabled
@@ -931,7 +906,7 @@ E : Entry {
    * @param enabled
    */
   fun setDrawGridBackground(enabled: Boolean) {
-    mDrawGridBackground = enabled
+    drawGridBackground = enabled
   }
 
   /**
@@ -971,7 +946,7 @@ E : Entry {
    * @param width
    */
   fun setBorderWidth(width: Float) {
-    mBorderPaint!!.strokeWidth = convertDpToPixel(width)
+    borderPaint.strokeWidth = convertDpToPixel(width)
   }
 
   /**
@@ -980,7 +955,7 @@ E : Entry {
    * @param color
    */
   fun setBorderColor(color: Int) {
-    mBorderPaint!!.color = color
+    borderPaint.color = color
   }
 
   /**
@@ -992,15 +967,14 @@ E : Entry {
    * @param y
    * @return
    */
-  fun getValuesByTouchPoint(x: Float, y: Float, axis: AxisDependency?): MPPointD {
+  fun getValuesByTouchPoint(x: Float, y: Float, axis: AxisDependency): MPPointD {
     val result = MPPointD.getInstance(0.0, 0.0)
     getValuesByTouchPoint(x, y, axis, result)
     return result
   }
 
-  fun getValuesByTouchPoint(x: Float, y: Float, axis: AxisDependency?, outputPoint: MPPointD?) {
-    getTransformer(axis).getValuesByTouchPoint(x, y, outputPoint!!)
-  }
+  fun getValuesByTouchPoint(x: Float, y: Float, axis: AxisDependency, outputPoint: MPPointD?) =
+      getTransformer(axis).getValuesByTouchPoint(x, y, outputPoint!!)
 
   /**
    * Returns a recyclable MPPointD instance Transforms the given chart values into pixels. This is
@@ -1010,9 +984,8 @@ E : Entry {
    * @param y
    * @return
    */
-  fun getPixelForValues(x: Float, y: Float, axis: AxisDependency?): MPPointD {
-    return getTransformer(axis).getPixelForValues(x, y)
-  }
+  fun getPixelForValues(x: Float, y: Float, axis: AxisDependency): MPPointD =
+      getTransformer(axis).getPixelForValues(x, y)
 
   /**
    * returns the Entry object displayed at the touched position of the chart
@@ -1021,12 +994,8 @@ E : Entry {
    * @param y
    * @return
    */
-  fun getEntryByTouchPoint(x: Float, y: Float): Entry? {
-    val h = getHighlightByTouchPoint(x, y)
-    return if (h != null) {
-      data!!.getEntryForHighlight(h)
-    } else null
-  }
+  fun getEntryByTouchPoint(x: Float, y: Float): Entry? =
+      getHighlightByTouchPoint(x, y)?.let { data?.getEntryForHighlight(it) }
 
   /**
    * returns the DataSet object displayed at the touched position of the chart
@@ -1035,12 +1004,8 @@ E : Entry {
    * @param y
    * @return
    */
-  fun getDataSetByTouchPoint(x: Float, y: Float): IBarLineScatterCandleBubbleDataSet<*>? {
-    val h = getHighlightByTouchPoint(x, y)
-    return if (h != null) {
-      data!!.getDataSetByIndex(h.dataSetIndex)
-    } else null
-  }
+  fun getDataSetByTouchPoint(x: Float, y: Float): IBarLineScatterCandleBubbleDataSet<*>? =
+      getHighlightByTouchPoint(x, y)?.let { data?.getDataSetByIndex(it.dataSetIndex) }
 
   /** buffer for storing lowest visible x point */
   protected var posForGetLowestVisibleX: MPPointD = MPPointD.getInstance(0.0, 0.0)
@@ -1111,13 +1076,13 @@ E : Entry {
    * @param dependency
    * @return
    */
-  fun getAxis(dependency: AxisDependency): YAxis {
-    return if (dependency === AxisDependency.LEFT) axisLeft!! else axisRight!!
-  }
+  fun getAxis(dependency: AxisDependency): YAxis =
+      when (dependency) {
+        AxisDependency.LEFT -> axisLeft
+        AxisDependency.RIGHT -> axisRight
+      }
 
-  override fun isInverted(axis: AxisDependency?): Boolean {
-    return axis?.let { getAxis(it) }?.isInverted == true
-  }
+  override fun isInverted(axis: AxisDependency): Boolean = getAxis(axis).isInverted
 
   /**
    * If set to true, both x and y axis can be scaled simultaneously with 2 fingers, if false, x and
@@ -1156,31 +1121,15 @@ E : Entry {
     return viewPortHandler.hasNoDragOffset()
   }
 
-  /**
-   * Sets a custom XAxisRenderer and overrides the existing (default) one.
-   *
-   * @param xAxisRenderer
-   */
-  fun setXAxisRenderer(xAxisRenderer: XAxisRenderer?) {
-    rendererXAxis = xAxisRenderer
-  }
-
   override val yChartMax: Float
-    get() = max(axisLeft!!.mAxisMaximum, axisRight!!.mAxisMaximum)
+    get() = max(axisLeft.mAxisMaximum, axisRight.mAxisMaximum)
 
   override val yChartMin: Float
-    get() = min(axisLeft!!.mAxisMinimum, axisRight!!.mAxisMinimum)
+    get() = min(axisLeft.mAxisMinimum, axisRight.mAxisMinimum)
 
-  /**
-   * Returns true if either the left or the right or both axes are inverted.
-   *
-   * @return
-   */
+  /** Returns true if either the left or the right or both axes are inverted. */
   val isAnyAxisInverted: Boolean
-    get() {
-      if (axisLeft?.isInverted == true) return true
-      return axisRight?.isInverted == true
-    }
+    get() = axisLeft.isInverted || axisRight.isInverted
 
   override fun setPaint(p: Paint, which: Int) {
     super.setPaint(p, which)
@@ -1189,14 +1138,12 @@ E : Entry {
     }
   }
 
-  override fun getPaint(which: Int): Paint? {
-    val p = super.getPaint(which)
-    if (p != null) return p
-    when (which) {
-      PAINT_GRID_BACKGROUND -> return gridBackgroundPaint!!
-    }
-    return null
-  }
+  override fun getPaint(which: Int): Paint? =
+      super.getPaint(which)
+          ?: when (which) {
+            PAINT_GRID_BACKGROUND -> gridBackgroundPaint
+            else -> null
+          }
 
   private var onSizeChangedBuffer = FloatArray(2)
 

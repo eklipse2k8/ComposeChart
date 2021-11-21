@@ -38,7 +38,7 @@ class ScatterChartFrag : SimpleFragment(R.layout.frag_simple_scatter) {
           setChartView(chart) // For bounds control
         }
 
-    chart.setMarker(mv)
+    chart.marker = mv
   }
 
   companion object {

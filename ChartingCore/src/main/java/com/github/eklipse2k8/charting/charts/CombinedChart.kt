@@ -56,7 +56,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     SCATTER
   }
 
-  override val dataRenderer: DataRenderer = CombinedChartRenderer(this, mAnimator, viewPortHandler)
+  override val dataRenderer: DataRenderer = CombinedChartRenderer(this, animator, viewPortHandler)
 
   override val highlighter = CombinedHighlighter(this, this)
 
@@ -142,7 +142,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   /** draws all MarkerViews on the highlighted positions */
   override fun drawMarkers(canvas: Canvas) {
     // if there is no marker view or drawing marker is disabled
-    if (mMarker == null || !isDrawMarkersEnabled() || !valuesToHighlight()) return
+    if (marker == null || !isDrawMarkersEnabled() || !valuesToHighlight()) return
     val indicesToHighlight = mIndicesToHighlight ?: return
     indicesToHighlight.forEach { highlight ->
       if (highlight == null) return@forEach
@@ -152,17 +152,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       val entryIndex = set.getEntryIndex(e)
 
       // make sure entry not null
-      if (entryIndex > set.entryCount * mAnimator.phaseX) return@forEach
+      if (entryIndex > set.entryCount * animator.phaseX) return@forEach
       val pos = getMarkerPosition(highlight)
 
       // check bounds
       if (!viewPortHandler.isInBounds(pos[0], pos[1])) return@forEach
 
       // callbacks to update the content
-      mMarker?.refreshContent(e, highlight)
+      marker?.refreshContent(e, highlight)
 
       // draw the marker
-      mMarker?.draw(canvas, pos[0], pos[1])
+      marker?.draw(canvas, pos[0], pos[1])
     }
   }
 }

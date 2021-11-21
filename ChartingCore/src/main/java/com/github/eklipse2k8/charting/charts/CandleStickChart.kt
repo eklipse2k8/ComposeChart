@@ -21,7 +21,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     CandleDataProvider {
 
   override val dataRenderer: DataRenderer =
-      CandleStickChartRenderer(this, mAnimator, viewPortHandler)
+      CandleStickChartRenderer(this, animator, viewPortHandler)
 
   init {
     xAxis.spaceMin = 0.5f

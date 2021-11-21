@@ -8,7 +8,6 @@ import android.view.VelocityTracker
 import android.view.View
 import android.view.animation.AnimationUtils
 import com.github.eklipse2k8.charting.charts.AnyBarChart
-import com.github.eklipse2k8.charting.charts.AnyBarLineChart
 import com.github.eklipse2k8.charting.charts.HorizontalBarChart
 import com.github.eklipse2k8.charting.interfaces.datasets.IDataSet
 import com.github.eklipse2k8.charting.utils.MPPointF

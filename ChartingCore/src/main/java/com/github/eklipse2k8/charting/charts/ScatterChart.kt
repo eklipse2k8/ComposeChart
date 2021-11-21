@@ -21,7 +21,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     BarLineChartBase<ScatterData, IScatterDataSet, Entry>(context, attrs, defStyleAttr),
     ScatterDataProvider {
 
-  override val dataRenderer: DataRenderer = ScatterChartRenderer(this, mAnimator, viewPortHandler)
+  override val dataRenderer: DataRenderer = ScatterChartRenderer(this, animator, viewPortHandler)
 
   init {
     xAxis.spaceMin = 0.5f

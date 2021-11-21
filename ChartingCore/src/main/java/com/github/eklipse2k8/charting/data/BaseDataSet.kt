@@ -39,7 +39,7 @@ abstract class BaseDataSet<E : Entry>(
     protected set
 
   /** this specifies which axis this DataSet should be plotted against */
-  override var axisDependency: AxisDependency? = AxisDependency.LEFT
+  override var axisDependency: AxisDependency = AxisDependency.LEFT
 
   /** if true, value highlightning is enabled */
   override var isHighlightEnabled = true
