@@ -9,7 +9,8 @@ import java.util.*
  *
  * @author Philipp Jahoda
  */
-class RadarData : ChartData<IRadarDataSet, RadarEntry> {
+class RadarData @JvmOverloads constructor(dataSets: MutableList<IRadarDataSet> = mutableListOf()) :
+    ChartData<IRadarDataSet, RadarEntry>(dataSets) {
   /**
    * Sets the labels that should be drawn around the RadarChart at the end of each web line.
    *
@@ -17,11 +18,7 @@ class RadarData : ChartData<IRadarDataSet, RadarEntry> {
    */
   var labels: List<String>? = null
 
-  constructor() : super()
-
-  constructor(dataSets: MutableList<IRadarDataSet>) : super(dataSets)
-
-  constructor(vararg dataSets: IRadarDataSet) : super(*dataSets)
+  constructor(vararg dataSets: IRadarDataSet) : this(dataSets.toMutableList())
 
   /**
    * Sets the labels that should be drawn around the RadarChart at the end of each web line.
@@ -32,7 +29,6 @@ class RadarData : ChartData<IRadarDataSet, RadarEntry> {
     this.labels = labels.toList()
   }
 
-  override fun getEntryForHighlight(highlight: Highlight): RadarEntry {
-    return getDataSetByIndex(highlight.dataSetIndex)!!.getEntryForIndex(highlight.x.toInt())
-  }
+  override fun getEntryForHighlight(highlight: Highlight): RadarEntry? =
+      getDataSetByIndex(highlight.dataSetIndex)?.getEntryForIndex(highlight.x.toInt())
 }

@@ -11,10 +11,7 @@ import com.github.eklipse2k8.charting.interfaces.datasets.IPieDataSet
  *
  * @author Philipp Jahoda
  */
-class PieData : ChartData<IPieDataSet, PieEntry> {
-
-  constructor() : super()
-  constructor(dataSet: IPieDataSet) : super(dataSet)
+class PieData(dataSet: IPieDataSet) : ChartData<IPieDataSet, PieEntry>(dataSet) {
 
   /** Sets the PieDataSet this data object should represent. */
   var dataSet: IPieDataSet

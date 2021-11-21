@@ -197,7 +197,7 @@ interface IDataSet<E : Entry> {
   var axisDependency: AxisDependency
 
   /** returns all the colors that are set for this DataSet */
-  val colors: MutableList<Int>
+  val colors: List<Int>
 
   /**
    * Returns the first color (index 0) of the colors-array this DataSet contains. This is only used

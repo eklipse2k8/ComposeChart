@@ -37,13 +37,13 @@ E : Entry {
   var xMin = Float.MAX_VALUE
     protected set
 
-  protected var mLeftAxisMax = -Float.MAX_VALUE
+  private var leftAxisMax = -Float.MAX_VALUE
 
-  protected var mLeftAxisMin = Float.MAX_VALUE
+  private var leftAxisMin = Float.MAX_VALUE
 
-  protected var mRightAxisMax = -Float.MAX_VALUE
+  private var rightAxisMax = -Float.MAX_VALUE
 
-  protected var mRightAxisMin = Float.MAX_VALUE
+  private var rightAxisMin = Float.MAX_VALUE
 
   /** Returns the total entry count across all DataSet objects this data object contains. */
   val entryCount: Int
@@ -116,21 +116,21 @@ E : Entry {
 
     mutableDataSets.forEach { set -> calcMinMax(set) }
 
-    mLeftAxisMax = -Float.MAX_VALUE
-    mLeftAxisMin = Float.MAX_VALUE
-    mRightAxisMax = -Float.MAX_VALUE
-    mRightAxisMin = Float.MAX_VALUE
+    leftAxisMax = -Float.MAX_VALUE
+    leftAxisMin = Float.MAX_VALUE
+    rightAxisMax = -Float.MAX_VALUE
+    rightAxisMin = Float.MAX_VALUE
 
     // left axis
     val firstLeft = getFirstLeft(mutableDataSets)
 
     if (firstLeft != null) {
-      mLeftAxisMax = firstLeft.yMax
-      mLeftAxisMin = firstLeft.yMin
+      leftAxisMax = firstLeft.yMax
+      leftAxisMin = firstLeft.yMin
       mutableDataSets.forEach { dataSet ->
         if (dataSet.axisDependency === AxisDependency.LEFT) {
-          if (dataSet.yMin < mLeftAxisMin) mLeftAxisMin = dataSet.yMin
-          if (dataSet.yMax > mLeftAxisMax) mLeftAxisMax = dataSet.yMax
+          if (dataSet.yMin < leftAxisMin) leftAxisMin = dataSet.yMin
+          if (dataSet.yMax > leftAxisMax) leftAxisMax = dataSet.yMax
         }
       }
     }
@@ -139,12 +139,12 @@ E : Entry {
     val firstRight = getFirstRight(mutableDataSets)
 
     if (firstRight != null) {
-      mRightAxisMax = firstRight.yMax
-      mRightAxisMin = firstRight.yMin
+      rightAxisMax = firstRight.yMax
+      rightAxisMin = firstRight.yMin
       mutableDataSets.forEach { dataSet ->
         if (dataSet.axisDependency === AxisDependency.RIGHT) {
-          if (dataSet.yMin < mRightAxisMin) mRightAxisMin = dataSet.yMin
-          if (dataSet.yMax > mRightAxisMax) mRightAxisMax = dataSet.yMax
+          if (dataSet.yMin < rightAxisMin) rightAxisMin = dataSet.yMin
+          if (dataSet.yMax > rightAxisMax) rightAxisMax = dataSet.yMax
         }
       }
     }
@@ -158,13 +158,13 @@ E : Entry {
    */
   fun getYMin(axis: AxisDependency): Float {
     return if (axis === AxisDependency.LEFT) {
-      if (mLeftAxisMin == Float.MAX_VALUE) {
-        mRightAxisMin
-      } else mLeftAxisMin
+      if (leftAxisMin == Float.MAX_VALUE) {
+        rightAxisMin
+      } else leftAxisMin
     } else {
-      if (mRightAxisMin == Float.MAX_VALUE) {
-        mLeftAxisMin
-      } else mRightAxisMin
+      if (rightAxisMin == Float.MAX_VALUE) {
+        leftAxisMin
+      } else rightAxisMin
     }
   }
 
@@ -176,13 +176,13 @@ E : Entry {
    */
   fun getYMax(axis: AxisDependency): Float {
     return if (axis === AxisDependency.LEFT) {
-      if (mLeftAxisMax == -Float.MAX_VALUE) {
-        mRightAxisMax
-      } else mLeftAxisMax
+      if (leftAxisMax == -Float.MAX_VALUE) {
+        rightAxisMax
+      } else leftAxisMax
     } else {
-      if (mRightAxisMax == -Float.MAX_VALUE) {
-        mLeftAxisMax
-      } else mRightAxisMax
+      if (rightAxisMax == -Float.MAX_VALUE) {
+        leftAxisMax
+      } else rightAxisMax
     }
   }
 
@@ -305,11 +305,11 @@ E : Entry {
     if (xMax < entry.x) xMax = entry.x
     if (xMin > entry.x) xMin = entry.x
     if (axis === AxisDependency.LEFT) {
-      if (mLeftAxisMax < entry.y) mLeftAxisMax = entry.y
-      if (mLeftAxisMin > entry.y) mLeftAxisMin = entry.y
+      if (leftAxisMax < entry.y) leftAxisMax = entry.y
+      if (leftAxisMin > entry.y) leftAxisMin = entry.y
     } else {
-      if (mRightAxisMax < entry.y) mRightAxisMax = entry.y
-      if (mRightAxisMin > entry.y) mRightAxisMin = entry.y
+      if (rightAxisMax < entry.y) rightAxisMax = entry.y
+      if (rightAxisMin > entry.y) rightAxisMin = entry.y
     }
   }
 
@@ -324,11 +324,11 @@ E : Entry {
     if (xMax < dataSet.xMax) xMax = dataSet.xMax
     if (xMin > dataSet.xMin) xMin = dataSet.xMin
     if (dataSet.axisDependency === AxisDependency.LEFT) {
-      if (mLeftAxisMax < dataSet.yMax) mLeftAxisMax = dataSet.yMax
-      if (mLeftAxisMin > dataSet.yMin) mLeftAxisMin = dataSet.yMin
+      if (leftAxisMax < dataSet.yMax) leftAxisMax = dataSet.yMax
+      if (leftAxisMin > dataSet.yMin) leftAxisMin = dataSet.yMin
     } else {
-      if (mRightAxisMax < dataSet.yMax) mRightAxisMax = dataSet.yMax
-      if (mRightAxisMin > dataSet.yMin) mRightAxisMin = dataSet.yMin
+      if (rightAxisMax < dataSet.yMax) rightAxisMax = dataSet.yMax
+      if (rightAxisMin > dataSet.yMin) rightAxisMin = dataSet.yMin
     }
   }
 

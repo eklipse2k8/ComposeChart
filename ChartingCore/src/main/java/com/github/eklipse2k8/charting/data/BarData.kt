@@ -7,16 +7,13 @@ import com.github.eklipse2k8.charting.interfaces.datasets.IBarDataSet
  *
  * @author Philipp Jahoda
  */
-class BarData : BarLineScatterCandleBubbleData<IBarDataSet, BarEntry> {
+class BarData @JvmOverloads constructor(dataSets: MutableList<IBarDataSet> = mutableListOf()) :
+    BarLineScatterCandleBubbleData<IBarDataSet, BarEntry>(dataSets) {
 
   /** the width of the bars on the x-axis, in values (not pixels) */
   var barWidth = 0.85f
 
-  constructor() : super()
-
-  constructor(vararg dataSets: IBarDataSet) : super(*dataSets)
-
-  constructor(dataSets: MutableList<IBarDataSet>) : super(dataSets)
+  constructor(vararg dataSets: IBarDataSet) : this(dataSets.toMutableList())
 
   /**
    * Groups all BarDataSet objects this data object holds together by modifying the x-value of their

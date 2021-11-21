@@ -543,7 +543,6 @@ E : Entry {
    * @param axis
    * @param duration
    */
-  @TargetApi(11)
   fun zoomAndCenterAnimated(
       scaleX: Float,
       scaleY: Float,
@@ -708,7 +707,6 @@ E : Entry {
    * @param axis
    * @param duration the duration of the animation in milliseconds
    */
-  @TargetApi(11)
   fun moveViewToAnimated(xValue: Float, yValue: Float, axis: AxisDependency, duration: Long) {
     val bounds =
         getValuesByTouchPoint(viewPortHandler.contentLeft(), viewPortHandler.contentTop(), axis)

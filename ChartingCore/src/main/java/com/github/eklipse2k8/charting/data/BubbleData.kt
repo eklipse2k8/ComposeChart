@@ -2,13 +2,10 @@ package com.github.eklipse2k8.charting.data
 
 import com.github.eklipse2k8.charting.interfaces.datasets.IBubbleDataSet
 
-class BubbleData : BarLineScatterCandleBubbleData<IBubbleDataSet, BubbleEntry> {
+class BubbleData constructor(dataSets: MutableList<IBubbleDataSet> = mutableListOf()) :
+    BarLineScatterCandleBubbleData<IBubbleDataSet, BubbleEntry>(dataSets) {
 
-  constructor() : super()
-
-  constructor(vararg dataSets: IBubbleDataSet) : super(*dataSets)
-
-  constructor(dataSets: MutableList<IBubbleDataSet>) : super(dataSets)
+  constructor(vararg dataSets: IBubbleDataSet) : this(dataSets.toMutableList())
 
   /**
    * Sets the width of the circle that surrounds the bubble when highlighted for all DataSet objects

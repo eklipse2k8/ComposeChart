@@ -32,7 +32,13 @@ abstract class BaseDataSet<E : Entry>(
    *
    * @param colors
    */
-  override var colors: MutableList<Int> = mutableListOf()
+  private val mutableColors = mutableListOf<Int>()
+  final override var colors: List<Int>
+    get() = mutableColors.toList()
+    set(value) {
+      resetColors()
+      mutableColors.addAll(value)
+    }
 
   /** List representing all colors that are used for drawing the actual values for this DataSet */
   var valueColors: MutableList<Int> = mutableListOf()
@@ -75,6 +81,11 @@ abstract class BaseDataSet<E : Entry>(
   /** flag that indicates if the DataSet is visible or not */
   override var isVisible = true
 
+  init {
+    addColor(Color.rgb(140, 234, 255))
+    valueColors.add(Color.BLACK)
+  }
+
   /** Use this method to tell the data set that the underlying data has changed. */
   fun notifyDataSetChanged() {
     calcMinMax()
@@ -90,7 +101,7 @@ abstract class BaseDataSet<E : Entry>(
     get() = colors[0]
     set(color) {
       resetColors()
-      colors.add(color)
+      mutableColors.add(color)
     }
 
   override fun getColor(index: Int): Int {
@@ -107,7 +118,7 @@ abstract class BaseDataSet<E : Entry>(
    */
   fun setColors(vararg colorArgs: Int) {
     resetColors()
-    colors.addAll(createColors(colorArgs))
+    mutableColors.addAll(createColors(colorArgs))
   }
 
   /**
@@ -120,8 +131,8 @@ abstract class BaseDataSet<E : Entry>(
    */
   @RequiresApi(23)
   fun setColors(colorList: IntArray, context: Context) {
-    colors.clear()
-    colors.addAll(colorList.map { context.resources.getColor(it, context.theme) })
+    mutableColors.clear()
+    mutableColors.addAll(colorList.map { context.resources.getColor(it, context.theme) })
   }
 
   /**
@@ -130,7 +141,7 @@ abstract class BaseDataSet<E : Entry>(
    * @param color
    */
   fun addColor(color: Int) {
-    colors.add(color)
+    mutableColors.add(color)
   }
 
   /**
@@ -151,13 +162,13 @@ abstract class BaseDataSet<E : Entry>(
    */
   fun setColors(colorList: IntArray, alpha: Int) {
     resetColors()
-    colors.addAll(
+    mutableColors.addAll(
         colorList.map { Color.argb(alpha, Color.red(it), Color.green(it), Color.blue(it)) })
   }
 
   /** Resets all colors of this DataSet and recreates the colors array. */
   fun resetColors() {
-    colors.clear()
+    mutableColors.clear()
   }
 
   override var valueFormatter: IValueFormatter?
@@ -247,7 +258,7 @@ abstract class BaseDataSet<E : Entry>(
 
   protected fun copyTo(baseDataSet: BaseDataSet<*>) {
     baseDataSet.axisDependency = axisDependency
-    baseDataSet.colors = colors
+    baseDataSet.mutableColors.addAll(colors)
     baseDataSet.isDrawIconsEnabled = isDrawIconsEnabled
     baseDataSet.isDrawValuesEnabled = isDrawValuesEnabled
     baseDataSet.form = form
@@ -261,12 +272,5 @@ abstract class BaseDataSet<E : Entry>(
     baseDataSet.valueColors = valueColors
     baseDataSet.mValueTextSize = mValueTextSize
     baseDataSet.isVisible = isVisible
-  }
-
-  /** Default constructor. */
-  init {
-    // default color
-    colors.add(Color.rgb(140, 234, 255))
-    valueColors.add(Color.BLACK)
   }
 }
