@@ -37,6 +37,7 @@ import com.github.eklipse2k8.charting.utils.Utils
 import com.github.eklipse2k8.charting.utils.Utils.convertDpToPixel
 import com.github.eklipse2k8.charting.utils.Utils.getDecimals
 import com.github.eklipse2k8.charting.utils.ViewPortHandler
+import com.google.android.material.elevation.SurfaceColors
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.coroutines.suspendCoroutine
@@ -830,7 +831,7 @@ E : Entry {
     } else {
       // does not have background drawable, then draw white background on
       // the canvas
-      canvas.drawColor(Color.WHITE)
+      canvas.drawColor(SurfaceColors.SURFACE_1.getColor(context))
     }
     // draw the view on the canvas
     draw(canvas)

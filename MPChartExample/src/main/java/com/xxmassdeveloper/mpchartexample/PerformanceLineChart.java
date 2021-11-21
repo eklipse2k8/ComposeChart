@@ -19,6 +19,7 @@ import com.github.eklipse2k8.charting.components.Legend;
 import com.github.eklipse2k8.charting.data.Entry;
 import com.github.eklipse2k8.charting.data.LineData;
 import com.github.eklipse2k8.charting.data.LineDataSet;
+import com.google.android.material.elevation.SurfaceColors;
 import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
 
 import java.util.ArrayList;
@@ -44,6 +45,8 @@ public class PerformanceLineChart extends DemoBase implements OnSeekBarChangeLis
         seekBarValues.setOnSeekBarChangeListener(this);
 
         chart = findViewById(R.id.chart1);
+
+        chart.setBackgroundColor(SurfaceColors.SURFACE_0.getColor(this));
         chart.setDrawGridBackground(false);
 
         // no description text
@@ -139,8 +142,10 @@ public class PerformanceLineChart extends DemoBase implements OnSeekBarChangeLis
     public void saveToGallery() { /* Intentionally left empty */ }
 
     @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {}
+    public void onStartTrackingTouch(SeekBar seekBar) {
+    }
 
     @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {}
+    public void onStopTrackingTouch(SeekBar seekBar) {
+    }
 }

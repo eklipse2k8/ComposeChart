@@ -75,7 +75,6 @@ public class LineChartTime extends DemoBase implements OnSeekBarChangeListener {
         chart.setHighlightPerDragEnabled(true);
 
         // set an alternative background color
-        chart.setBackgroundColor(Color.WHITE);
         chart.setViewPortOffsets(0f, 0f, 0f, 0f);
 
         // add data
@@ -100,7 +99,7 @@ public class LineChartTime extends DemoBase implements OnSeekBarChangeListener {
             private final SimpleDateFormat mFormat = new SimpleDateFormat("dd MMM HH:mm", Locale.ENGLISH);
 
             @Override
-            public String getFormattedValue(float value, AxisBase axis) {
+            public String getFormattedValue(float value, @NonNull AxisBase axis) {
 
                 long millis = TimeUnit.HOURS.toMillis((long) value);
                 return mFormat.format(new Date(millis));
@@ -122,7 +121,7 @@ public class LineChartTime extends DemoBase implements OnSeekBarChangeListener {
         rightAxis.setEnabled(false);
     }
 
-    private void setData(int count, float range) {
+    private void setData(int count) {
 
         // now in hours
         long now = TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis());
@@ -135,7 +134,7 @@ public class LineChartTime extends DemoBase implements OnSeekBarChangeListener {
         // increment by 1 hour
         for (float x = now; x < to; x++) {
 
-            float y = getRandom(range, 50);
+            float y = getRandom((float) 50, 50);
             values.add(new Entry(x, y)); // add one entry per hour
         }
 
@@ -162,7 +161,7 @@ public class LineChartTime extends DemoBase implements OnSeekBarChangeListener {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.line, menu);
         return true;
     }
@@ -293,7 +292,7 @@ public class LineChartTime extends DemoBase implements OnSeekBarChangeListener {
 
         tvX.setText(String.valueOf(seekBarX.getProgress()));
 
-        setData(seekBarX.getProgress(), 50);
+        setData(seekBarX.getProgress());
 
         // redraw
         chart.invalidate();
