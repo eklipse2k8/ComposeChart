@@ -34,7 +34,7 @@
         android:max="500"
         android:paddingBottom="12dp" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvXMax"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
         android:gravity="right"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvYMax"
         android:layout_width="50dp"
         android:layout_height="wrap_content"

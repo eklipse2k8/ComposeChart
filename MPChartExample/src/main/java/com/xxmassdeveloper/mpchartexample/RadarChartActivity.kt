@@ -1,256 +1,200 @@
+package com.xxmassdeveloper.mpchartexample
 
-package com.xxmassdeveloper.mpchartexample;
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.net.Uri
+import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.view.WindowManager
+import androidx.core.content.ContextCompat
+import com.github.eklipse2k8.charting.animation.Easing.EaseInOutCubic
+import com.github.eklipse2k8.charting.animation.Easing.EaseInOutQuad
+import com.github.eklipse2k8.charting.charts.RadarChart
+import com.github.eklipse2k8.charting.components.AxisBase
+import com.github.eklipse2k8.charting.components.Legend
+import com.github.eklipse2k8.charting.components.MarkerView
+import com.github.eklipse2k8.charting.data.RadarData
+import com.github.eklipse2k8.charting.data.RadarDataSet
+import com.github.eklipse2k8.charting.data.RadarEntry
+import com.github.eklipse2k8.charting.formatter.IAxisValueFormatter
+import com.github.eklipse2k8.charting.interfaces.datasets.IRadarDataSet
+import com.xxmassdeveloper.mpchartexample.custom.RadarMarkerView
+import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Bundle;
+class RadarChartActivity : DemoBase() {
+  private lateinit var chart: RadarChart
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    window.setFlags(
+        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+    setContentView(R.layout.activity_radarchart)
+    title = "RadarChartActivity"
+    chart = findViewById(R.id.chart1)
+    chart.setBackgroundColor(Color.rgb(60, 65, 82))
+    chart.description.isEnabled = false
+    chart.webLineWidth = 1f
+    chart.webColor = Color.LTGRAY
+    chart.webLineWidthInner = 1f
+    chart.webColorInner = Color.LTGRAY
+    chart.webAlpha = 100
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.WindowManager;
-
-import com.github.eklipse2k8.charting.animation.Easing;
-import com.github.eklipse2k8.charting.charts.RadarChart;
-import com.github.eklipse2k8.charting.components.AxisBase;
-import com.github.eklipse2k8.charting.components.Legend;
-import com.github.eklipse2k8.charting.components.MarkerView;
-import com.github.eklipse2k8.charting.components.XAxis;
-import com.github.eklipse2k8.charting.components.YAxis;
-import com.github.eklipse2k8.charting.data.RadarData;
-import com.github.eklipse2k8.charting.data.RadarDataSet;
-import com.github.eklipse2k8.charting.data.RadarEntry;
-import com.github.eklipse2k8.charting.formatter.IAxisValueFormatter;
-import com.github.eklipse2k8.charting.interfaces.datasets.IDataSet;
-import com.github.eklipse2k8.charting.interfaces.datasets.IRadarDataSet;
-import com.xxmassdeveloper.mpchartexample.custom.RadarMarkerView;
-import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
-
-import java.util.ArrayList;
-
-public class RadarChartActivity extends DemoBase {
-
-    private RadarChart chart;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_radarchart);
-
-        setTitle("RadarChartActivity");
-
-        chart = findViewById(R.id.chart1);
-        chart.setBackgroundColor(Color.rgb(60, 65, 82));
-
-        chart.getDescription().setEnabled(false);
-
-        chart.setWebLineWidth(1f);
-        chart.setWebColor(Color.LTGRAY);
-        chart.setWebLineWidthInner(1f);
-        chart.setWebColorInner(Color.LTGRAY);
-        chart.setWebAlpha(100);
-
-        // create a custom MarkerView (extend MarkerView) and specify the layout
-        // to use for it
-        MarkerView mv = new RadarMarkerView(this, R.layout.radar_markerview);
-        mv.setChartView(chart); // For bounds control
-        chart.setMarker(mv); // Set the marker to the chart
-
-        setData();
-
-        chart.animateXY(1400, 1400, Easing.INSTANCE.getEaseInOutQuad());
-
-        XAxis xAxis = chart.getXAxis();
-        xAxis.setTypeface(tfLight);
-        xAxis.setTextSize(9f);
-        xAxis.setYOffset(0f);
-        xAxis.setXOffset(0f);
-        xAxis.setValueFormatter(new IAxisValueFormatter() {
-
-            private final String[] mActivities = new String[]{"Burger", "Steak", "Salad", "Pasta", "Pizza"};
-
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return mActivities[(int) value % mActivities.length];
-            }
-        });
-        xAxis.setTextColor(Color.WHITE);
-
-        YAxis yAxis = chart.getYAxis();
-        yAxis.setTypeface(tfLight);
-        yAxis.setLabelCount(5, false);
-        yAxis.setTextSize(9f);
-        yAxis.setAxisMinimum(0f);
-        yAxis.setAxisMaximum(80f);
-        yAxis.setDrawLabels(false);
-
-        Legend l = chart.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
-        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-        l.setDrawInside(false);
-        l.setTypeface(tfLight);
-        l.setXEntrySpace(7f);
-        l.setYEntrySpace(5f);
-        l.setTextColor(Color.WHITE);
-    }
-
-    private void setData() {
-
-        float mul = 80;
-        float min = 20;
-        int cnt = 5;
-
-        ArrayList<RadarEntry> entries1 = new ArrayList<>();
-        ArrayList<RadarEntry> entries2 = new ArrayList<>();
-
-        // NOTE: The order of the entries when being added to the entries array determines their position around the center of
-        // the chart.
-        for (int i = 0; i < cnt; i++) {
-            float val1 = (float) (Math.random() * mul) + min;
-            entries1.add(new RadarEntry(val1));
-
-            float val2 = (float) (Math.random() * mul) + min;
-            entries2.add(new RadarEntry(val2));
+    // create a custom MarkerView (extend MarkerView) and specify the layout
+    // to use for it
+    val mv: MarkerView = RadarMarkerView(this, R.layout.radar_markerview)
+    mv.setChartView(chart) // For bounds control
+    chart.marker = mv // Set the marker to the chart
+    setData()
+    chart.animateXY(1400, 1400, EaseInOutQuad)
+    val xAxis = chart.xAxis
+    xAxis.typeface = tfLight
+    xAxis.textSize = 9f
+    xAxis.yOffset = 0f
+    xAxis.xOffset = 0f
+    xAxis.valueFormatter =
+        object : IAxisValueFormatter {
+          private val mActivities = arrayOf("Burger", "Steak", "Salad", "Pasta", "Pizza")
+          override fun getFormattedValue(value: Float, axis: AxisBase): String? {
+            return mActivities[value.toInt() % mActivities.size]
+          }
         }
+    xAxis.textColor = Color.WHITE
+    val yAxis = chart.yAxis
+    yAxis!!.typeface = tfLight
+    yAxis.setLabelCount(5, false)
+    yAxis.textSize = 9f
+    yAxis.axisMinimum = 0f
+    yAxis.axisMaximum = 80f
+    yAxis.setDrawLabels(false)
+    val l = chart.legend
+    l.verticalAlignment = Legend.LegendVerticalAlignment.TOP
+    l.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
+    l.orientation = Legend.LegendOrientation.HORIZONTAL
+    l.setDrawInside(false)
+    l.typeface = tfLight
+    l.xEntrySpace = 7f
+    l.yEntrySpace = 5f
+    l.textColor = Color.WHITE
+  }
 
-        RadarDataSet set1 = new RadarDataSet(entries1, "Last Week");
-        set1.setColor(Color.rgb(103, 110, 129));
-        set1.setFillColor(Color.rgb(103, 110, 129));
-        set1.setDrawFilled(true);
-        set1.setFillAlpha(180);
-        set1.setLineWidth(2f);
-        set1.setDrawHighlightCircleEnabled(true);
-        set1.setDrawHighlightIndicators(false);
+  private fun setData() {
+    val mul = 80f
+    val min = 20f
+    val cnt = 5
+    val entries1 = ArrayList<RadarEntry>()
+    val entries2 = ArrayList<RadarEntry>()
 
-        RadarDataSet set2 = new RadarDataSet(entries2, "This Week");
-        set2.setColor(Color.rgb(121, 162, 175));
-        set2.setFillColor(Color.rgb(121, 162, 175));
-        set2.setDrawFilled(true);
-        set2.setFillAlpha(180);
-        set2.setLineWidth(2f);
-        set2.setDrawHighlightCircleEnabled(true);
-        set2.setDrawHighlightIndicators(false);
-
-        ArrayList<IRadarDataSet> sets = new ArrayList<>();
-        sets.add(set1);
-        sets.add(set2);
-
-        RadarData data = new RadarData(sets);
-        data.setValueTypeface(tfLight);
-        data.setValueTextSize(8f);
-        data.setDrawValues(false);
-        data.setValueTextColor(Color.WHITE);
-
-        chart.setData(data);
-        chart.invalidate();
+    // NOTE: The order of the entries when being added to the entries array determines their
+    // position around the center of
+    // the chart.
+    for (i in 0 until cnt) {
+      val val1 = (Math.random() * mul).toFloat() + min
+      entries1.add(RadarEntry(val1))
+      val val2 = (Math.random() * mul).toFloat() + min
+      entries2.add(RadarEntry(val2))
     }
+    val set1 = RadarDataSet(entries1, "Last Week")
+    set1.color = Color.rgb(103, 110, 129)
+    set1.fillColor = Color.rgb(103, 110, 129)
+    set1.setDrawFilled(true)
+    set1.fillAlpha = 180
+    set1.lineWidth = 2f
+    set1.isDrawHighlightCircleEnabled = true
+    set1.setDrawHighlightIndicators(false)
+    val set2 = RadarDataSet(entries2, "This Week")
+    set2.color = Color.rgb(121, 162, 175)
+    set2.fillColor = Color.rgb(121, 162, 175)
+    set2.setDrawFilled(true)
+    set2.fillAlpha = 180
+    set2.lineWidth = 2f
+    set2.isDrawHighlightCircleEnabled = true
+    set2.setDrawHighlightIndicators(false)
+    val sets = ArrayList<IRadarDataSet>()
+    sets.add(set1)
+    sets.add(set2)
+    val data = RadarData(sets)
+    data.setValueTypeface(tfLight)
+    data.setValueTextSize(8f)
+    data.setDrawValues(false)
+    data.setValueTextColor(Color.WHITE)
+    chart.data = data
+    chart.invalidate()
+  }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.radar, menu);
-        return true;
-    }
+  override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    menuInflater.inflate(R.menu.radar, menu)
+    return true
+  }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.viewGithub: {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse("https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/com/xxmassdeveloper/mpchartexample/RadarChartActivity.java"));
-                startActivity(i);
-                break;
-            }
-            case R.id.actionToggleValues: {
-                for (IDataSet<?> set : chart.getData().getDataSets())
-                    set.setDrawValues(!set.isDrawValuesEnabled());
-
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleHighlight: {
-                if (chart.getData() != null) {
-                    chart.getData().setHighlightEnabled(!chart.getData().isHighlightEnabled());
-                    chart.invalidate();
-                }
-                break;
-            }
-            case R.id.actionToggleRotate: {
-                chart.setRotationEnabled(!chart.isRotationEnabled());
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleFilled: {
-
-                ArrayList<IRadarDataSet> sets = (ArrayList<IRadarDataSet>) chart.getData()
-                        .getDataSets();
-
-                for (IRadarDataSet set : sets) {
-                    set.setDrawFilled(!set.isDrawFilledEnabled());
-                }
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleHighlightCircle: {
-
-                ArrayList<IRadarDataSet> sets = (ArrayList<IRadarDataSet>) chart.getData()
-                        .getDataSets();
-
-                for (IRadarDataSet set : sets) {
-                    set.setDrawHighlightCircleEnabled(!set.isDrawHighlightCircleEnabled());
-                }
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleXLabels: {
-                chart.getXAxis().setEnabled(!chart.getXAxis().isEnabled());
-                chart.notifyDataSetChanged();
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleYLabels: {
-
-                chart.getYAxis().setEnabled(!chart.getYAxis().isEnabled());
-                chart.invalidate();
-                break;
-            }
-            case R.id.animateX: {
-                chart.animateX(1400);
-                break;
-            }
-            case R.id.animateY: {
-                chart.animateY(1400);
-                break;
-            }
-            case R.id.animateXY: {
-                chart.animateXY(1400, 1400);
-                break;
-            }
-            case R.id.actionToggleSpin: {
-                chart.spin(2000, chart.getRotationAngle(), chart.getRotationAngle() + 360, Easing.INSTANCE.getEaseInOutCubic());
-                break;
-            }
-            case R.id.actionSave: {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    saveToGallery();
-                } else {
-                    requestStoragePermission(chart);
-                }
-                break;
-            }
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    when (item.itemId) {
+      R.id.viewGithub -> {
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data =
+            Uri.parse(
+                "https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/com/xxmassdeveloper/mpchartexample/RadarChartActivity.java")
+        startActivity(i)
+      }
+      R.id.actionToggleValues -> {
+        for (set in chart.data!!.dataSets) set.setDrawValues(!set.isDrawValuesEnabled)
+        chart.invalidate()
+      }
+      R.id.actionToggleHighlight -> {
+        if (chart.data != null) {
+          chart.data!!.isHighlightEnabled = !chart.data!!.isHighlightEnabled
+          chart.invalidate()
         }
-        return true;
+      }
+      R.id.actionToggleRotate -> {
+        chart.isRotationEnabled = !chart.isRotationEnabled
+        chart.invalidate()
+      }
+      R.id.actionToggleFilled -> {
+        chart.data?.dataSets?.forEach { set -> set.setDrawFilled(!set.isDrawFilledEnabled) }
+        chart.invalidate()
+      }
+      R.id.actionToggleHighlightCircle -> {
+        chart.data?.dataSets?.forEach { set ->
+          set.isDrawHighlightCircleEnabled = !set.isDrawHighlightCircleEnabled
+        }
+        chart.invalidate()
+      }
+      R.id.actionToggleXLabels -> {
+        chart.xAxis.isEnabled = !chart.xAxis.isEnabled
+        chart.notifyDataSetChanged()
+        chart.invalidate()
+      }
+      R.id.actionToggleYLabels -> {
+        chart.yAxis!!.isEnabled = !chart.yAxis!!.isEnabled
+        chart.invalidate()
+      }
+      R.id.animateX -> {
+        chart.animateX(1400)
+      }
+      R.id.animateY -> {
+        chart.animateY(1400)
+      }
+      R.id.animateXY -> {
+        chart.animateXY(1400, 1400)
+      }
+      R.id.actionToggleSpin -> {
+        chart.spin(2000, chart.rotationAngle, chart.rotationAngle + 360, EaseInOutCubic)
+      }
+      R.id.actionSave -> {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+            PackageManager.PERMISSION_GRANTED) {
+          saveToGallery()
+        } else {
+          requestStoragePermission(chart!!)
+        }
+      }
     }
+    return true
+  }
 
-    @Override
-    protected void saveToGallery() {
-        saveToGallery(chart, "RadarChartActivity");
-    }
+  override fun saveToGallery() {
+    saveToGallery(chart!!, "RadarChartActivity")
+  }
 }

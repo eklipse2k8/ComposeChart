@@ -1,204 +1,156 @@
+package com.xxmassdeveloper.mpchartexample
 
-package com.xxmassdeveloper.mpchartexample;
+import android.content.Intent
+import android.graphics.Color
+import android.net.Uri
+import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.view.WindowManager
+import com.github.eklipse2k8.charting.charts.BarChart
+import com.github.eklipse2k8.charting.components.AxisBase
+import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition
+import com.github.eklipse2k8.charting.data.BarData
+import com.github.eklipse2k8.charting.data.BarDataSet
+import com.github.eklipse2k8.charting.data.BarEntry
+import com.github.eklipse2k8.charting.data.Entry
+import com.github.eklipse2k8.charting.formatter.IAxisValueFormatter
+import com.github.eklipse2k8.charting.formatter.IValueFormatter
+import com.github.eklipse2k8.charting.utils.ViewPortHandler
+import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase
+import java.text.DecimalFormat
 
-import android.content.Intent;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.WindowManager;
+class BarChartPositiveNegative : DemoBase() {
+  private lateinit var chart: BarChart
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    window.setFlags(
+        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+    setContentView(R.layout.activity_barchart_noseekbar)
+    title = "BarChartPositiveNegative"
+    chart = findViewById(R.id.chart1)
+    chart.setBackgroundColor(Color.WHITE)
+    chart.extraTopOffset = -30f
+    chart.extraBottomOffset = 10f
+    chart.extraLeftOffset = 70f
+    chart.extraRightOffset = 70f
+    chart.setDrawBarShadow(false)
+    chart.setDrawValueAboveBar(true)
+    chart.description.isEnabled = false
 
-import androidx.annotation.NonNull;
+    // scaling can now only be done on x- and y-axis separately
+    chart.setPinchZoom(false)
+    chart.setDrawGridBackground(false)
+    val xAxis = chart.xAxis
+    xAxis.position = XAxisPosition.BOTTOM
+    xAxis.typeface = tfRegular
+    xAxis.setDrawGridLines(false)
+    xAxis.setDrawAxisLine(false)
+    xAxis.textColor = Color.LTGRAY
+    xAxis.textSize = 13f
+    xAxis.labelCount = 5
+    xAxis.setCenterAxisLabels(true)
+    xAxis.granularity = 1f
+    val left = chart.axisLeft
+    left.setDrawLabels(false)
+    left.spaceTop = 25f
+    left.spaceBottom = 25f
+    left.setDrawAxisLine(false)
+    left.setDrawGridLines(false)
+    left.setDrawZeroLine(true) // draw a zero line
+    left.zeroLineColor = Color.GRAY
+    left.zeroLineWidth = 0.7f
+    chart.axisRight.isEnabled = false
+    chart.legend.isEnabled = false
 
-import com.github.eklipse2k8.charting.charts.BarChart;
-import com.github.eklipse2k8.charting.components.AxisBase;
-import com.github.eklipse2k8.charting.components.XAxis;
-import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition;
-import com.github.eklipse2k8.charting.components.YAxis;
-import com.github.eklipse2k8.charting.data.BarData;
-import com.github.eklipse2k8.charting.data.BarDataSet;
-import com.github.eklipse2k8.charting.data.BarEntry;
-import com.github.eklipse2k8.charting.data.Entry;
-import com.github.eklipse2k8.charting.formatter.IAxisValueFormatter;
-import com.github.eklipse2k8.charting.formatter.IValueFormatter;
-import com.github.eklipse2k8.charting.utils.ViewPortHandler;
-import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
+    // THIS IS THE ORIGINAL DATA YOU WANT TO PLOT
+    val data: MutableList<Data> = ArrayList()
+    data.add(Data(0f, -224.1f, "12-29"))
+    data.add(Data(1f, 238.5f, "12-30"))
+    data.add(Data(2f, 1280.1f, "12-31"))
+    data.add(Data(3f, -442.3f, "01-01"))
+    data.add(Data(4f, -2280.1f, "01-02"))
+    xAxis.valueFormatter =
+        object : IAxisValueFormatter {
+          override fun getFormattedValue(value: Float, axis: AxisBase): String? {
+            return data[Math.min(Math.max(value.toInt(), 0), data.size - 1)].xAxisValue
+          }
+        }
+    setData(data)
+  }
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
+  private fun setData(dataList: List<Data>) {
+    val values = ArrayList<BarEntry>()
+    val colors: MutableList<Int> = ArrayList()
+    val green = Color.rgb(110, 190, 102)
+    val red = Color.rgb(211, 74, 88)
+    for (i in dataList.indices) {
+      val d = dataList[i]
+      val entry = BarEntry(d.xValue, d.yValue)
+      values.add(entry)
 
-public class BarChartPositiveNegative extends DemoBase {
+      // specific colors
+      if (d.yValue >= 0) colors.add(red) else colors.add(green)
+    }
+    val set: BarDataSet?
+    if (chart.data != null && chart.data!!.dataSetCount > 0) {
+      set = chart.data!!.getDataSetByIndex(0) as BarDataSet?
+      set!!.entries = values
+      chart.data!!.notifyDataChanged()
+      chart.notifyDataSetChanged()
+    } else {
+      set = BarDataSet(values, "Values")
+      set.colors = colors
+      set.setValueTextColors(colors)
+      val data = BarData(set)
+      data.setValueTextSize(13f)
+      data.setValueTypeface(tfRegular)
+      data.setValueFormatter(ValueFormatter())
+      data.barWidth = 0.8f
+      chart.data = data
+      chart.invalidate()
+    }
+  }
 
-    private BarChart chart;
+  /** Demo class representing data. */
+  private inner class Data
+  internal constructor(val xValue: Float, val yValue: Float, val xAxisValue: String)
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_barchart_noseekbar);
-
-        setTitle("BarChartPositiveNegative");
-
-        chart = findViewById(R.id.chart1);
-        chart.setBackgroundColor(Color.WHITE);
-        chart.setExtraTopOffset(-30f);
-        chart.setExtraBottomOffset(10f);
-        chart.setExtraLeftOffset(70f);
-        chart.setExtraRightOffset(70f);
-
-        chart.setDrawBarShadow(false);
-        chart.setDrawValueAboveBar(true);
-
-        chart.getDescription().setEnabled(false);
-
-        // scaling can now only be done on x- and y-axis separately
-        chart.setPinchZoom(false);
-
-        chart.setDrawGridBackground(false);
-
-        XAxis xAxis = chart.getXAxis();
-        xAxis.setPosition(XAxisPosition.BOTTOM);
-        xAxis.setTypeface(tfRegular);
-        xAxis.setDrawGridLines(false);
-        xAxis.setDrawAxisLine(false);
-        xAxis.setTextColor(Color.LTGRAY);
-        xAxis.setTextSize(13f);
-        xAxis.setLabelCount(5);
-        xAxis.setCenterAxisLabels(true);
-        xAxis.setGranularity(1f);
-
-        YAxis left = chart.getAxisLeft();
-        left.setDrawLabels(false);
-        left.setSpaceTop(25f);
-        left.setSpaceBottom(25f);
-        left.setDrawAxisLine(false);
-        left.setDrawGridLines(false);
-        left.setDrawZeroLine(true); // draw a zero line
-        left.setZeroLineColor(Color.GRAY);
-        left.setZeroLineWidth(0.7f);
-        chart.getAxisRight().setEnabled(false);
-        chart.getLegend().setEnabled(false);
-
-        // THIS IS THE ORIGINAL DATA YOU WANT TO PLOT
-        final List<Data> data = new ArrayList<>();
-        data.add(new Data(0f, -224.1f, "12-29"));
-        data.add(new Data(1f, 238.5f, "12-30"));
-        data.add(new Data(2f, 1280.1f, "12-31"));
-        data.add(new Data(3f, -442.3f, "01-01"));
-        data.add(new Data(4f, -2280.1f, "01-02"));
-
-        xAxis.setValueFormatter(new IAxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return data.get(Math.min(Math.max((int) value, 0), data.size()-1)).xAxisValue;
-            }
-        });
-
-        setData(data);
+  private inner class ValueFormatter internal constructor() : IValueFormatter {
+    private val mFormat: DecimalFormat
+    override fun getFormattedValue(
+        value: Float,
+        entry: Entry,
+        dataSetIndex: Int,
+        viewPortHandler: ViewPortHandler
+    ): String {
+      return mFormat.format(value.toDouble())
     }
 
-    private void setData(@NonNull List<Data> dataList) {
-
-        ArrayList<BarEntry> values = new ArrayList<>();
-        List<Integer> colors = new ArrayList<>();
-
-        int green = Color.rgb(110, 190, 102);
-        int red = Color.rgb(211, 74, 88);
-
-        for (int i = 0; i < dataList.size(); i++) {
-
-            Data d = dataList.get(i);
-            BarEntry entry = new BarEntry(d.xValue, d.yValue);
-            values.add(entry);
-
-            // specific colors
-            if (d.yValue >= 0)
-                colors.add(red);
-            else
-                colors.add(green);
-        }
-
-        BarDataSet set;
-
-        if (chart.getData() != null &&
-                chart.getData().getDataSetCount() > 0) {
-            set = (BarDataSet) chart.getData().getDataSetByIndex(0);
-            set.setEntries(values);
-            chart.getData().notifyDataChanged();
-            chart.notifyDataSetChanged();
-        } else {
-            set = new BarDataSet(values, "Values");
-            set.setColors(colors);
-            set.setValueTextColors(colors);
-
-            BarData data = new BarData(set);
-            data.setValueTextSize(13f);
-            data.setValueTypeface(tfRegular);
-            data.setValueFormatter(new ValueFormatter());
-            data.setBarWidth(0.8f);
-
-            chart.setData(data);
-            chart.invalidate();
-        }
+    init {
+      mFormat = DecimalFormat("######.0")
     }
+  }
 
-    /**
-     * Demo class representing data.
-     */
-    private class Data {
+  override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    menuInflater.inflate(R.menu.only_github, menu)
+    return true
+  }
 
-        final String xAxisValue;
-        final float yValue;
-        final float xValue;
-
-        Data(float xValue, float yValue, String xAxisValue) {
-            this.xAxisValue = xAxisValue;
-            this.yValue = yValue;
-            this.xValue = xValue;
-        }
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    when (item.itemId) {
+      R.id.viewGithub -> {
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data =
+            Uri.parse(
+                "https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/com/xxmassdeveloper/mpchartexample/BarChartPositiveNegative.java")
+        startActivity(i)
+      }
     }
+    return true
+  }
 
-    private class ValueFormatter implements IValueFormatter
-    {
-
-        @NonNull
-        private final DecimalFormat mFormat;
-
-        ValueFormatter() {
-            mFormat = new DecimalFormat("######.0");
-        }
-
-        @NonNull
-        @Override
-        public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-            return mFormat.format(value);
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.only_github, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.viewGithub: {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse("https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/com/xxmassdeveloper/mpchartexample/BarChartPositiveNegative.java"));
-                startActivity(i);
-                break;
-            }
-        }
-
-        return true;
-    }
-
-    @Override
-    public void saveToGallery() { /* Intentionally left empty */ }
+  public override fun saveToGallery() {
+    /* Intentionally left empty */
+  }
 }

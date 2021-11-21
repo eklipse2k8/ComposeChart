@@ -1,296 +1,239 @@
+package com.xxmassdeveloper.mpchartexample
 
-package com.xxmassdeveloper.mpchartexample;
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.net.Uri
+import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.view.WindowManager
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import com.github.eklipse2k8.charting.charts.BarChart
+import com.github.eklipse2k8.charting.components.Legend
+import com.github.eklipse2k8.charting.data.BarData
+import com.github.eklipse2k8.charting.data.BarDataSet
+import com.github.eklipse2k8.charting.data.BarEntry
+import com.github.eklipse2k8.charting.data.Entry
+import com.github.eklipse2k8.charting.formatter.IAxisValueFormatter
+import com.github.eklipse2k8.charting.formatter.LargeValueFormatter
+import com.github.eklipse2k8.charting.highlight.Highlight
+import com.github.eklipse2k8.charting.listener.OnChartValueSelectedListener
+import com.xxmassdeveloper.mpchartexample.custom.MyMarkerView
+import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase
+import java.util.*
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Bundle;
+class BarChartActivityMultiDataset :
+    DemoBase(), OnSeekBarChangeListener, OnChartValueSelectedListener {
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.WindowManager;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.TextView;
+  private lateinit var chart: BarChart
+  private lateinit var seekBarX: SeekBar
+  private lateinit var seekBarY: SeekBar
+  private lateinit var tvX: TextView
+  private lateinit var tvY: TextView
 
-import com.github.eklipse2k8.charting.charts.BarChart;
-import com.github.eklipse2k8.charting.components.AxisBase;
-import com.github.eklipse2k8.charting.components.Legend;
-import com.github.eklipse2k8.charting.components.XAxis;
-import com.github.eklipse2k8.charting.components.YAxis;
-import com.github.eklipse2k8.charting.data.BarData;
-import com.github.eklipse2k8.charting.data.BarDataSet;
-import com.github.eklipse2k8.charting.data.BarEntry;
-import com.github.eklipse2k8.charting.data.Entry;
-import com.github.eklipse2k8.charting.formatter.IAxisValueFormatter;
-import com.github.eklipse2k8.charting.formatter.LargeValueFormatter;
-import com.github.eklipse2k8.charting.highlight.Highlight;
-import com.github.eklipse2k8.charting.interfaces.datasets.IBarDataSet;
-import com.github.eklipse2k8.charting.listener.OnChartValueSelectedListener;
-import com.xxmassdeveloper.mpchartexample.custom.MyMarkerView;
-import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_barchart)
+    title = "BarChartActivityMultiDataset"
+    tvX = findViewById(R.id.tvXMax)
+    tvX.textSize = 10f
+    tvY = findViewById(R.id.tvYMax)
+    seekBarX = findViewById(R.id.seekBar1)
+    seekBarX.max = 50
+    seekBarX.setOnSeekBarChangeListener(this)
+    seekBarY = findViewById(R.id.seekBar2)
+    seekBarY.setOnSeekBarChangeListener(this)
+    chart = findViewById(R.id.chart1)
+    chart.setOnChartValueSelectedListener(this)
+    chart.description.isEnabled = false
 
-import java.util.ArrayList;
-import java.util.Locale;
+    //        chart.setDrawBorders(true);
 
-public class BarChartActivityMultiDataset extends DemoBase implements OnSeekBarChangeListener,
-        OnChartValueSelectedListener {
+    // scaling can now only be done on x- and y-axis separately
+    chart.setPinchZoom(false)
+    chart.setDrawBarShadow(false)
+    chart.setDrawGridBackground(false)
 
-    private BarChart chart;
-    private SeekBar seekBarX, seekBarY;
-    private TextView tvX, tvY;
+    // create a custom MarkerView (extend MarkerView) and specify the layout
+    // to use for it
+    val mv = MyMarkerView(this, R.layout.custom_marker_view)
+    mv.setChartView(chart) // For bounds control
+    chart.marker = mv // Set the marker to the chart
+    seekBarX.progress = 10
+    seekBarY.progress = 100
+    val l = chart.legend
+    l.verticalAlignment = Legend.LegendVerticalAlignment.TOP
+    l.horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
+    l.orientation = Legend.LegendOrientation.VERTICAL
+    l.setDrawInside(true)
+    l.typeface = tfLight
+    l.yOffset = 0f
+    l.xOffset = 10f
+    l.yEntrySpace = 0f
+    l.textSize = 8f
+    val xAxis = chart.xAxis
+    xAxis.typeface = tfLight
+    xAxis.granularity = 1f
+    xAxis.setCenterAxisLabels(true)
+    xAxis.valueFormatter = IAxisValueFormatter { value, _ -> value.toString() }
+    val leftAxis = chart.axisLeft
+    leftAxis.typeface = tfLight
+    leftAxis.valueFormatter = LargeValueFormatter()
+    leftAxis.setDrawGridLines(false)
+    leftAxis.spaceTop = 35f
+    leftAxis.axisMinimum = 0f // this replaces setStartAtZero(true)
+    chart.axisRight.isEnabled = false
+  }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_barchart);
-
-        setTitle("BarChartActivityMultiDataset");
-
-        tvX = findViewById(R.id.tvXMax);
-        tvX.setTextSize(10);
-        tvY = findViewById(R.id.tvYMax);
-
-        seekBarX = findViewById(R.id.seekBar1);
-        seekBarX.setMax(50);
-        seekBarX.setOnSeekBarChangeListener(this);
-
-        seekBarY = findViewById(R.id.seekBar2);
-        seekBarY.setOnSeekBarChangeListener(this);
-
-        chart = findViewById(R.id.chart1);
-        chart.setOnChartValueSelectedListener(this);
-        chart.getDescription().setEnabled(false);
-
-//        chart.setDrawBorders(true);
-
-        // scaling can now only be done on x- and y-axis separately
-        chart.setPinchZoom(false);
-
-        chart.setDrawBarShadow(false);
-
-        chart.setDrawGridBackground(false);
-
-        // create a custom MarkerView (extend MarkerView) and specify the layout
-        // to use for it
-        MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
-        mv.setChartView(chart); // For bounds control
-        chart.setMarker(mv); // Set the marker to the chart
-
-        seekBarX.setProgress(10);
-        seekBarY.setProgress(100);
-
-        Legend l = chart.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        l.setOrientation(Legend.LegendOrientation.VERTICAL);
-        l.setDrawInside(true);
-        l.setTypeface(tfLight);
-        l.setYOffset(0f);
-        l.setXOffset(10f);
-        l.setYEntrySpace(0f);
-        l.setTextSize(8f);
-
-        XAxis xAxis = chart.getXAxis();
-        xAxis.setTypeface(tfLight);
-        xAxis.setGranularity(1f);
-        xAxis.setCenterAxisLabels(true);
-        xAxis.setValueFormatter(new IAxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return String.valueOf((int) value);
-            }
-        });
-
-        YAxis leftAxis = chart.getAxisLeft();
-        leftAxis.setTypeface(tfLight);
-        leftAxis.setValueFormatter(new LargeValueFormatter());
-        leftAxis.setDrawGridLines(false);
-        leftAxis.setSpaceTop(35f);
-        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
-
-        chart.getAxisRight().setEnabled(false);
+  override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+    val groupSpace = 0.08f
+    val barSpace = 0.03f // x4 DataSet
+    val barWidth = 0.2f // x4 DataSet
+    // (0.2 + 0.03) * 4 + 0.08 = 1.00 -> interval per "group"
+    val groupCount = seekBarX!!.progress + 1
+    val startYear = 1980
+    val endYear = startYear + groupCount
+    tvX!!.text = String.format(Locale.ENGLISH, "%d-%d", startYear, endYear)
+    tvY!!.text = seekBarY!!.progress.toString()
+    val values1 = ArrayList<BarEntry>()
+    val values2 = ArrayList<BarEntry>()
+    val values3 = ArrayList<BarEntry>()
+    val values4 = ArrayList<BarEntry>()
+    val randomMultiplier = seekBarY!!.progress * 100000f
+    for (i in startYear until endYear) {
+      values1.add(BarEntry(i.toFloat(), (Math.random() * randomMultiplier).toFloat()))
+      values2.add(BarEntry(i.toFloat(), (Math.random() * randomMultiplier).toFloat()))
+      values3.add(BarEntry(i.toFloat(), (Math.random() * randomMultiplier).toFloat()))
+      values4.add(BarEntry(i.toFloat(), (Math.random() * randomMultiplier).toFloat()))
+    }
+    val set1: BarDataSet?
+    val set2: BarDataSet?
+    val set3: BarDataSet?
+    val set4: BarDataSet?
+    if (chart.data != null && chart.data!!.dataSetCount > 0) {
+      set1 = chart.data!!.getDataSetByIndex(0) as BarDataSet?
+      set2 = chart.data!!.getDataSetByIndex(1) as BarDataSet?
+      set3 = chart.data!!.getDataSetByIndex(2) as BarDataSet?
+      set4 = chart.data!!.getDataSetByIndex(3) as BarDataSet?
+      if (set1 != null) {
+        set1.entries = values1
+      }
+      if (set2 != null) {
+        set2.entries = values2
+      }
+      if (set3 != null) {
+        set3.entries = values3
+      }
+      if (set4 != null) {
+        set4.entries = values4
+      }
+      chart.data!!.notifyDataChanged()
+      chart.notifyDataSetChanged()
+    } else {
+      // create 4 DataSets
+      set1 = BarDataSet(values1, "Company A")
+      set1.color = Color.rgb(104, 241, 175)
+      set2 = BarDataSet(values2, "Company B")
+      set2.color = Color.rgb(164, 228, 251)
+      set3 = BarDataSet(values3, "Company C")
+      set3.color = Color.rgb(242, 247, 158)
+      set4 = BarDataSet(values4, "Company D")
+      set4.color = Color.rgb(255, 102, 0)
+      val data = BarData(set1, set2, set3, set4)
+      data.setValueFormatter(LargeValueFormatter())
+      data.setValueTypeface(tfLight)
+      chart.data = data
     }
 
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+    // specify the width each bar should have
+    chart.barData!!.barWidth = barWidth
 
-        float groupSpace = 0.08f;
-        float barSpace = 0.03f; // x4 DataSet
-        float barWidth = 0.2f; // x4 DataSet
-        // (0.2 + 0.03) * 4 + 0.08 = 1.00 -> interval per "group"
+    // restrict the x-axis range
+    chart.xAxis.axisMinimum = startYear.toFloat()
 
-        int groupCount = seekBarX.getProgress() + 1;
-        int startYear = 1980;
-        int endYear = startYear + groupCount;
+    // barData.getGroupWith(...) is a helper that calculates the width each group needs based on the
+    // provided parameters
+    chart.xAxis.axisMaximum =
+        startYear + chart.barData!!.getGroupWidth(groupSpace, barSpace) * groupCount
+    chart.groupBars(startYear.toFloat(), groupSpace, barSpace)
+    chart.invalidate()
+  }
 
-        tvX.setText(String.format(Locale.ENGLISH, "%d-%d", startYear, endYear));
-        tvY.setText(String.valueOf(seekBarY.getProgress()));
+  override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    menuInflater.inflate(R.menu.bar, menu)
+    return true
+  }
 
-        ArrayList<BarEntry> values1 = new ArrayList<>();
-        ArrayList<BarEntry> values2 = new ArrayList<>();
-        ArrayList<BarEntry> values3 = new ArrayList<>();
-        ArrayList<BarEntry> values4 = new ArrayList<>();
-
-        float randomMultiplier = seekBarY.getProgress() * 100000f;
-
-        for (int i = startYear; i < endYear; i++) {
-            values1.add(new BarEntry(i, (float) (Math.random() * randomMultiplier)));
-            values2.add(new BarEntry(i, (float) (Math.random() * randomMultiplier)));
-            values3.add(new BarEntry(i, (float) (Math.random() * randomMultiplier)));
-            values4.add(new BarEntry(i, (float) (Math.random() * randomMultiplier)));
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    when (item.itemId) {
+      R.id.viewGithub -> {
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data =
+            Uri.parse(
+                "https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/com/xxmassdeveloper/mpchartexample/BarChartActivityMultiDataset.java")
+        startActivity(i)
+      }
+      R.id.actionToggleValues -> {
+        for (set in chart.data!!.dataSets) set.setDrawValues(!set.isDrawValuesEnabled)
+        chart.invalidate()
+      }
+      R.id.actionTogglePinch -> {
+        chart.setPinchZoom(!chart.isPinchZoomEnabled)
+        chart.invalidate()
+      }
+      R.id.actionToggleAutoScaleMinMax -> {
+        chart.isAutoScaleMinMaxEnabled = !chart.isAutoScaleMinMaxEnabled
+        chart.notifyDataSetChanged()
+      }
+      R.id.actionToggleBarBorders -> {
+        for (set in chart.data!!.dataSets) (set as BarDataSet).barBorderWidth =
+            if (set.barBorderWidth == 1f) 0f else 1f
+        chart.invalidate()
+      }
+      R.id.actionToggleHighlight -> {
+        if (chart.data != null) {
+          chart.data!!.isHighlightEnabled = !chart.data!!.isHighlightEnabled
+          chart.invalidate()
         }
-
-        BarDataSet set1, set2, set3, set4;
-
-        if (chart.getData() != null && chart.getData().getDataSetCount() > 0) {
-
-            set1 = (BarDataSet) chart.getData().getDataSetByIndex(0);
-            set2 = (BarDataSet) chart.getData().getDataSetByIndex(1);
-            set3 = (BarDataSet) chart.getData().getDataSetByIndex(2);
-            set4 = (BarDataSet) chart.getData().getDataSetByIndex(3);
-            if (set1 != null) {
-                set1.setEntries(values1);
-            }
-            if (set2 != null) {
-                set2.setEntries(values2);
-            }
-            if (set3 != null) {
-                set3.setEntries(values3);
-            }
-            if (set4 != null) {
-                set4.setEntries(values4);
-            }
-            chart.getData().notifyDataChanged();
-            chart.notifyDataSetChanged();
-
+      }
+      R.id.actionSave -> {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+            PackageManager.PERMISSION_GRANTED) {
+          saveToGallery()
         } else {
-            // create 4 DataSets
-            set1 = new BarDataSet(values1, "Company A");
-            set1.setColor(Color.rgb(104, 241, 175));
-            set2 = new BarDataSet(values2, "Company B");
-            set2.setColor(Color.rgb(164, 228, 251));
-            set3 = new BarDataSet(values3, "Company C");
-            set3.setColor(Color.rgb(242, 247, 158));
-            set4 = new BarDataSet(values4, "Company D");
-            set4.setColor(Color.rgb(255, 102, 0));
-
-            BarData data = new BarData(set1, set2, set3, set4);
-            data.setValueFormatter(new LargeValueFormatter());
-            data.setValueTypeface(tfLight);
-
-            chart.setData(data);
+          requestStoragePermission(chart!!)
         }
-
-        // specify the width each bar should have
-        chart.getBarData().setBarWidth(barWidth);
-
-        // restrict the x-axis range
-        chart.getXAxis().setAxisMinimum(startYear);
-
-        // barData.getGroupWith(...) is a helper that calculates the width each group needs based on the provided parameters
-        chart.getXAxis().setAxisMaximum(startYear + chart.getBarData().getGroupWidth(groupSpace, barSpace) * groupCount);
-        chart.groupBars(startYear, groupSpace, barSpace);
-        chart.invalidate();
+      }
+      R.id.animateX -> {
+        chart.animateX(2000)
+      }
+      R.id.animateY -> {
+        chart.animateY(2000)
+      }
+      R.id.animateXY -> {
+        chart.animateXY(2000, 2000)
+      }
     }
+    return true
+  }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.bar, menu);
-        return true;
-    }
+  override fun saveToGallery() {
+    saveToGallery(chart!!, "BarChartActivityMultiDataset")
+  }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+  override fun onStartTrackingTouch(seekBar: SeekBar) {}
+  override fun onStopTrackingTouch(seekBar: SeekBar) {}
+  override fun onValueSelected(e: Entry?, h: Highlight?) {
+    Log.i("Activity", "Selected: ${e.toString()}, dataSet: ${h?.dataSetIndex}")
+  }
 
-        switch (item.getItemId()) {
-            case R.id.viewGithub: {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse("https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/com/xxmassdeveloper/mpchartexample/BarChartActivityMultiDataset.java"));
-                startActivity(i);
-                break;
-            }
-            case R.id.actionToggleValues: {
-                for (IBarDataSet set : chart.getData().getDataSets())
-                    set.setDrawValues(!set.isDrawValuesEnabled());
-
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionTogglePinch: {
-                chart.setPinchZoom(!chart.isPinchZoomEnabled());
-
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleAutoScaleMinMax: {
-                chart.setAutoScaleMinMaxEnabled(!chart.isAutoScaleMinMaxEnabled());
-                chart.notifyDataSetChanged();
-                break;
-            }
-            case R.id.actionToggleBarBorders: {
-                for (IBarDataSet set : chart.getData().getDataSets())
-                    ((BarDataSet) set).setBarBorderWidth(set.getBarBorderWidth() == 1.f ? 0.f : 1.f);
-
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleHighlight: {
-                if (chart.getData() != null) {
-                    chart.getData().setHighlightEnabled(!chart.getData().isHighlightEnabled());
-                    chart.invalidate();
-                }
-                break;
-            }
-            case R.id.actionSave: {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    saveToGallery();
-                } else {
-                    requestStoragePermission(chart);
-                }
-                break;
-            }
-            case R.id.animateX: {
-                chart.animateX(2000);
-                break;
-            }
-            case R.id.animateY: {
-                chart.animateY(2000);
-                break;
-            }
-            case R.id.animateXY: {
-                chart.animateXY(2000, 2000);
-                break;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    protected void saveToGallery() {
-        saveToGallery(chart, "BarChartActivityMultiDataset");
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {}
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {}
-
-    @Override
-    public void onValueSelected(@NonNull Entry e, @NonNull Highlight h) {
-        Log.i("Activity", "Selected: " + e.toString() + ", dataSet: " + h.getDataSetIndex());
-    }
-
-    @Override
-    public void onNothingSelected() {
-        Log.i("Activity", "Nothing selected.");
-    }
+  override fun onNothingSelected() {
+    Log.i("Activity", "Nothing selected.")
+  }
 }

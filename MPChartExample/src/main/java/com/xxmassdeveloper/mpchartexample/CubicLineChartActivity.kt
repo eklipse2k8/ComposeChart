@@ -1,313 +1,235 @@
+package com.xxmassdeveloper.mpchartexample
 
-package com.xxmassdeveloper.mpchartexample;
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.net.Uri
+import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.view.WindowManager
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import com.github.eklipse2k8.charting.charts.LineChart
+import com.github.eklipse2k8.charting.components.YAxis.YAxisLabelPosition
+import com.github.eklipse2k8.charting.data.Entry
+import com.github.eklipse2k8.charting.data.LineData
+import com.github.eklipse2k8.charting.data.LineDataSet
+import com.github.eklipse2k8.charting.formatter.IFillFormatter
+import com.github.eklipse2k8.charting.interfaces.dataprovider.LineDataProvider
+import com.github.eklipse2k8.charting.interfaces.datasets.ILineDataSet
+import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Bundle;
+class CubicLineChartActivity : DemoBase(), OnSeekBarChangeListener {
+  private lateinit var chart: LineChart
+  private lateinit var seekBarX: SeekBar
+  private lateinit var seekBarY: SeekBar
+  private lateinit var tvX: TextView
+  private lateinit var tvY: TextView
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.WindowManager;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.TextView;
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    window.setFlags(
+        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+    setContentView(R.layout.activity_linechart)
+    title = "CubicLineChartActivity"
+    tvX = findViewById(R.id.tvXMax)
+    tvY = findViewById(R.id.tvYMax)
+    seekBarX = findViewById(R.id.seekBar1)
+    seekBarY = findViewById(R.id.seekBar2)
+    chart = findViewById(R.id.chart1)
+    chart.setViewPortOffsets(0f, 0f, 0f, 0f)
+    chart.setBackgroundColor(Color.rgb(104, 241, 175))
 
-import com.github.eklipse2k8.charting.charts.LineChart;
-import com.github.eklipse2k8.charting.components.XAxis;
-import com.github.eklipse2k8.charting.components.YAxis;
-import com.github.eklipse2k8.charting.data.Entry;
-import com.github.eklipse2k8.charting.data.LineData;
-import com.github.eklipse2k8.charting.data.LineDataSet;
-import com.github.eklipse2k8.charting.formatter.IFillFormatter;
-import com.github.eklipse2k8.charting.interfaces.dataprovider.LineDataProvider;
-import com.github.eklipse2k8.charting.interfaces.datasets.IDataSet;
-import com.github.eklipse2k8.charting.interfaces.datasets.ILineDataSet;
-import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
+    // no description text
+    chart.description.isEnabled = false
 
-import java.util.ArrayList;
-import java.util.List;
+    // enable touch gestures
+    chart.isTouchEnabled = true
 
-public class CubicLineChartActivity extends DemoBase implements OnSeekBarChangeListener {
+    // enable scaling and dragging
+    chart.isDragEnabled = true
+    chart.setScaleEnabled(true)
 
-    private LineChart chart;
-    private SeekBar seekBarX, seekBarY;
-    private TextView tvX, tvY;
+    // if disabled, scaling can be done on x- and y-axis separately
+    chart.setPinchZoom(false)
+    chart.setDrawGridBackground(false)
+    chart.maxHighlightDistance = 300f
+    val x = chart.xAxis
+    x.isEnabled = false
+    val y = chart.axisLeft
+    y.typeface = tfLight
+    y.setLabelCount(6, false)
+    y.textColor = Color.WHITE
+    y.setPosition(YAxisLabelPosition.INSIDE_CHART)
+    y.setDrawGridLines(false)
+    y.axisLineColor = Color.WHITE
+    chart.axisRight.isEnabled = false
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_linechart);
+    // add data
+    seekBarY.setOnSeekBarChangeListener(this)
+    seekBarX.setOnSeekBarChangeListener(this)
 
-        setTitle("CubicLineChartActivity");
+    // lower max, as cubic runs significantly slower than linear
+    seekBarX.setMax(700)
+    seekBarX.setProgress(45)
+    seekBarY.setProgress(100)
+    chart.legend.isEnabled = false
+    chart.animateXY(2000, 2000)
 
-        tvX = findViewById(R.id.tvXMax);
-        tvY = findViewById(R.id.tvYMax);
+    // don't forget to refresh the drawing
+    chart.invalidate()
+  }
 
-        seekBarX = findViewById(R.id.seekBar1);
-        seekBarY = findViewById(R.id.seekBar2);
-
-        chart = findViewById(R.id.chart1);
-        chart.setViewPortOffsets(0, 0, 0, 0);
-        chart.setBackgroundColor(Color.rgb(104, 241, 175));
-
-        // no description text
-        chart.getDescription().setEnabled(false);
-
-        // enable touch gestures
-        chart.setTouchEnabled(true);
-
-        // enable scaling and dragging
-        chart.setDragEnabled(true);
-        chart.setScaleEnabled(true);
-
-        // if disabled, scaling can be done on x- and y-axis separately
-        chart.setPinchZoom(false);
-
-        chart.setDrawGridBackground(false);
-        chart.setMaxHighlightDistance(300);
-
-        XAxis x = chart.getXAxis();
-        x.setEnabled(false);
-
-        YAxis y = chart.getAxisLeft();
-        y.setTypeface(tfLight);
-        y.setLabelCount(6, false);
-        y.setTextColor(Color.WHITE);
-        y.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
-        y.setDrawGridLines(false);
-        y.setAxisLineColor(Color.WHITE);
-
-        chart.getAxisRight().setEnabled(false);
-
-        // add data
-        seekBarY.setOnSeekBarChangeListener(this);
-        seekBarX.setOnSeekBarChangeListener(this);
-
-        // lower max, as cubic runs significantly slower than linear
-        seekBarX.setMax(700);
-
-        seekBarX.setProgress(45);
-        seekBarY.setProgress(100);
-
-        chart.getLegend().setEnabled(false);
-
-        chart.animateXY(2000, 2000);
-
-        // don't forget to refresh the drawing
-        chart.invalidate();
+  private fun setData(count: Int, range: Float) {
+    val values = ArrayList<Entry>()
+    for (i in 0 until count) {
+      val `val` = (Math.random() * (range + 1)).toFloat() + 20
+      values.add(Entry(i.toFloat(), `val`))
     }
+    val set1: LineDataSet?
+    if (chart.data != null && chart.data!!.dataSetCount > 0) {
+      set1 = chart.data!!.getDataSetByIndex(0) as LineDataSet?
+      set1!!.entries = values
+      chart.data!!.notifyDataChanged()
+      chart.notifyDataSetChanged()
+    } else {
+      // create a dataset and give it a type
+      set1 = LineDataSet(values, "DataSet 1")
+      set1.mode = LineDataSet.Mode.CUBIC_BEZIER
+      set1.cubicIntensity = 0.2f
+      set1.setDrawFilled(true)
+      set1.setDrawCircles(false)
+      set1.lineWidth = 1.8f
+      set1.circleRadius = 4f
+      set1.setCircleColor(Color.WHITE)
+      set1.highLightColor = Color.rgb(244, 117, 117)
+      set1.color = Color.WHITE
+      set1.fillColor = Color.WHITE
+      set1.fillAlpha = 100
+      set1.setDrawHorizontalHighlightIndicator(false)
+      set1.fillFormatter =
+          object : IFillFormatter {
+            override fun getFillLinePosition(
+                dataSet: ILineDataSet,
+                dataProvider: LineDataProvider
+            ): Float {
+              return chart.axisLeft.axisMinimum
+            }
+          }
 
-    private void setData(int count, float range) {
+      // create a data object with the data sets
+      val data = LineData(set1)
+      data.setValueTypeface(tfLight)
+      data.setValueTextSize(9f)
+      data.setDrawValues(false)
 
-        ArrayList<Entry> values = new ArrayList<>();
+      // set data
+      chart.data = data
+    }
+  }
 
-        for (int i = 0; i < count; i++) {
-            float val = (float) (Math.random() * (range + 1)) + 20;
-            values.add(new Entry(i, val));
+  override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    menuInflater.inflate(R.menu.line, menu)
+    return true
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    when (item.itemId) {
+      R.id.viewGithub -> {
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data =
+            Uri.parse(
+                "https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/com/xxmassdeveloper/mpchartexample/CubicLineChartActivity.java")
+        startActivity(i)
+      }
+      R.id.actionToggleValues -> {
+        for (set in chart.data!!.dataSets) set.setDrawValues(!set.isDrawValuesEnabled)
+        chart.invalidate()
+      }
+      R.id.actionToggleHighlight -> {
+        chart.data?.let { it.isHighlightEnabled = !it.isHighlightEnabled }
+        chart.invalidate()
+      }
+      R.id.actionToggleFilled -> {
+        chart.data?.dataSets?.forEach { set -> set.setDrawFilled(!set.isDrawFilledEnabled) }
+        chart.invalidate()
+      }
+      R.id.actionToggleCircles -> {
+        chart.data?.dataSets?.forEach { set ->
+          (set as LineDataSet).setDrawCircles(!set.isDrawCirclesEnabled)
         }
-
-        LineDataSet set1;
-
-        if (chart.getData() != null &&
-                chart.getData().getDataSetCount() > 0) {
-            set1 = (LineDataSet) chart.getData().getDataSetByIndex(0);
-            set1.setEntries(values);
-            chart.getData().notifyDataChanged();
-            chart.notifyDataSetChanged();
+        chart.invalidate()
+      }
+      R.id.actionToggleCubic -> {
+        chart.data?.dataSets?.forEach { set ->
+          (set as LineDataSet).mode =
+              if (set.mode === LineDataSet.Mode.CUBIC_BEZIER) LineDataSet.Mode.LINEAR
+              else LineDataSet.Mode.CUBIC_BEZIER
+        }
+        chart.invalidate()
+      }
+      R.id.actionToggleStepped -> {
+        chart.data?.dataSets?.forEach { set ->
+          (set as LineDataSet).mode =
+              if (set.mode === LineDataSet.Mode.STEPPED) LineDataSet.Mode.LINEAR
+              else LineDataSet.Mode.STEPPED
+        }
+        chart.invalidate()
+      }
+      R.id.actionToggleHorizontalCubic -> {
+        chart.data?.dataSets?.forEach { set ->
+          (set as LineDataSet).mode =
+              if (set.mode === LineDataSet.Mode.HORIZONTAL_BEZIER) LineDataSet.Mode.LINEAR
+              else LineDataSet.Mode.HORIZONTAL_BEZIER
+        }
+        chart.invalidate()
+      }
+      R.id.actionTogglePinch -> {
+        chart.setPinchZoom(!chart.isPinchZoomEnabled)
+        chart.invalidate()
+      }
+      R.id.actionToggleAutoScaleMinMax -> {
+        chart.isAutoScaleMinMaxEnabled = !chart.isAutoScaleMinMaxEnabled
+        chart.notifyDataSetChanged()
+      }
+      R.id.animateX -> {
+        chart.animateX(2000)
+      }
+      R.id.animateY -> {
+        chart.animateY(2000)
+      }
+      R.id.animateXY -> {
+        chart.animateXY(2000, 2000)
+      }
+      R.id.actionSave -> {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+            PackageManager.PERMISSION_GRANTED) {
+          saveToGallery()
         } else {
-            // create a dataset and give it a type
-            set1 = new LineDataSet(values, "DataSet 1");
-
-            set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-            set1.setCubicIntensity(0.2f);
-            set1.setDrawFilled(true);
-            set1.setDrawCircles(false);
-            set1.setLineWidth(1.8f);
-            set1.setCircleRadius(4f);
-            set1.setCircleColor(Color.WHITE);
-            set1.setHighLightColor(Color.rgb(244, 117, 117));
-            set1.setColor(Color.WHITE);
-            set1.setFillColor(Color.WHITE);
-            set1.setFillAlpha(100);
-            set1.setDrawHorizontalHighlightIndicator(false);
-            set1.setFillFormatter(new IFillFormatter() {
-                @Override
-                public float getFillLinePosition(ILineDataSet dataSet, LineDataProvider dataProvider) {
-                    return chart.getAxisLeft().getAxisMinimum();
-                }
-            });
-
-            // create a data object with the data sets
-            LineData data = new LineData(set1);
-            data.setValueTypeface(tfLight);
-            data.setValueTextSize(9f);
-            data.setDrawValues(false);
-
-            // set data
-            chart.setData(data);
+          requestStoragePermission(chart)
         }
+      }
     }
+    return true
+  }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.line, menu);
-        return true;
-    }
+  override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+    tvX!!.text = seekBarX!!.progress.toString()
+    tvY!!.text = seekBarY!!.progress.toString()
+    setData(seekBarX!!.progress, seekBarY!!.progress.toFloat())
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    // redraw
+    chart.invalidate()
+  }
 
-        switch (item.getItemId()) {
-            case R.id.viewGithub: {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse("https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/com/xxmassdeveloper/mpchartexample/CubicLineChartActivity.java"));
-                startActivity(i);
-                break;
-            }
-            case R.id.actionToggleValues: {
-                for (IDataSet set : chart.getData().getDataSets())
-                    set.setDrawValues(!set.isDrawValuesEnabled());
+  override fun saveToGallery() {
+    saveToGallery(chart!!, "CubicLineChartActivity")
+  }
 
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleHighlight: {
-                if(chart.getData() != null) {
-                    chart.getData().setHighlightEnabled(!chart.getData().isHighlightEnabled());
-                    chart.invalidate();
-                }
-                break;
-            }
-            case R.id.actionToggleFilled: {
-
-                List<ILineDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (ILineDataSet iSet : sets) {
-
-                    LineDataSet set = (LineDataSet) iSet;
-
-                    set.setDrawFilled(!set.isDrawFilledEnabled());
-                }
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleCircles: {
-                List<ILineDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (ILineDataSet iSet : sets) {
-
-                    LineDataSet set = (LineDataSet) iSet;
-                    set.setDrawCircles(!set.isDrawCirclesEnabled());
-                }
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleCubic: {
-                List<ILineDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (ILineDataSet iSet : sets) {
-
-                    LineDataSet set = (LineDataSet) iSet;
-                    set.setMode(set.getMode() == LineDataSet.Mode.CUBIC_BEZIER
-                            ? LineDataSet.Mode.LINEAR
-                            :  LineDataSet.Mode.CUBIC_BEZIER);
-                }
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleStepped: {
-                List<ILineDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (ILineDataSet iSet : sets) {
-
-                    LineDataSet set = (LineDataSet) iSet;
-                    set.setMode(set.getMode() == LineDataSet.Mode.STEPPED
-                            ? LineDataSet.Mode.LINEAR
-                            :  LineDataSet.Mode.STEPPED);
-                }
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleHorizontalCubic: {
-                List<ILineDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (ILineDataSet iSet : sets) {
-
-                    LineDataSet set = (LineDataSet) iSet;
-                    set.setMode(set.getMode() == LineDataSet.Mode.HORIZONTAL_BEZIER
-                            ? LineDataSet.Mode.LINEAR
-                            :  LineDataSet.Mode.HORIZONTAL_BEZIER);
-                }
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionTogglePinch: {
-                chart.setPinchZoom(!chart.isPinchZoomEnabled());
-
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleAutoScaleMinMax: {
-                chart.setAutoScaleMinMaxEnabled(!chart.isAutoScaleMinMaxEnabled());
-                chart.notifyDataSetChanged();
-                break;
-            }
-            case R.id.animateX: {
-                chart.animateX(2000);
-                break;
-            }
-            case R.id.animateY: {
-                chart.animateY(2000);
-                break;
-            }
-            case R.id.animateXY: {
-                chart.animateXY(2000, 2000);
-                break;
-            }
-            case R.id.actionSave: {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    saveToGallery();
-                } else {
-                    requestStoragePermission(chart);
-                }
-                break;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-        tvX.setText(String.valueOf(seekBarX.getProgress()));
-        tvY.setText(String.valueOf(seekBarY.getProgress()));
-
-        setData(seekBarX.getProgress(), seekBarY.getProgress());
-
-        // redraw
-        chart.invalidate();
-    }
-
-    @Override
-    protected void saveToGallery() {
-        saveToGallery(chart, "CubicLineChartActivity");
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {}
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {}
+  override fun onStartTrackingTouch(seekBar: SeekBar) {}
+  override fun onStopTrackingTouch(seekBar: SeekBar) {}
 }

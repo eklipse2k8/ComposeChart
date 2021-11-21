@@ -1,286 +1,223 @@
-package com.xxmassdeveloper.mpchartexample;
+package com.xxmassdeveloper.mpchartexample
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Bundle;
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.net.Uri
+import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.view.WindowManager
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import com.github.eklipse2k8.charting.charts.BarChart
+import com.github.eklipse2k8.charting.components.Legend
+import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition
+import com.github.eklipse2k8.charting.data.BarData
+import com.github.eklipse2k8.charting.data.BarDataSet
+import com.github.eklipse2k8.charting.data.BarEntry
+import com.github.eklipse2k8.charting.data.Entry
+import com.github.eklipse2k8.charting.highlight.Highlight
+import com.github.eklipse2k8.charting.interfaces.datasets.IBarDataSet
+import com.github.eklipse2k8.charting.listener.OnChartValueSelectedListener
+import com.github.eklipse2k8.charting.utils.ColorTemplate
+import com.xxmassdeveloper.mpchartexample.custom.MyAxisValueFormatter
+import com.xxmassdeveloper.mpchartexample.custom.MyValueFormatter
+import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.WindowManager;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.TextView;
+class StackedBarActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSelectedListener {
+  private lateinit var chart: BarChart
+  private lateinit var seekBarX: SeekBar
+  private lateinit var seekBarY: SeekBar
+  private lateinit var tvX: TextView
+  private lateinit var tvY: TextView
 
-import com.github.eklipse2k8.charting.charts.BarChart;
-import com.github.eklipse2k8.charting.components.Legend;
-import com.github.eklipse2k8.charting.components.XAxis;
-import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition;
-import com.github.eklipse2k8.charting.components.YAxis;
-import com.github.eklipse2k8.charting.data.BarData;
-import com.github.eklipse2k8.charting.data.BarDataSet;
-import com.github.eklipse2k8.charting.data.BarEntry;
-import com.github.eklipse2k8.charting.data.Entry;
-import com.github.eklipse2k8.charting.highlight.Highlight;
-import com.github.eklipse2k8.charting.interfaces.datasets.IBarDataSet;
-import com.github.eklipse2k8.charting.listener.OnChartValueSelectedListener;
-import com.github.eklipse2k8.charting.utils.ColorTemplate;
-import com.xxmassdeveloper.mpchartexample.custom.MyAxisValueFormatter;
-import com.xxmassdeveloper.mpchartexample.custom.MyValueFormatter;
-import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    window.setFlags(
+        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+    setContentView(R.layout.activity_barchart)
+    title = "StackedBarActivity"
+    tvX = findViewById(R.id.tvXMax)
+    tvY = findViewById(R.id.tvYMax)
+    seekBarX = findViewById(R.id.seekBar1)
+    seekBarX.setOnSeekBarChangeListener(this)
+    seekBarY = findViewById(R.id.seekBar2)
+    seekBarY.setOnSeekBarChangeListener(this)
+    chart = findViewById(R.id.chart1)
+    chart.setOnChartValueSelectedListener(this)
+    chart.description.isEnabled = false
 
-import java.util.ArrayList;
-import java.util.List;
+    // if more than 60 entries are displayed in the chart, no values will be
+    // drawn
+    chart.setMaxVisibleValueCount(40)
 
-public class StackedBarActivity extends DemoBase implements OnSeekBarChangeListener, OnChartValueSelectedListener {
+    // scaling can now only be done on x- and y-axis separately
+    chart.setPinchZoom(false)
+    chart.setDrawGridBackground(false)
+    chart.setDrawBarShadow(false)
+    chart.setDrawValueAboveBar(false)
+    chart.isHighlightFullBarEnabled = false
 
-    private BarChart chart;
-    private SeekBar seekBarX, seekBarY;
-    private TextView tvX, tvY;
+    // change the position of the y-labels
+    val leftAxis = chart.axisLeft
+    leftAxis.valueFormatter = MyAxisValueFormatter()
+    leftAxis.axisMinimum = 0f // this replaces setStartAtZero(true)
+    chart.axisRight.isEnabled = false
+    val xLabels = chart.xAxis
+    xLabels.position = XAxisPosition.TOP
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_barchart);
+    // chart.setDrawXLabels(false);
+    // chart.setDrawYLabels(false);
 
-        setTitle("StackedBarActivity");
+    // setting data
+    seekBarX.setProgress(12)
+    seekBarY.setProgress(100)
+    val l = chart.legend
+    l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
+    l.horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
+    l.orientation = Legend.LegendOrientation.HORIZONTAL
+    l.setDrawInside(false)
+    l.formSize = 8f
+    l.formToTextSpace = 4f
+    l.xEntrySpace = 6f
 
-        tvX = findViewById(R.id.tvXMax);
-        tvY = findViewById(R.id.tvYMax);
+    // chart.setDrawLegend(false);
+  }
 
-        seekBarX = findViewById(R.id.seekBar1);
-        seekBarX.setOnSeekBarChangeListener(this);
-
-        seekBarY = findViewById(R.id.seekBar2);
-        seekBarY.setOnSeekBarChangeListener(this);
-
-        chart = findViewById(R.id.chart1);
-        chart.setOnChartValueSelectedListener(this);
-
-        chart.getDescription().setEnabled(false);
-
-        // if more than 60 entries are displayed in the chart, no values will be
-        // drawn
-        chart.setMaxVisibleValueCount(40);
-
-        // scaling can now only be done on x- and y-axis separately
-        chart.setPinchZoom(false);
-
-        chart.setDrawGridBackground(false);
-        chart.setDrawBarShadow(false);
-
-        chart.setDrawValueAboveBar(false);
-        chart.setHighlightFullBarEnabled(false);
-
-        // change the position of the y-labels
-        YAxis leftAxis = chart.getAxisLeft();
-        leftAxis.setValueFormatter(new MyAxisValueFormatter());
-        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
-        chart.getAxisRight().setEnabled(false);
-
-        XAxis xLabels = chart.getXAxis();
-        xLabels.setPosition(XAxisPosition.TOP);
-
-        // chart.setDrawXLabels(false);
-        // chart.setDrawYLabels(false);
-
-        // setting data
-        seekBarX.setProgress(12);
-        seekBarY.setProgress(100);
-
-        Legend l = chart.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-        l.setDrawInside(false);
-        l.setFormSize(8f);
-        l.setFormToTextSpace(4f);
-        l.setXEntrySpace(6f);
-
-        // chart.setDrawLegend(false);
+  override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+    tvX!!.text = seekBarX!!.progress.toString()
+    tvY!!.text = seekBarY!!.progress.toString()
+    val values = ArrayList<BarEntry>()
+    for (i in 0 until seekBarX!!.progress) {
+      val mul = (seekBarY!!.progress + 1).toFloat()
+      val val1 = (Math.random() * mul).toFloat() + mul / 3
+      val val2 = (Math.random() * mul).toFloat() + mul / 3
+      val val3 = (Math.random() * mul).toFloat() + mul / 3
+      values.add(
+          BarEntry(
+              i.toFloat(),
+              0f,
+              floatArrayOf(val1, val2, val3),
+              resources.getDrawable(R.drawable.star)))
     }
+    val set1: BarDataSet?
+    if (chart.data != null && chart.data!!.dataSetCount > 0) {
+      set1 = chart.data!!.getDataSetByIndex(0) as BarDataSet?
+      if (set1 != null) {
+        set1.entries = values
+      }
+      chart.data!!.notifyDataChanged()
+      chart.notifyDataSetChanged()
+    } else {
+      set1 = BarDataSet(values, "Statistics Vienna 2014")
+      set1.setDrawIcons(false)
+      set1.setColors(*colors)
+      set1.stackLabels = arrayOf("Births", "Divorces", "Marriages")
+      val dataSets = ArrayList<IBarDataSet>()
+      dataSets.add(set1)
+      val data = BarData(dataSets)
+      data.setValueFormatter(MyValueFormatter())
+      data.setValueTextColor(Color.WHITE)
+      chart.data = data
+    }
+    chart.setFitBars(true)
+    chart.invalidate()
+  }
 
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+  override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    menuInflater.inflate(R.menu.bar, menu)
+    return true
+  }
 
-        tvX.setText(String.valueOf(seekBarX.getProgress()));
-        tvY.setText(String.valueOf(seekBarY.getProgress()));
-
-        ArrayList<BarEntry> values = new ArrayList<>();
-
-        for (int i = 0; i < seekBarX.getProgress(); i++) {
-            float mul = (seekBarY.getProgress() + 1);
-            float val1 = (float) (Math.random() * mul) + mul / 3;
-            float val2 = (float) (Math.random() * mul) + mul / 3;
-            float val3 = (float) (Math.random() * mul) + mul / 3;
-
-            values.add(new BarEntry(
-                    i,
-                    0f, new float[]{val1, val2, val3},
-                    getResources().getDrawable(R.drawable.star)));
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    when (item.itemId) {
+      R.id.viewGithub -> {
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data =
+            Uri.parse(
+                "https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/com/xxmassdeveloper/mpchartexample/StackedBarActivity.java")
+        startActivity(i)
+      }
+      R.id.actionToggleValues -> {
+        chart.data?.dataSets?.forEach { set ->
+          set.setDrawValues(!set.isDrawValuesEnabled)
         }
-
-        BarDataSet set1;
-
-        if (chart.getData() != null &&
-                chart.getData().getDataSetCount() > 0) {
-            set1 = (BarDataSet) chart.getData().getDataSetByIndex(0);
-            if (set1 != null) {
-                set1.setEntries(values);
-            }
-            chart.getData().notifyDataChanged();
-            chart.notifyDataSetChanged();
+        chart.invalidate()
+      }
+      R.id.actionToggleIcons -> {
+        chart.data?.dataSets?.forEach { set ->
+          set.setDrawIcons(!set.isDrawIconsEnabled)
+        }
+        chart.invalidate()
+      }
+      R.id.actionToggleHighlight -> {
+        if (chart.data != null) {
+          chart.data!!.isHighlightEnabled = !chart.data!!.isHighlightEnabled
+          chart.invalidate()
+        }
+      }
+      R.id.actionTogglePinch -> {
+        chart.setPinchZoom(!chart.isPinchZoomEnabled)
+        chart.invalidate()
+      }
+      R.id.actionToggleAutoScaleMinMax -> {
+        chart.isAutoScaleMinMaxEnabled = !chart.isAutoScaleMinMaxEnabled
+        chart.notifyDataSetChanged()
+      }
+      R.id.actionToggleBarBorders -> {
+        for (set in chart.data!!.dataSets) (set as BarDataSet).barBorderWidth =
+            if (set.barBorderWidth == 1f) 0f else 1f
+        chart.invalidate()
+      }
+      R.id.animateX -> {
+        chart.animateX(2000)
+      }
+      R.id.animateY -> {
+        chart.animateY(2000)
+      }
+      R.id.animateXY -> {
+        chart.animateXY(2000, 2000)
+      }
+      R.id.actionSave -> {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+            PackageManager.PERMISSION_GRANTED) {
+          saveToGallery()
         } else {
-            set1 = new BarDataSet(values, "Statistics Vienna 2014");
-            set1.setDrawIcons(false);
-            set1.setColors(getColors());
-            set1.setStackLabels(new String[]{"Births", "Divorces", "Marriages"});
-
-            ArrayList<IBarDataSet> dataSets = new ArrayList<>();
-            dataSets.add(set1);
-
-            BarData data = new BarData(dataSets);
-            data.setValueFormatter(new MyValueFormatter());
-            data.setValueTextColor(Color.WHITE);
-
-            chart.setData(data);
+          requestStoragePermission(chart!!)
         }
-
-        chart.setFitBars(true);
-        chart.invalidate();
+      }
     }
+    return true
+  }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.bar, menu);
-        return true;
-    }
+  override fun saveToGallery() {
+    saveToGallery(chart!!, "StackedBarActivity")
+  }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+  override fun onStartTrackingTouch(seekBar: SeekBar) {}
+  override fun onStopTrackingTouch(seekBar: SeekBar) {}
+  override fun onValueSelected(e: Entry?, h: Highlight?) {
+    if (e == null || h == null) return
 
-        switch (item.getItemId()) {
-            case R.id.viewGithub: {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse("https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/com/xxmassdeveloper/mpchartexample/StackedBarActivity.java"));
-                startActivity(i);
-                break;
-            }
-            case R.id.actionToggleValues: {
-                List<IBarDataSet> sets = chart.getData()
-                        .getDataSets();
+    val entry = e as BarEntry
+    if (entry!!.yVals != null) Log.i("VAL SELECTED", "Value: " + entry.yVals!![h.stackIndex])
+    else Log.i("VAL SELECTED", "Value: " + entry.y)
+  }
 
-                for (IBarDataSet iSet : sets) {
+  override fun onNothingSelected() {}
 
-                    BarDataSet set = (BarDataSet) iSet;
-                    set.setDrawValues(!set.isDrawValuesEnabled());
-                }
+  // have as many colors as stack-values per entry
+  private val colors: IntArray
+    private get() {
 
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleIcons: {
-                List<IBarDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (IBarDataSet iSet : sets) {
-
-                    BarDataSet set = (BarDataSet) iSet;
-                    set.setDrawIcons(!set.isDrawIconsEnabled());
-                }
-
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleHighlight: {
-                if (chart.getData() != null) {
-                    chart.getData().setHighlightEnabled(!chart.getData().isHighlightEnabled());
-                    chart.invalidate();
-                }
-                break;
-            }
-            case R.id.actionTogglePinch: {
-                chart.setPinchZoom(!chart.isPinchZoomEnabled());
-
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleAutoScaleMinMax: {
-                chart.setAutoScaleMinMaxEnabled(!chart.isAutoScaleMinMaxEnabled());
-                chart.notifyDataSetChanged();
-                break;
-            }
-            case R.id.actionToggleBarBorders: {
-                for (IBarDataSet set : chart.getData().getDataSets())
-                    ((BarDataSet) set).setBarBorderWidth(set.getBarBorderWidth() == 1.f ? 0.f : 1.f);
-
-                chart.invalidate();
-                break;
-            }
-            case R.id.animateX: {
-                chart.animateX(2000);
-                break;
-            }
-            case R.id.animateY: {
-                chart.animateY(2000);
-                break;
-            }
-            case R.id.animateXY: {
-
-                chart.animateXY(2000, 2000);
-                break;
-            }
-            case R.id.actionSave: {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    saveToGallery();
-                } else {
-                    requestStoragePermission(chart);
-                }
-                break;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    protected void saveToGallery() {
-        saveToGallery(chart, "StackedBarActivity");
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {}
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {}
-
-    @Override
-    public void onValueSelected(Entry e, @NonNull Highlight h) {
-
-        BarEntry entry = (BarEntry) e;
-
-        if (entry.getYVals() != null)
-            Log.i("VAL SELECTED", "Value: " + entry.getYVals()[h.getStackIndex()]);
-        else
-            Log.i("VAL SELECTED", "Value: " + entry.getY());
-    }
-
-    @Override
-    public void onNothingSelected() {}
-
-    @NonNull
-    private int[] getColors() {
-
-        // have as many colors as stack-values per entry
-        int[] colors = new int[3];
-
-        System.arraycopy(ColorTemplate.MATERIAL_COLORS, 0, colors, 0, 3);
-
-        return colors;
+      // have as many colors as stack-values per entry
+      val colors = IntArray(3)
+      System.arraycopy(ColorTemplate.MATERIAL_COLORS, 0, colors, 0, 3)
+      return colors
     }
 }

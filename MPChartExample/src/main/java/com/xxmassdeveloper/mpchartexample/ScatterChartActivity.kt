@@ -1,247 +1,192 @@
+package com.xxmassdeveloper.mpchartexample
 
-package com.xxmassdeveloper.mpchartexample;
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.view.WindowManager
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import com.github.eklipse2k8.charting.charts.ScatterChart
+import com.github.eklipse2k8.charting.charts.ScatterShape
+import com.github.eklipse2k8.charting.components.Legend
+import com.github.eklipse2k8.charting.data.Entry
+import com.github.eklipse2k8.charting.data.ScatterData
+import com.github.eklipse2k8.charting.data.ScatterDataSet
+import com.github.eklipse2k8.charting.highlight.Highlight
+import com.github.eklipse2k8.charting.interfaces.datasets.IScatterDataSet
+import com.github.eklipse2k8.charting.listener.OnChartValueSelectedListener
+import com.github.eklipse2k8.charting.utils.ColorTemplate
+import com.xxmassdeveloper.mpchartexample.custom.CustomScatterShapeRenderer
+import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Bundle;
+class ScatterChartActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSelectedListener {
+  private lateinit var chart: ScatterChart
+  private lateinit var seekBarX: SeekBar
+  private lateinit var seekBarY: SeekBar
+  private lateinit var tvX: TextView
+  private lateinit var tvY: TextView
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.WindowManager;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.TextView;
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    window.setFlags(
+        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+    setContentView(R.layout.activity_scatterchart)
+    title = "ScatterChartActivity"
+    tvX = findViewById(R.id.tvXMax)
+    tvY = findViewById(R.id.tvYMax)
+    seekBarX = findViewById(R.id.seekBar1)
+    seekBarX.setOnSeekBarChangeListener(this)
+    seekBarY = findViewById(R.id.seekBar2)
+    seekBarY.setOnSeekBarChangeListener(this)
+    chart = findViewById(R.id.chart1)
+    chart.description.isEnabled = false
+    chart.setOnChartValueSelectedListener(this)
+    chart.setDrawGridBackground(false)
+    chart.isTouchEnabled = true
+    chart.maxHighlightDistance = 50f
 
-import com.github.eklipse2k8.charting.charts.ScatterChart;
-import com.github.eklipse2k8.charting.charts.ScatterShape;
-import com.github.eklipse2k8.charting.components.Legend;
-import com.github.eklipse2k8.charting.components.XAxis;
-import com.github.eklipse2k8.charting.components.YAxis;
-import com.github.eklipse2k8.charting.data.Entry;
-import com.github.eklipse2k8.charting.data.ScatterData;
-import com.github.eklipse2k8.charting.data.ScatterDataSet;
-import com.github.eklipse2k8.charting.highlight.Highlight;
-import com.github.eklipse2k8.charting.interfaces.datasets.IScatterDataSet;
-import com.github.eklipse2k8.charting.listener.OnChartValueSelectedListener;
-import com.github.eklipse2k8.charting.utils.ColorTemplate;
-import com.xxmassdeveloper.mpchartexample.custom.CustomScatterShapeRenderer;
-import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
+    // enable scaling and dragging
+    chart.isDragEnabled = true
+    chart.setScaleEnabled(true)
+    chart.setMaxVisibleValueCount(200)
+    chart.setPinchZoom(true)
+    seekBarX.setProgress(45)
+    seekBarY.setProgress(100)
+    val l = chart.legend
+    l.verticalAlignment = Legend.LegendVerticalAlignment.TOP
+    l.horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
+    l.orientation = Legend.LegendOrientation.VERTICAL
+    l.setDrawInside(false)
+    l.typeface = tfLight
+    l.xOffset = 5f
+    val yl = chart.axisLeft
+    yl.typeface = tfLight
+    yl.axisMinimum = 0f // this replaces setStartAtZero(true)
+    chart.axisRight.isEnabled = false
+    val xl = chart.xAxis
+    xl.typeface = tfLight
+    xl.setDrawGridLines(false)
+  }
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class ScatterChartActivity extends DemoBase implements OnSeekBarChangeListener,
-        OnChartValueSelectedListener {
-
-    private ScatterChart chart;
-    private SeekBar seekBarX, seekBarY;
-    private TextView tvX, tvY;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_scatterchart);
-
-        setTitle("ScatterChartActivity");
-
-        tvX = findViewById(R.id.tvXMax);
-        tvY = findViewById(R.id.tvYMax);
-
-        seekBarX = findViewById(R.id.seekBar1);
-        seekBarX.setOnSeekBarChangeListener(this);
-
-        seekBarY = findViewById(R.id.seekBar2);
-        seekBarY.setOnSeekBarChangeListener(this);
-
-        chart = findViewById(R.id.chart1);
-        chart.getDescription().setEnabled(false);
-        chart.setOnChartValueSelectedListener(this);
-
-        chart.setDrawGridBackground(false);
-        chart.setTouchEnabled(true);
-        chart.setMaxHighlightDistance(50f);
-
-        // enable scaling and dragging
-        chart.setDragEnabled(true);
-        chart.setScaleEnabled(true);
-
-        chart.setMaxVisibleValueCount(200);
-        chart.setPinchZoom(true);
-
-        seekBarX.setProgress(45);
-        seekBarY.setProgress(100);
-
-        Legend l = chart.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        l.setOrientation(Legend.LegendOrientation.VERTICAL);
-        l.setDrawInside(false);
-        l.setTypeface(tfLight);
-        l.setXOffset(5f);
-
-        YAxis yl = chart.getAxisLeft();
-        yl.setTypeface(tfLight);
-        yl.setAxisMinimum(0f); // this replaces setStartAtZero(true)
-
-        chart.getAxisRight().setEnabled(false);
-
-        XAxis xl = chart.getXAxis();
-        xl.setTypeface(tfLight);
-        xl.setDrawGridLines(false);
+  override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+    tvX!!.text = seekBarX!!.progress.toString()
+    tvY!!.text = seekBarY!!.progress.toString()
+    val values1 = ArrayList<Entry>()
+    val values2 = ArrayList<Entry>()
+    val values3 = ArrayList<Entry>()
+    for (i in 0 until seekBarX!!.progress) {
+      val `val` = (Math.random() * seekBarY!!.progress).toFloat() + 3
+      values1.add(Entry(i.toFloat(), `val`))
+    }
+    for (i in 0 until seekBarX!!.progress) {
+      val `val` = (Math.random() * seekBarY!!.progress).toFloat() + 3
+      values2.add(Entry(i + 0.33f, `val`))
+    }
+    for (i in 0 until seekBarX!!.progress) {
+      val `val` = (Math.random() * seekBarY!!.progress).toFloat() + 3
+      values3.add(Entry(i + 0.66f, `val`))
     }
 
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+    // create a dataset and give it a type
+    val set1 = ScatterDataSet(values1, "DS 1")
+    set1.setScatterShape(ScatterShape.SQUARE)
+    set1.color = ColorTemplate.COLORFUL_COLORS[0]
+    val set2 = ScatterDataSet(values2, "DS 2")
+    set2.setScatterShape(ScatterShape.CIRCLE)
+    set2.scatterShapeHoleColor = ColorTemplate.COLORFUL_COLORS[3]
+    set2.scatterShapeHoleRadius = 3f
+    set2.color = ColorTemplate.COLORFUL_COLORS[1]
+    val set3 = ScatterDataSet(values3, "DS 3")
+    set3.shapeRenderer = CustomScatterShapeRenderer()
+    set3.color = ColorTemplate.COLORFUL_COLORS[2]
+    set1.scatterShapeSize = 8f
+    set2.scatterShapeSize = 8f
+    set3.scatterShapeSize = 8f
+    val dataSets = ArrayList<IScatterDataSet>()
+    dataSets.add(set1) // add the data sets
+    dataSets.add(set2)
+    dataSets.add(set3)
 
-        tvX.setText(String.valueOf(seekBarX.getProgress()));
-        tvY.setText(String.valueOf(seekBarY.getProgress()));
+    // create a data object with the data sets
+    val data = ScatterData(dataSets)
+    data.setValueTypeface(tfLight)
+    chart.data = data
+    chart.invalidate()
+  }
 
-        ArrayList<Entry> values1 = new ArrayList<>();
-        ArrayList<Entry> values2 = new ArrayList<>();
-        ArrayList<Entry> values3 = new ArrayList<>();
+  override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    menuInflater.inflate(R.menu.scatter, menu)
+    return true
+  }
 
-        for (int i = 0; i < seekBarX.getProgress(); i++) {
-            float val = (float) (Math.random() * seekBarY.getProgress()) + 3;
-            values1.add(new Entry(i, val));
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    when (item.itemId) {
+      R.id.viewGithub -> {
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data =
+            Uri.parse(
+                "https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/com/xxmassdeveloper/mpchartexample/ScatterChartActivity.java")
+        startActivity(i)
+      }
+      R.id.actionToggleValues -> {
+        chart.data?.dataSets?.forEach { set ->
+          set.setDrawValues(!set.isDrawValuesEnabled)
         }
-
-        for (int i = 0; i < seekBarX.getProgress(); i++) {
-            float val = (float) (Math.random() * seekBarY.getProgress()) + 3;
-            values2.add(new Entry(i+0.33f, val));
+        chart.invalidate()
+      }
+      R.id.actionToggleHighlight -> {
+        if (chart.data != null) {
+          chart.data!!.isHighlightEnabled = !chart.data!!.isHighlightEnabled
+          chart.invalidate()
         }
-
-        for (int i = 0; i < seekBarX.getProgress(); i++) {
-            float val = (float) (Math.random() * seekBarY.getProgress()) + 3;
-            values3.add(new Entry(i+0.66f, val));
+      }
+      R.id.actionTogglePinch -> {
+        chart.setPinchZoom(!chart.isPinchZoomEnabled)
+        chart.invalidate()
+      }
+      R.id.actionToggleAutoScaleMinMax -> {
+        chart.isAutoScaleMinMaxEnabled = !chart.isAutoScaleMinMaxEnabled
+        chart.notifyDataSetChanged()
+      }
+      R.id.animateX -> {
+        chart.animateX(3000)
+      }
+      R.id.animateY -> {
+        chart.animateY(3000)
+      }
+      R.id.animateXY -> {
+        chart.animateXY(3000, 3000)
+      }
+      R.id.actionSave -> {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+            PackageManager.PERMISSION_GRANTED) {
+          saveToGallery()
+        } else {
+          requestStoragePermission(chart!!)
         }
-
-        // create a dataset and give it a type
-        ScatterDataSet set1 = new ScatterDataSet(values1, "DS 1");
-        set1.setScatterShape(ScatterShape.SQUARE);
-        set1.setColor(ColorTemplate.COLORFUL_COLORS[0]);
-        ScatterDataSet set2 = new ScatterDataSet(values2, "DS 2");
-        set2.setScatterShape(ScatterShape.CIRCLE);
-        set2.setScatterShapeHoleColor(ColorTemplate.COLORFUL_COLORS[3]);
-        set2.setScatterShapeHoleRadius(3f);
-        set2.setColor(ColorTemplate.COLORFUL_COLORS[1]);
-        ScatterDataSet set3 = new ScatterDataSet(values3, "DS 3");
-        set3.setShapeRenderer(new CustomScatterShapeRenderer());
-        set3.setColor(ColorTemplate.COLORFUL_COLORS[2]);
-
-        set1.setScatterShapeSize(8f);
-        set2.setScatterShapeSize(8f);
-        set3.setScatterShapeSize(8f);
-
-        ArrayList<IScatterDataSet> dataSets = new ArrayList<>();
-        dataSets.add(set1); // add the data sets
-        dataSets.add(set2);
-        dataSets.add(set3);
-
-        // create a data object with the data sets
-        ScatterData data = new ScatterData(dataSets);
-        data.setValueTypeface(tfLight);
-
-        chart.setData(data);
-        chart.invalidate();
+      }
     }
+    return true
+  }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.scatter, menu);
-        return true;
-    }
+  override fun saveToGallery() {
+    saveToGallery(chart!!, "ScatterChartActivity")
+  }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+  override fun onValueSelected(e: Entry?, h: Highlight?) {
+    if (e == null || h == null) return
+    Log.i(
+        "VAL SELECTED", "Value: " + e.y + ", xIndex: " + e.x + ", DataSet index: " + h.dataSetIndex)
+  }
 
-        switch (item.getItemId()) {
-            case R.id.viewGithub: {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse("https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/com/xxmassdeveloper/mpchartexample/ScatterChartActivity.java"));
-                startActivity(i);
-                break;
-            }
-            case R.id.actionToggleValues: {
-                List<IScatterDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (IScatterDataSet iSet : sets) {
-
-                    ScatterDataSet set = (ScatterDataSet) iSet;
-                    set.setDrawValues(!set.isDrawValuesEnabled());
-                }
-
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleHighlight: {
-                if(chart.getData() != null) {
-                    chart.getData().setHighlightEnabled(!chart.getData().isHighlightEnabled());
-                    chart.invalidate();
-                }
-                break;
-            }
-            case R.id.actionTogglePinch: {
-                chart.setPinchZoom(!chart.isPinchZoomEnabled());
-
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleAutoScaleMinMax: {
-                chart.setAutoScaleMinMaxEnabled(!chart.isAutoScaleMinMaxEnabled());
-                chart.notifyDataSetChanged();
-                break;
-            }
-            case R.id.animateX: {
-                chart.animateX(3000);
-                break;
-            }
-            case R.id.animateY: {
-                chart.animateY(3000);
-                break;
-            }
-            case R.id.animateXY: {
-
-                chart.animateXY(3000, 3000);
-                break;
-            }
-            case R.id.actionSave: {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    saveToGallery();
-                } else {
-                    requestStoragePermission(chart);
-                }
-                break;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    protected void saveToGallery() {
-        saveToGallery(chart, "ScatterChartActivity");
-    }
-
-    @Override
-    public void onValueSelected(@NonNull Entry e, @NonNull Highlight h) {
-        Log.i("VAL SELECTED",
-                "Value: " + e.getY() + ", xIndex: " + e.getX()
-                        + ", DataSet index: " + h.getDataSetIndex());
-    }
-
-    @Override
-    public void onNothingSelected() {}
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {}
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {}
+  override fun onNothingSelected() {}
+  override fun onStartTrackingTouch(seekBar: SeekBar) {}
+  override fun onStopTrackingTouch(seekBar: SeekBar) {}
 }

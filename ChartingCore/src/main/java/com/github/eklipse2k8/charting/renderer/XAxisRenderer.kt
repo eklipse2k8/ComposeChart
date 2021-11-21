@@ -7,6 +7,8 @@ import com.github.eklipse2k8.charting.components.LimitLine.LimitLabelPosition
 import com.github.eklipse2k8.charting.components.XAxis
 import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition
 import com.github.eklipse2k8.charting.utils.*
+import com.google.android.material.resources.MaterialResources
+import com.google.android.material.textview.MaterialTextView
 import kotlin.math.roundToInt
 
 open class XAxisRenderer(
@@ -19,6 +21,11 @@ open class XAxisRenderer(
     with(axisLabelPaint) {
       color = Color.BLACK
       textAlign = Align.CENTER
+      typeface = Typeface.DEFAULT
+//      MaterialResources.getTextAppearance()
+//
+//      MaterialResources.getDimensionPixelSize(context, attributes, indices.get(index), -1)
+//      MaterialTextView
       textSize = Utils.convertDpToPixel(10f)
     }
   }

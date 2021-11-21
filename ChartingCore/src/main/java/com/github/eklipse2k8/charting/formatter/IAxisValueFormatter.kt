@@ -6,7 +6,7 @@ import com.github.eklipse2k8.charting.components.AxisBase
  * Created by Philipp Jahoda on 20/09/15. Custom formatter interface that allows formatting of axis
  * labels before they are being drawn.
  */
-interface IAxisValueFormatter {
+fun interface IAxisValueFormatter {
   /**
    * Called when a value from an axis is to be formatted before being drawn. For performance
    * reasons, avoid excessive calculations and memory allocations inside this method.

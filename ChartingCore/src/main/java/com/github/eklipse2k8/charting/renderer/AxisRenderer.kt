@@ -18,13 +18,10 @@ import kotlin.math.*
 abstract class AxisRenderer(
     viewPortHandler: ViewPortHandler,
     /** transformer to transform values to screen pixels and return */
-    transformer: Transformer?,
+    protected var transformer: Transformer?,
     /** base axis this axis renderer works with */
     @JvmField protected var axis: AxisBase
 ) : Renderer(viewPortHandler) {
-
-  /** transformer to transform values to screen pixels and return */
-  @JvmField protected var transformer: Transformer? = transformer
 
   /** paint object for the grid lines */
   @JvmField

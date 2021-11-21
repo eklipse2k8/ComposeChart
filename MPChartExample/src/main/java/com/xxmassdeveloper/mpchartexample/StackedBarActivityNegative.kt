@@ -1,267 +1,212 @@
+package com.xxmassdeveloper.mpchartexample
 
-package com.xxmassdeveloper.mpchartexample;
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.net.Uri
+import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.view.WindowManager
+import androidx.core.content.ContextCompat
+import com.github.eklipse2k8.charting.charts.HorizontalBarChart
+import com.github.eklipse2k8.charting.components.AxisBase
+import com.github.eklipse2k8.charting.components.Legend
+import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition
+import com.github.eklipse2k8.charting.components.YAxis.AxisDependency
+import com.github.eklipse2k8.charting.data.BarData
+import com.github.eklipse2k8.charting.data.BarDataSet
+import com.github.eklipse2k8.charting.data.BarEntry
+import com.github.eklipse2k8.charting.data.Entry
+import com.github.eklipse2k8.charting.formatter.IAxisValueFormatter
+import com.github.eklipse2k8.charting.formatter.IValueFormatter
+import com.github.eklipse2k8.charting.highlight.Highlight
+import com.github.eklipse2k8.charting.listener.OnChartValueSelectedListener
+import com.github.eklipse2k8.charting.utils.ViewPortHandler
+import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase
+import java.text.DecimalFormat
+import kotlin.math.abs
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Bundle;
+class StackedBarActivityNegative : DemoBase(), OnChartValueSelectedListener {
+  private lateinit var chart: HorizontalBarChart
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.WindowManager;
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    window.setFlags(
+        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+    setContentView(R.layout.activity_age_distribution)
+    title = "StackedBarActivityNegative"
+    chart = findViewById(R.id.chart1)
+    chart.setOnChartValueSelectedListener(this)
+    chart.setDrawGridBackground(false)
+    chart.description.isEnabled = false
 
-import com.github.eklipse2k8.charting.charts.HorizontalBarChart;
-import com.github.eklipse2k8.charting.components.AxisBase;
-import com.github.eklipse2k8.charting.components.Legend;
-import com.github.eklipse2k8.charting.components.XAxis;
-import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition;
-import com.github.eklipse2k8.charting.components.YAxis;
-import com.github.eklipse2k8.charting.data.BarData;
-import com.github.eklipse2k8.charting.data.BarDataSet;
-import com.github.eklipse2k8.charting.data.BarEntry;
-import com.github.eklipse2k8.charting.data.Entry;
-import com.github.eklipse2k8.charting.formatter.IValueFormatter;
-import com.github.eklipse2k8.charting.formatter.IAxisValueFormatter;
-import com.github.eklipse2k8.charting.highlight.Highlight;
-import com.github.eklipse2k8.charting.interfaces.datasets.IBarDataSet;
-import com.github.eklipse2k8.charting.listener.OnChartValueSelectedListener;
-import com.github.eklipse2k8.charting.utils.ViewPortHandler;
-import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
-
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-public class StackedBarActivityNegative extends DemoBase implements
-        OnChartValueSelectedListener {
-
-    private HorizontalBarChart chart;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_age_distribution);
-
-        setTitle("StackedBarActivityNegative");
-
-        chart = findViewById(R.id.chart1);
-        chart.setOnChartValueSelectedListener(this);
-        chart.setDrawGridBackground(false);
-        chart.getDescription().setEnabled(false);
-
-        // scaling can now only be done on x- and y-axis separately
-        chart.setPinchZoom(false);
-
-        chart.setDrawBarShadow(false);
-        chart.setDrawValueAboveBar(true);
-        chart.setHighlightFullBarEnabled(false);
-
-        chart.getAxisLeft().setEnabled(false);
-        chart.getAxisRight().setAxisMaximum(25f);
-        chart.getAxisRight().setAxisMinimum(-25f);
-        chart.getAxisRight().setDrawGridLines(false);
-        chart.getAxisRight().setDrawZeroLine(true);
-        chart.getAxisRight().setLabelCount(7, false);
-        chart.getAxisRight().setValueFormatter(new CustomFormatter());
-        chart.getAxisRight().setTextSize(9f);
-
-        XAxis xAxis = chart.getXAxis();
-        xAxis.setPosition(XAxisPosition.BOTH_SIDED);
-        xAxis.setDrawGridLines(false);
-        xAxis.setDrawAxisLine(false);
-        xAxis.setTextSize(9f);
-        xAxis.setAxisMinimum(0f);
-        xAxis.setAxisMaximum(110f);
-        xAxis.setCenterAxisLabels(true);
-        xAxis.setLabelCount(12);
-        xAxis.setGranularity(10f);
-        xAxis.setValueFormatter(new IAxisValueFormatter() {
-
-            private final DecimalFormat format = new DecimalFormat("###");
-
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return format.format(value) + "-" + format.format(value + 10);
-            }
-        });
-
-        Legend l = chart.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-        l.setDrawInside(false);
-        l.setFormSize(8f);
-        l.setFormToTextSpace(4f);
-        l.setXEntrySpace(6f);
-
-        // IMPORTANT: When using negative values in stacked bars, always make sure the negative values are in the array first
-        ArrayList<BarEntry> values = new ArrayList<>();
-        values.add(new BarEntry(5, 0f, new float[]{ -10, 10 }));
-        values.add(new BarEntry(15, 0f, new float[]{ -12, 13 }));
-        values.add(new BarEntry(25, 0f, new float[]{ -15, 15 }));
-        values.add(new BarEntry(35, 0f, new float[]{ -17, 17 }));
-        values.add(new BarEntry(45, 0f, new float[]{ -19, 20 }));
-        values.add(new BarEntry(45, 0f, new float[]{ -19, 20 }, getResources().getDrawable(R.drawable.star)));
-        values.add(new BarEntry(55, 0f, new float[]{ -19, 19 }));
-        values.add(new BarEntry(65, 0f, new float[]{ -16, 16 }));
-        values.add(new BarEntry(75, 0f, new float[]{ -13, 14 }));
-        values.add(new BarEntry(85, 0f, new float[]{ -10, 11 }));
-        values.add(new BarEntry(95, 0f, new float[]{ -5, 6 }));
-        values.add(new BarEntry(105, 0f, new float[]{ -1, 2 }));
-
-        BarDataSet set = new BarDataSet(values, "Age Distribution");
-        set.setDrawIcons(false);
-        set.setValueFormatter(new CustomFormatter());
-        set.setValueTextSize(7f);
-        set.setAxisDependency(YAxis.AxisDependency.RIGHT);
-        set.setColors(Color.rgb(67,67,72), Color.rgb(124,181,236));
-        set.setStackLabels(new String[]{
-                "Men", "Women"
-        });
-
-        BarData data = new BarData(set);
-        data.setBarWidth(8.5f);
-        chart.setData(data);
-        chart.invalidate();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.bar, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.viewGithub: {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse("https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/com/xxmassdeveloper/mpchartexample/StackedBarActivityNegative.java"));
-                startActivity(i);
-                break;
-            }
-            case R.id.actionToggleValues: {
-                List<IBarDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (IBarDataSet iSet : sets) {
-
-                    BarDataSet set = (BarDataSet) iSet;
-                    set.setDrawValues(!set.isDrawValuesEnabled());
-                }
-
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleIcons: {
-                List<IBarDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (IBarDataSet iSet : sets) {
-
-                    BarDataSet set = (BarDataSet) iSet;
-                    set.setDrawIcons(!set.isDrawIconsEnabled());
-                }
-
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleHighlight: {
-                if(chart.getData() != null) {
-                    chart.getData().setHighlightEnabled(!chart.getData().isHighlightEnabled());
-                    chart.invalidate();
-                }
-                break;
-            }
-            case R.id.actionTogglePinch: {
-                chart.setPinchZoom(!chart.isPinchZoomEnabled());
-
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleAutoScaleMinMax: {
-                chart.setAutoScaleMinMaxEnabled(!chart.isAutoScaleMinMaxEnabled());
-                chart.notifyDataSetChanged();
-                break;
-            }
-            case R.id.actionToggleBarBorders: {
-                for (IBarDataSet set : chart.getData().getDataSets())
-                    ((BarDataSet)set).setBarBorderWidth(set.getBarBorderWidth() == 1.f ? 0.f : 1.f);
-
-                chart.invalidate();
-                break;
-            }
-            case R.id.animateX: {
-                chart.animateX(3000);
-                break;
-            }
-            case R.id.animateY: {
-                chart.animateY(3000);
-                break;
-            }
-            case R.id.animateXY: {
-
-                chart.animateXY(3000, 3000);
-                break;
-            }
-            case R.id.actionSave: {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    saveToGallery();
-                } else {
-                    requestStoragePermission(chart);
-                }
-                break;
-            }
+    // scaling can now only be done on x- and y-axis separately
+    chart.setPinchZoom(false)
+    chart.setDrawBarShadow(false)
+    chart.setDrawValueAboveBar(true)
+    chart.isHighlightFullBarEnabled = false
+    chart.axisLeft.isEnabled = false
+    chart.axisRight.axisMaximum = 25f
+    chart.axisRight.axisMinimum = -25f
+    chart.axisRight.setDrawGridLines(false)
+    chart.axisRight.setDrawZeroLine(true)
+    chart.axisRight.setLabelCount(7, false)
+    chart.axisRight.valueFormatter = CustomFormatter()
+    chart.axisRight.textSize = 9f
+    val xAxis = chart.xAxis
+    xAxis.position = XAxisPosition.BOTH_SIDED
+    xAxis.setDrawGridLines(false)
+    xAxis.setDrawAxisLine(false)
+    xAxis.textSize = 9f
+    xAxis.axisMinimum = 0f
+    xAxis.axisMaximum = 110f
+    xAxis.setCenterAxisLabels(true)
+    xAxis.labelCount = 12
+    xAxis.granularity = 10f
+    xAxis.valueFormatter =
+        object : IAxisValueFormatter {
+          private val format = DecimalFormat("###")
+          override fun getFormattedValue(value: Float, axis: AxisBase): String? {
+            return format.format(value.toDouble()) + "-" + format.format((value + 10).toDouble())
+          }
         }
-        return true;
-    }
+    val l = chart.legend
+    l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
+    l.horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
+    l.orientation = Legend.LegendOrientation.HORIZONTAL
+    l.setDrawInside(false)
+    l.formSize = 8f
+    l.formToTextSpace = 4f
+    l.xEntrySpace = 6f
 
-    @Override
-    protected void saveToGallery() {
-        saveToGallery(chart, "StackedBarActivityNegative");
-    }
+    // IMPORTANT: When using negative values in stacked bars, always make sure the negative values
+    // are in the array first
+    val values = ArrayList<BarEntry>()
+    values.add(BarEntry(5f, 0f, floatArrayOf(-10f, 10f)))
+    values.add(BarEntry(15f, 0f, floatArrayOf(-12f, 13f)))
+    values.add(BarEntry(25f, 0f, floatArrayOf(-15f, 15f)))
+    values.add(BarEntry(35f, 0f, floatArrayOf(-17f, 17f)))
+    values.add(BarEntry(45f, 0f, floatArrayOf(-19f, 20f)))
+    values.add(BarEntry(45f, 0f, floatArrayOf(-19f, 20f), resources.getDrawable(R.drawable.star)))
+    values.add(BarEntry(55f, 0f, floatArrayOf(-19f, 19f)))
+    values.add(BarEntry(65f, 0f, floatArrayOf(-16f, 16f)))
+    values.add(BarEntry(75f, 0f, floatArrayOf(-13f, 14f)))
+    values.add(BarEntry(85f, 0f, floatArrayOf(-10f, 11f)))
+    values.add(BarEntry(95f, 0f, floatArrayOf(-5f, 6f)))
+    values.add(BarEntry(105f, 0f, floatArrayOf(-1f, 2f)))
+    val set = BarDataSet(values, "Age Distribution")
+    set.setDrawIcons(false)
+    set.valueFormatter = CustomFormatter()
+    set.valueTextSize = 7f
+    set.axisDependency = AxisDependency.RIGHT
+    set.setColors(Color.rgb(67, 67, 72), Color.rgb(124, 181, 236))
+    set.stackLabels = arrayOf("Men", "Women")
+    val data = BarData(set)
+    data.barWidth = 8.5f
+    chart.data = data
+    chart.invalidate()
+  }
 
-    @Override
-    public void onValueSelected(Entry e, @NonNull Highlight h) {
-        BarEntry entry = (BarEntry) e;
-        Log.i("VAL SELECTED",
-                "Value: " + Math.abs(entry.getYVals()[h.getStackIndex()]));
-    }
+  override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    menuInflater.inflate(R.menu.bar, menu)
+    return true
+  }
 
-    @Override
-    public void onNothingSelected() {
-        Log.i("NOTING SELECTED", "");
-    }
-
-    private class CustomFormatter implements IValueFormatter, IAxisValueFormatter {
-
-        @NonNull
-        private final DecimalFormat mFormat;
-
-        CustomFormatter() {
-            mFormat = new DecimalFormat("###");
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    when (item.itemId) {
+      R.id.viewGithub -> {
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data =
+            Uri.parse(
+                "https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/com/xxmassdeveloper/mpchartexample/StackedBarActivityNegative.java")
+        startActivity(i)
+      }
+      R.id.actionToggleValues -> {
+        chart.data?.dataSets?.forEach { set ->
+          set.setDrawValues(!set.isDrawValuesEnabled)
         }
-
-        // data
-        @NonNull
-        @Override
-        public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-            return mFormat.format(Math.abs(value)) + "m";
+        chart.invalidate()
+      }
+      R.id.actionToggleIcons -> {
+        chart.data?.dataSets?.forEach { set ->
+          set.setDrawIcons(!set.isDrawIconsEnabled)
         }
-
-        // YAxis
-        @NonNull
-        @Override
-        public String getFormattedValue(float value, AxisBase axis) {
-            return mFormat.format(Math.abs(value)) + "m";
+        chart.invalidate()
+      }
+      R.id.actionToggleHighlight -> {
+        if (chart.data != null) {
+          chart.data!!.isHighlightEnabled = !chart.data!!.isHighlightEnabled
+          chart.invalidate()
         }
+      }
+      R.id.actionTogglePinch -> {
+        chart.setPinchZoom(!chart.isPinchZoomEnabled)
+        chart.invalidate()
+      }
+      R.id.actionToggleAutoScaleMinMax -> {
+        chart.isAutoScaleMinMaxEnabled = !chart.isAutoScaleMinMaxEnabled
+        chart.notifyDataSetChanged()
+      }
+      R.id.actionToggleBarBorders -> {
+        for (set in chart.data!!.dataSets) (set as BarDataSet).barBorderWidth =
+            if (set.barBorderWidth == 1f) 0f else 1f
+        chart.invalidate()
+      }
+      R.id.animateX -> {
+        chart.animateX(3000)
+      }
+      R.id.animateY -> {
+        chart.animateY(3000)
+      }
+      R.id.animateXY -> {
+        chart.animateXY(3000, 3000)
+      }
+      R.id.actionSave -> {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+            PackageManager.PERMISSION_GRANTED) {
+          saveToGallery()
+        } else {
+          requestStoragePermission(chart!!)
+        }
+      }
     }
+    return true
+  }
+
+  override fun saveToGallery() {
+    saveToGallery(chart!!, "StackedBarActivityNegative")
+  }
+
+  override fun onValueSelected(e: Entry?, h: Highlight?) {
+    if (e == null || h == null) return
+    val entry = e as BarEntry?
+    Log.i("VAL SELECTED", "Value: " + Math.abs(entry!!.yVals!![h.stackIndex]))
+  }
+
+  override fun onNothingSelected() {
+    Log.i("NOTING SELECTED", "")
+  }
+
+  private inner class CustomFormatter internal constructor() :
+      IValueFormatter, IAxisValueFormatter {
+    private val mFormat: DecimalFormat = DecimalFormat("###")
+
+    // data
+    override fun getFormattedValue(
+        value: Float,
+        entry: Entry,
+        dataSetIndex: Int,
+        viewPortHandler: ViewPortHandler
+    ): String {
+      return mFormat.format(abs(value)) + "m"
+    }
+
+    // YAxis
+    override fun getFormattedValue(value: Float, axis: AxisBase): String {
+      return mFormat.format(abs(value)) + "m"
+    }
+  }
 }

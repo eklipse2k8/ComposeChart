@@ -1,405 +1,311 @@
+package com.xxmassdeveloper.mpchartexample
 
-package com.xxmassdeveloper.mpchartexample;
-
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.WindowManager;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.TextView;
-
-import com.github.eklipse2k8.charting.charts.LineChart;
-import com.github.eklipse2k8.charting.components.Legend;
-import com.github.eklipse2k8.charting.components.Legend.LegendForm;
-import com.github.eklipse2k8.charting.components.XAxis;
-import com.github.eklipse2k8.charting.components.YAxis;
-import com.github.eklipse2k8.charting.components.YAxis.AxisDependency;
-import com.github.eklipse2k8.charting.data.Entry;
-import com.github.eklipse2k8.charting.data.LineData;
-import com.github.eklipse2k8.charting.data.LineDataSet;
-import com.github.eklipse2k8.charting.highlight.Highlight;
-import com.github.eklipse2k8.charting.interfaces.datasets.ILineDataSet;
-import com.github.eklipse2k8.charting.listener.OnChartValueSelectedListener;
-import com.github.eklipse2k8.charting.utils.ColorTemplate;
-import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.net.Uri
+import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.view.WindowManager
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import com.github.eklipse2k8.charting.charts.LineChart
+import com.github.eklipse2k8.charting.components.Legend
+import com.github.eklipse2k8.charting.components.Legend.LegendForm
+import com.github.eklipse2k8.charting.components.YAxis.AxisDependency
+import com.github.eklipse2k8.charting.data.Entry
+import com.github.eklipse2k8.charting.data.LineData
+import com.github.eklipse2k8.charting.data.LineDataSet
+import com.github.eklipse2k8.charting.highlight.Highlight
+import com.github.eklipse2k8.charting.listener.OnChartValueSelectedListener
+import com.github.eklipse2k8.charting.utils.ColorTemplate.colorWithAlpha
+import com.github.eklipse2k8.charting.utils.ColorTemplate.holoBlue
+import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase
 
 /**
- * Example of a dual axis {@link LineChart} with multiple data sets.
+ * Example of a dual axis [LineChart] with multiple data sets.
  *
  * @since 1.7.4
  * @version 3.1.0
  */
-public class LineChartActivity2 extends DemoBase implements OnSeekBarChangeListener,
-        OnChartValueSelectedListener {
+class LineChartActivity2 : DemoBase(), OnSeekBarChangeListener, OnChartValueSelectedListener {
+  private lateinit var chart: LineChart
+  private lateinit var seekBarX: SeekBar
+  private lateinit var seekBarY: SeekBar
+  private lateinit var tvX: TextView
+  private lateinit var tvY: TextView
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    window.setFlags(
+        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+    setContentView(R.layout.activity_linechart)
+    title = "LineChartActivity2"
+    tvX = findViewById(R.id.tvXMax)
+    tvY = findViewById(R.id.tvYMax)
+    seekBarX = findViewById(R.id.seekBar1)
+    seekBarX.setOnSeekBarChangeListener(this)
+    seekBarY = findViewById(R.id.seekBar2)
+    seekBarY.setOnSeekBarChangeListener(this)
+    chart = findViewById(R.id.chart1)
+    chart.setOnChartValueSelectedListener(this)
 
-    private LineChart chart;
-    private SeekBar seekBarX, seekBarY;
-    private TextView tvX, tvY;
+    // no description text
+    chart.description.isEnabled = false
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_linechart);
+    // enable touch gestures
+    chart.isTouchEnabled = true
+    chart.dragDecelerationFrictionCoef = 0.9f
 
-        setTitle("LineChartActivity2");
+    // enable scaling and dragging
+    chart.isDragEnabled = true
+    chart.setScaleEnabled(true)
+    chart.setDrawGridBackground(false)
+    chart.isHighlightPerDragEnabled = true
 
-        tvX = findViewById(R.id.tvXMax);
-        tvY = findViewById(R.id.tvYMax);
+    // if disabled, scaling can be done on x- and y-axis separately
+    chart.setPinchZoom(true)
 
-        seekBarX = findViewById(R.id.seekBar1);
-        seekBarX.setOnSeekBarChangeListener(this);
+    // add data
+    seekBarX.setProgress(20)
+    seekBarY.setProgress(30)
+    chart.animateX(1500)
 
-        seekBarY = findViewById(R.id.seekBar2);
-        seekBarY.setOnSeekBarChangeListener(this);
+    // get the legend (only possible after setting data)
+    val l = chart.legend
 
-        chart = findViewById(R.id.chart1);
-        chart.setOnChartValueSelectedListener(this);
+    // modify the legend ...
+    l.form = LegendForm.LINE
+    l.typeface = tfLight
+    l.textSize = 11f
+    l.textColor = Color.WHITE
+    l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
+    l.horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
+    l.orientation = Legend.LegendOrientation.HORIZONTAL
+    l.setDrawInside(false)
+    //        l.setYOffset(11f);
+    val xAxis = chart.xAxis
+    xAxis.typeface = tfLight
+    xAxis.textSize = 11f
+    xAxis.textColor = Color.WHITE
+    xAxis.setDrawGridLines(false)
+    xAxis.setDrawAxisLine(false)
+    val leftAxis = chart.axisLeft
+    leftAxis.typeface = tfLight
+    leftAxis.textColor = holoBlue
+    leftAxis.axisMaximum = 200f
+    leftAxis.axisMinimum = 0f
+    leftAxis.setDrawGridLines(true)
+    leftAxis.isGranularityEnabled = true
+    val rightAxis = chart.axisRight
+    rightAxis.typeface = tfLight
+    rightAxis.textColor = Color.RED
+    rightAxis.axisMaximum = 900f
+    rightAxis.axisMinimum = -200f
+    rightAxis.setDrawGridLines(false)
+    rightAxis.setDrawZeroLine(false)
+    rightAxis.isGranularityEnabled = false
+  }
 
-        // no description text
-        chart.getDescription().setEnabled(false);
-
-        // enable touch gestures
-        chart.setTouchEnabled(true);
-
-        chart.setDragDecelerationFrictionCoef(0.9f);
-
-        // enable scaling and dragging
-        chart.setDragEnabled(true);
-        chart.setScaleEnabled(true);
-        chart.setDrawGridBackground(false);
-        chart.setHighlightPerDragEnabled(true);
-
-        // if disabled, scaling can be done on x- and y-axis separately
-        chart.setPinchZoom(true);
-
-        // add data
-        seekBarX.setProgress(20);
-        seekBarY.setProgress(30);
-
-        chart.animateX(1500);
-
-        // get the legend (only possible after setting data)
-        Legend l = chart.getLegend();
-
-        // modify the legend ...
-        l.setForm(LegendForm.LINE);
-        l.setTypeface(tfLight);
-        l.setTextSize(11f);
-        l.setTextColor(Color.WHITE);
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
-        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-        l.setDrawInside(false);
-//        l.setYOffset(11f);
-
-        XAxis xAxis = chart.getXAxis();
-        xAxis.setTypeface(tfLight);
-        xAxis.setTextSize(11f);
-        xAxis.setTextColor(Color.WHITE);
-        xAxis.setDrawGridLines(false);
-        xAxis.setDrawAxisLine(false);
-
-        YAxis leftAxis = chart.getAxisLeft();
-        leftAxis.setTypeface(tfLight);
-        leftAxis.setTextColor(ColorTemplate.INSTANCE.getHoloBlue());
-        leftAxis.setAxisMaximum(200f);
-        leftAxis.setAxisMinimum(0f);
-        leftAxis.setDrawGridLines(true);
-        leftAxis.setGranularityEnabled(true);
-
-        YAxis rightAxis = chart.getAxisRight();
-        rightAxis.setTypeface(tfLight);
-        rightAxis.setTextColor(Color.RED);
-        rightAxis.setAxisMaximum(900);
-        rightAxis.setAxisMinimum(-200);
-        rightAxis.setDrawGridLines(false);
-        rightAxis.setDrawZeroLine(false);
-        rightAxis.setGranularityEnabled(false);
+  private fun setData(count: Int, range: Float) {
+    val values1 = ArrayList<Entry>()
+    for (i in 0 until count) {
+      val `val` = (Math.random() * (range / 2f)).toFloat() + 50
+      values1.add(Entry(i.toFloat(), `val`))
     }
+    val values2 = ArrayList<Entry>()
+    for (i in 0 until count) {
+      val `val` = (Math.random() * range).toFloat() + 450
+      values2.add(Entry(i.toFloat(), `val`))
+    }
+    val values3 = ArrayList<Entry>()
+    for (i in 0 until count) {
+      val `val` = (Math.random() * range).toFloat() + 500
+      values3.add(Entry(i.toFloat(), `val`))
+    }
+    val set1: LineDataSet?
+    val set2: LineDataSet?
+    val set3: LineDataSet?
+    if (chart.data != null && chart.data!!.dataSetCount > 0) {
+      set1 = chart.data!!.getDataSetByIndex(0) as LineDataSet?
+      set2 = chart.data!!.getDataSetByIndex(1) as LineDataSet?
+      set3 = chart.data!!.getDataSetByIndex(2) as LineDataSet?
+      if (set1 != null) {
+        set1.entries = values1
+      }
+      if (set2 != null) {
+        set2.entries = values2
+      }
+      if (set3 != null) {
+        set3.entries = values3
+      }
+      chart.data!!.notifyDataChanged()
+      chart.notifyDataSetChanged()
+    } else {
+      // create a dataset and give it a type
+      set1 = LineDataSet(values1, "DataSet 1")
+      set1.axisDependency = AxisDependency.LEFT
+      set1.color = holoBlue
+      set1.setCircleColor(Color.WHITE)
+      set1.lineWidth = 2f
+      set1.circleRadius = 3f
+      set1.fillAlpha = 65
+      set1.fillColor = holoBlue
+      set1.highLightColor = Color.rgb(244, 117, 117)
+      set1.setDrawCircleHole(false)
+      // set1.setFillFormatter(new MyFillFormatter(0f));
+      // set1.setDrawHorizontalHighlightIndicator(false);
+      // set1.setVisible(false);
+      // set1.setCircleHoleColor(Color.WHITE);
 
-    private void setData(int count, float range) {
+      // create a dataset and give it a type
+      set2 = LineDataSet(values2, "DataSet 2")
+      set2.axisDependency = AxisDependency.RIGHT
+      set2.color = Color.RED
+      set2.setCircleColor(Color.WHITE)
+      set2.lineWidth = 2f
+      set2.circleRadius = 3f
+      set2.fillAlpha = 65
+      set2.fillColor = Color.RED
+      set2.setDrawCircleHole(false)
+      set2.highLightColor = Color.rgb(244, 117, 117)
+      // set2.setFillFormatter(new MyFillFormatter(900f));
+      set3 = LineDataSet(values3, "DataSet 3")
+      set3.axisDependency = AxisDependency.RIGHT
+      set3.color = Color.YELLOW
+      set3.setCircleColor(Color.WHITE)
+      set3.lineWidth = 2f
+      set3.circleRadius = 3f
+      set3.fillAlpha = 65
+      set3.fillColor = colorWithAlpha(Color.YELLOW, 200)
+      set3.setDrawCircleHole(false)
+      set3.highLightColor = Color.rgb(244, 117, 117)
 
-        ArrayList<Entry> values1 = new ArrayList<>();
+      // create a data object with the data sets
+      val data = LineData(set1, set2, set3)
+      data.setValueTextColor(Color.WHITE)
+      data.setValueTextSize(9f)
 
-        for (int i = 0; i < count; i++) {
-            float val = (float) (Math.random() * (range / 2f)) + 50;
-            values1.add(new Entry(i, val));
+      // set data
+      chart.data = data
+    }
+  }
+
+  override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    menuInflater.inflate(R.menu.line, menu)
+    return true
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    when (item.itemId) {
+      R.id.viewGithub -> {
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data =
+            Uri.parse(
+                "https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/com/xxmassdeveloper/mpchartexample/LineChartActivity2.java")
+        startActivity(i)
+      }
+      R.id.actionToggleValues -> {
+        chart.data?.dataSets?.forEach { set -> set.setDrawValues(!set.isDrawValuesEnabled) }
+        chart.invalidate()
+      }
+      R.id.actionToggleHighlight -> {
+        if (chart.data != null) {
+          chart.data!!.isHighlightEnabled = !chart.data!!.isHighlightEnabled
+          chart.invalidate()
         }
-
-        ArrayList<Entry> values2 = new ArrayList<>();
-
-        for (int i = 0; i < count; i++) {
-            float val = (float) (Math.random() * range) + 450;
-            values2.add(new Entry(i, val));
+      }
+      R.id.actionToggleFilled -> {
+        chart.data?.dataSets?.forEach { set -> set.setDrawFilled(!set.isDrawFilledEnabled) }
+        chart.invalidate()
+      }
+      R.id.actionToggleCircles -> {
+        chart.data?.dataSets?.forEach { set ->
+          (set as LineDataSet).setDrawCircles(!set.isDrawCirclesEnabled)
         }
-
-        ArrayList<Entry> values3 = new ArrayList<>();
-
-        for (int i = 0; i < count; i++) {
-            float val = (float) (Math.random() * range) + 500;
-            values3.add(new Entry(i, val));
+        chart.invalidate()
+      }
+      R.id.actionToggleCubic -> {
+        chart.data?.dataSets?.forEach { set ->
+          (set as LineDataSet).mode =
+              if (set.mode === LineDataSet.Mode.CUBIC_BEZIER) LineDataSet.Mode.LINEAR
+              else LineDataSet.Mode.CUBIC_BEZIER
         }
-
-        LineDataSet set1, set2, set3;
-
-        if (chart.getData() != null &&
-                chart.getData().getDataSetCount() > 0) {
-            set1 = (LineDataSet) chart.getData().getDataSetByIndex(0);
-            set2 = (LineDataSet) chart.getData().getDataSetByIndex(1);
-            set3 = (LineDataSet) chart.getData().getDataSetByIndex(2);
-            if (set1 != null) {
-                set1.setEntries(values1);
-            }
-            if (set2 != null) {
-                set2.setEntries(values2);
-            }
-            if (set3 != null) {
-                set3.setEntries(values3);
-            }
-            chart.getData().notifyDataChanged();
-            chart.notifyDataSetChanged();
+        chart.invalidate()
+      }
+      R.id.actionToggleStepped -> {
+        chart.data?.dataSets?.forEach { set ->
+          (set as LineDataSet).mode =
+              if (set.mode === LineDataSet.Mode.STEPPED) LineDataSet.Mode.LINEAR
+              else LineDataSet.Mode.STEPPED
+        }
+        chart.invalidate()
+      }
+      R.id.actionToggleHorizontalCubic -> {
+        chart.data?.dataSets?.forEach { set ->
+          (set as LineDataSet).mode =
+              if (set.mode === LineDataSet.Mode.HORIZONTAL_BEZIER) LineDataSet.Mode.LINEAR
+              else LineDataSet.Mode.HORIZONTAL_BEZIER
+        }
+        chart.invalidate()
+      }
+      R.id.actionTogglePinch -> {
+        chart.setPinchZoom(!chart.isPinchZoomEnabled)
+        chart.invalidate()
+      }
+      R.id.actionToggleAutoScaleMinMax -> {
+        chart.isAutoScaleMinMaxEnabled = !chart.isAutoScaleMinMaxEnabled
+        chart.notifyDataSetChanged()
+      }
+      R.id.animateX -> {
+        chart.animateX(2000)
+      }
+      R.id.animateY -> {
+        chart.animateY(2000)
+      }
+      R.id.animateXY -> {
+        chart.animateXY(2000, 2000)
+      }
+      R.id.actionSave -> {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+            PackageManager.PERMISSION_GRANTED) {
+          saveToGallery()
         } else {
-            // create a dataset and give it a type
-            set1 = new LineDataSet(values1, "DataSet 1");
-
-            set1.setAxisDependency(AxisDependency.LEFT);
-            set1.setColor(ColorTemplate.INSTANCE.getHoloBlue());
-            set1.setCircleColor(Color.WHITE);
-            set1.setLineWidth(2f);
-            set1.setCircleRadius(3f);
-            set1.setFillAlpha(65);
-            set1.setFillColor(ColorTemplate.INSTANCE.getHoloBlue());
-            set1.setHighLightColor(Color.rgb(244, 117, 117));
-            set1.setDrawCircleHole(false);
-            //set1.setFillFormatter(new MyFillFormatter(0f));
-            //set1.setDrawHorizontalHighlightIndicator(false);
-            //set1.setVisible(false);
-            //set1.setCircleHoleColor(Color.WHITE);
-
-            // create a dataset and give it a type
-            set2 = new LineDataSet(values2, "DataSet 2");
-            set2.setAxisDependency(AxisDependency.RIGHT);
-            set2.setColor(Color.RED);
-            set2.setCircleColor(Color.WHITE);
-            set2.setLineWidth(2f);
-            set2.setCircleRadius(3f);
-            set2.setFillAlpha(65);
-            set2.setFillColor(Color.RED);
-            set2.setDrawCircleHole(false);
-            set2.setHighLightColor(Color.rgb(244, 117, 117));
-            //set2.setFillFormatter(new MyFillFormatter(900f));
-
-            set3 = new LineDataSet(values3, "DataSet 3");
-            set3.setAxisDependency(AxisDependency.RIGHT);
-            set3.setColor(Color.YELLOW);
-            set3.setCircleColor(Color.WHITE);
-            set3.setLineWidth(2f);
-            set3.setCircleRadius(3f);
-            set3.setFillAlpha(65);
-            set3.setFillColor(ColorTemplate.INSTANCE.colorWithAlpha(Color.YELLOW, 200));
-            set3.setDrawCircleHole(false);
-            set3.setHighLightColor(Color.rgb(244, 117, 117));
-
-            // create a data object with the data sets
-            LineData data = new LineData(set1, set2, set3);
-            data.setValueTextColor(Color.WHITE);
-            data.setValueTextSize(9f);
-
-            // set data
-            chart.setData(data);
+          requestStoragePermission(chart!!)
         }
+      }
     }
+    return true
+  }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.line, menu);
-        return true;
-    }
+  override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+    tvX!!.text = seekBarX!!.progress.toString()
+    tvY!!.text = seekBarY!!.progress.toString()
+    setData(seekBarX!!.progress, seekBarY!!.progress.toFloat())
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    // redraw
+    chart.invalidate()
+  }
 
-        switch (item.getItemId()) {
-            case R.id.viewGithub: {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse("https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartExample/src/com/xxmassdeveloper/mpchartexample/LineChartActivity2.java"));
-                startActivity(i);
-                break;
-            }
-            case R.id.actionToggleValues: {
-                List<ILineDataSet> sets = chart.getData()
-                        .getDataSets();
+  override fun saveToGallery() {
+    saveToGallery(chart!!, "LineChartActivity2")
+  }
 
-                for (ILineDataSet iSet : sets) {
+  override fun onValueSelected(e: Entry?, h: Highlight?) {
+    if (e == null || h == null) return
+    Log.i("Entry selected", e.toString())
+    val dependency = chart.data?.getDataSetByIndex(h.dataSetIndex)?.axisDependency
+    dependency?.let { chart.centerViewToAnimated(e.x, e.y, it, 500) }
+  }
 
-                    LineDataSet set = (LineDataSet) iSet;
-                    set.setDrawValues(!set.isDrawValuesEnabled());
-                }
+  override fun onNothingSelected() {
+    Log.i("Nothing selected", "Nothing selected.")
+  }
 
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleHighlight: {
-                if (chart.getData() != null) {
-                    chart.getData().setHighlightEnabled(!chart.getData().isHighlightEnabled());
-                    chart.invalidate();
-                }
-                break;
-            }
-            case R.id.actionToggleFilled: {
-
-                List<ILineDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (ILineDataSet iSet : sets) {
-
-                    LineDataSet set = (LineDataSet) iSet;
-                    set.setDrawFilled(!set.isDrawFilledEnabled());
-                }
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleCircles: {
-                List<ILineDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (ILineDataSet iSet : sets) {
-
-                    LineDataSet set = (LineDataSet) iSet;
-                    set.setDrawCircles(!set.isDrawCirclesEnabled());
-                }
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleCubic: {
-                List<ILineDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (ILineDataSet iSet : sets) {
-
-                    LineDataSet set = (LineDataSet) iSet;
-                    set.setMode(set.getMode() == LineDataSet.Mode.CUBIC_BEZIER
-                            ? LineDataSet.Mode.LINEAR
-                            : LineDataSet.Mode.CUBIC_BEZIER);
-                }
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleStepped: {
-                List<ILineDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (ILineDataSet iSet : sets) {
-
-                    LineDataSet set = (LineDataSet) iSet;
-                    set.setMode(set.getMode() == LineDataSet.Mode.STEPPED
-                            ? LineDataSet.Mode.LINEAR
-                            : LineDataSet.Mode.STEPPED);
-                }
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleHorizontalCubic: {
-                List<ILineDataSet> sets = chart.getData()
-                        .getDataSets();
-
-                for (ILineDataSet iSet : sets) {
-
-                    LineDataSet set = (LineDataSet) iSet;
-                    set.setMode(set.getMode() == LineDataSet.Mode.HORIZONTAL_BEZIER
-                            ? LineDataSet.Mode.LINEAR
-                            : LineDataSet.Mode.HORIZONTAL_BEZIER);
-                }
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionTogglePinch: {
-                chart.setPinchZoom(!chart.isPinchZoomEnabled());
-
-                chart.invalidate();
-                break;
-            }
-            case R.id.actionToggleAutoScaleMinMax: {
-                chart.setAutoScaleMinMaxEnabled(!chart.isAutoScaleMinMaxEnabled());
-                chart.notifyDataSetChanged();
-                break;
-            }
-            case R.id.animateX: {
-                chart.animateX(2000);
-                break;
-            }
-            case R.id.animateY: {
-                chart.animateY(2000);
-                break;
-            }
-            case R.id.animateXY: {
-                chart.animateXY(2000, 2000);
-                break;
-            }
-            case R.id.actionSave: {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    saveToGallery();
-                } else {
-                    requestStoragePermission(chart);
-                }
-                break;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-        tvX.setText(String.valueOf(seekBarX.getProgress()));
-        tvY.setText(String.valueOf(seekBarY.getProgress()));
-
-        setData(seekBarX.getProgress(), seekBarY.getProgress());
-
-        // redraw
-        chart.invalidate();
-    }
-
-    @Override
-    protected void saveToGallery() {
-        saveToGallery(chart, "LineChartActivity2");
-    }
-
-    @Override
-    public void onValueSelected(@NonNull Entry e, @NonNull Highlight h) {
-        Log.i("Entry selected", e.toString());
-
-        chart.centerViewToAnimated(e.getX(), e.getY(), chart.getData().getDataSetByIndex(h.getDataSetIndex())
-                .getAxisDependency(), 500);
-        //chart.zoomAndCenterAnimated(2.5f, 2.5f, e.getX(), e.getY(), chart.getData().getDataSetByIndex(dataSetIndex)
-        // .getAxisDependency(), 1000);
-        //chart.zoomAndCenterAnimated(1.8f, 1.8f, e.getX(), e.getY(), chart.getData().getDataSetByIndex(dataSetIndex)
-        // .getAxisDependency(), 1000);
-    }
-
-    @Override
-    public void onNothingSelected() {
-        Log.i("Nothing selected", "Nothing selected.");
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {}
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {}
+  override fun onStartTrackingTouch(seekBar: SeekBar) {}
+  override fun onStopTrackingTouch(seekBar: SeekBar) {}
 }

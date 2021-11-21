@@ -7,7 +7,7 @@
     android:paddingStart="16dp"
     android:paddingEnd="16dp">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
         android:text="Medium Text"
         android:textAppearance="?attr/textAppearanceBodyLarge" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvDesc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
