@@ -381,7 +381,6 @@ object Utils {
   }
 
   fun velocityTrackerPointerUpCleanUpIfNecessary(ev: MotionEvent, tracker: VelocityTracker) {
-
     // Check the dot product of current velocities.
     // If the pointer that left was opposing another velocity vector, clear.
     tracker.computeCurrentVelocity(1000, maximumFlingVelocity.toFloat())

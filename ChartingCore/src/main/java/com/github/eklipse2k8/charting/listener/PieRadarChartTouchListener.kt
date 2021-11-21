@@ -79,8 +79,7 @@ class PieRadarChartTouchListener(chart: PieRadarChartBase<*, *, *>) :
 
   override fun onLongPress(me: MotionEvent) {
     lastGesture = ChartGesture.LONG_PRESS
-    val l = chart.getOnChartGestureListener()
-    l?.onChartLongPressed(me)
+    chart.onChartGestureListener.onChartLongPressed(me)
   }
 
   override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
@@ -89,8 +88,7 @@ class PieRadarChartTouchListener(chart: PieRadarChartBase<*, *, *>) :
 
   override fun onSingleTapUp(e: MotionEvent): Boolean {
     lastGesture = ChartGesture.SINGLE_TAP
-    val l = chart.getOnChartGestureListener()
-    l?.onChartSingleTapped(e)
+    chart.onChartGestureListener.onChartSingleTapped(e)
     if (!chart.isHighlightPerTapEnabled()) {
       return false
     }

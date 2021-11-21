@@ -50,7 +50,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   override fun calcMinMax() {
-    val localData = data ?: return
+    val localData = barData ?: return
 
     if (mFitBars) {
       xAxis.calculate(
@@ -116,7 +116,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
     val y = e.y
     val x = e.x
-    val barWidth = data!!.barWidth
+    val barWidth = barData?.barWidth ?: 0f
     val left = x - barWidth / 2f
     val right = x + barWidth / 2f
     val top: Float = if (y >= 0) y else 0f
@@ -153,7 +153,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   override val barData: BarData?
-    get() = data
+    get() = data as BarData
 
   /**
    * Adds half of the bar width to each side of the x-axis range in order to allow the bars of the

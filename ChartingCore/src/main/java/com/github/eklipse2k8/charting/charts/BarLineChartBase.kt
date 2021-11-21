@@ -83,12 +83,12 @@ E : Entry {
   var isScaleYEnabled = true
 
   /** paint object for the (by default) lightgrey background of the grid */
-  protected var mGridBackgroundPaint: Paint? = null
+  private var gridBackgroundPaint: Paint? = null
 
-  protected var mBorderPaint: Paint? = null
+  private var mBorderPaint: Paint? = null
 
   /** flag indicating if the grid background should be drawn or not */
-  protected var mDrawGridBackground = false
+  private var mDrawGridBackground = false
 
   /**
    * When enabled, the borders rectangle will be rendered. If this is enabled, there is no point
@@ -102,8 +102,6 @@ E : Entry {
   /**
    * When enabled, the values will be clipped to contentRect, otherwise they can bleed outside the
    * content rect.
-   *
-   * @return
    */
   var isClipValuesToContentEnabled = false
     protected set
@@ -112,8 +110,6 @@ E : Entry {
    * When disabled, the data and/or highlights will not be clipped to contentRect. Disabling this
    * option can be useful, when the data lies fully within the content rect, but is drawn in such a
    * way (such as thick lines) that there is unwanted clipping.
-   *
-   * @return
    */
   var isClipDataToContentEnabled = true
     protected set
@@ -136,23 +132,15 @@ E : Entry {
   var axisRight: YAxis? = null
     protected set
 
-  /**
-   * Sets a custom axis renderer for the left axis and overwrites the existing one.
-   *
-   * @param rendererLeftYAxis
-   */
+  /** Sets a custom axis renderer for the left axis and overwrites the existing one. */
   var rendererLeftYAxis: YAxisRenderer? = null
 
-  /**
-   * Sets a custom axis renderer for the right acis and overwrites the existing one.
-   *
-   * @param rendererRightYAxis
-   */
+  /** Sets a custom axis renderer for the right acis and overwrites the existing one. */
   var rendererRightYAxis: YAxisRenderer? = null
 
-  protected var mLeftAxisTransformer: Transformer? = null
+  protected var leftAxisTransformer: Transformer? = null
 
-  protected var mRightAxisTransformer: Transformer? = null
+  protected var rightAxisTransformer: Transformer? = null
 
   var rendererXAxis: XAxisRenderer? = null
     protected set
@@ -160,14 +148,14 @@ E : Entry {
   init {
     axisLeft = YAxis(AxisDependency.LEFT)
     axisRight = YAxis(AxisDependency.RIGHT)
-    mLeftAxisTransformer = Transformer(viewPortHandler)
-    mRightAxisTransformer = Transformer(viewPortHandler)
-    rendererLeftYAxis = YAxisRenderer(viewPortHandler, axisLeft!!, mLeftAxisTransformer)
-    rendererRightYAxis = YAxisRenderer(viewPortHandler, axisRight!!, mRightAxisTransformer)
-    rendererXAxis = XAxisRenderer(viewPortHandler, xAxis, mLeftAxisTransformer)
+    leftAxisTransformer = Transformer(viewPortHandler)
+    rightAxisTransformer = Transformer(viewPortHandler)
+    rendererLeftYAxis = YAxisRenderer(viewPortHandler, axisLeft!!, leftAxisTransformer)
+    rendererRightYAxis = YAxisRenderer(viewPortHandler, axisRight!!, rightAxisTransformer)
+    rendererXAxis = XAxisRenderer(viewPortHandler, xAxis, leftAxisTransformer)
     onTouchListener =
         BarLineChartTouchListener(this as AnyBarChart, viewPortHandler.matrixTouch, 3f)
-    mGridBackgroundPaint =
+    gridBackgroundPaint =
         Paint().apply {
           style = Paint.Style.FILL
           color = Color.rgb(240, 240, 240) // light
@@ -275,15 +263,15 @@ E : Entry {
                 xAxis.mAxisMaximum +
                 ", xdelta: " +
                 xAxis.mAxisRange)
-    mRightAxisTransformer!!.prepareMatrixValuePx(
+    rightAxisTransformer!!.prepareMatrixValuePx(
         xAxis.mAxisMinimum, xAxis.mAxisRange, axisRight!!.mAxisRange, axisRight!!.mAxisMinimum)
-    mLeftAxisTransformer!!.prepareMatrixValuePx(
+    leftAxisTransformer!!.prepareMatrixValuePx(
         xAxis.mAxisMinimum, xAxis.mAxisRange, axisLeft!!.mAxisRange, axisLeft!!.mAxisMinimum)
   }
 
   protected fun prepareOffsetMatrix() {
-    mRightAxisTransformer!!.prepareMatrixOffset(axisRight!!.isInverted)
-    mLeftAxisTransformer!!.prepareMatrixOffset(axisLeft!!.isInverted)
+    rightAxisTransformer!!.prepareMatrixOffset(axisRight!!.isInverted)
+    leftAxisTransformer!!.prepareMatrixOffset(axisLeft!!.isInverted)
   }
 
   override fun notifyDataSetChanged() {
@@ -440,7 +428,7 @@ E : Entry {
   private fun drawGridBackground(c: Canvas) {
     if (mDrawGridBackground) {
       // draw the grid background
-      c.drawRect(viewPortHandler.contentRect, mGridBackgroundPaint!!)
+      c.drawRect(viewPortHandler.contentRect, gridBackgroundPaint!!)
     }
     if (isDrawBordersEnabled) {
       c.drawRect(viewPortHandler.contentRect, mBorderPaint!!)
@@ -454,29 +442,29 @@ E : Entry {
    * @return
    */
   override fun getTransformer(axis: AxisDependency?): Transformer {
-    return if (axis === AxisDependency.LEFT) mLeftAxisTransformer!! else mRightAxisTransformer!!
+    return if (axis === AxisDependency.LEFT) leftAxisTransformer!! else rightAxisTransformer!!
   }
 
   override fun onTouchEvent(event: MotionEvent): Boolean {
     super.onTouchEvent(event)
-    if (onTouchListener == null || data == null) return false
-
     // check if touch gestures are enabled
-    return if (!isTouchEnabled) false else onTouchListener!!.onTouch(this, event)
+    if (data == null || !isTouchEnabled) {
+      return false
+    }
+    return onTouchListener?.onTouch(this, event) == true
   }
 
   override fun computeScroll() {
-    if (onTouchListener is BarLineChartTouchListener)
-        (onTouchListener as BarLineChartTouchListener).computeScroll()
+    (onTouchListener as? BarLineChartTouchListener)?.computeScroll()
   }
 
-  protected var mZoomMatrixBuffer = Matrix()
+  private var zoomMatrixBuffer = Matrix()
 
   /** Zooms in by 1.4f, into the charts center. */
   fun zoomIn() {
     val center = viewPortHandler.contentCenter
-    viewPortHandler.zoomIn(center.x, -center.y, mZoomMatrixBuffer)
-    viewPortHandler.refresh(mZoomMatrixBuffer, this, false)
+    viewPortHandler.zoomIn(center.x, -center.y, zoomMatrixBuffer)
+    viewPortHandler.refresh(zoomMatrixBuffer, this, false)
     MPPointF.recycleInstance(center)
 
     // Range might have changed, which means that Y-axis labels
@@ -489,8 +477,8 @@ E : Entry {
   /** Zooms out by 0.7f, from the charts center. */
   fun zoomOut() {
     val center = viewPortHandler.contentCenter
-    viewPortHandler.zoomOut(center.x, -center.y, mZoomMatrixBuffer)
-    viewPortHandler.refresh(mZoomMatrixBuffer, this, false)
+    viewPortHandler.zoomOut(center.x, -center.y, zoomMatrixBuffer)
+    viewPortHandler.refresh(zoomMatrixBuffer, this, false)
     MPPointF.recycleInstance(center)
 
     // Range might have changed, which means that Y-axis labels
@@ -502,8 +490,8 @@ E : Entry {
 
   /** Zooms out to original size. */
   fun resetZoom() {
-    viewPortHandler.resetZoom(mZoomMatrixBuffer)
-    viewPortHandler.refresh(mZoomMatrixBuffer, this, false)
+    viewPortHandler.resetZoom(zoomMatrixBuffer)
+    viewPortHandler.refresh(zoomMatrixBuffer, this, false)
 
     // Range might have changed, which means that Y-axis labels
     // could have changed in size, affecting Y-axis size.
@@ -522,8 +510,8 @@ E : Entry {
    * @param y
    */
   fun zoom(scaleX: Float, scaleY: Float, x: Float, y: Float) {
-    viewPortHandler.zoom(scaleX, scaleY, x, -y, mZoomMatrixBuffer)
-    viewPortHandler.refresh(mZoomMatrixBuffer, this, false)
+    viewPortHandler.zoom(scaleX, scaleY, x, -y, zoomMatrixBuffer)
+    viewPortHandler.refresh(zoomMatrixBuffer, this, false)
 
     // Range might have changed, which means that Y-axis labels
     // could have changed in size, affecting Y-axis size.
@@ -558,7 +546,7 @@ E : Entry {
    */
   fun zoomToCenter(scaleX: Float, scaleY: Float) {
     val center: MPPointF = centerOffsets
-    val save = mZoomMatrixBuffer
+    val save = zoomMatrixBuffer
     viewPortHandler.zoom(scaleX, scaleY, center.x, -center.y, save)
     viewPortHandler.refresh(save, this, false)
   }
@@ -906,7 +894,7 @@ E : Entry {
    * @param color
    */
   fun setGridBackgroundColor(color: Int) {
-    mGridBackgroundPaint!!.color = color
+    gridBackgroundPaint!!.color = color
   }
   /**
    * Returns true if dragging is enabled for the chart, false if not.
@@ -1197,7 +1185,7 @@ E : Entry {
   override fun setPaint(p: Paint, which: Int) {
     super.setPaint(p, which)
     when (which) {
-      PAINT_GRID_BACKGROUND -> mGridBackgroundPaint = p
+      PAINT_GRID_BACKGROUND -> gridBackgroundPaint = p
     }
   }
 
@@ -1205,29 +1193,29 @@ E : Entry {
     val p = super.getPaint(which)
     if (p != null) return p
     when (which) {
-      PAINT_GRID_BACKGROUND -> return mGridBackgroundPaint!!
+      PAINT_GRID_BACKGROUND -> return gridBackgroundPaint!!
     }
     return null
   }
 
-  private var mOnSizeChangedBuffer = FloatArray(2)
+  private var onSizeChangedBuffer = FloatArray(2)
 
   override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
     // Saving current position of chart.
-    mOnSizeChangedBuffer[1] = 0f
-    mOnSizeChangedBuffer[0] = mOnSizeChangedBuffer[1]
+    onSizeChangedBuffer[1] = 0f
+    onSizeChangedBuffer[0] = onSizeChangedBuffer[1]
     if (isKeepPositionOnRotation) {
-      mOnSizeChangedBuffer[0] = viewPortHandler.contentLeft()
-      mOnSizeChangedBuffer[1] = viewPortHandler.contentTop()
-      getTransformer(AxisDependency.LEFT).pixelsToValue(mOnSizeChangedBuffer)
+      onSizeChangedBuffer[0] = viewPortHandler.contentLeft()
+      onSizeChangedBuffer[1] = viewPortHandler.contentTop()
+      getTransformer(AxisDependency.LEFT).pixelsToValue(onSizeChangedBuffer)
     }
 
     // Superclass transforms chart.
     super.onSizeChanged(w, h, oldw, oldh)
     if (isKeepPositionOnRotation) {
       // Restoring old position of chart.
-      getTransformer(AxisDependency.LEFT).pointValuesToPixel(mOnSizeChangedBuffer)
-      viewPortHandler.centerViewPort(mOnSizeChangedBuffer, this)
+      getTransformer(AxisDependency.LEFT).pointValuesToPixel(onSizeChangedBuffer)
+      viewPortHandler.centerViewPort(onSizeChangedBuffer, this)
     } else {
       viewPortHandler.refresh(viewPortHandler.matrixTouch, this, true)
     }

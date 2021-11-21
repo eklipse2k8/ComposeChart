@@ -54,8 +54,7 @@ abstract class ChartTouchListener<T : Chart<*,*,*>>(
    * @param me
    */
   fun startAction(me: MotionEvent?) {
-    val l = chart.getOnChartGestureListener()
-    l?.onChartGestureStart(me, lastGesture)
+    chart.onChartGestureListener.onChartGestureStart(me, lastGesture)
   }
 
   /**
@@ -64,8 +63,7 @@ abstract class ChartTouchListener<T : Chart<*,*,*>>(
    * @param me
    */
   fun endAction(me: MotionEvent?) {
-    val l = chart.getOnChartGestureListener()
-    l?.onChartGestureEnd(me, lastGesture)
+    chart.onChartGestureListener.onChartGestureEnd(me, lastGesture)
   }
 
   /**

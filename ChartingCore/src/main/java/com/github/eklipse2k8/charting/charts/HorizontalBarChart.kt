@@ -41,14 +41,14 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   override val highlighter = HorizontalBarHighlighter(this)
 
   init {
-    mLeftAxisTransformer = TransformerHorizontalBarChart(viewPortHandler)
-    mRightAxisTransformer = TransformerHorizontalBarChart(viewPortHandler)
+    leftAxisTransformer = TransformerHorizontalBarChart(viewPortHandler)
+    rightAxisTransformer = TransformerHorizontalBarChart(viewPortHandler)
     rendererLeftYAxis =
-        YAxisRendererHorizontalBarChart(viewPortHandler, axisLeft!!, mLeftAxisTransformer)
+        YAxisRendererHorizontalBarChart(viewPortHandler, axisLeft!!, leftAxisTransformer)
     rendererRightYAxis =
-        YAxisRendererHorizontalBarChart(viewPortHandler, axisRight!!, mRightAxisTransformer)
+        YAxisRendererHorizontalBarChart(viewPortHandler, axisRight!!, rightAxisTransformer)
     rendererXAxis =
-        XAxisRendererHorizontalBarChart(viewPortHandler, xAxis, mLeftAxisTransformer!!, this)
+        XAxisRendererHorizontalBarChart(viewPortHandler, xAxis, leftAxisTransformer!!, this)
   }
 
   private val mOffsetsBuffer = RectF()
@@ -160,9 +160,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   }
 
   override fun prepareValuePxMatrix() {
-    mRightAxisTransformer!!.prepareMatrixValuePx(
+    rightAxisTransformer!!.prepareMatrixValuePx(
         axisRight!!.mAxisMinimum, axisRight!!.mAxisRange, xAxis.mAxisRange, xAxis.mAxisMinimum)
-    mLeftAxisTransformer!!.prepareMatrixValuePx(
+    leftAxisTransformer!!.prepareMatrixValuePx(
         axisLeft!!.mAxisMinimum, axisLeft!!.mAxisRange, xAxis.mAxisRange, xAxis.mAxisMinimum)
   }
 
@@ -178,7 +178,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
     val y = e.y
     val x = e.x
-    val barWidth = data?.barWidth ?: 0f
+    val barWidth = barData?.barWidth ?: 0f
     val top = x - barWidth / 2f
     val bottom = x + barWidth / 2f
     val left: Float = if (y >= 0) y else 0f

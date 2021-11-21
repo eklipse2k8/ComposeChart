@@ -162,7 +162,7 @@ E : Entry {
     protected set
 
   /** listener that is called when a value on the chart is selected */
-  protected var mSelectionListener: OnChartValueSelectedListener? = null
+  private var mSelectionListener: OnChartValueSelectedListener? = null
 
   /** Set an extra offset to be appended to the viewport's top */
   var extraTopOffset: Float = 0f
@@ -197,9 +197,6 @@ E : Entry {
   /** text that is displayed when the chart is empty */
   private var mNoDataText = "No chart data available."
 
-  /** Gesture listener for custom callbacks when making gestures on the chart. */
-  private var mGestureListener: OnChartGestureListener? = null
-
   /**
    * Returns the ViewPortHandler of the chart that is responsible for the content area of the chart
    * and its offsets and dimensions.
@@ -219,10 +216,10 @@ E : Entry {
   protected var mIndicesToHighlight: Array<Highlight?>? = null
 
   /** The maximum distance in dp away from an entry causing it to highlight. */
-  protected var mMaxHighlightDistance = convertDpToPixel(500f)
+  private var mMaxHighlightDistance = convertDpToPixel(500f)
 
   /** if set to true, the marker view is drawn when a value is clicked */
-  protected var mDrawMarkers = true
+  private var mDrawMarkers = true
 
   /** the view that represents the marker */
   protected var mMarker: IMarker? = null
@@ -568,7 +565,6 @@ E : Entry {
    * @param easingX a custom easing function to be used on the animation phase
    * @param easingY a custom easing function to be used on the animation phase
    */
-  @RequiresApi(11)
   open fun animateXY(
       durationMillisX: Int,
       durationMillisY: Int,
@@ -587,7 +583,6 @@ E : Entry {
    * @param durationMillisY
    * @param easing a custom easing function to be used on the animation phase
    */
-  @RequiresApi(11)
   open fun animateXY(durationMillisX: Int, durationMillisY: Int, easing: EasingFunction?) {
     mAnimator.animateXY(durationMillisX, durationMillisY, easing!!)
   }
@@ -600,7 +595,6 @@ E : Entry {
    * @param durationMillis
    * @param easing a custom easing function to be used on the animation phase
    */
-  @RequiresApi(11)
   open fun animateX(durationMillis: Int, easing: EasingFunction?) {
     mAnimator.animateX(durationMillis, easing!!)
   }
@@ -613,12 +607,10 @@ E : Entry {
    * @param durationMillis
    * @param easing a custom easing function to be used on the animation phase
    */
-  @RequiresApi(11)
   open fun animateY(durationMillis: Int, easing: EasingFunction?) {
     mAnimator.animateY(durationMillis, easing!!)
   }
 
-  /** CODE BELOW FOR ANIMATIONS WITHOUT EASING */
   /**
    * Animates the rendering of the chart on the x-axis with the specified animation time. If
    * animate(...) is called, no further calling of invalidate() is necessary to refresh the chart.
@@ -626,7 +618,6 @@ E : Entry {
    *
    * @param durationMillis
    */
-  @RequiresApi(11)
   open fun animateX(durationMillis: Int) {
     mAnimator.animateX(durationMillis)
   }
@@ -638,7 +629,6 @@ E : Entry {
    *
    * @param durationMillis
    */
-  @RequiresApi(11)
   open fun animateY(durationMillis: Int) {
     mAnimator.animateY(durationMillis)
   }
@@ -651,7 +641,6 @@ E : Entry {
    * @param durationMillisX
    * @param durationMillisY
    */
-  @RequiresApi(11)
   open fun animateXY(durationMillisX: Int, durationMillisY: Int) {
     mAnimator.animateXY(durationMillisX, durationMillisY)
   }
@@ -671,21 +660,8 @@ E : Entry {
   /**
    * Sets a gesture-listener for the chart for custom callbacks when executing gestures on the chart
    * surface.
-   *
-   * @param l
    */
-  open fun setOnChartGestureListener(l: OnChartGestureListener?) {
-    mGestureListener = l
-  }
-
-  /**
-   * Returns the custom gesture listener.
-   *
-   * @return
-   */
-  open fun getOnChartGestureListener(): OnChartGestureListener? {
-    return mGestureListener
-  }
+  var onChartGestureListener: OnChartGestureListener = object : OnChartGestureListener {}
 
   /**
    * returns the current y-max value across all DataSets

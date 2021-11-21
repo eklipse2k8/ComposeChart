@@ -21,8 +21,8 @@ class BarChartFrag : SimpleFragment(R.layout.frag_simple_bar), OnChartGestureLis
     // create a new chart object
     chart =
         BarChart(requireActivity()).apply {
-          description!!.isEnabled = false
-          setOnChartGestureListener(this@BarChartFrag)
+          description?.isEnabled = false
+          onChartGestureListener = this@BarChartFrag
           setDrawGridBackground(false)
           setDrawBarShadow(false)
           data = generateBarData(1, 20000f, 12)
