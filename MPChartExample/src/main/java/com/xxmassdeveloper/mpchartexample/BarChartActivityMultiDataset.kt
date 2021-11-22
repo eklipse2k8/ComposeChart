@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.WindowManager
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
@@ -96,16 +95,16 @@ class BarChartActivityMultiDataset :
     val barSpace = 0.03f // x4 DataSet
     val barWidth = 0.2f // x4 DataSet
     // (0.2 + 0.03) * 4 + 0.08 = 1.00 -> interval per "group"
-    val groupCount = seekBarX!!.progress + 1
+    val groupCount = seekBarX.progress + 1
     val startYear = 1980
     val endYear = startYear + groupCount
-    tvX!!.text = String.format(Locale.ENGLISH, "%d-%d", startYear, endYear)
-    tvY!!.text = seekBarY!!.progress.toString()
+    tvX.text = String.format(Locale.ENGLISH, "%d-%d", startYear, endYear)
+    tvY.text = seekBarY.progress.toString()
     val values1 = ArrayList<BarEntry>()
     val values2 = ArrayList<BarEntry>()
     val values3 = ArrayList<BarEntry>()
     val values4 = ArrayList<BarEntry>()
-    val randomMultiplier = seekBarY!!.progress * 100000f
+    val randomMultiplier = seekBarY.progress * 100000f
     for (i in startYear until endYear) {
       values1.add(BarEntry(i.toFloat(), (Math.random() * randomMultiplier).toFloat()))
       values2.add(BarEntry(i.toFloat(), (Math.random() * randomMultiplier).toFloat()))
@@ -224,7 +223,7 @@ class BarChartActivityMultiDataset :
   }
 
   override fun saveToGallery() {
-    saveToGallery(chart!!, "BarChartActivityMultiDataset")
+    saveToGallery(chart, "BarChartActivityMultiDataset")
   }
 
   override fun onStartTrackingTouch(seekBar: SeekBar) {}

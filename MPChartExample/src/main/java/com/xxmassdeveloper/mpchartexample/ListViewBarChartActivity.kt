@@ -26,8 +26,6 @@ import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase
 class ListViewBarChartActivity : DemoBase() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    window.setFlags(
-        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     setContentView(R.layout.activity_listview_chart)
     title = "ListViewBarChartActivity"
     val lv = findViewById<ListView>(R.id.listView1)
@@ -37,7 +35,7 @@ class ListViewBarChartActivity : DemoBase() {
     for (i in 0..19) {
       list.add(generateData(i + 1))
     }
-    val cda: ChartDataAdapter = ChartDataAdapter(applicationContext, list)
+    val cda = ChartDataAdapter(applicationContext, list)
     lv.adapter = cda
   }
 

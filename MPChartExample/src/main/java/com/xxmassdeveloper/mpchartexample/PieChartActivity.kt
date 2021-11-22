@@ -19,6 +19,7 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.github.eklipse2k8.charting.animation.Easing.EaseInOutCubic
 import com.github.eklipse2k8.charting.animation.Easing.EaseInOutQuad
 import com.github.eklipse2k8.charting.charts.PieChart
@@ -44,8 +45,6 @@ class PieChartActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSelect
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    window.setFlags(
-        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     setContentView(R.layout.activity_piechart)
     title = "PieChartActivity"
     tvX = findViewById(R.id.tvXMax)
@@ -108,7 +107,7 @@ class PieChartActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSelect
           PieEntry(
               (Math.random() * range + range / 5).toFloat(),
               parties[i % parties.size],
-              resources.getDrawable(R.drawable.star)))
+              ResourcesCompat.getDrawable(resources, R.drawable.star, theme)))
     }
     val dataSet = PieDataSet(entries, "Election Results")
     dataSet.setDrawIcons(false)

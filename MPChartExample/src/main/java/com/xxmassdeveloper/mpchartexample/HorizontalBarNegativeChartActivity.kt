@@ -14,6 +14,7 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.github.eklipse2k8.charting.charts.HorizontalBarChart
 import com.github.eklipse2k8.charting.components.Legend
 import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition
@@ -102,7 +103,12 @@ class HorizontalBarNegativeChartActivity :
     val values = ArrayList<BarEntry>()
     for (i in 0 until count) {
       val `val` = (Math.random() * range - range / 2).toFloat()
-      values.add(BarEntry(i * spaceForBar, `val`, null, resources.getDrawable(R.drawable.star)))
+      values.add(
+          BarEntry(
+              i * spaceForBar,
+              `val`,
+              null,
+              ResourcesCompat.getDrawable(resources, R.drawable.star, theme)))
     }
     val set1: BarDataSet?
     if (chart.data != null && chart.data!!.dataSetCount > 0) {
@@ -140,15 +146,11 @@ class HorizontalBarNegativeChartActivity :
         startActivity(i)
       }
       R.id.actionToggleValues -> {
-        chart.data?.dataSets?.forEach { set ->
-          set.setDrawValues(!set.isDrawValuesEnabled)
-        }
+        chart.data?.dataSets?.forEach { set -> set.setDrawValues(!set.isDrawValuesEnabled) }
         chart.invalidate()
       }
       R.id.actionToggleIcons -> {
-        chart.data?.dataSets?.forEach { set ->
-          set.setDrawIcons(!set.isDrawIconsEnabled)
-        }
+        chart.data?.dataSets?.forEach { set -> set.setDrawIcons(!set.isDrawIconsEnabled) }
         chart.invalidate()
       }
       R.id.actionToggleHighlight -> {

@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import com.github.eklipse2k8.charting.charts.HorizontalBarChart
 import com.github.eklipse2k8.charting.components.AxisBase
@@ -34,8 +33,6 @@ class StackedBarActivityNegative : DemoBase(), OnChartValueSelectedListener {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    window.setFlags(
-        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     setContentView(R.layout.activity_age_distribution)
     title = "StackedBarActivityNegative"
     chart = findViewById(R.id.chart1)
@@ -125,15 +122,11 @@ class StackedBarActivityNegative : DemoBase(), OnChartValueSelectedListener {
         startActivity(i)
       }
       R.id.actionToggleValues -> {
-        chart.data?.dataSets?.forEach { set ->
-          set.setDrawValues(!set.isDrawValuesEnabled)
-        }
+        chart.data?.dataSets?.forEach { set -> set.setDrawValues(!set.isDrawValuesEnabled) }
         chart.invalidate()
       }
       R.id.actionToggleIcons -> {
-        chart.data?.dataSets?.forEach { set ->
-          set.setDrawIcons(!set.isDrawIconsEnabled)
-        }
+        chart.data?.dataSets?.forEach { set -> set.setDrawIcons(!set.isDrawIconsEnabled) }
         chart.invalidate()
       }
       R.id.actionToggleHighlight -> {

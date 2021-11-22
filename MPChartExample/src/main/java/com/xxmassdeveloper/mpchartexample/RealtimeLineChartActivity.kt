@@ -97,10 +97,6 @@ class RealtimeLineChartActivity : DemoBase(), OnChartValueSelectedListener {
 
       // move to the latest entry
       chart.moveViewToX(data.entryCount.toFloat())
-
-      // this automatically refreshes the chart (calls invalidate())
-      // chart.moveViewTo(data.getXValCount()-7, 55f,
-      // AxisDependency.LEFT);
     }
   }
 

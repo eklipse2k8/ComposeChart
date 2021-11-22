@@ -28,8 +28,6 @@ class RadarChartActivity : DemoBase() {
   private lateinit var chart: RadarChart
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    window.setFlags(
-        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     setContentView(R.layout.activity_radarchart)
     title = "RadarChartActivity"
     chart = findViewById(R.id.chart1)

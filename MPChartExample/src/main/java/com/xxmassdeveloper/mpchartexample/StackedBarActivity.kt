@@ -9,11 +9,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.WindowManager
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.github.eklipse2k8.charting.charts.BarChart
 import com.github.eklipse2k8.charting.components.Legend
 import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition
@@ -38,8 +38,6 @@ class StackedBarActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSele
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    window.setFlags(
-        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     setContentView(R.layout.activity_barchart)
     title = "StackedBarActivity"
     tvX = findViewById(R.id.tvXMax)
@@ -103,7 +101,7 @@ class StackedBarActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSele
               i.toFloat(),
               0f,
               floatArrayOf(val1, val2, val3),
-              resources.getDrawable(R.drawable.star)))
+              ResourcesCompat.getDrawable(resources, R.drawable.star, theme)))
     }
     val set1: BarDataSet?
     if (chart.data != null && chart.data!!.dataSetCount > 0) {
@@ -144,15 +142,11 @@ class StackedBarActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSele
         startActivity(i)
       }
       R.id.actionToggleValues -> {
-        chart.data?.dataSets?.forEach { set ->
-          set.setDrawValues(!set.isDrawValuesEnabled)
-        }
+        chart.data?.dataSets?.forEach { set -> set.setDrawValues(!set.isDrawValuesEnabled) }
         chart.invalidate()
       }
       R.id.actionToggleIcons -> {
-        chart.data?.dataSets?.forEach { set ->
-          set.setDrawIcons(!set.isDrawIconsEnabled)
-        }
+        chart.data?.dataSets?.forEach { set -> set.setDrawIcons(!set.isDrawIconsEnabled) }
         chart.invalidate()
       }
       R.id.actionToggleHighlight -> {

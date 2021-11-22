@@ -29,8 +29,6 @@ class HalfPieChartActivity : DemoBase() {
   private lateinit var chart: PieChart
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    window.setFlags(
-        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     setContentView(R.layout.activity_piechart_half)
     title = "HalfPieChartActivity"
     chart = findViewById(R.id.chart1)
@@ -78,7 +76,6 @@ class HalfPieChartActivity : DemoBase() {
     dataSet.sliceSpace = 3f
     dataSet.selectionShift = 5f
     dataSet.setColors(*ColorTemplate.MATERIAL_COLORS)
-    // dataSet.setSelectionShift(0f);
     val data = PieData(dataSet)
     data.setValueFormatter(PercentFormatter())
     data.setValueTextSize(11f)

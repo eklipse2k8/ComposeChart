@@ -24,8 +24,6 @@ class PerformanceLineChart : DemoBase(), OnSeekBarChangeListener {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    window.setFlags(
-        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     setContentView(R.layout.activity_performance_linechart)
     title = "PerformanceLineChart"
     tvCount = findViewById(R.id.tvValueCount)
@@ -51,7 +49,7 @@ class PerformanceLineChart : DemoBase(), OnSeekBarChangeListener {
     chart.axisRight.isEnabled = false
     chart.xAxis.setDrawGridLines(true)
     chart.xAxis.setDrawAxisLine(false)
-    seekBarValues.setProgress(9000)
+    seekBarValues.progress = 9000
 
     // don't forget to refresh the drawing
     chart.invalidate()

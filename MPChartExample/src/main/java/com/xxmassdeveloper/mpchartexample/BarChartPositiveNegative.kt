@@ -8,7 +8,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import com.github.eklipse2k8.charting.charts.BarChart
-import com.github.eklipse2k8.charting.components.AxisBase
 import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition
 import com.github.eklipse2k8.charting.data.BarData
 import com.github.eklipse2k8.charting.data.BarDataSet
@@ -19,13 +18,15 @@ import com.github.eklipse2k8.charting.formatter.IValueFormatter
 import com.github.eklipse2k8.charting.utils.ViewPortHandler
 import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase
 import java.text.DecimalFormat
+import kotlin.math.max
+import kotlin.math.min
 
 class BarChartPositiveNegative : DemoBase() {
+
   private lateinit var chart: BarChart
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    window.setFlags(
-        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     setContentView(R.layout.activity_barchart_noseekbar)
     title = "BarChartPositiveNegative"
     chart = findViewById(R.id.chart1)
@@ -64,24 +65,22 @@ class BarChartPositiveNegative : DemoBase() {
     chart.legend.isEnabled = false
 
     // THIS IS THE ORIGINAL DATA YOU WANT TO PLOT
-    val data: MutableList<Data> = ArrayList()
+    val data = mutableListOf<Data>()
     data.add(Data(0f, -224.1f, "12-29"))
     data.add(Data(1f, 238.5f, "12-30"))
     data.add(Data(2f, 1280.1f, "12-31"))
     data.add(Data(3f, -442.3f, "01-01"))
     data.add(Data(4f, -2280.1f, "01-02"))
     xAxis.valueFormatter =
-        object : IAxisValueFormatter {
-          override fun getFormattedValue(value: Float, axis: AxisBase): String? {
-            return data[Math.min(Math.max(value.toInt(), 0), data.size - 1)].xAxisValue
-          }
+        IAxisValueFormatter { value, _ ->
+          data[min(max(value.toInt(), 0), data.size - 1)].xAxisValue
         }
     setData(data)
   }
 
   private fun setData(dataList: List<Data>) {
-    val values = ArrayList<BarEntry>()
-    val colors: MutableList<Int> = ArrayList()
+    val values = mutableListOf<BarEntry>()
+    val colors = mutableListOf<Int>()
     val green = Color.rgb(110, 190, 102)
     val red = Color.rgb(211, 74, 88)
     for (i in dataList.indices) {
@@ -113,11 +112,10 @@ class BarChartPositiveNegative : DemoBase() {
   }
 
   /** Demo class representing data. */
-  private inner class Data
-  internal constructor(val xValue: Float, val yValue: Float, val xAxisValue: String)
+  private inner class Data(val xValue: Float, val yValue: Float, val xAxisValue: String)
 
-  private inner class ValueFormatter internal constructor() : IValueFormatter {
-    private val mFormat: DecimalFormat
+  private inner class ValueFormatter() : IValueFormatter {
+    private val mFormat: DecimalFormat = DecimalFormat("######.0")
     override fun getFormattedValue(
         value: Float,
         entry: Entry,
@@ -125,10 +123,6 @@ class BarChartPositiveNegative : DemoBase() {
         viewPortHandler: ViewPortHandler
     ): String {
       return mFormat.format(value.toDouble())
-    }
-
-    init {
-      mFormat = DecimalFormat("######.0")
     }
   }
 

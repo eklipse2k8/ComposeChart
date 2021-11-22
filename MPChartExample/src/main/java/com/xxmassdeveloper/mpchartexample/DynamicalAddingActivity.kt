@@ -26,8 +26,6 @@ class DynamicalAddingActivity : DemoBase(), OnChartValueSelectedListener {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    window.setFlags(
-        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     setContentView(R.layout.activity_linechart_noseekbar)
     title = "DynamicalAddingActivity"
     chart = findViewById(R.id.chart1)
@@ -35,9 +33,6 @@ class DynamicalAddingActivity : DemoBase(), OnChartValueSelectedListener {
     chart.setDrawGridBackground(false)
     chart.description.isEnabled = false
     chart.setNoDataText("No chart data available. Use the menu to add entries and data sets!")
-
-    //        chart.getXAxis().setDrawLabels(false);
-    //        chart.getXAxis().setDrawGridLines(false);
     chart.invalidate()
   }
 

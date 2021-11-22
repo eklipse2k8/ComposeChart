@@ -34,11 +34,11 @@ abstract class AxisRenderer(
       }
 
   /** paint for the x-label values */
-  @JvmField protected var axisLabelPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+  @JvmField protected val axisLabelPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
   /** paint for the line surrounding the chart */
   @JvmField
-  protected var axisLinePaint: Paint =
+  protected val axisLinePaint: Paint =
       Paint().apply {
         color = Color.BLACK
         strokeWidth = 1f

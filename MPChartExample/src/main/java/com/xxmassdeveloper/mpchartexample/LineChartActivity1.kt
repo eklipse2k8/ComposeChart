@@ -10,11 +10,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.WindowManager
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.github.eklipse2k8.charting.animation.Easing.EaseInOutCubic
 import com.github.eklipse2k8.charting.charts.LineChart
 import com.github.eklipse2k8.charting.components.Legend.LegendForm
@@ -157,7 +157,8 @@ class LineChartActivity1 : DemoBase(), OnSeekBarChangeListener, OnChartValueSele
     val values = ArrayList<Entry>()
     for (i in 0 until count) {
       val `val` = (Math.random() * range).toFloat() - 30
-      values.add(Entry(i.toFloat(), `val`, resources.getDrawable(R.drawable.star)))
+      values.add(
+          Entry(i.toFloat(), `val`, ResourcesCompat.getDrawable(resources, R.drawable.star, theme)))
     }
     val set1: LineDataSet?
     if (chart.data != null && chart.data!!.dataSetCount > 0) {

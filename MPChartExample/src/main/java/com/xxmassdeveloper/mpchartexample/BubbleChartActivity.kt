@@ -9,11 +9,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.WindowManager
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.github.eklipse2k8.charting.charts.BubbleChart
 import com.github.eklipse2k8.charting.components.Legend
 import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition
@@ -29,15 +29,15 @@ import com.github.eklipse2k8.charting.utils.MPPointF
 import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase
 
 class BubbleChartActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSelectedListener {
+
   private lateinit var chart: BubbleChart
   private lateinit var seekBarX: SeekBar
   private lateinit var seekBarY: SeekBar
   private lateinit var tvX: TextView
   private lateinit var tvY: TextView
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    window.setFlags(
-        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     setContentView(R.layout.activity_bubblechart)
     title = "BubbleChartActivity"
     tvX = findViewById(R.id.tvXMax)
@@ -57,8 +57,8 @@ class BubbleChartActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSel
     chart.setScaleEnabled(true)
     chart.setMaxVisibleValueCount(200)
     chart.setPinchZoom(true)
-    seekBarX.setProgress(10)
-    seekBarY.setProgress(50)
+    seekBarX.progress = 10
+    seekBarY.progress = 50
     val l = chart.legend
     l.verticalAlignment = Legend.LegendVerticalAlignment.TOP
     l.horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
@@ -77,26 +77,26 @@ class BubbleChartActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSel
   }
 
   override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-    val count = seekBarX!!.progress
-    val range = seekBarY!!.progress
-    tvX!!.text = count.toString()
-    tvY!!.text = range.toString()
-    val values1 = ArrayList<BubbleEntry>()
-    val values2 = ArrayList<BubbleEntry>()
-    val values3 = ArrayList<BubbleEntry>()
+    val count = seekBarX.progress
+    val range = seekBarY.progress
+    tvX.text = count.toString()
+    tvY.text = range.toString()
+    val values1 = mutableListOf<BubbleEntry>()
+    val values2 = mutableListOf<BubbleEntry>()
+    val values3 = mutableListOf<BubbleEntry>()
     for (i in 0 until count) {
       values1.add(
           BubbleEntry(
               i.toFloat(),
               (Math.random() * range).toFloat(),
               (Math.random() * range).toFloat(),
-              resources.getDrawable(R.drawable.star)))
+              ResourcesCompat.getDrawable(resources, R.drawable.star, theme)))
       values2.add(
           BubbleEntry(
               i.toFloat(),
               (Math.random() * range).toFloat(),
               (Math.random() * range).toFloat(),
-              resources.getDrawable(R.drawable.star)))
+              ResourcesCompat.getDrawable(resources, R.drawable.star, theme)))
       values3.add(
           BubbleEntry(
               i.toFloat(), (Math.random() * range).toFloat(), (Math.random() * range).toFloat()))
@@ -172,7 +172,7 @@ class BubbleChartActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSel
             PackageManager.PERMISSION_GRANTED) {
           saveToGallery()
         } else {
-          requestStoragePermission(chart!!)
+          requestStoragePermission(chart)
         }
       }
       R.id.animateX -> {
@@ -189,7 +189,7 @@ class BubbleChartActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSel
   }
 
   override fun saveToGallery() {
-    saveToGallery(chart!!, "BubbleChartActivity")
+    saveToGallery(chart, "BubbleChartActivity")
   }
 
   override fun onValueSelected(e: Entry?, h: Highlight?) {

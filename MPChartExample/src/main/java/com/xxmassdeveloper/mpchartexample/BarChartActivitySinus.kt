@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.WindowManager
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
@@ -30,8 +29,6 @@ class BarChartActivitySinus : DemoBase(), OnSeekBarChangeListener {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    window.setFlags(
-        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     setContentView(R.layout.activity_barchart_sinus)
     title = "BarChartActivitySinus"
     data = loadBarEntriesFromAssets(assets, "othersine.txt")
@@ -50,45 +47,43 @@ class BarChartActivitySinus : DemoBase(), OnSeekBarChangeListener {
     chart.setPinchZoom(false)
 
     // draw shadows for each bar that show the maximum value
-    // chart.setDrawBarShadow(true);
-
-    // chart.setDrawXLabels(false);
     chart.setDrawGridBackground(false)
-    // chart.setDrawYLabels(false);
-    val xAxis = chart.xAxis
-    xAxis.isEnabled = false
-    val leftAxis = chart.axisLeft
-    leftAxis.typeface = tfLight
-    leftAxis.setLabelCount(6, false)
-    leftAxis.axisMinimum = -2.5f
-    leftAxis.axisMaximum = 2.5f
-    leftAxis.isGranularityEnabled = true
-    leftAxis.granularity = 0.1f
-    val rightAxis = chart.axisRight
-    rightAxis.setDrawGridLines(false)
-    rightAxis.typeface = tfLight
-    rightAxis.setLabelCount(6, false)
-    rightAxis.axisMinimum = -2.5f
-    rightAxis.axisMaximum = 2.5f
-    rightAxis.granularity = 0.1f
+    chart.xAxis.isEnabled = false
+    with(chart.axisLeft) {
+      typeface = tfLight
+      setLabelCount(6, false)
+      axisMinimum = -2.5f
+      axisMaximum = 2.5f
+      isGranularityEnabled = true
+      granularity = 0.1f
+    }
+    with(chart.axisRight) {
+      setDrawGridLines(false)
+      typeface = tfLight
+      setLabelCount(6, false)
+      axisMinimum = -2.5f
+      axisMaximum = 2.5f
+      granularity = 0.1f
+    }
     seekBarX.setOnSeekBarChangeListener(this)
-    seekBarX.setProgress(150) // set data
-    val l = chart.legend
-    l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
-    l.horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
-    l.orientation = Legend.LegendOrientation.HORIZONTAL
-    l.setDrawInside(false)
-    l.form = LegendForm.SQUARE
-    l.formSize = 9f
-    l.textSize = 11f
-    l.xEntrySpace = 4f
+    seekBarX.progress = 150 // set data
+    with(chart.legend) {
+      verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
+      horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
+      orientation = Legend.LegendOrientation.HORIZONTAL
+      setDrawInside(false)
+      form = LegendForm.SQUARE
+      formSize = 9f
+      textSize = 11f
+      xEntrySpace = 4f
+    }
     chart.animateXY(1500, 1500)
   }
 
   private fun setData(count: Int) {
     val entries = ArrayList<BarEntry>()
     for (i in 0 until count) {
-      entries.add(data!![i])
+      entries.add(data[i])
     }
     val set: BarDataSet?
     if (chart.data != null && chart.data!!.dataSetCount > 0) {
@@ -161,7 +156,7 @@ class BarChartActivitySinus : DemoBase(), OnSeekBarChangeListener {
             PackageManager.PERMISSION_GRANTED) {
           saveToGallery()
         } else {
-          requestStoragePermission(chart!!)
+          requestStoragePermission(chart)
         }
       }
     }
@@ -169,13 +164,13 @@ class BarChartActivitySinus : DemoBase(), OnSeekBarChangeListener {
   }
 
   override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-    tvX!!.text = seekBarX!!.progress.toString()
-    setData(seekBarX!!.progress)
+    tvX.text = seekBarX.progress.toString()
+    setData(seekBarX.progress)
     chart.invalidate()
   }
 
   override fun saveToGallery() {
-    saveToGallery(chart!!, "BarChartActivitySinus")
+    saveToGallery(chart, "BarChartActivitySinus")
   }
 
   override fun onStartTrackingTouch(seekBar: SeekBar) {}

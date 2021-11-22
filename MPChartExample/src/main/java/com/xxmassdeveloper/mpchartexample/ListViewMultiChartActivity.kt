@@ -48,11 +48,11 @@ class ListViewMultiChartActivity : DemoBase() {
   }
 
   /** adapter that supports 3 different item types */
-  private inner class ChartDataAdapter
-  internal constructor(context: Context?, objects: List<ChartItem?>?) :
-      ArrayAdapter<ChartItem?>(context!!, 0, objects!!) {
+  private inner class ChartDataAdapter(context: Context, objects: List<ChartItem>) :
+      ArrayAdapter<ChartItem?>(context, 0, objects) {
+
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-      return getItem(position)!!.getView(position, convertView, context)
+      return getItem(position)?.getView(position, convertView, context) ?: error("invalid view")
     }
 
     override fun getItemViewType(position: Int): Int {

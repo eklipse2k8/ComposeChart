@@ -13,6 +13,7 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.github.eklipse2k8.charting.charts.CandleStickChart
 import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition
 import com.github.eklipse2k8.charting.components.YAxis.AxisDependency
@@ -89,7 +90,7 @@ class CandleStickChartActivity : DemoBase(), OnSeekBarChangeListener {
               `val` - low,
               if (even) `val` + open else `val` - open,
               if (even) `val` - close else `val` + close,
-              resources.getDrawable(R.drawable.star)))
+            ResourcesCompat.getDrawable(resources, R.drawable.star, theme)))
     }
     val set1 = CandleDataSet(values, "Data Set")
     set1.setDrawIcons(false)

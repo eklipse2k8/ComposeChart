@@ -81,24 +81,22 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    * @return
    */
   /** the object reprsenting the y-axis labels */
-  var yAxis: YAxis? = null
-    private set
+  val yAxis: YAxis = YAxis(AxisDependency.LEFT)
 
   private var mYAxisRenderer: YAxisRendererRadarChart? = null
 
   private var mXAxisRenderer: XAxisRendererRadarChart? = null
 
   val yRange: Float
-    get() = yAxis?.mAxisRange ?: 0f
+    get() = yAxis.mAxisRange
 
   override val highlighter: IHighlighter = RadarHighlighter(this)
 
   init {
-    yAxis = YAxis(AxisDependency.LEFT)
-    yAxis!!.labelXOffset = 10f
+    yAxis.labelXOffset = 10f
     mWebLineWidth = Utils.convertDpToPixel(1.5f)
     mInnerWebLineWidth = Utils.convertDpToPixel(0.75f)
-    mYAxisRenderer = YAxisRendererRadarChart(viewPortHandler, yAxis!!, this)
+    mYAxisRenderer = YAxisRendererRadarChart(viewPortHandler, yAxis, this)
     mXAxisRenderer = XAxisRendererRadarChart(viewPortHandler, xAxis, this)
   }
 

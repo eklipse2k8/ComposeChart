@@ -29,8 +29,6 @@ class DrawChartActivity : DemoBase(), OnChartValueSelectedListener, OnDrawListen
   private lateinit var chart: LineChart
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    window.setFlags(
-        WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
     setContentView(R.layout.activity_draw_chart)
     title = "DrawChartActivity"
     chart = findViewById(R.id.chart1)
@@ -52,10 +50,6 @@ class DrawChartActivity : DemoBase(), OnChartValueSelectedListener, OnDrawListen
     val yl = chart.axisLeft
     yl.typeface = tfRegular
     chart.legend.isEnabled = false
-
-    // chart.setYRange(-40f, 40f, true);
-    // call this to reset the changed y-range
-    // chart.resetYRange(true);
   }
 
   private fun initWithDummyData() {

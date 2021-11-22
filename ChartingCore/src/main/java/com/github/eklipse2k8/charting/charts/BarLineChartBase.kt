@@ -6,6 +6,10 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
+import androidx.core.content.res.getColorOrThrow
+import androidx.core.content.res.getDimensionOrThrow
+import androidx.core.content.withStyledAttributes
+import com.github.eklipse2k8.charting.R
 import com.github.eklipse2k8.charting.components.Legend.*
 import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition
 import com.github.eklipse2k8.charting.components.YAxis
@@ -155,6 +159,17 @@ E : Entry {
   init {
     onTouchListener =
         BarLineChartTouchListener(this as AnyBarChart, viewPortHandler.matrixTouch, 3f)
+
+    context.withStyledAttributes(
+        set = attrs,
+        attrs = R.styleable.Chart_Axis,
+        defStyleAttr = R.attr.Chart_Axis_Style,
+        defStyleRes = R.style.Chart_Axis) {
+      with(rendererXAxis.paintAxisLabels) {
+        color = getColorOrThrow(R.styleable.Chart_Axis_android_textColor)
+        textSize = getDimensionOrThrow(R.styleable.Chart_Axis_android_textSize)
+      }
+    }
   }
 
   // for performance tracking

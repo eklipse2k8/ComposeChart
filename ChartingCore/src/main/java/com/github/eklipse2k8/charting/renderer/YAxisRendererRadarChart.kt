@@ -147,9 +147,9 @@ class YAxisRendererRadarChart(
     for (i in limitLines.indices) {
       val l = limitLines[i]
       if (!l.isEnabled) continue
-      limitLinePaint!!.color = l.lineColor
-      limitLinePaint!!.pathEffect = l.dashPathEffect
-      limitLinePaint!!.strokeWidth = l.lineWidth
+      limitLinePaint.color = l.lineColor
+      limitLinePaint.pathEffect = l.dashPathEffect
+      limitLinePaint.strokeWidth = l.lineWidth
       val r: Float = (l.limit - mChart.yChartMin) * factor
       val limitPath = mRenderLimitLinesPathBuffer
       limitPath.reset()
@@ -159,7 +159,7 @@ class YAxisRendererRadarChart(
         if (j == 0) limitPath.moveTo(pOut.x, pOut.y) else limitPath.lineTo(pOut.x, pOut.y)
       }
       limitPath.close()
-      canvas!!.drawPath(limitPath, limitLinePaint!!)
+      canvas!!.drawPath(limitPath, limitLinePaint)
     }
     MPPointF.recycleInstance(center)
     MPPointF.recycleInstance(pOut)

@@ -11,13 +11,8 @@ import com.github.eklipse2k8.charting.utils.Utils.convertDpToPixel
  *
  * @author Philipp Jahoda
  */
-/** Constructor - don't forget calling setChartDimens(...) */
 class ViewPortHandler {
-  /**
-   * Returns the charts-touch matrix used for translation and scale on touch.
-   *
-   * @return
-   */
+
   /** matrix used for touch events */
   val matrixTouch = Matrix()
 
@@ -153,8 +148,6 @@ class ViewPortHandler {
   val smallestContentExtension: Float
     get() = contentRect.width().coerceAtMost(contentRect.height())
 
-  /** ################ ################ ################ ################ */
-  /** CODE BELOW THIS RELATED TO SCALING AND GESTURES */
   /**
    * Zooms in by 1.4f, x and y are the coordinates (in pixels) of the zoom center.
    *
