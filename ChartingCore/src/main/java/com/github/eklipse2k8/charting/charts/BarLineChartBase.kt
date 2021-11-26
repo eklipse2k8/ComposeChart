@@ -162,13 +162,15 @@ E : Entry {
 
     context.withStyledAttributes(
         set = attrs,
-        attrs = R.styleable.Chart_Axis,
-        defStyleAttr = R.attr.Chart_Axis_Style,
-        defStyleRes = R.style.Chart_Axis) {
+        attrs = R.styleable.Chart_Base_Style,
+        defStyleAttr = R.attr.defaultChartStyle,
+        defStyleRes = R.style.LineChart) {
       with(rendererXAxis.paintAxisLabels) {
-        color = getColorOrThrow(R.styleable.Chart_Axis_android_textColor)
-        textSize = getDimensionOrThrow(R.styleable.Chart_Axis_android_textSize)
+        color = getColorOrThrow(R.styleable.Chart_Base_Style_android_textColor)
+        textSize = getDimensionOrThrow(R.styleable.Chart_Base_Style_android_textSize)
       }
+
+      with(gridBackgroundPaint) { color = getColorOrThrow(R.styleable.Chart_Base_Style_gridColor) }
     }
   }
 

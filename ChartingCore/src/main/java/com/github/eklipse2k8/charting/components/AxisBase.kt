@@ -6,7 +6,6 @@ import android.util.Log
 import com.github.eklipse2k8.charting.formatter.DefaultAxisValueFormatter
 import com.github.eklipse2k8.charting.formatter.IAxisValueFormatter
 import com.github.eklipse2k8.charting.utils.Utils
-import java.util.ArrayList
 import kotlin.math.abs
 
 /**
@@ -17,30 +16,19 @@ import kotlin.math.abs
 abstract class AxisBase : ComponentBase() {
   /** custom formatter that is used instead of the auto-formatter if set */
   protected var mAxisValueFormatter: IAxisValueFormatter? = null
-  /**
-   * Returns the color of the grid lines for this axis (the horizontal lines coming from each
-   * label).
-   *
-   * @return
-   */
+
   /**
    * Sets the color of the grid lines for this axis (the horizontal lines coming from each label).
    *
    * @param color
    */
   var gridColor = Color.GRAY
+
   private var mGridLineWidth = 1f
-  /**
-   * Returns the color of the axis line (line alongside the axis).
-   *
-   * @return
-   */
-  /**
-   * Sets the color of the border surrounding the chart.
-   *
-   * @param color
-   */
+
+  /** Sets the color of the border surrounding the chart. */
   var axisLineColor = Color.GRAY
+
   private var mAxisLineWidth = 1f
 
   /** the actual array of entries */

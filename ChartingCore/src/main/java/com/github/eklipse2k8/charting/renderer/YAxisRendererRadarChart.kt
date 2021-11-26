@@ -14,10 +14,11 @@ class YAxisRendererRadarChart(
     yAxis: YAxis,
     private val mChart: RadarChart
 ) : YAxisRenderer(viewPortHandler, yAxis, null) {
+
   override fun computeAxisValues(min: Float, max: Float) {
     val labelCount = axis.labelCount
     val range = abs(max - min).toDouble()
-    if (labelCount == 0 || range <= 0 || java.lang.Double.isInfinite(range)) {
+    if (labelCount == 0 || range <= 0 || range.isInfinite()) {
       axis.mEntries = floatArrayOf()
       axis.mCenteredEntries = floatArrayOf()
       axis.mEntryCount = 0

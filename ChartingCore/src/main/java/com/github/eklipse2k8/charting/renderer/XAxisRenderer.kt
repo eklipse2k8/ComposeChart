@@ -17,19 +17,6 @@ open class XAxisRenderer(
     trans: Transformer?
 ) : AxisRenderer(viewPortHandler, trans, xAxis) {
 
-  init {
-    with(axisLabelPaint) {
-      color = Color.BLACK
-      textAlign = Align.CENTER
-      typeface = Typeface.DEFAULT
-//      MaterialResources.getTextAppearance()
-//
-//      MaterialResources.getDimensionPixelSize(context, attributes, indices.get(index), -1)
-//      MaterialTextView
-      textSize = Utils.convertDpToPixel(10f)
-    }
-  }
-
   private fun setupGridPaint() {
     gridPaint.color = xAxis.gridColor
     gridPaint.strokeWidth = xAxis.gridLineWidth

@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Chart.Axis" parent="TextAppearance.Material3.LabelSmall">
+    <style name="LineChart">
+        <item name="android:textAppearance">?attr/textAppearanceLabelMedium</item>
         <item name="android:textColor">@color/design_default_color_primary</item>
-<!--        <item name="android:textColor">?attr/colorOnSurface</item>-->
+        <item name="android:textSize">10sp</item>
+        <item name="android:textAlignment">center</item>
+
+        <item name="gridColor">@android:color/white</item>
     </style>
 
 </resources>
