@@ -96,9 +96,9 @@ abstract class AxisRenderer(
     val labelCount = axis.labelCount
     val range = abs(max - min).toDouble()
     if (labelCount == 0 || range <= 0 || range.isInfinite()) {
-      axis.mEntries = floatArrayOf()
-      axis.mCenteredEntries = floatArrayOf()
-      axis.mEntryCount = 0
+      axis.entries = floatArrayOf()
+      axis.centeredEntries = floatArrayOf()
+      axis.entryCount = 0
       return
     }
 
@@ -125,14 +125,14 @@ abstract class AxisRenderer(
     // force label count
     if (axis.isForceLabelsEnabled) {
       interval = (range.toFloat() / (labelCount - 1).toFloat()).toDouble()
-      axis.mEntryCount = labelCount
-      if (axis.mEntries.size < labelCount) {
+      axis.entryCount = labelCount
+      if (axis.entries.size < labelCount) {
         // Ensure stops contains at least numStops elements.
-        axis.mEntries = FloatArray(labelCount)
+        axis.entries = FloatArray(labelCount)
       }
       var v = min
       for (i in 0 until labelCount) {
-        axis.mEntries[i] = v
+        axis.entries[i] = v
         v += interval.toFloat()
       }
       n = labelCount
@@ -154,17 +154,17 @@ abstract class AxisRenderer(
       } else if (last == first && n == 0) {
         n = 1
       }
-      axis.mEntryCount = n
-      if (axis.mEntries.size < n) {
+      axis.entryCount = n
+      if (axis.entries.size < n) {
         // Ensure stops contains at least numStops elements.
-        axis.mEntries = FloatArray(n)
+        axis.entries = FloatArray(n)
       }
       f = first
       var i = 0
       while (i < n) {
         if (f == 0.0) // Fix for negative zero case (Where value == -0.0, and 0.0 == -0.0)
          f = 0.0
-        axis.mEntries[i] = f.toFloat()
+        axis.entries[i] = f.toFloat()
         f += interval
         ++i
       }
@@ -172,17 +172,17 @@ abstract class AxisRenderer(
 
     // set decimals
     if (interval < 1) {
-      axis.mDecimals = ceil(-log10(interval)).toInt()
+      axis.decimals = ceil(-log10(interval)).toInt()
     } else {
-      axis.mDecimals = 0
+      axis.decimals = 0
     }
     if (axis.isCenterAxisLabelsEnabled) {
-      if (axis.mCenteredEntries.size < n) {
-        axis.mCenteredEntries = FloatArray(n)
+      if (axis.centeredEntries.size < n) {
+        axis.centeredEntries = FloatArray(n)
       }
       val offset = interval.toFloat() / 2f
       for (i in 0 until n) {
-        axis.mCenteredEntries[i] = axis.mEntries[i] + offset
+        axis.centeredEntries[i] = axis.entries[i] + offset
       }
     }
   }

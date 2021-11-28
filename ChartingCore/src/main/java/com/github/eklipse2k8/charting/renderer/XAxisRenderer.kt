@@ -7,8 +7,6 @@ import com.github.eklipse2k8.charting.components.LimitLine.LimitLabelPosition
 import com.github.eklipse2k8.charting.components.XAxis
 import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition
 import com.github.eklipse2k8.charting.utils.*
-import com.google.android.material.resources.MaterialResources
-import com.google.android.material.textview.MaterialTextView
 import kotlin.math.roundToInt
 
 open class XAxisRenderer(
@@ -141,16 +139,16 @@ open class XAxisRenderer(
   protected open fun drawLabels(c: Canvas?, pos: Float, anchor: MPPointF?) {
     val labelRotationAngleDegrees = xAxis.labelRotationAngle
     val centeringEnabled = xAxis.isCenterAxisLabelsEnabled
-    val positions = FloatArray(xAxis.mEntryCount * 2)
+    val positions = FloatArray(xAxis.entryCount * 2)
     run {
       var i = 0
       while (i < positions.size) {
 
         // only fill x values
         if (centeringEnabled) {
-          positions[i] = xAxis.mCenteredEntries[i / 2]
+          positions[i] = xAxis.centeredEntries[i / 2]
         } else {
-          positions[i] = xAxis.mEntries[i / 2]
+          positions[i] = xAxis.entries[i / 2]
         }
         i += 2
       }
@@ -160,11 +158,11 @@ open class XAxisRenderer(
     while (i < positions.size) {
       var x = positions[i]
       if (viewPortHandler.isInBoundsX(x)) {
-        val label = xAxis.valueFormatter!!.getFormattedValue(xAxis.mEntries[i / 2], xAxis)
+        val label = xAxis.valueFormatter!!.getFormattedValue(xAxis.entries[i / 2], xAxis)
         if (xAxis.isAvoidFirstLastClippingEnabled) {
 
           // avoid clipping of the last
-          if (i / 2 == xAxis.mEntryCount - 1 && xAxis.mEntryCount > 1) {
+          if (i / 2 == xAxis.entryCount - 1 && xAxis.entryCount > 1) {
             val width = Utils.calcTextWidth(axisLabelPaint, label).toFloat()
             if (width > viewPortHandler.offsetRight() * 2 && x + width > viewPortHandler.chartWidth)
                 x -= width / 2
@@ -200,15 +198,15 @@ open class XAxisRenderer(
     if (!xAxis.isDrawGridLinesEnabled || !xAxis.isEnabled) return
     val clipRestoreCount = canvas!!.save()
     canvas.clipRect(gridClippingRect!!)
-    if (mRenderGridLinesBuffer.size != axis.mEntryCount * 2) {
-      mRenderGridLinesBuffer = FloatArray(xAxis.mEntryCount * 2)
+    if (mRenderGridLinesBuffer.size != axis.entryCount * 2) {
+      mRenderGridLinesBuffer = FloatArray(xAxis.entryCount * 2)
     }
     val positions = mRenderGridLinesBuffer
     run {
       var i = 0
       while (i < positions.size) {
-        positions[i] = xAxis.mEntries[i / 2]
-        positions[i + 1] = xAxis.mEntries[i / 2]
+        positions[i] = xAxis.entries[i / 2]
+        positions[i + 1] = xAxis.entries[i / 2]
         i += 2
       }
     }

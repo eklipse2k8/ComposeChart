@@ -22,7 +22,7 @@ public class AxisRendererTest {
         AxisRenderer renderer = new YAxisRenderer(null, yAxis, null);
 
         renderer.computeAxis(0, 100, false);
-        float[] entries = yAxis.mEntries;
+        float[] entries = yAxis.entries;
 
         assertEquals(6, entries.length);
         assertEquals(20, entries[1] - entries[0], 0.01); // interval 20
@@ -35,7 +35,7 @@ public class AxisRendererTest {
         renderer = new YAxisRenderer(null, yAxis, null);
 
         renderer.computeAxis(0, 100, false);
-        entries = yAxis.mEntries;
+        entries = yAxis.entries;
 
         assertEquals(3, entries.length);
         assertEquals(50, entries[1] - entries[0], 0.01); // interval 50
@@ -47,7 +47,7 @@ public class AxisRendererTest {
         renderer = new YAxisRenderer(null, yAxis, null);
 
         renderer.computeAxis(0, 100, false);
-        entries = yAxis.mEntries;
+        entries = yAxis.entries;
 
         assertEquals(5, entries.length);
         assertEquals(25, entries[1] - entries[0], 0.01); // interval 25
@@ -59,7 +59,7 @@ public class AxisRendererTest {
         renderer = new YAxisRenderer(null, yAxis, null);
 
         renderer.computeAxis(0, 0.01f, false);
-        entries = yAxis.mEntries;
+        entries = yAxis.entries;
 
         assertEquals(5, entries.length);
         assertEquals(0.0025, entries[1] - entries[0], 0.0001);
@@ -71,7 +71,7 @@ public class AxisRendererTest {
         renderer = new YAxisRenderer(null, yAxis, null);
 
         renderer.computeAxis(0, 0.01f, false);
-        entries = yAxis.mEntries;
+        entries = yAxis.entries;
 
         assertEquals(5, entries.length);
         assertEquals(0.0020, entries[1] - entries[0], 0.0001);
@@ -83,7 +83,7 @@ public class AxisRendererTest {
         renderer = new YAxisRenderer(null, yAxis, null);
 
         renderer.computeAxis(-50, 50, false);
-        entries = yAxis.mEntries;
+        entries = yAxis.entries;
 
         assertEquals(5, entries.length);
         assertEquals(-40, entries[0], 0.0001);
@@ -95,7 +95,7 @@ public class AxisRendererTest {
         renderer = new YAxisRenderer(null, yAxis, null);
 
         renderer.computeAxis(-50, 100, false);
-        entries = yAxis.mEntries;
+        entries = yAxis.entries;
 
         assertEquals(5, entries.length);
         assertEquals(-30, entries[0], 0.0001);

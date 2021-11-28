@@ -95,16 +95,16 @@ class XAxisRendererHorizontalBarChart(
   override fun drawLabels(c: Canvas?, pos: Float, anchor: MPPointF?) {
     val labelRotationAngleDegrees = xAxis.labelRotationAngle
     val centeringEnabled = xAxis.isCenterAxisLabelsEnabled
-    val positions = FloatArray(xAxis.mEntryCount * 2)
+    val positions = FloatArray(xAxis.entryCount * 2)
     run {
       var i = 0
       while (i < positions.size) {
 
         // only fill x values
         if (centeringEnabled) {
-          positions[i + 1] = xAxis.mCenteredEntries[i / 2]
+          positions[i + 1] = xAxis.centeredEntries[i / 2]
         } else {
-          positions[i + 1] = xAxis.mEntries[i / 2]
+          positions[i + 1] = xAxis.entries[i / 2]
         }
         i += 2
       }
@@ -114,7 +114,7 @@ class XAxisRendererHorizontalBarChart(
     while (i < positions.size) {
       val y = positions[i + 1]
       if (viewPortHandler.isInBoundsY(y)) {
-        val label = xAxis.valueFormatter!!.getFormattedValue(xAxis.mEntries[i / 2], xAxis)
+        val label = xAxis.valueFormatter!!.getFormattedValue(xAxis.entries[i / 2], xAxis)
         drawLabel(c, label, pos, y, anchor, labelRotationAngleDegrees)
       }
       i += 2

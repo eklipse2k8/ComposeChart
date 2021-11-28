@@ -8,6 +8,8 @@ import com.github.eklipse2k8.charting.formatter.IAxisValueFormatter
 import com.github.eklipse2k8.charting.utils.Utils
 import kotlin.math.abs
 
+private val TAG = AxisBase::class.java.simpleName
+
 /**
  * Base-class of all axes (previously called labels).
  *
@@ -17,96 +19,91 @@ abstract class AxisBase : ComponentBase() {
   /** custom formatter that is used instead of the auto-formatter if set */
   protected var mAxisValueFormatter: IAxisValueFormatter? = null
 
+  /** Sets the width of the grid lines that are drawn away from each axis label. */
+  var gridLineWidth: Float = 1f
+    set(width) {
+      field = Utils.convertDpToPixel(width)
+    }
+
   /**
    * Sets the color of the grid lines for this axis (the horizontal lines coming from each label).
-   *
-   * @param color
    */
   var gridColor = Color.GRAY
-
-  private var mGridLineWidth = 1f
+    set(value) {
+      Log.i(TAG, "setGridColor value=$value")
+      field = value
+    }
 
   /** Sets the color of the border surrounding the chart. */
   var axisLineColor = Color.GRAY
+    set(value) {
+      Log.i(TAG, "setAxisLineColor value=$value")
+      field = value
+    }
 
-  private var mAxisLineWidth = 1f
+  /** Sets the width of the border surrounding the chart in dp. */
+  var axisLineWidth: Float = 1f
+    set(width) {
+      field = Utils.convertDpToPixel(width)
+    }
 
   /** the actual array of entries */
-  @JvmField var mEntries = floatArrayOf()
+  @JvmField var entries = floatArrayOf()
 
   /** axis label entries only used for centered labels */
-  @JvmField var mCenteredEntries = floatArrayOf()
+  @JvmField var centeredEntries = floatArrayOf()
 
   /** the number of entries the legend contains */
-  @JvmField var mEntryCount = 0
+  @JvmField var entryCount = 0
 
   /** the number of decimal digits to use */
-  @JvmField var mDecimals = 0
+  @JvmField var decimals = 0
 
-  /** the number of label entries the axis should have, default 6 */
-  private var mLabelCount = 6
+  /**
+   * Sets the number of label entries for the y-axis max = 25, min = 2, default: 6, be aware that
+   * this number is not fixed.
+   */
+  var labelCount: Int = 6
+    set(value) {
+      var count = value
+      if (count > axisMaxLabels) count = axisMaxLabels
+      if (count < axisMinLabels) count = axisMinLabels
+      field = count
+      isForceLabelsEnabled = false
+    }
 
   /** the minimum interval between axis values */
   protected var mGranularity = 1.0f
-  /** @return true if granularity is enabled */
-  /**
-   * Enabled/disable granularity control on axis value intervals. If enabled, the axis interval is
-   * not allowed to go below a certain granularity. Default: false
-   *
-   * @param enabled
-   */
+
   /**
    * When true, axis labels are controlled by the `granularity` property. When false, axis values
    * could possibly be repeated. This could happen if two adjacent axis values are rounded to same
    * value. If using granularity this could be avoided by having fewer axis values visible.
    */
   var isGranularityEnabled = false
-  /**
-   * Returns true if focing the y-label count is enabled. Default: false
-   *
-   * @return
-   */
+
   /** if true, the set number of y-labels will be forced */
   var isForceLabelsEnabled = false
     protected set
-  /**
-   * Returns true if drawing grid lines is enabled for this axis.
-   *
-   * @return
-   */
+
   /** flag indicating if the grid lines for this axis should be drawn */
   var isDrawGridLinesEnabled = true
     protected set
-  /**
-   * Returns true if the line alongside the axis should be drawn.
-   *
-   * @return
-   */
+
   /** flag that indicates if the line alongside the axis is drawn or not */
   var isDrawAxisLineEnabled = true
     protected set
-  /**
-   * Returns true if drawing the labels is enabled for this axis.
-   *
-   * @return
-   */
+
   /** flag that indicates of the labels of this axis should be drawn or not */
   var isDrawLabelsEnabled = true
     protected set
+
   protected var mCenterAxisLabels = false
-  /**
-   * returns the DashPathEffect that is set for axis line
-   *
-   * @return
-   */
+
   /** the path effect of the axis line that makes dashed lines possible */
   var axisLineDashPathEffect: DashPathEffect? = null
     private set
-  /**
-   * returns the DashPathEffect that is set for grid line
-   *
-   * @return
-   */
+
   /** the path effect of the grid lines that makes dashed lines possible */
   var gridDashPathEffect: DashPathEffect? = null
     private set
@@ -121,27 +118,17 @@ abstract class AxisBase : ComponentBase() {
   /** flag indicating the grid lines layer depth */
   var isDrawGridLinesBehindDataEnabled = true
     protected set
-  /** Gets extra spacing for `axisMinimum` to be added to automatically calculated `axisMinimum` */
-  /** Sets extra spacing for `axisMinimum` to be added to automatically calculated `axisMinimum` */
+
   /** Extra spacing for `axisMinimum` to be added to automatically calculated `axisMinimum` */
   var spaceMin = 0f
-  /** Gets extra spacing for `axisMaximum` to be added to automatically calculated `axisMaximum` */
-  /** Sets extra spacing for `axisMaximum` to be added to automatically calculated `axisMaximum` */
+
   /** Extra spacing for `axisMaximum` to be added to automatically calculated `axisMaximum` */
   var spaceMax = 0f
-  /**
-   * Returns true if the axis min value has been customized (and is not calculated automatically)
-   *
-   * @return
-   */
+
   /** flag indicating that the axis-min value has been customized */
   var isAxisMinCustom = false
     protected set
-  /**
-   * Returns true if the axis max value has been customized (and is not calculated automatically)
-   *
-   * @return
-   */
+
   /** flag indicating that the axis-max value has been customized */
   var isAxisMaxCustom = false
     protected set
@@ -154,15 +141,18 @@ abstract class AxisBase : ComponentBase() {
 
   /** the total range of values this axis covers */
   @JvmField var mAxisRange = 0f
+
   private var mAxisMinLabels = 2
+
   private var mAxisMaxLabels = 25
-  /** The minumum number of labels on the axis */
+
   /** The minumum number of labels on the axis */
   var axisMinLabels: Int
     get() = mAxisMinLabels
     set(labels) {
       if (labels > 0) mAxisMinLabels = labels
     }
+
   /** The maximum number of labels on the axis */
   /** The maximum number of labels on the axis */
   var axisMaxLabels: Int
@@ -200,37 +190,7 @@ abstract class AxisBase : ComponentBase() {
   }
 
   val isCenterAxisLabelsEnabled: Boolean
-    get() = mCenterAxisLabels && mEntryCount > 0
-  /**
-   * Returns the width of the axis line (line alongside the axis).
-   *
-   * @return
-   */
-  /**
-   * Sets the width of the border surrounding the chart in dp.
-   *
-   * @param width
-   */
-  var axisLineWidth: Float
-    get() = mAxisLineWidth
-    set(width) {
-      mAxisLineWidth = Utils.convertDpToPixel(width)
-    }
-  /**
-   * Returns the width of the grid lines that are drawn away from each axis label.
-   *
-   * @return
-   */
-  /**
-   * Sets the width of the grid lines that are drawn away from each axis label.
-   *
-   * @param width
-   */
-  var gridLineWidth: Float
-    get() = mGridLineWidth
-    set(width) {
-      mGridLineWidth = Utils.convertDpToPixel(width)
-    }
+    get() = mCenterAxisLabels && entryCount > 0
 
   /**
    * Set this to true to enable drawing the labels of this axis (this will not affect drawing the
@@ -255,34 +215,10 @@ abstract class AxisBase : ComponentBase() {
     labelCount = count
     isForceLabelsEnabled = force
   }
-  /**
-   * Returns the number of label entries the y-axis should have
-   *
-   * @return
-   */
-  /**
-   * Sets the number of label entries for the y-axis max = 25, min = 2, default: 6, be aware that
-   * this number is not fixed.
-   *
-   * @param count the number of y-axis labels that should be displayed
-   */
-  var labelCount: Int
-    get() = mLabelCount
-    set(value) {
-      var count = value
-      if (count > axisMaxLabels) count = axisMaxLabels
-      if (count < axisMinLabels) count = axisMinLabels
-      mLabelCount = count
-      isForceLabelsEnabled = false
-    }
-  /** @return the minimum interval between axis values */
-  // set this to true if it was disabled, as it makes no sense to call this method with granularity
-  // disabled
+
   /**
    * Set a minimum interval for the axis when zooming in. The axis is not allowed to go below that
    * limit. This can be used to avoid label duplicating when zooming in.
-   *
-   * @param granularity
    */
   var granularity: Float
     get() = mGranularity
@@ -357,7 +293,7 @@ abstract class AxisBase : ComponentBase() {
   val longestLabel: String
     get() {
       var longest = ""
-      for (i in mEntries.indices) {
+      for (i in entries.indices) {
         val text = getFormattedLabel(i)
         if (text != null && longest.length < text.length) longest = text
       }
@@ -365,33 +301,26 @@ abstract class AxisBase : ComponentBase() {
     }
 
   fun getFormattedLabel(index: Int): String? {
-    return if (index < 0 || index >= mEntries.size) ""
-    else valueFormatter!!.getFormattedValue(mEntries[index], this)
+    return if (index < 0 || index >= entries.size) ""
+    else valueFormatter!!.getFormattedValue(entries[index], this)
   }
-  /**
-   * Returns the formatter used for formatting the axis labels.
-   *
-   * @return
-   */
 
   /**
    * Sets the formatter to be used for formatting the axis labels. If no formatter is set, the chart
    * will automatically determine a reasonable formatting (concerning decimals) for all the values
    * that are drawn inside the chart. Use chart.getDefaultValueFormatter() to use the formatter
    * calculated by the chart.
-   *
-   * @param f
    */
   var valueFormatter: IAxisValueFormatter?
     get() {
       if (mAxisValueFormatter == null ||
           mAxisValueFormatter is DefaultAxisValueFormatter &&
-              (mAxisValueFormatter as DefaultAxisValueFormatter).decimalDigits != mDecimals)
-          mAxisValueFormatter = DefaultAxisValueFormatter(mDecimals)
+              (mAxisValueFormatter as DefaultAxisValueFormatter).decimalDigits != decimals)
+          mAxisValueFormatter = DefaultAxisValueFormatter(decimals)
       return mAxisValueFormatter
     }
     set(f) {
-      mAxisValueFormatter = f ?: DefaultAxisValueFormatter(mDecimals)
+      mAxisValueFormatter = f ?: DefaultAxisValueFormatter(decimals)
     }
 
   /**
@@ -467,8 +396,6 @@ abstract class AxisBase : ComponentBase() {
    */
   val isAxisLineDashedLineEnabled: Boolean
     get() = axisLineDashPathEffect != null
-
-  /** ###### BELOW CODE RELATED TO CUSTOM AXIS VALUES ###### */
 
   /**
    * Set a custom maximum value for this axis. If set, this value will not be calculated

@@ -15,6 +15,7 @@ open class YAxisRenderer(
     @JvmField protected var yAxis: YAxis,
     trans: Transformer?
 ) : AxisRenderer(viewPortHandler, trans, yAxis) {
+
   @JvmField
   protected var zeroLinePaint: Paint =
       Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -24,7 +25,7 @@ open class YAxisRenderer(
       }
 
   init {
-    axisLabelPaint.color = Color.BLACK
+    axisLabelPaint.color = Color.WHITE
     axisLabelPaint.textSize = Utils.convertDpToPixel(10f)
   }
 
@@ -94,7 +95,7 @@ open class YAxisRenderer(
       offset: Float
   ) {
     val from = if (yAxis.isDrawBottomYLabelEntryEnabled) 0 else 1
-    val to = if (yAxis.isDrawTopYLabelEntryEnabled) yAxis.mEntryCount else yAxis.mEntryCount - 1
+    val to = if (yAxis.isDrawTopYLabelEntryEnabled) yAxis.entryCount else yAxis.entryCount - 1
     val xOffset = yAxis.labelXOffset
 
     // draw
@@ -169,15 +170,15 @@ open class YAxisRenderer(
    */
   protected open val transformedPositions: FloatArray
     get() {
-      if (mGetTransformedPositionsBuffer.size != yAxis.mEntryCount * 2) {
-        mGetTransformedPositionsBuffer = FloatArray(yAxis.mEntryCount * 2)
+      if (mGetTransformedPositionsBuffer.size != yAxis.entryCount * 2) {
+        mGetTransformedPositionsBuffer = FloatArray(yAxis.entryCount * 2)
       }
       val positions = mGetTransformedPositionsBuffer
       var i = 0
       while (i < positions.size) {
 
         // only fill y values, x values are not needed for y-labels
-        positions[i + 1] = yAxis.mEntries[i / 2]
+        positions[i + 1] = yAxis.entries[i / 2]
         i += 2
       }
       transformer?.pointValuesToPixel(positions)
