@@ -66,14 +66,14 @@ open class YAxisRenderer(
     axisLinePaint.color = yAxis.axisLineColor
     axisLinePaint.strokeWidth = yAxis.axisLineWidth
     if (yAxis.axisDependency === AxisDependency.LEFT) {
-      canvas!!.drawLine(
+      canvas.drawLine(
           viewPortHandler.contentLeft(),
           viewPortHandler.contentTop(),
           viewPortHandler.contentLeft(),
           viewPortHandler.contentBottom(),
           axisLinePaint)
     } else {
-      canvas!!.drawLine(
+      canvas.drawLine(
           viewPortHandler.contentRight(),
           viewPortHandler.contentTop(),
           viewPortHandler.contentRight(),
@@ -101,7 +101,7 @@ open class YAxisRenderer(
     // draw
     for (i in from until to) {
       val text = yAxis.getFormattedLabel(i)
-      canvas!!.drawText(
+      canvas.drawText(
           text!!, fixedPosition + xOffset, positions[i * 2 + 1] + offset, axisLabelPaint)
     }
   }
@@ -111,7 +111,7 @@ open class YAxisRenderer(
   override fun renderGridLines(canvas: Canvas) {
     if (!yAxis.isEnabled) return
     if (yAxis.isDrawGridLinesEnabled) {
-      val clipRestoreCount = canvas!!.save()
+      val clipRestoreCount = canvas.save()
       canvas.clipRect(gridClippingRect)
       val positions = transformedPositions
       gridPaint.color = yAxis.gridColor
@@ -191,7 +191,7 @@ open class YAxisRenderer(
 
   /** Draws the zero line. */
   protected open fun drawZeroLine(canvas: Canvas) {
-    val clipRestoreCount = canvas!!.save()
+    val clipRestoreCount = canvas.save()
     zeroLineClippingRect.set(viewPortHandler.contentRect)
     zeroLineClippingRect.inset(0f, -yAxis.zeroLineWidth)
     canvas.clipRect(zeroLineClippingRect)
@@ -235,7 +235,7 @@ open class YAxisRenderer(
     for (i in limitLines.indices) {
       val l = limitLines[i]
       if (!l.isEnabled) continue
-      val clipRestoreCount = canvas!!.save()
+      val clipRestoreCount = canvas.save()
       limitLineClippingRect.set(viewPortHandler.contentRect)
       limitLineClippingRect.inset(0f, -l.lineWidth)
       canvas.clipRect(limitLineClippingRect)

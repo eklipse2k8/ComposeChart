@@ -92,14 +92,14 @@ class YAxisRendererHorizontalBarChart(
     axisLinePaint.color = yAxis.axisLineColor
     axisLinePaint.strokeWidth = yAxis.axisLineWidth
     if (yAxis.axisDependency === AxisDependency.LEFT) {
-      canvas!!.drawLine(
+      canvas.drawLine(
           viewPortHandler.contentLeft(),
           viewPortHandler.contentTop(),
           viewPortHandler.contentRight(),
           viewPortHandler.contentTop(),
           axisLinePaint)
     } else {
-      canvas!!.drawLine(
+      canvas.drawLine(
           viewPortHandler.contentLeft(),
           viewPortHandler.contentBottom(),
           viewPortHandler.contentRight(),
@@ -128,7 +128,7 @@ class YAxisRendererHorizontalBarChart(
     val xOffset = yAxis.labelXOffset
     for (i in from until to) {
       val text = yAxis.getFormattedLabel(i)
-      canvas!!.drawText(text!!, positions[i * 2], fixedPosition - offset + xOffset, axisLabelPaint)
+      canvas.drawText(text!!, positions[i * 2], fixedPosition - offset + xOffset, axisLabelPaint)
     }
   }
 
@@ -167,7 +167,7 @@ class YAxisRendererHorizontalBarChart(
   private val drawZeroLinePathBuffer = Path()
 
   override fun drawZeroLine(canvas: Canvas) {
-    val clipRestoreCount = canvas!!.save()
+    val clipRestoreCount = canvas.save()
     zeroLineClippingRect.set(viewPortHandler.contentRect)
     zeroLineClippingRect.inset(-yAxis.zeroLineWidth, 0f)
     canvas.clipRect(limitLineClippingRect)
@@ -208,7 +208,7 @@ class YAxisRendererHorizontalBarChart(
     limitLinePath.reset()
     limitLines.forEach { limitLine ->
       if (!limitLine.isEnabled) return@forEach
-      val clipRestoreCount = canvas!!.save()
+      val clipRestoreCount = canvas.save()
       limitLineClippingRect.set(viewPortHandler.contentRect)
       limitLineClippingRect.inset(-limitLine.lineWidth, 0f)
       canvas.clipRect(limitLineClippingRect)

@@ -128,7 +128,7 @@ class YAxisRendererRadarChart(
       val r = (yAxis.entries[j] - yAxis.mAxisMinimum) * factor
       Utils.getPosition(center, r, mChart.rotationAngle, pOut)
       val label = yAxis.getFormattedLabel(j)
-      canvas!!.drawText(label!!, pOut.x + xOffset, pOut.y, axisLabelPaint)
+      canvas.drawText(label!!, pOut.x + xOffset, pOut.y, axisLabelPaint)
     }
     MPPointF.recycleInstance(center)
     MPPointF.recycleInstance(pOut)
@@ -160,7 +160,7 @@ class YAxisRendererRadarChart(
         if (j == 0) limitPath.moveTo(pOut.x, pOut.y) else limitPath.lineTo(pOut.x, pOut.y)
       }
       limitPath.close()
-      canvas!!.drawPath(limitPath, limitLinePaint)
+      canvas.drawPath(limitPath, limitLinePaint)
     }
     MPPointF.recycleInstance(center)
     MPPointF.recycleInstance(pOut)

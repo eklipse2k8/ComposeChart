@@ -9,12 +9,14 @@ import com.github.eklipse2k8.charting.components.LimitLine.LimitLabelPosition
 import com.github.eklipse2k8.charting.components.XAxis
 import com.github.eklipse2k8.charting.components.XAxis.XAxisPosition
 import com.github.eklipse2k8.charting.utils.*
+import kotlin.math.roundToInt
 
 class XAxisRendererHorizontalBarChart(
     viewPortHandler: ViewPortHandler,
     xAxis: XAxis,
     trans: Transformer,
 ) : XAxisRenderer(viewPortHandler, xAxis, trans) {
+
   override fun computeAxis(min: Float, max: Float, inverted: Boolean) {
     if (transformer == null) return
     // calculate the starting and entry point of the y-labels (depending on
@@ -51,10 +53,10 @@ class XAxisRendererHorizontalBarChart(
     val labelRotatedSize =
         Utils.getSizeOfRotatedRectangleByDegrees(
             labelSize.width, labelHeight, xAxis.labelRotationAngle)
-    xAxis.labelWidth = Math.round(labelWidth)
-    xAxis.labelHeight = Math.round(labelHeight)
+    xAxis.labelWidth = labelWidth.roundToInt()
+    xAxis.labelHeight = labelHeight.roundToInt()
     xAxis.labelRotatedWidth = (labelRotatedSize.width + xAxis.xOffset * 3.5f).toInt()
-    xAxis.labelRotatedHeight = Math.round(labelRotatedSize.height)
+    xAxis.labelRotatedHeight = labelRotatedSize.height.roundToInt()
     FSize.recycleInstance(labelRotatedSize)
   }
 
@@ -96,28 +98,21 @@ class XAxisRendererHorizontalBarChart(
     val labelRotationAngleDegrees = xAxis.labelRotationAngle
     val centeringEnabled = xAxis.isCenterAxisLabelsEnabled
     val positions = FloatArray(xAxis.entryCount * 2)
-    run {
-      var i = 0
-      while (i < positions.size) {
-
-        // only fill x values
-        if (centeringEnabled) {
-          positions[i + 1] = xAxis.centeredEntries[i / 2]
-        } else {
-          positions[i + 1] = xAxis.entries[i / 2]
-        }
-        i += 2
+    for (i in positions.indices step 2) {
+      // only fill x values
+      if (centeringEnabled) {
+        positions[i + 1] = xAxis.centeredEntries[i / 2]
+      } else {
+        positions[i + 1] = xAxis.entries[i / 2]
       }
     }
     transformer?.pointValuesToPixel(positions)
-    var i = 0
-    while (i < positions.size) {
+    for (i in positions.indices step 2) {
       val y = positions[i + 1]
       if (viewPortHandler.isInBoundsY(y)) {
         val label = xAxis.valueFormatter!!.getFormattedValue(xAxis.entries[i / 2], xAxis)
         drawLabel(c, label, pos, y, anchor, labelRotationAngleDegrees)
       }
-      i += 2
     }
   }
 
@@ -133,7 +128,7 @@ class XAxisRendererHorizontalBarChart(
     gridLinePath.lineTo(viewPortHandler.contentLeft(), y)
 
     // draw a path because lines don't support dashing on lower android versions
-    canvas!!.drawPath(gridLinePath, gridPaint)
+    canvas.drawPath(gridLinePath, gridPaint)
     gridLinePath.reset()
   }
 
@@ -141,25 +136,21 @@ class XAxisRendererHorizontalBarChart(
     if (!xAxis.isDrawAxisLineEnabled || !xAxis.isEnabled) return
     axisLinePaint.color = xAxis.axisLineColor
     axisLinePaint.strokeWidth = xAxis.axisLineWidth
-    if (xAxis.position === XAxisPosition.TOP ||
-        xAxis.position === XAxisPosition.TOP_INSIDE ||
-        xAxis.position === XAxisPosition.BOTH_SIDED) {
-      canvas!!.drawLine(
-          viewPortHandler.contentRight(),
-          viewPortHandler.contentTop(),
-          viewPortHandler.contentRight(),
-          viewPortHandler.contentBottom(),
-          axisLinePaint)
-    }
-    if (xAxis.position === XAxisPosition.BOTTOM ||
-        xAxis.position === XAxisPosition.BOTTOM_INSIDE ||
-        xAxis.position === XAxisPosition.BOTH_SIDED) {
-      canvas!!.drawLine(
-          viewPortHandler.contentLeft(),
-          viewPortHandler.contentTop(),
-          viewPortHandler.contentLeft(),
-          viewPortHandler.contentBottom(),
-          axisLinePaint)
+    when (xAxis.position) {
+      XAxisPosition.TOP, XAxisPosition.TOP_INSIDE, XAxisPosition.BOTH_SIDED ->
+          canvas.drawLine(
+              viewPortHandler.contentRight(),
+              viewPortHandler.contentTop(),
+              viewPortHandler.contentRight(),
+              viewPortHandler.contentBottom(),
+              axisLinePaint)
+      XAxisPosition.BOTTOM, XAxisPosition.BOTTOM_INSIDE ->
+          canvas.drawLine(
+              viewPortHandler.contentLeft(),
+              viewPortHandler.contentTop(),
+              viewPortHandler.contentLeft(),
+              viewPortHandler.contentBottom(),
+              axisLinePaint)
     }
   }
 
@@ -181,7 +172,7 @@ class XAxisRendererHorizontalBarChart(
     limitLinePath.reset()
     limitLines.forEach { limitLine ->
       if (!limitLine.isEnabled) return@forEach
-      val clipRestoreCount = canvas!!.save()
+      val clipRestoreCount = canvas.save()
       limitLineClippingRect.set(viewPortHandler.contentRect)
       limitLineClippingRect.inset(0f, -limitLine.lineWidth)
       canvas.clipRect(limitLineClippingRect)

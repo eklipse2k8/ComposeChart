@@ -139,22 +139,19 @@ open class XAxisRenderer(
     val labelRotationAngleDegrees = xAxis.labelRotationAngle
     val centeringEnabled = xAxis.isCenterAxisLabelsEnabled
     val positions = FloatArray(xAxis.entryCount * 2)
-    run {
-      var i = 0
-      while (i < positions.size) {
 
-        // only fill x values
-        if (centeringEnabled) {
-          positions[i] = xAxis.centeredEntries[i / 2]
-        } else {
-          positions[i] = xAxis.entries[i / 2]
-        }
-        i += 2
+    for (i in positions.indices step 2) {
+      // only fill x values
+      if (centeringEnabled) {
+        positions[i] = xAxis.centeredEntries[i / 2]
+      } else {
+        positions[i] = xAxis.entries[i / 2]
       }
     }
+
     transformer?.pointValuesToPixel(positions)
-    var i = 0
-    while (i < positions.size) {
+
+    for (i in positions.indices step 2) {
       var x = positions[i]
       if (viewPortHandler.isInBoundsX(x)) {
         val label = xAxis.valueFormatter!!.getFormattedValue(xAxis.entries[i / 2], xAxis)
@@ -174,7 +171,6 @@ open class XAxisRenderer(
         }
         drawLabel(c, label, x, pos, anchor, labelRotationAngleDegrees)
       }
-      i += 2
     }
   }
 
@@ -189,34 +185,28 @@ open class XAxisRenderer(
     Utils.drawXAxisValue(c, formattedLabel, x, y, axisLabelPaint, anchor, angleDegrees)
   }
 
-  private var mRenderGridLinesPath = Path()
+  private var renderGridLinesPath = Path()
 
-  private var mRenderGridLinesBuffer = FloatArray(2)
+  private var renderGridLinesBuffer = FloatArray(2)
 
   override fun renderGridLines(canvas: Canvas) {
     if (!xAxis.isDrawGridLinesEnabled || !xAxis.isEnabled) return
     val clipRestoreCount = canvas.save()
     canvas.clipRect(gridClippingRect!!)
-    if (mRenderGridLinesBuffer.size != axis.entryCount * 2) {
-      mRenderGridLinesBuffer = FloatArray(xAxis.entryCount * 2)
+    if (renderGridLinesBuffer.size != axis.entryCount * 2) {
+      renderGridLinesBuffer = FloatArray(xAxis.entryCount * 2)
     }
-    val positions = mRenderGridLinesBuffer
-    run {
-      var i = 0
-      while (i < positions.size) {
-        positions[i] = xAxis.entries[i / 2]
-        positions[i + 1] = xAxis.entries[i / 2]
-        i += 2
-      }
+    val positions = renderGridLinesBuffer
+    for (i in positions.indices step 2) {
+      positions[i] = xAxis.entries[i / 2]
+      positions[i + 1] = xAxis.entries[i / 2]
     }
     transformer?.pointValuesToPixel(positions)
     setupGridPaint()
-    val gridLinePath = mRenderGridLinesPath
+    val gridLinePath = renderGridLinesPath
     gridLinePath.reset()
-    var i = 0
-    while (i < positions.size) {
+    for (i in positions.indices step 2) {
       drawGridLine(canvas, positions[i], positions[i + 1], gridLinePath)
-      i += 2
     }
     canvas.restoreToCount(clipRestoreCount)
   }
