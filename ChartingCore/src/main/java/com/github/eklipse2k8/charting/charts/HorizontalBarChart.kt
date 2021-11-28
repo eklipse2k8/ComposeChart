@@ -47,8 +47,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         YAxisRendererHorizontalBarChart(viewPortHandler, axisLeft, leftAxisTransformer)
     rendererRightYAxis =
         YAxisRendererHorizontalBarChart(viewPortHandler, axisRight, rightAxisTransformer)
-    rendererXAxis =
-        XAxisRendererHorizontalBarChart(viewPortHandler, xAxis, leftAxisTransformer)
+    rendererXAxis = XAxisRendererHorizontalBarChart(viewPortHandler, xAxis, leftAxisTransformer)
   }
 
   private val mOffsetsBuffer = RectF()
@@ -90,8 +89,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
                   (legend.mNeededHeight.coerceAtMost(
                       viewPortHandler.chartHeight * legend.maxSizePercent) + legend.yOffset)
               if (axisLeft.isEnabled && axisLeft.isDrawLabelsEnabled)
-                  offsets.top +=
-                      axisLeft.getRequiredHeightSpace(rendererLeftYAxis.paintAxisLabels)
+                  offsets.top += axisLeft.getRequiredHeightSpace(rendererLeftYAxis.paintAxisLabels)
             }
             LegendVerticalAlignment.BOTTOM -> {
               offsets.bottom +=
@@ -237,7 +235,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
       return min(xAxis.mAxisMaximum, posForGetHighestVisibleX.y.toFloat())
     }
 
-  /** ###### VIEWPORT METHODS BELOW THIS ###### */
   override fun setVisibleXRangeMaximum(maxXRange: Float) {
     val xScale = xAxis.mAxisRange / maxXRange
     viewPortHandler.setMinimumScaleY(xScale)

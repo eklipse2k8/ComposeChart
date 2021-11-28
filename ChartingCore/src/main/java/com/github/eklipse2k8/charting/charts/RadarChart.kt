@@ -12,7 +12,10 @@ import com.github.eklipse2k8.charting.data.RadarEntry
 import com.github.eklipse2k8.charting.highlight.IHighlighter
 import com.github.eklipse2k8.charting.highlight.RadarHighlighter
 import com.github.eklipse2k8.charting.interfaces.datasets.IRadarDataSet
-import com.github.eklipse2k8.charting.renderer.*
+import com.github.eklipse2k8.charting.renderer.DataRenderer
+import com.github.eklipse2k8.charting.renderer.RadarChartRenderer
+import com.github.eklipse2k8.charting.renderer.XAxisRendererRadarChart
+import com.github.eklipse2k8.charting.renderer.YAxisRendererRadarChart
 import com.github.eklipse2k8.charting.utils.Utils
 import kotlin.math.max
 import kotlin.math.min
@@ -40,34 +43,20 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    * Sets the color for the web lines that come from the center. Don't forget to use
    * getResources().getColor(...) when loading a color from the resources. Default: Color.rgb(122,
    * 122, 122)
-   *
-   * @param color
    */
-  /** color for the main web lines */
   var webColor = Color.rgb(122, 122, 122)
 
   /**
    * Sets the color for the web lines in between the lines that come from the center. Don't forget
    * to use getResources().getColor(...) when loading a color from the resources. Default:
    * Color.rgb(122, 122, 122)
-   *
-   * @param color
    */
-  /** color for the inner web */
   var webColorInner = Color.rgb(122, 122, 122)
 
   /**
-   * Returns the alpha value for all web lines.
-   *
-   * @return
-   */
-  /**
    * Sets the transparency (alpha) value for all web lines, default: 150, 255 = 100% opaque, 0 =
    * 100% transparent
-   *
-   * @param alpha
    */
-  /** transparency the grid is drawn with (0-255) */
   var webAlpha = 150
 
   /** flag indicating if the web lines should be drawn or not */
@@ -75,11 +64,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   /** modulus that determines how many labels and web-lines are skipped before the next is drawn */
   private var mSkipWebLineCount = 0
-  /**
-   * Returns the object that represents all y-labels of the RadarChart.
-   *
-   * @return
-   */
+
   /** the object reprsenting the y-axis labels */
   val yAxis: YAxis = YAxis(AxisDependency.LEFT)
 
@@ -102,15 +87,14 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   override fun calcMinMax() {
     super.calcMinMax()
-    yAxis!!.calculate(data!!.getYMin(AxisDependency.LEFT), data!!.getYMax(AxisDependency.LEFT))
+    yAxis.calculate(data!!.getYMin(AxisDependency.LEFT), data!!.getYMax(AxisDependency.LEFT))
     xAxis.calculate(0f, data!!.maxEntryCountSet?.entryCount?.toFloat() ?: 0f)
   }
 
   override fun notifyDataSetChanged() {
     if (data == null) return
     calcMinMax()
-    mYAxisRenderer?.computeAxis(
-        yAxis?.axisMinimum ?: 0f, yAxis?.axisMaximum ?: 0f, yAxis?.isInverted == true)
+    mYAxisRenderer?.computeAxis(yAxis.axisMinimum, yAxis.axisMaximum, yAxis.isInverted)
     mXAxisRenderer?.computeAxis(xAxis.axisMinimum, xAxis.axisMaximum, false)
     if (!legend.isLegendCustom) legendRenderer.computeLegend(data!!)
     calculateOffsets()
@@ -123,11 +107,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     if (xAxis.isEnabled) mXAxisRenderer!!.computeAxis(xAxis.axisMinimum, xAxis.axisMaximum, false)
     mXAxisRenderer!!.renderAxisLabels(canvas)
     if (mDrawWeb) dataRenderer.drawExtras(canvas)
-    if (yAxis!!.isEnabled && yAxis!!.isDrawLimitLinesBehindDataEnabled)
+    if (yAxis.isEnabled && yAxis.isDrawLimitLinesBehindDataEnabled)
         mYAxisRenderer!!.renderLimitLines(canvas)
     dataRenderer.drawData(canvas)
     if (valuesToHighlight()) dataRenderer.drawHighlighted(canvas, mIndicesToHighlight)
-    if (yAxis!!.isEnabled && !yAxis!!.isDrawLimitLinesBehindDataEnabled)
+    if (yAxis.isEnabled && !yAxis.isDrawLimitLinesBehindDataEnabled)
         mYAxisRenderer!!.renderLimitLines(canvas)
     mYAxisRenderer!!.renderAxisLabels(canvas)
     dataRenderer.drawValues(canvas)
@@ -176,22 +160,14 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     return index
   }
 
-  /**
-   * Sets the width of the web lines that come from the center.
-   *
-   * @param width
-   */
+  /** Sets the width of the web lines that come from the center. */
   var webLineWidth: Float
     get() = mWebLineWidth
     set(width) {
       mWebLineWidth = Utils.convertDpToPixel(width)
     }
 
-  /**
-   * Sets the width of the web lines that are in between the lines coming from the center.
-   *
-   * @param width
-   */
+  /** Sets the width of the web lines that are in between the lines coming from the center. */
   var webLineWidthInner: Float
     get() = mInnerWebLineWidth
     set(width) {
@@ -201,22 +177,14 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   /**
    * If set to true, drawing the web is enabled, if set to false, drawing the whole web is disabled.
    * Default: true
-   *
-   * @param enabled
    */
   fun setDrawWeb(enabled: Boolean) {
     mDrawWeb = enabled
   }
-  /**
-   * Returns the modulus that is used for skipping web-lines.
-   *
-   * @return
-   */
+
   /**
    * Sets the number of web-lines that should be skipped on chart web before the next one is drawn.
    * This targets the lines that come from the center of the RadarChart.
-   *
-   * @param count if count = 1 -> 1 line is skipped in between
    */
   var skipWebLineCount: Int
     get() = mSkipWebLineCount

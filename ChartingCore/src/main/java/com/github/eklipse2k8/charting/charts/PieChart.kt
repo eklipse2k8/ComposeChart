@@ -79,8 +79,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    * sets the radius of the transparent circle that is drawn next to the hole in the piechart in
    * percent of the maximum radius (max = the radius of the whole chart), default 55% -> means 5%
    * larger than the center-hole by default
-   *
-   * @param percent
    */
   var transparentCircleRadius = 55f
 
@@ -459,8 +457,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   /**
    * Sets the max angle that is used for calculating the pie-circle. 360f means it's a full
    * PieChart, 180f results in a half-pie-chart. Default: 360f
-   *
-   * @param maxangle min 90, max 360
    */
   var maxAngle: Float
     get() = mMaxAngle
@@ -472,8 +468,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
    * Set the angle to set minimum size for slices, you must call [.notifyDataSetChanged] and
    * [.invalidate] when changing this, only works if there is enough room for all slices to have the
    * minimum angle.
-   *
-   * @param minAngle minimum 0, maximum is half of [.setMaxAngle]
    */
   var minAngleForSlices: Float
     get() = mMinAngleForSlices

@@ -56,7 +56,7 @@ E : Entry {
     onTouchListener = PieRadarChartTouchListener(this)
   }
 
-  override fun calcMinMax() {}
+  override fun calcMinMax() = Unit
 
   override val maxVisibleCount: Int
     get() = data?.entryCount ?: 0

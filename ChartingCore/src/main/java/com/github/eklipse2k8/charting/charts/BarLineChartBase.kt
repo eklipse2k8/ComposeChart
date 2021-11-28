@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.MotionEvent
 import androidx.core.content.res.getColorOrThrow
 import androidx.core.content.res.getDimensionOrThrow
-import androidx.core.content.res.getDimensionPixelSizeOrThrow
 import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.content.withStyledAttributes
 import com.github.eklipse2k8.charting.R
@@ -188,9 +187,7 @@ E : Entry {
         applyTextAppearance(context, resId)
       }
 
-      with(gridBackgroundPaint) {
-        color = getColorOrThrow(R.styleable.Axis_backgroundColor)
-      }
+      with(gridBackgroundPaint) { color = getColorOrThrow(R.styleable.Axis_backgroundColor) }
     }
   }
 
