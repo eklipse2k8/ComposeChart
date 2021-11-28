@@ -11,12 +11,15 @@
 
     <style name="LineChart.Axis">
         <item name="yAxisStartLineColor">?attr/colorOnBackground</item>
+        <item name="yAxisStartLineSize">0.5dp</item>
         <item name="yAxisStartTextAppearance">@style/LineChart.Axis.TextAppearance</item>
 
         <item name="yAxisEndLineColor">?attr/colorOnBackground</item>
+        <item name="yAxisEndLineSize">0.5dp</item>
         <item name="yAxisEndTextAppearance">@style/LineChart.Axis.TextAppearance</item>
 
         <item name="xAxisLineColor">?attr/colorOnBackground</item>
+        <item name="xAxisLineSize">0.5dp</item>
         <item name="xAxisTextAppearance">@style/LineChart.Axis.TextAppearance</item>
     </style>
 

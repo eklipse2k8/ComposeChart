@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.MotionEvent
 import androidx.core.content.res.getColorOrThrow
 import androidx.core.content.res.getDimensionOrThrow
+import androidx.core.content.res.getDimensionPixelSizeOrThrow
 import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.content.withStyledAttributes
 import com.github.eklipse2k8.charting.R
@@ -168,18 +169,21 @@ E : Entry {
         defStyleRes = R.style.LineChart_Axis) {
       with(xAxis) {
         gridColor = getColorOrThrow(R.styleable.Axis_xAxisLineColor)
+        gridLineWidth = getDimensionOrThrow(R.styleable.Axis_xAxisLineSize)
         val resId = getResourceIdOrThrow(R.styleable.Axis_xAxisTextAppearance)
         applyTextAppearance(context, resId)
       }
 
       with(axisLeft) {
         gridColor = getColorOrThrow(R.styleable.Axis_yAxisStartLineColor)
+        gridLineWidth = getDimensionOrThrow(R.styleable.Axis_yAxisStartLineSize)
         val resId = getResourceIdOrThrow(R.styleable.Axis_yAxisStartTextAppearance)
         applyTextAppearance(context, resId)
       }
 
       with(axisRight) {
         gridColor = getColorOrThrow(R.styleable.Axis_yAxisEndLineColor)
+        gridLineWidth = getDimensionOrThrow(R.styleable.Axis_yAxisEndLineSize)
         val resId = getResourceIdOrThrow(R.styleable.Axis_yAxisEndTextAppearance)
         applyTextAppearance(context, resId)
       }

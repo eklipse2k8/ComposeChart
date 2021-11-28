@@ -56,9 +56,7 @@ class ListViewBarChartActivity : DemoBase() {
       }
 
       // apply styling
-      if (data != null) {
-        data.setValueTextColor(Color.BLACK)
-      }
+      data?.setValueTextColor(Color.BLACK)
       holder.chart.description.isEnabled = false
       holder.chart.setDrawGridBackground(false)
       val xAxis = holder.chart.xAxis

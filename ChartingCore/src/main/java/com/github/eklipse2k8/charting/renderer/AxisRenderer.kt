@@ -13,19 +13,20 @@ import kotlin.math.*
 /**
  * Baseclass of all axis renderers.
  *
+ * @param transformer transformer to transform values to screen pixels and return
+ * @param axis base axis this axis renderer works with
+ *
  * @author Philipp Jahoda
  */
 abstract class AxisRenderer(
     viewPortHandler: ViewPortHandler,
-    /** transformer to transform values to screen pixels and return */
-    protected var transformer: Transformer?,
-    /** base axis this axis renderer works with */
-    @JvmField protected var axis: AxisBase
+    protected val transformer: Transformer?,
+    protected val axis: AxisBase
 ) : Renderer(viewPortHandler) {
 
   /** paint object for the grid lines */
   @JvmField
-  protected var gridPaint: Paint =
+  protected val gridPaint: Paint =
       Paint().apply {
         color = Color.GRAY
         strokeWidth = 1f
@@ -47,7 +48,7 @@ abstract class AxisRenderer(
 
   /** paint used for the limit lines */
   @JvmField
-  protected var limitLinePaint: Paint =
+  protected val limitLinePaint: Paint =
       Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
 
   /** Returns the Paint object used for drawing the axis (labels). */
@@ -69,10 +70,10 @@ abstract class AxisRenderer(
     var maxVal = max
     if (viewPortHandler.contentWidth() > 10 && !viewPortHandler.isFullyZoomedOutY) {
       val p1 =
-          transformer!!.getValuesByTouchPoint(
+          transformer.getValuesByTouchPoint(
               viewPortHandler.contentLeft(), viewPortHandler.contentTop())
       val p2 =
-          transformer!!.getValuesByTouchPoint(
+          transformer.getValuesByTouchPoint(
               viewPortHandler.contentLeft(), viewPortHandler.contentBottom())
       if (!inverted) {
         minVal = p2.y.toFloat()

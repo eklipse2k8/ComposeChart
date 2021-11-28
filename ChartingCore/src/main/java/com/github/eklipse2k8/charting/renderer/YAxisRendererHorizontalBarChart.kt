@@ -33,16 +33,17 @@ class YAxisRendererHorizontalBarChart(
    * - the maximum y-value in the data object for this axis
    */
   override fun computeAxis(min: Float, max: Float, inverted: Boolean) {
+    if (transformer == null) return
     // calculate the starting and entry point of the y-labels (depending on
     // zoom / contentrect bounds)
     var computeYMin = min
     var computeYMax = max
     if (viewPortHandler.contentHeight() > 10 && !viewPortHandler.isFullyZoomedOutX) {
       val p1 =
-          transformer!!.getValuesByTouchPoint(
+          transformer.getValuesByTouchPoint(
               viewPortHandler.contentLeft(), viewPortHandler.contentTop())
       val p2 =
-          transformer!!.getValuesByTouchPoint(
+          transformer.getValuesByTouchPoint(
               viewPortHandler.contentRight(), viewPortHandler.contentTop())
       if (!inverted) {
         computeYMin = p1.x.toFloat()
@@ -69,8 +70,7 @@ class YAxisRendererHorizontalBarChart(
     val textHeight = Utils.calcTextHeight(axisLabelPaint, "Q").toFloat()
     val dependency = yAxis.axisDependency
     val labelPosition = yAxis.labelPosition
-    var yPos = 0f
-    yPos =
+    val yPos: Float =
         if (dependency === AxisDependency.LEFT) {
           if (labelPosition === YAxisLabelPosition.OUTSIDE_CHART) {
             viewPortHandler.contentTop() - baseYOffset

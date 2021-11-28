@@ -32,10 +32,10 @@ open class XAxisRenderer(
     var computeMax = max
     if (viewPortHandler.contentWidth() > 10 && !viewPortHandler.isFullyZoomedOutX) {
       val p1 =
-          transformer!!.getValuesByTouchPoint(
+          transformer.getValuesByTouchPoint(
               viewPortHandler.contentLeft(), viewPortHandler.contentTop())
       val p2 =
-          transformer!!.getValuesByTouchPoint(
+          transformer.getValuesByTouchPoint(
               viewPortHandler.contentRight(), viewPortHandler.contentTop())
       if (inverted) {
         computeMin = p2.x.toFloat()
@@ -268,7 +268,7 @@ open class XAxisRenderer(
     }
   }
 
-  var limitLineSegmentsBuffer = FloatArray(4)
+  private var limitLineSegmentsBuffer = FloatArray(4)
 
   private val limitLinePath = Path()
 

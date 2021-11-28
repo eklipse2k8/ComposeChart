@@ -118,7 +118,7 @@ abstract class AxisBase : ComponentBase() {
     private set
 
   /** array of limit lines that can be set for the axis */
-  protected var mLimitLines: MutableList<LimitLine> = ArrayList()
+  private val mLimitLines: MutableList<LimitLine> = mutableListOf()
 
   /** flag indicating the limit lines layer depth */
   var isDrawLimitLinesBehindDataEnabled = false

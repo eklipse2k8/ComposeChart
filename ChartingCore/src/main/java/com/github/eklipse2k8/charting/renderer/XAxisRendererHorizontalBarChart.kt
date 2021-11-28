@@ -25,10 +25,10 @@ class XAxisRendererHorizontalBarChart(
     var computeMax = max
     if (viewPortHandler.contentWidth() > 10 && !viewPortHandler.isFullyZoomedOutY) {
       val p1 =
-          transformer!!.getValuesByTouchPoint(
+          transformer.getValuesByTouchPoint(
               viewPortHandler.contentLeft(), viewPortHandler.contentBottom())
       val p2 =
-          transformer!!.getValuesByTouchPoint(
+          transformer.getValuesByTouchPoint(
               viewPortHandler.contentLeft(), viewPortHandler.contentTop())
       if (inverted) {
         computeMin = p2.y.toFloat()

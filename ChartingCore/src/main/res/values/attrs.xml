@@ -4,14 +4,17 @@
 
     <!-- Y-Axis Start (Left) -->
     <attr name="yAxisStartLineColor" format="color" />
+    <attr name="yAxisStartLineSize" format="dimension" />
     <attr name="yAxisStartTextAppearance" format="reference" />
 
     <!-- Y-Axis End (Right) -->
     <attr name="yAxisEndLineColor" format="color" />
+    <attr name="yAxisEndLineSize" format="dimension" />
     <attr name="yAxisEndTextAppearance" format="reference" />
 
     <!-- X-Axis -->
     <attr name="xAxisLineColor" format="color" />
+    <attr name="xAxisLineSize" format="dimension" />
     <attr name="xAxisTextAppearance" format="reference" />
 
     <!-- Surface -->
@@ -20,8 +23,6 @@
     <declare-styleable name="Axis.TextAppearance">
         <attr name="android:textSize" />
         <attr name="android:textColor" />
-        <attr name="android:textColorHint" />
-        <attr name="android:textColorLink" />
         <attr name="android:textAlignment" />
         <attr name="android:textStyle" />
         <attr name="android:textFontWeight" />
@@ -31,12 +32,15 @@
 
     <declare-styleable name="Axis">
         <attr name="yAxisStartLineColor" />
+        <attr name="yAxisStartLineSize" />
         <attr name="yAxisStartTextAppearance" />
 
+        <attr name="yAxisEndLineSize" />
         <attr name="yAxisEndLineColor" />
         <attr name="yAxisEndTextAppearance" />
 
         <attr name="xAxisLineColor" />
+        <attr name="xAxisLineSize" />
         <attr name="xAxisTextAppearance" />
 
         <attr name="backgroundColor" />

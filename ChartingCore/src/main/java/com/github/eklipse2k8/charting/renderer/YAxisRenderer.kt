@@ -17,7 +17,7 @@ open class YAxisRenderer(
 ) : AxisRenderer(viewPortHandler, trans, yAxis) {
 
   @JvmField
-  protected var zeroLinePaint: Paint =
+  protected val zeroLinePaint: Paint =
       Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.GRAY
         strokeWidth = 1f
@@ -40,7 +40,7 @@ open class YAxisRenderer(
     val yoffset = Utils.calcTextHeight(axisLabelPaint, "A") / 2.5f + yAxis.yOffset
     val dependency = yAxis.axisDependency
     val labelPosition = yAxis.labelPosition
-    var xPos: Float
+    val xPos: Float
     if (dependency === AxisDependency.LEFT) {
       if (labelPosition === YAxisLabelPosition.OUTSIDE_CHART) {
         axisLabelPaint.textAlign = Align.RIGHT
@@ -200,7 +200,7 @@ open class YAxisRenderer(
     if (transformer == null) {
       return
     }
-    val pos = transformer!!.getPixelForValues(0f, 0f)
+    val pos = transformer.getPixelForValues(0f, 0f)
     zeroLinePaint.color = yAxis.zeroLineColor
     zeroLinePaint.strokeWidth = yAxis.zeroLineWidth
     val zeroLinePath = drawZeroLinePath
