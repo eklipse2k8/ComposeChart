@@ -58,7 +58,7 @@ class YAxisRendererHorizontalBarChart(
   }
 
   /** draws the y-axis labels to the screen */
-  override fun renderAxisLabels(canvas: Canvas?) {
+  override fun renderAxisLabels(canvas: Canvas) {
     if (!yAxis.isEnabled || !yAxis.isDrawLabelsEnabled) return
     val positions = transformedPositions
     axisLabelPaint.typeface = yAxis.typeface
@@ -87,7 +87,7 @@ class YAxisRendererHorizontalBarChart(
     drawYLabels(canvas, yPos, positions, yAxis.yOffset)
   }
 
-  override fun renderAxisLine(canvas: Canvas?) {
+  override fun renderAxisLine(canvas: Canvas) {
     if (!yAxis.isEnabled || !yAxis.isDrawAxisLineEnabled) return
     axisLinePaint.color = yAxis.axisLineColor
     axisLinePaint.strokeWidth = yAxis.axisLineWidth
@@ -115,7 +115,7 @@ class YAxisRendererHorizontalBarChart(
    * @param positions
    */
   override fun drawYLabels(
-      canvas: Canvas?,
+      canvas: Canvas,
       fixedPosition: Float,
       positions: FloatArray,
       offset: Float
@@ -166,11 +166,11 @@ class YAxisRendererHorizontalBarChart(
 
   private val drawZeroLinePathBuffer = Path()
 
-  override fun drawZeroLine(c: Canvas?) {
-    val clipRestoreCount = c!!.save()
-    mZeroLineClippingRect.set(viewPortHandler.contentRect)
-    mZeroLineClippingRect.inset(-yAxis.zeroLineWidth, 0f)
-    c.clipRect(limitLineClippingRect)
+  override fun drawZeroLine(canvas: Canvas) {
+    val clipRestoreCount = canvas!!.save()
+    zeroLineClippingRect.set(viewPortHandler.contentRect)
+    zeroLineClippingRect.inset(-yAxis.zeroLineWidth, 0f)
+    canvas.clipRect(limitLineClippingRect)
 
     // draw zero line
     val pos = transformer!!.getPixelForValues(0f, 0f)
@@ -182,8 +182,8 @@ class YAxisRendererHorizontalBarChart(
     zeroLinePath.lineTo(pos.x.toFloat() - 1, viewPortHandler.contentBottom())
 
     // draw a path because lines don't support dashing on lower android versions
-    c.drawPath(zeroLinePath, zeroLinePaint)
-    c.restoreToCount(clipRestoreCount)
+    canvas.drawPath(zeroLinePath, zeroLinePaint)
+    canvas.restoreToCount(clipRestoreCount)
   }
 
   private var renderLimitLinesPathBuffer = Path()
@@ -196,7 +196,7 @@ class YAxisRendererHorizontalBarChart(
    *
    * @param canvas
    */
-  override fun renderLimitLines(canvas: Canvas?) {
+  override fun renderLimitLines(canvas: Canvas) {
     val limitLines = yAxis.limitLines
     if (limitLines.isEmpty()) return
     val pts = renderLimitLinesBuffer

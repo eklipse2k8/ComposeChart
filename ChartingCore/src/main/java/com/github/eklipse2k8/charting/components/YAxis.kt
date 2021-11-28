@@ -147,12 +147,12 @@ class YAxis : AxisBase {
   constructor() : super() {
     // default left
     axisDependency = AxisDependency.LEFT
-    mYOffset = 0f
+    yOffset = 0f
   }
 
   constructor(position: AxisDependency) : super() {
     axisDependency = position
-    mYOffset = 0f
+    yOffset = 0f
   }
 
   /**
@@ -212,7 +212,7 @@ class YAxis : AxisBase {
    * @return
    */
   fun getRequiredWidthSpace(p: Paint): Float {
-    p.textSize = mTextSize
+    p.textSize = textSize
     val label = longestLabel
     var width = Utils.calcTextWidth(p, label).toFloat() + xOffset * 2f
     var minWidth = minWidth
@@ -231,7 +231,7 @@ class YAxis : AxisBase {
    * @return
    */
   fun getRequiredHeightSpace(p: Paint): Float {
-    p.textSize = mTextSize
+    p.textSize = textSize
     val label = longestLabel
     return Utils.calcTextHeight(p, label).toFloat() + yOffset * 2f
   }

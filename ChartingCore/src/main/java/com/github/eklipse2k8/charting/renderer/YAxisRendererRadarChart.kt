@@ -113,7 +113,7 @@ class YAxisRendererRadarChart(
     axis.mAxisRange = abs(axis.mAxisMaximum - axis.mAxisMinimum)
   }
 
-  override fun renderAxisLabels(canvas: Canvas?) {
+  override fun renderAxisLabels(canvas: Canvas) {
     if (!yAxis.isEnabled || !yAxis.isDrawLabelsEnabled) return
     axisLabelPaint.typeface = yAxis.typeface
     axisLabelPaint.textSize = yAxis.textSize
@@ -136,7 +136,7 @@ class YAxisRendererRadarChart(
 
   private val mRenderLimitLinesPathBuffer = Path()
 
-  override fun renderLimitLines(canvas: Canvas?) {
+  override fun renderLimitLines(canvas: Canvas) {
     val limitLines = yAxis.limitLines
     val sliceangle = mChart.sliceAngle
 

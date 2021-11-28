@@ -37,8 +37,8 @@ class ZoomJob(
       result.yValue = yValue
       result.scaleX = scaleX
       result.scaleY = scaleY
-      result.mViewPortHandler = viewPortHandler
-      result.mTrans = trans
+      result.viewPortHandler = viewPortHandler
+      result.transformer = trans
       result.axisDependency = axis
       result.view = v
       return result
@@ -59,19 +59,19 @@ class ZoomJob(
   private var mRunMatrixBuffer = Matrix()
   override fun run() {
     val save = mRunMatrixBuffer
-    if (mViewPortHandler == null) {
+    if (viewPortHandler == null) {
       return
     }
-    mViewPortHandler!!.zoom(scaleX, scaleY, save)
-    mViewPortHandler!!.refresh(save, view, false)
+    viewPortHandler!!.zoom(scaleX, scaleY, save)
+    viewPortHandler!!.refresh(save, view, false)
     val yValsInView =
-        (view as BarLineChartBase<*, *, *>).getAxis(axisDependency!!).mAxisRange / mViewPortHandler!!.scaleY
-    val xValsInView = (view as BarLineChartBase<*, *, *>).xAxis.mAxisRange / mViewPortHandler!!.scaleX
+        (view as BarLineChartBase<*, *, *>).getAxis(axisDependency!!).mAxisRange / viewPortHandler!!.scaleY
+    val xValsInView = (view as BarLineChartBase<*, *, *>).xAxis.mAxisRange / viewPortHandler!!.scaleX
     pts[0] = xValue - xValsInView / 2f
     pts[1] = yValue + yValsInView / 2f
-    mTrans?.pointValuesToPixel(pts)
-    mViewPortHandler!!.translate(pts, save)
-    mViewPortHandler!!.refresh(save, view, false)
+    transformer?.pointValuesToPixel(pts)
+    viewPortHandler!!.translate(pts, save)
+    viewPortHandler!!.refresh(save, view, false)
     (view as BarLineChartBase<*, *, *>).calculateOffsets()
     view?.postInvalidate()
     recycleInstance(this)

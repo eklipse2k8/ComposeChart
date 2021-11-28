@@ -17,7 +17,7 @@ class Description : ComponentBase() {
   var textAlign = Paint.Align.RIGHT
 
   init {
-    mTextSize = Utils.convertDpToPixel(8f)
+    textSize = Utils.convertDpToPixel(8f)
   }
 
   /**

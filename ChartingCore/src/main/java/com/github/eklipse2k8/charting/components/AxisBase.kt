@@ -492,9 +492,9 @@ abstract class AxisBase : ComponentBase() {
 
   /** default constructor */
   init {
-    mTextSize = Utils.convertDpToPixel(10f)
-    mXOffset = Utils.convertDpToPixel(5f)
-    mYOffset = Utils.convertDpToPixel(5f)
+    textSize = Utils.convertDpToPixel(10f)
+    xOffset = Utils.convertDpToPixel(5f)
+    yOffset = Utils.convertDpToPixel(5f)
     mLimitLines = ArrayList()
   }
 }

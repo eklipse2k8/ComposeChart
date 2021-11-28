@@ -546,14 +546,14 @@ class Legend() : ComponentBase() {
                         .toFloat())
       }
     }
-    mNeededHeight += mYOffset
-    mNeededWidth += mXOffset
+    mNeededHeight += yOffset
+    mNeededWidth += xOffset
   }
 
   /** default constructor */
   init {
-    mTextSize = Utils.convertDpToPixel(10f)
-    mXOffset = Utils.convertDpToPixel(5f)
-    mYOffset = Utils.convertDpToPixel(3f) // 2
+    textSize = Utils.convertDpToPixel(10f)
+    xOffset = Utils.convertDpToPixel(5f)
+    yOffset = Utils.convertDpToPixel(3f) // 2
   }
 }

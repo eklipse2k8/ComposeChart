@@ -1,7 +1,10 @@
 package com.github.eklipse2k8.charting.renderer
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.Paint.Align
+import android.graphics.Path
+import android.graphics.RectF
 import com.github.eklipse2k8.charting.components.LimitLine
 import com.github.eklipse2k8.charting.components.LimitLine.LimitLabelPosition
 import com.github.eklipse2k8.charting.components.XAxis
@@ -69,7 +72,7 @@ open class XAxisRenderer(
     FSize.recycleInstance(labelSize)
   }
 
-  override fun renderAxisLabels(canvas: Canvas?) {
+  override fun renderAxisLabels(canvas: Canvas) {
     if (!xAxis.isEnabled || !xAxis.isDrawLabelsEnabled) return
     val yoffset = xAxis.yOffset
     axisLabelPaint.typeface = xAxis.typeface
@@ -104,30 +107,26 @@ open class XAxisRenderer(
     MPPointF.recycleInstance(pointF)
   }
 
-  override fun renderAxisLine(canvas: Canvas?) {
+  override fun renderAxisLine(canvas: Canvas) {
     if (!xAxis.isDrawAxisLineEnabled || !xAxis.isEnabled) return
     axisLinePaint.color = xAxis.axisLineColor
     axisLinePaint.strokeWidth = xAxis.axisLineWidth
     axisLinePaint.pathEffect = xAxis.axisLineDashPathEffect
-    if (xAxis.position === XAxisPosition.TOP ||
-        xAxis.position === XAxisPosition.TOP_INSIDE ||
-        xAxis.position === XAxisPosition.BOTH_SIDED) {
-      canvas!!.drawLine(
-          viewPortHandler.contentLeft(),
-          viewPortHandler.contentTop(),
-          viewPortHandler.contentRight(),
-          viewPortHandler.contentTop(),
-          axisLinePaint)
-    }
-    if (xAxis.position === XAxisPosition.BOTTOM ||
-        xAxis.position === XAxisPosition.BOTTOM_INSIDE ||
-        xAxis.position === XAxisPosition.BOTH_SIDED) {
-      canvas!!.drawLine(
-          viewPortHandler.contentLeft(),
-          viewPortHandler.contentBottom(),
-          viewPortHandler.contentRight(),
-          viewPortHandler.contentBottom(),
-          axisLinePaint)
+    when (xAxis.position) {
+      XAxisPosition.TOP, XAxisPosition.TOP_INSIDE, XAxisPosition.BOTH_SIDED ->
+          canvas.drawLine(
+              viewPortHandler.contentLeft(),
+              viewPortHandler.contentTop(),
+              viewPortHandler.contentRight(),
+              viewPortHandler.contentTop(),
+              axisLinePaint)
+      XAxisPosition.BOTTOM, XAxisPosition.BOTTOM_INSIDE ->
+          canvas.drawLine(
+              viewPortHandler.contentLeft(),
+              viewPortHandler.contentBottom(),
+              viewPortHandler.contentRight(),
+              viewPortHandler.contentBottom(),
+              axisLinePaint)
     }
   }
 
@@ -136,7 +135,7 @@ open class XAxisRenderer(
    *
    * @param pos
    */
-  protected open fun drawLabels(c: Canvas?, pos: Float, anchor: MPPointF?) {
+  protected open fun drawLabels(c: Canvas, pos: Float, anchor: MPPointF?) {
     val labelRotationAngleDegrees = xAxis.labelRotationAngle
     val centeringEnabled = xAxis.isCenterAxisLabelsEnabled
     val positions = FloatArray(xAxis.entryCount * 2)
@@ -180,7 +179,7 @@ open class XAxisRenderer(
   }
 
   protected fun drawLabel(
-      c: Canvas?,
+      c: Canvas,
       formattedLabel: String?,
       x: Float,
       y: Float,
@@ -194,9 +193,9 @@ open class XAxisRenderer(
 
   private var mRenderGridLinesBuffer = FloatArray(2)
 
-  override fun renderGridLines(canvas: Canvas?) {
+  override fun renderGridLines(canvas: Canvas) {
     if (!xAxis.isDrawGridLinesEnabled || !xAxis.isEnabled) return
-    val clipRestoreCount = canvas!!.save()
+    val clipRestoreCount = canvas.save()
     canvas.clipRect(gridClippingRect!!)
     if (mRenderGridLinesBuffer.size != axis.entryCount * 2) {
       mRenderGridLinesBuffer = FloatArray(xAxis.entryCount * 2)
@@ -222,13 +221,13 @@ open class XAxisRenderer(
     canvas.restoreToCount(clipRestoreCount)
   }
 
-  @JvmField protected var mGridClippingRect = RectF()
+  protected var _gridClippingRect = RectF()
 
   open val gridClippingRect: RectF?
     get() {
-      mGridClippingRect.set(viewPortHandler.contentRect)
-      mGridClippingRect.inset(-axis.gridLineWidth, 0f)
-      return mGridClippingRect
+      _gridClippingRect.set(viewPortHandler.contentRect)
+      _gridClippingRect.inset(-axis.gridLineWidth, 0f)
+      return _gridClippingRect
     }
 
   /**
@@ -239,12 +238,12 @@ open class XAxisRenderer(
    * @param y
    * @param gridLinePath
    */
-  protected open fun drawGridLine(canvas: Canvas?, x: Float, y: Float, gridLinePath: Path) {
+  protected open fun drawGridLine(canvas: Canvas, x: Float, y: Float, gridLinePath: Path) {
     gridLinePath.moveTo(x, viewPortHandler.contentBottom())
     gridLinePath.lineTo(x, viewPortHandler.contentTop())
 
     // draw a path because lines don't support dashing on lower android versions
-    canvas!!.drawPath(gridLinePath, gridPaint)
+    canvas.drawPath(gridLinePath, gridPaint)
     gridLinePath.reset()
   }
 
@@ -257,7 +256,7 @@ open class XAxisRenderer(
    *
    * @param canvas
    */
-  override fun renderLimitLines(canvas: Canvas?) {
+  override fun renderLimitLines(canvas: Canvas) {
     val limitLines = xAxis.limitLines
     if (limitLines.isEmpty()) return
     val position = renderLimitLinesBuffer
@@ -266,7 +265,7 @@ open class XAxisRenderer(
     for (i in limitLines.indices) {
       val l = limitLines[i]
       if (!l.isEnabled) continue
-      val clipRestoreCount = canvas!!.save()
+      val clipRestoreCount = canvas.save()
       limitLineClippingRect.set(viewPortHandler.contentRect)
       limitLineClippingRect.inset(-l.lineWidth, 0f)
       canvas.clipRect(limitLineClippingRect)

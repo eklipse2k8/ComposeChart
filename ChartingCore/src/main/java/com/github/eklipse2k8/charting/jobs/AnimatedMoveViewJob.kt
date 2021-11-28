@@ -32,10 +32,10 @@ class AnimatedMoveViewJob(
         duration: Long
     ): AnimatedMoveViewJob? {
       val result = pool?.get() ?: return null
-      result.mViewPortHandler = viewPortHandler
+      result.viewPortHandler = viewPortHandler
       result.xValue = xValue
       result.yValue = yValue
-      result.mTrans = trans
+      result.transformer = trans
       result.view = v
       result.xOrigin = xOrigin
       result.yOrigin = yOrigin
@@ -58,8 +58,8 @@ class AnimatedMoveViewJob(
   override fun onAnimationUpdate(animation: ValueAnimator) {
     pts[0] = xOrigin + (xValue - xOrigin) * phase
     pts[1] = yOrigin + (yValue - yOrigin) * phase
-    mTrans?.pointValuesToPixel(pts)
-    view?.let { mViewPortHandler?.centerViewPort(pts, it) }
+    transformer?.pointValuesToPixel(pts)
+    view?.let { viewPortHandler?.centerViewPort(pts, it) }
   }
 
   override fun recycleSelf() {

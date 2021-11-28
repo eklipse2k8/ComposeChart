@@ -18,8 +18,8 @@ class AnimatedZoomJob(
     viewPortHandler: ViewPortHandler?,
     v: View?,
     trans: Transformer?,
-    axis: YAxis?,
-    xAxisRange: Float,
+    private var yAxis: YAxis?,
+    private var xAxisRange: Float,
     scaleX: Float,
     scaleY: Float,
     xOrigin: Float,
@@ -52,10 +52,10 @@ class AnimatedZoomJob(
         duration: Long
     ): AnimatedZoomJob? {
       val result = pool?.get() ?: return null
-      result.mViewPortHandler = viewPortHandler
+      result.viewPortHandler = viewPortHandler
       result.xValue = scaleX
       result.yValue = scaleY
-      result.mTrans = trans
+      result.transformer = trans
       result.view = v
       result.xOrigin = xOrigin
       result.yOrigin = yOrigin
@@ -74,28 +74,27 @@ class AnimatedZoomJob(
     }
   }
 
-  private var yAxis: YAxis?
-
-  private var xAxisRange: Float
-
-  private var mOnAnimationUpdateMatrixBuffer = Matrix()
+  private var onAnimationUpdateMatrixBuffer = Matrix()
 
   override fun onAnimationUpdate(animation: ValueAnimator) {
-    if (mViewPortHandler == null) {
+    if (viewPortHandler == null) {
       return
     }
     val scaleX = xOrigin + (xValue - xOrigin) * phase
     val scaleY = yOrigin + (yValue - yOrigin) * phase
-    val save = mOnAnimationUpdateMatrixBuffer
-    mViewPortHandler!!.setZoom(scaleX, scaleY, save)
-    mViewPortHandler!!.refresh(save, view, false)
-    val valsInView = (yAxis?.mAxisRange ?: 0f) / mViewPortHandler!!.scaleY
-    val xsInView = xAxisRange / mViewPortHandler!!.scaleX
+
+    with(requireNotNull(viewPortHandler)) {
+      onAnimationUpdateMatrixBuffer =
+          setZoom(scaleX = scaleX, scaleY = scaleY, inputMatrix = onAnimationUpdateMatrixBuffer)
+      refresh(onAnimationUpdateMatrixBuffer, view, true)
+    }
+    val valsInView = (yAxis?.mAxisRange ?: 0f) / viewPortHandler!!.scaleY
+    val xsInView = xAxisRange / viewPortHandler!!.scaleX
     pts[0] = zoomOriginX + (zoomCenterX - xsInView / 2f - zoomOriginX) * phase
     pts[1] = zoomOriginY + (zoomCenterY + valsInView / 2f - zoomOriginY) * phase
-    mTrans?.pointValuesToPixel(pts)
-    mViewPortHandler?.translate(pts, save)
-    mViewPortHandler?.refresh(save, view, true)
+    transformer?.pointValuesToPixel(pts)
+    viewPortHandler?.translate(pts, onAnimationUpdateMatrixBuffer)
+    viewPortHandler?.refresh(onAnimationUpdateMatrixBuffer, view, true)
   }
 
   override fun onAnimationEnd(animation: Animator) {
@@ -116,7 +115,5 @@ class AnimatedZoomJob(
 
   init {
     animator.addListener(this)
-    yAxis = axis
-    this.xAxisRange = xAxisRange
   }
 }

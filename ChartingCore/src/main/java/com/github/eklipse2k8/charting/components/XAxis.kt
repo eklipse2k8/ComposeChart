@@ -72,6 +72,6 @@ class XAxis : AxisBase() {
   }
 
   init {
-    mYOffset = Utils.convertDpToPixel(4f) // -3
+    yOffset = Utils.convertDpToPixel(4f) // -3
   }
 }

@@ -230,38 +230,28 @@ class ViewPortHandler {
   }
 
   /**
-   * Sets the scale factor to the specified values.
-   *
-   * @param scaleX
-   * @param scaleY
-   * @return
-   */
-  fun setZoom(scaleX: Float, scaleY: Float): Matrix {
-    val save = Matrix()
-    setZoom(scaleX, scaleY, save)
-    return save
-  }
-
-  fun setZoom(scaleX: Float, scaleY: Float, outputMatrix: Matrix) {
-    outputMatrix.reset()
-    outputMatrix.set(matrixTouch)
-    outputMatrix.setScale(scaleX, scaleY)
-  }
-
-  /**
    * Sets the scale factor to the specified values. x and y is pivot.
    *
    * @param scaleX
    * @param scaleY
    * @param x
    * @param y
-   * @return
    */
-  fun setZoom(scaleX: Float, scaleY: Float, x: Float, y: Float): Matrix {
-    val save = Matrix()
-    save.set(matrixTouch)
-    save.setScale(scaleX, scaleY, x, y)
-    return save
+  @JvmOverloads
+  fun setZoom(
+      scaleX: Float,
+      scaleY: Float,
+      x: Float = Float.NaN,
+      y: Float = Float.NaN,
+      inputMatrix: Matrix = Matrix()
+  ): Matrix {
+    inputMatrix.set(matrixTouch)
+    if (!x.isNaN() && !y.isNaN()) {
+      inputMatrix.setScale(scaleX, scaleY, x, y)
+    } else {
+      inputMatrix.setScale(scaleX, scaleY)
+    }
+    return inputMatrix
   }
 
   private var valsBufferForFitScreen = FloatArray(9)

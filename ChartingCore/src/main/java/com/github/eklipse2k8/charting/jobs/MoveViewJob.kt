@@ -25,10 +25,10 @@ class MoveViewJob(
         v: View?
     ): MoveViewJob {
       val result = pool!!.get()
-      result.mViewPortHandler = viewPortHandler
+      result.viewPortHandler = viewPortHandler
       result.xValue = xValue
       result.yValue = yValue
-      result.mTrans = trans
+      result.transformer = trans
       result.view = v
       return result
     }
@@ -46,12 +46,12 @@ class MoveViewJob(
   override fun run() {
     pts[0] = xValue
     pts[1] = yValue
-    mTrans?.pointValuesToPixel(pts)
-    view?.let { mViewPortHandler?.centerViewPort(pts, it) }
+    transformer?.pointValuesToPixel(pts)
+    view?.let { viewPortHandler?.centerViewPort(pts, it) }
     recycleInstance(this)
   }
 
   override fun instantiate(): Poolable {
-    return MoveViewJob(mViewPortHandler, xValue, yValue, mTrans, view)
+    return MoveViewJob(viewPortHandler, xValue, yValue, transformer, view)
   }
 }

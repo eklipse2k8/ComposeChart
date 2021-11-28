@@ -30,7 +30,7 @@ open class YAxisRenderer(
   }
 
   /** draws the y-axis labels to the screen */
-  override fun renderAxisLabels(canvas: Canvas?) {
+  override fun renderAxisLabels(canvas: Canvas) {
     if (!yAxis.isEnabled || !yAxis.isDrawLabelsEnabled) return
     val positions = transformedPositions
     axisLabelPaint.typeface = yAxis.typeface
@@ -40,7 +40,7 @@ open class YAxisRenderer(
     val yoffset = Utils.calcTextHeight(axisLabelPaint, "A") / 2.5f + yAxis.yOffset
     val dependency = yAxis.axisDependency
     val labelPosition = yAxis.labelPosition
-    var xPos = 0f
+    var xPos: Float
     if (dependency === AxisDependency.LEFT) {
       if (labelPosition === YAxisLabelPosition.OUTSIDE_CHART) {
         axisLabelPaint.textAlign = Align.RIGHT
@@ -61,7 +61,7 @@ open class YAxisRenderer(
     drawYLabels(canvas, xPos, positions, yoffset)
   }
 
-  override fun renderAxisLine(canvas: Canvas?) {
+  override fun renderAxisLine(canvas: Canvas) {
     if (!yAxis.isEnabled || !yAxis.isDrawAxisLineEnabled) return
     axisLinePaint.color = yAxis.axisLineColor
     axisLinePaint.strokeWidth = yAxis.axisLineWidth
@@ -89,7 +89,7 @@ open class YAxisRenderer(
    * @param positions
    */
   protected open fun drawYLabels(
-      canvas: Canvas?,
+      canvas: Canvas,
       fixedPosition: Float,
       positions: FloatArray,
       offset: Float
@@ -108,7 +108,7 @@ open class YAxisRenderer(
 
   @JvmField protected var renderGridLinesPath = Path()
 
-  override fun renderGridLines(canvas: Canvas?) {
+  override fun renderGridLines(canvas: Canvas) {
     if (!yAxis.isEnabled) return
     if (yAxis.isDrawGridLinesEnabled) {
       val clipRestoreCount = canvas!!.save()
@@ -185,16 +185,16 @@ open class YAxisRenderer(
       return positions
     }
 
-  @JvmField protected var mDrawZeroLinePath = Path()
+  @JvmField protected var drawZeroLinePath = Path()
 
-  @JvmField protected var mZeroLineClippingRect = RectF()
+  @JvmField protected var zeroLineClippingRect = RectF()
 
   /** Draws the zero line. */
-  protected open fun drawZeroLine(c: Canvas?) {
-    val clipRestoreCount = c!!.save()
-    mZeroLineClippingRect.set(viewPortHandler.contentRect)
-    mZeroLineClippingRect.inset(0f, -yAxis.zeroLineWidth)
-    c.clipRect(mZeroLineClippingRect)
+  protected open fun drawZeroLine(canvas: Canvas) {
+    val clipRestoreCount = canvas!!.save()
+    zeroLineClippingRect.set(viewPortHandler.contentRect)
+    zeroLineClippingRect.inset(0f, -yAxis.zeroLineWidth)
+    canvas.clipRect(zeroLineClippingRect)
 
     // draw zero line
     if (transformer == null) {
@@ -203,14 +203,14 @@ open class YAxisRenderer(
     val pos = transformer!!.getPixelForValues(0f, 0f)
     zeroLinePaint.color = yAxis.zeroLineColor
     zeroLinePaint.strokeWidth = yAxis.zeroLineWidth
-    val zeroLinePath = mDrawZeroLinePath
+    val zeroLinePath = drawZeroLinePath
     zeroLinePath.reset()
     zeroLinePath.moveTo(viewPortHandler.contentLeft(), pos.y.toFloat())
     zeroLinePath.lineTo(viewPortHandler.contentRight(), pos.y.toFloat())
 
     // draw a path because lines don't support dashing on lower android versions
-    c.drawPath(zeroLinePath, zeroLinePaint)
-    c.restoreToCount(clipRestoreCount)
+    canvas.drawPath(zeroLinePath, zeroLinePaint)
+    canvas.restoreToCount(clipRestoreCount)
   }
 
   @JvmField protected var renderLimitLines = Path()
@@ -224,7 +224,7 @@ open class YAxisRenderer(
    *
    * @param canvas
    */
-  override fun renderLimitLines(canvas: Canvas?) {
+  override fun renderLimitLines(canvas: Canvas) {
     val limitLines = yAxis.limitLines
     if (limitLines.isEmpty()) return
     val pts = renderLimitLinesBuffer

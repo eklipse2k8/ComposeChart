@@ -13,14 +13,14 @@ class XAxisRendererRadarChart(
     private val mChart: RadarChart
 ) : XAxisRenderer(viewPortHandler, xAxis, null) {
 
-  override fun renderAxisLabels(canvas: Canvas?) {
+  override fun renderAxisLabels(canvas: Canvas) {
     if (!xAxis.isEnabled || !xAxis.isDrawLabelsEnabled) return
     val labelRotationAngleDegrees = xAxis.labelRotationAngle
     val drawLabelAnchor = MPPointF.getInstance(0.5f, 0.25f)
     axisLabelPaint.typeface = xAxis.typeface
     axisLabelPaint.textSize = xAxis.textSize
     axisLabelPaint.color = xAxis.textColor
-    val sliceangle = mChart.sliceAngle
+    val sliceAngle = mChart.sliceAngle
 
     // calculate the factor that is needed for transforming the value to
     // pixels
@@ -29,9 +29,8 @@ class XAxisRendererRadarChart(
     val pOut = MPPointF.getInstance(0f, 0f)
     for (i in 0 until mChart.data?.maxEntryCountSet?.entryCount!!) {
       val label = xAxis.valueFormatter!!.getFormattedValue(i.toFloat(), xAxis)
-      val angle = (sliceangle * i + mChart.rotationAngle) % 360f
-      Utils.getPosition(
-          center, mChart.yRange * factor + xAxis.labelRotatedWidth / 2f, angle, pOut)
+      val angle = (sliceAngle * i + mChart.rotationAngle) % 360f
+      Utils.getPosition(center, mChart.yRange * factor + xAxis.labelRotatedWidth / 2f, angle, pOut)
       drawLabel(
           canvas,
           label,
@@ -45,12 +44,6 @@ class XAxisRendererRadarChart(
     MPPointF.recycleInstance(drawLabelAnchor)
   }
 
-  /**
-   * XAxis LimitLines on RadarChart not yet supported.
-   *
-   * @param canvas
-   */
-  override fun renderLimitLines(canvas: Canvas?) {
-    // this space intentionally left blank
-  }
+  /** XAxis LimitLines on RadarChart not yet supported. */
+  override fun renderLimitLines(canvas: Canvas) = Unit
 }

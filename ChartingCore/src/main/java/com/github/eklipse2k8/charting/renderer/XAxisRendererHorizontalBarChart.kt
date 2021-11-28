@@ -58,7 +58,7 @@ class XAxisRendererHorizontalBarChart(
     FSize.recycleInstance(labelRotatedSize)
   }
 
-  override fun renderAxisLabels(canvas: Canvas?) {
+  override fun renderAxisLabels(canvas: Canvas) {
     if (!xAxis.isEnabled || !xAxis.isDrawLabelsEnabled) return
     val xoffset = xAxis.xOffset
     axisLabelPaint.typeface = xAxis.typeface
@@ -92,7 +92,7 @@ class XAxisRendererHorizontalBarChart(
     MPPointF.recycleInstance(pointF)
   }
 
-  override fun drawLabels(c: Canvas?, pos: Float, anchor: MPPointF?) {
+  override fun drawLabels(c: Canvas, pos: Float, anchor: MPPointF?) {
     val labelRotationAngleDegrees = xAxis.labelRotationAngle
     val centeringEnabled = xAxis.isCenterAxisLabelsEnabled
     val positions = FloatArray(xAxis.entryCount * 2)
@@ -123,12 +123,12 @@ class XAxisRendererHorizontalBarChart(
 
   override val gridClippingRect: RectF
     get() {
-      mGridClippingRect.set(viewPortHandler.contentRect)
-      mGridClippingRect.inset(0f, -axis.gridLineWidth)
-      return mGridClippingRect
+      _gridClippingRect.set(viewPortHandler.contentRect)
+      _gridClippingRect.inset(0f, -axis.gridLineWidth)
+      return _gridClippingRect
     }
 
-  override fun drawGridLine(canvas: Canvas?, x: Float, y: Float, gridLinePath: Path) {
+  override fun drawGridLine(canvas: Canvas, x: Float, y: Float, gridLinePath: Path) {
     gridLinePath.moveTo(viewPortHandler.contentRight(), y)
     gridLinePath.lineTo(viewPortHandler.contentLeft(), y)
 
@@ -137,7 +137,7 @@ class XAxisRendererHorizontalBarChart(
     gridLinePath.reset()
   }
 
-  override fun renderAxisLine(canvas: Canvas?) {
+  override fun renderAxisLine(canvas: Canvas) {
     if (!xAxis.isDrawAxisLineEnabled || !xAxis.isEnabled) return
     axisLinePaint.color = xAxis.axisLineColor
     axisLinePaint.strokeWidth = xAxis.axisLineWidth
@@ -171,7 +171,7 @@ class XAxisRendererHorizontalBarChart(
    *
    * @param canvas
    */
-  override fun renderLimitLines(canvas: Canvas?) {
+  override fun renderLimitLines(canvas: Canvas) {
     val limitLines = xAxis.limitLines
     if (limitLines.isEmpty()) return
     val pts = renderLimitLinesBuffer
