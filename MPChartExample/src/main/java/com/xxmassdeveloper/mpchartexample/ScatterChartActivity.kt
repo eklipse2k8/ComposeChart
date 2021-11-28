@@ -61,14 +61,11 @@ class ScatterChartActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSe
     l.horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
     l.orientation = Legend.LegendOrientation.VERTICAL
     l.setDrawInside(false)
-    l.typeface = tfLight
     l.xOffset = 5f
     val yl = chart.axisLeft
-    yl.typeface = tfLight
     yl.axisMinimum = 0f // this replaces setStartAtZero(true)
     chart.axisRight.isEnabled = false
     val xl = chart.xAxis
-    xl.typeface = tfLight
     xl.setDrawGridLines(false)
   }
 
@@ -113,7 +110,6 @@ class ScatterChartActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSe
 
     // create a data object with the data sets
     val data = ScatterData(dataSets)
-    data.setValueTypeface(tfLight)
     chart.data = data
     chart.invalidate()
   }

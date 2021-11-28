@@ -59,7 +59,6 @@ class CubicLineChartActivity : DemoBase(), OnSeekBarChangeListener {
     val x = chart.xAxis
     x.isEnabled = false
     val y = chart.axisLeft
-    y.typeface = tfLight
     y.setLabelCount(6, false)
     y.textColor = Color.WHITE
     y.setPosition(YAxisLabelPosition.INSIDE_CHART)
@@ -121,7 +120,6 @@ class CubicLineChartActivity : DemoBase(), OnSeekBarChangeListener {
 
       // create a data object with the data sets
       val data = LineData(set1)
-      data.setValueTypeface(tfLight)
       data.setValueTextSize(9f)
       data.setDrawValues(false)
 

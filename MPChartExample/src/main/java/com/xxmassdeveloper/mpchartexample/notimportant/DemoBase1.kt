@@ -51,13 +51,6 @@ abstract class DemoBase : AppCompatActivity(), OnRequestPermissionsResultCallbac
           "Party X",
           "Party Y",
           "Party Z")
-  protected var tfRegular: Typeface? = null
-  protected var tfLight: Typeface? = null
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    tfRegular = Typeface.createFromAsset(assets, "OpenSans-Regular.ttf")
-    tfLight = Typeface.createFromAsset(assets, "OpenSans-Light.ttf")
-  }
 
   protected fun getRandom(range: Float, start: Float): Float {
     return (Math.random() * range).toFloat() + start

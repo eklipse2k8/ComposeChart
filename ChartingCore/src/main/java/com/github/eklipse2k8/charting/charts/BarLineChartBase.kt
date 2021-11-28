@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.MotionEvent
 import androidx.core.content.res.getColorOrThrow
 import androidx.core.content.res.getDimensionOrThrow
+import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.content.withStyledAttributes
 import com.github.eklipse2k8.charting.R
 import com.github.eklipse2k8.charting.components.Legend.*
@@ -162,15 +163,30 @@ E : Entry {
 
     context.withStyledAttributes(
         set = attrs,
-        attrs = R.styleable.Chart_Base_Style,
+        attrs = R.styleable.Axis,
         defStyleAttr = R.attr.defaultChartStyle,
-        defStyleRes = R.style.LineChart) {
-      with(rendererXAxis.paintAxisLabels) {
-        color = getColorOrThrow(R.styleable.Chart_Base_Style_android_textColor)
-        textSize = getDimensionOrThrow(R.styleable.Chart_Base_Style_android_textSize)
+        defStyleRes = R.style.LineChart_Axis) {
+      with(xAxis) {
+        gridColor = getColorOrThrow(R.styleable.Axis_xAxisLineColor)
+        val resId = getResourceIdOrThrow(R.styleable.Axis_xAxisTextAppearance)
+        applyTextAppearance(context, resId)
       }
 
-      with(gridBackgroundPaint) { color = getColorOrThrow(R.styleable.Chart_Base_Style_gridColor) }
+      with(axisLeft) {
+        gridColor = getColorOrThrow(R.styleable.Axis_yAxisStartLineColor)
+        val resId = getResourceIdOrThrow(R.styleable.Axis_yAxisStartTextAppearance)
+        applyTextAppearance(context, resId)
+      }
+
+      with(axisRight) {
+        gridColor = getColorOrThrow(R.styleable.Axis_yAxisEndLineColor)
+        val resId = getResourceIdOrThrow(R.styleable.Axis_yAxisEndTextAppearance)
+        applyTextAppearance(context, resId)
+      }
+
+      with(gridBackgroundPaint) {
+        color = getColorOrThrow(R.styleable.Axis_backgroundColor)
+      }
     }
   }
 

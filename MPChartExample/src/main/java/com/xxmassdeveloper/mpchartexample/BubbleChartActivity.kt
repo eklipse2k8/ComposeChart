@@ -64,16 +64,13 @@ class BubbleChartActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSel
     l.horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
     l.orientation = Legend.LegendOrientation.VERTICAL
     l.setDrawInside(false)
-    l.typeface = tfLight
     val yl = chart.axisLeft
-    yl.typeface = tfLight
     yl.spaceTop = 30f
     yl.spaceBottom = 30f
     yl.setDrawZeroLine(false)
     chart.axisRight.isEnabled = false
     val xl = chart.xAxis
     xl.position = XAxisPosition.BOTTOM
-    xl.typeface = tfLight
   }
 
   override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -123,7 +120,6 @@ class BubbleChartActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSel
     // create a data object with the data sets
     val data = BubbleData(dataSets)
     data.setDrawValues(false)
-    data.setValueTypeface(tfLight)
     data.setValueTextSize(8f)
     data.setValueTextColor(Color.WHITE)
     data.setHighlightCircleWidth(1.5f)

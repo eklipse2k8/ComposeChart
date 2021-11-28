@@ -1,8 +1,17 @@
 package com.github.eklipse2k8.charting.components
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.DashPathEffect
+import android.graphics.Typeface
 import android.util.Log
+import androidx.core.content.res.getColorOrThrow
+import androidx.core.content.res.getDimensionPixelSizeOrThrow
+import androidx.core.content.res.getIntOrThrow
+import androidx.core.content.res.getStringOrThrow
+import androidx.core.content.withStyledAttributes
+import androidx.core.graphics.TypefaceCompatUtil
+import com.github.eklipse2k8.charting.R
 import com.github.eklipse2k8.charting.formatter.DefaultAxisValueFormatter
 import com.github.eklipse2k8.charting.formatter.IAxisValueFormatter
 import com.github.eklipse2k8.charting.utils.Utils
@@ -109,7 +118,7 @@ abstract class AxisBase : ComponentBase() {
     private set
 
   /** array of limit lines that can be set for the axis */
-  protected var mLimitLines: MutableList<LimitLine>
+  protected var mLimitLines: MutableList<LimitLine> = ArrayList()
 
   /** flag indicating the limit lines layer depth */
   var isDrawLimitLinesBehindDataEnabled = false
@@ -408,7 +417,7 @@ abstract class AxisBase : ComponentBase() {
     set(max) {
       isAxisMaxCustom = true
       mAxisMaximum = max
-      mAxisRange = Math.abs(max - mAxisMinimum)
+      mAxisRange = abs(max - mAxisMinimum)
     }
 
   /**
@@ -441,6 +450,18 @@ abstract class AxisBase : ComponentBase() {
    */
   fun resetAxisMinimum() {
     isAxisMinCustom = false
+  }
+
+  fun applyTextAppearance(context: Context, resId: Int) {
+    context.withStyledAttributes(resId, R.styleable.Axis_TextAppearance) {
+      textColor = getColorOrThrow(R.styleable.Axis_TextAppearance_android_textColor)
+      textSize =
+          getDimensionPixelSizeOrThrow(R.styleable.Axis_TextAppearance_android_textSize).toFloat()
+
+      val familyName = getStringOrThrow(R.styleable.Axis_TextAppearance_android_fontFamily)
+      val fontStyle = getIntOrThrow(R.styleable.Axis_TextAppearance_android_textStyle)
+      typeface = Typeface.create(familyName, fontStyle)
+    }
   }
 
   /**
@@ -490,11 +511,4 @@ abstract class AxisBase : ComponentBase() {
     mAxisRange = abs(max - min)
   }
 
-  /** default constructor */
-  init {
-    textSize = Utils.convertDpToPixel(10f)
-    xOffset = Utils.convertDpToPixel(5f)
-    yOffset = Utils.convertDpToPixel(5f)
-    mLimitLines = ArrayList()
-  }
 }

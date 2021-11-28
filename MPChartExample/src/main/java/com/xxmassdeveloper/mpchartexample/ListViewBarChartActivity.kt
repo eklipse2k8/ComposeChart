@@ -57,21 +57,17 @@ class ListViewBarChartActivity : DemoBase() {
 
       // apply styling
       if (data != null) {
-        data.setValueTypeface(tfLight)
         data.setValueTextColor(Color.BLACK)
       }
       holder.chart.description.isEnabled = false
       holder.chart.setDrawGridBackground(false)
       val xAxis = holder.chart.xAxis
       xAxis.position = XAxisPosition.BOTTOM
-      xAxis.typeface = tfLight
       xAxis.setDrawGridLines(false)
       val leftAxis = holder.chart.axisLeft
-      leftAxis.typeface = tfLight
       leftAxis.setLabelCount(5, false)
       leftAxis.spaceTop = 15f
       val rightAxis = holder.chart.axisRight
-      rightAxis.typeface = tfLight
       rightAxis.setLabelCount(5, false)
       rightAxis.spaceTop = 15f
 

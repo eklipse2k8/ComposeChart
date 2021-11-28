@@ -68,14 +68,12 @@ class BarChartActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSelect
     val xAxisFormatter: IAxisValueFormatter = DayAxisValueFormatter(chart)
     val xAxis = chart.xAxis
     xAxis.position = XAxisPosition.BOTTOM
-    xAxis.typeface = tfLight
     xAxis.setDrawGridLines(false)
     xAxis.granularity = 1f // only intervals of 1 day
     xAxis.labelCount = 7
     xAxis.valueFormatter = xAxisFormatter
     val custom: IAxisValueFormatter = MyAxisValueFormatter()
     val leftAxis = chart.axisLeft
-    leftAxis.typeface = tfLight
     leftAxis.setLabelCount(8, false)
     leftAxis.valueFormatter = custom
     leftAxis.setPosition(YAxisLabelPosition.OUTSIDE_CHART)
@@ -83,7 +81,6 @@ class BarChartActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSelect
     leftAxis.axisMinimum = 0f // this replaces setStartAtZero(true)
     val rightAxis = chart.axisRight
     rightAxis.setDrawGridLines(false)
-    rightAxis.typeface = tfLight
     rightAxis.setLabelCount(8, false)
     rightAxis.valueFormatter = custom
     rightAxis.spaceTop = 15f
@@ -151,7 +148,6 @@ class BarChartActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSelect
       dataSets.add(set1)
       val data = BarData(dataSets)
       data.setValueTextSize(10f)
-      data.setValueTypeface(tfLight)
       data.barWidth = 0.9f
       chart.data = data
     }

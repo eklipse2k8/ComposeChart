@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <attr name="defaultChartStyle" />
-    <attr format="color" name="gridColor"/>
 
-    <declare-styleable name="Chart.Base.Style">
+    <!-- Y-Axis Start (Left) -->
+    <attr name="yAxisStartLineColor" format="color" />
+    <attr name="yAxisStartTextAppearance" format="reference" />
+
+    <!-- Y-Axis End (Right) -->
+    <attr name="yAxisEndLineColor" format="color" />
+    <attr name="yAxisEndTextAppearance" format="reference" />
+
+    <!-- X-Axis -->
+    <attr name="xAxisLineColor" format="color" />
+    <attr name="xAxisTextAppearance" format="reference" />
+
+    <!-- Surface -->
+    <attr name="backgroundColor" format="color" />
+
+    <declare-styleable name="Axis.TextAppearance">
         <attr name="android:textSize" />
         <attr name="android:textColor" />
         <attr name="android:textColorHint" />
@@ -14,9 +27,19 @@
         <attr name="android:textFontWeight" />
         <attr name="android:typeface" />
         <attr name="android:fontFamily" />
+    </declare-styleable>
 
-        <attr name="gridColor" />
+    <declare-styleable name="Axis">
+        <attr name="yAxisStartLineColor" />
+        <attr name="yAxisStartTextAppearance" />
 
+        <attr name="yAxisEndLineColor" />
+        <attr name="yAxisEndTextAppearance" />
+
+        <attr name="xAxisLineColor" />
+        <attr name="xAxisTextAppearance" />
+
+        <attr name="backgroundColor" />
     </declare-styleable>
 
 </resources>

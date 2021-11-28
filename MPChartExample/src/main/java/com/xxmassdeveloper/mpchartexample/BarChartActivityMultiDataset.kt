@@ -71,18 +71,15 @@ class BarChartActivityMultiDataset :
     l.horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
     l.orientation = Legend.LegendOrientation.VERTICAL
     l.setDrawInside(true)
-    l.typeface = tfLight
     l.yOffset = 0f
     l.xOffset = 10f
     l.yEntrySpace = 0f
     l.textSize = 8f
     val xAxis = chart.xAxis
-    xAxis.typeface = tfLight
     xAxis.granularity = 1f
     xAxis.setCenterAxisLabels(true)
     xAxis.valueFormatter = IAxisValueFormatter { value, _ -> value.toString() }
     val leftAxis = chart.axisLeft
-    leftAxis.typeface = tfLight
     leftAxis.valueFormatter = LargeValueFormatter()
     leftAxis.setDrawGridLines(false)
     leftAxis.spaceTop = 35f
@@ -146,7 +143,6 @@ class BarChartActivityMultiDataset :
       set4.color = Color.rgb(255, 102, 0)
       val data = BarData(set1, set2, set3, set4)
       data.setValueFormatter(LargeValueFormatter())
-      data.setValueTypeface(tfLight)
       chart.data = data
     }
 

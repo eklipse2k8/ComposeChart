@@ -44,7 +44,6 @@ class BarChartPositiveNegative : DemoBase() {
     chart.setDrawGridBackground(false)
     val xAxis = chart.xAxis
     xAxis.position = XAxisPosition.BOTTOM
-    xAxis.typeface = tfRegular
     xAxis.setDrawGridLines(false)
     xAxis.setDrawAxisLine(false)
     xAxis.textColor = Color.LTGRAY
@@ -103,7 +102,6 @@ class BarChartPositiveNegative : DemoBase() {
       set.setValueTextColors(colors)
       val data = BarData(set)
       data.setValueTextSize(13f)
-      data.setValueTypeface(tfRegular)
       data.setValueFormatter(ValueFormatter())
       data.barWidth = 0.8f
       chart.data = data

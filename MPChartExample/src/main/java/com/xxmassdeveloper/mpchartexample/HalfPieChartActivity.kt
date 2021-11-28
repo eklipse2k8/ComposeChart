@@ -36,7 +36,6 @@ class HalfPieChartActivity : DemoBase() {
     moveOffScreen()
     chart.setUsePercentValues(true)
     chart.description.isEnabled = false
-    chart.setCenterTextTypeface(tfLight)
     chart.centerText = generateCenterSpannableText()
     chart.isDrawHoleEnabled = true
     chart.setHoleColor(Color.WHITE)
@@ -63,7 +62,6 @@ class HalfPieChartActivity : DemoBase() {
 
     // entry label styling
     chart.setEntryLabelColor(Color.WHITE)
-    chart.setEntryLabelTypeface(tfRegular)
     chart.setEntryLabelTextSize(12f)
   }
 
@@ -80,7 +78,6 @@ class HalfPieChartActivity : DemoBase() {
     data.setValueFormatter(PercentFormatter())
     data.setValueTextSize(11f)
     data.setValueTextColor(Color.WHITE)
-    data.setValueTypeface(tfLight)
     chart.data = data
     chart.invalidate()
   }

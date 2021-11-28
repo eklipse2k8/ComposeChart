@@ -50,7 +50,6 @@ class BarChartActivitySinus : DemoBase(), OnSeekBarChangeListener {
     chart.setDrawGridBackground(false)
     chart.xAxis.isEnabled = false
     with(chart.axisLeft) {
-      typeface = tfLight
       setLabelCount(6, false)
       axisMinimum = -2.5f
       axisMaximum = 2.5f
@@ -59,7 +58,6 @@ class BarChartActivitySinus : DemoBase(), OnSeekBarChangeListener {
     }
     with(chart.axisRight) {
       setDrawGridLines(false)
-      typeface = tfLight
       setLabelCount(6, false)
       axisMinimum = -2.5f
       axisMaximum = 2.5f
@@ -99,7 +97,6 @@ class BarChartActivitySinus : DemoBase(), OnSeekBarChangeListener {
     }
     val data = BarData(set!!)
     data.setValueTextSize(10f)
-    data.setValueTypeface(tfLight)
     data.setDrawValues(false)
     data.barWidth = 0.8f
     chart.data = data

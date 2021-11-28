@@ -47,7 +47,6 @@ class RadarChartActivity : DemoBase() {
     setData()
     chart.animateXY(1400, 1400, EaseInOutQuad)
     val xAxis = chart.xAxis
-    xAxis.typeface = tfLight
     xAxis.textSize = 9f
     xAxis.yOffset = 0f
     xAxis.xOffset = 0f
@@ -60,7 +59,6 @@ class RadarChartActivity : DemoBase() {
         }
     xAxis.textColor = Color.WHITE
     val yAxis = chart.yAxis
-    yAxis!!.typeface = tfLight
     yAxis.setLabelCount(5, false)
     yAxis.textSize = 9f
     yAxis.axisMinimum = 0f
@@ -71,7 +69,6 @@ class RadarChartActivity : DemoBase() {
     l.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
     l.orientation = Legend.LegendOrientation.HORIZONTAL
     l.setDrawInside(false)
-    l.typeface = tfLight
     l.xEntrySpace = 7f
     l.yEntrySpace = 5f
     l.textColor = Color.WHITE
@@ -113,7 +110,6 @@ class RadarChartActivity : DemoBase() {
     sets.add(set1)
     sets.add(set2)
     val data = RadarData(sets)
-    data.setValueTypeface(tfLight)
     data.setValueTextSize(8f)
     data.setDrawValues(false)
     data.setValueTextColor(Color.WHITE)

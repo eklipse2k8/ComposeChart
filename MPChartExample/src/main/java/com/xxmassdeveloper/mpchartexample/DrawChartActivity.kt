@@ -45,10 +45,8 @@ class DrawChartActivity : DemoBase(), OnChartValueSelectedListener, OnDrawListen
     // add dummy-data to the chart
     initWithDummyData()
     val xl = chart.xAxis
-    xl.typeface = tfRegular
     xl.setAvoidFirstLastClipping(true)
     val yl = chart.axisLeft
-    yl.typeface = tfRegular
     chart.legend.isEnabled = false
   }
 

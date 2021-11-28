@@ -65,7 +65,6 @@ class LineChartTime : DemoBase(), OnSeekBarChangeListener {
     l.isEnabled = false
     val xAxis = chart.xAxis
     xAxis.position = XAxisPosition.TOP_INSIDE
-    xAxis.typeface = tfLight
     xAxis.textSize = 10f
     xAxis.textColor = Color.WHITE
     xAxis.setDrawAxisLine(false)
@@ -83,7 +82,6 @@ class LineChartTime : DemoBase(), OnSeekBarChangeListener {
         }
     val leftAxis = chart.axisLeft
     leftAxis.setPosition(YAxisLabelPosition.INSIDE_CHART)
-    leftAxis.typeface = tfLight
     leftAxis.textColor = holoBlue
     leftAxis.setDrawGridLines(true)
     leftAxis.isGranularityEnabled = true

@@ -2,12 +2,22 @@
 <resources>
 
     <style name="LineChart">
-        <item name="android:textAppearance">?attr/textAppearanceLabelMedium</item>
-        <item name="android:textColor">@color/design_default_color_primary</item>
-        <item name="android:textSize">10sp</item>
-        <item name="android:textAlignment">center</item>
+        <item name="backgroundColor">?attr/colorSurface</item>
+    </style>
 
-        <item name="gridColor">@android:color/white</item>
+    <style name="LineChart.Axis.TextAppearance" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textColor">?attr/colorOnBackground</item>
+    </style>
+
+    <style name="LineChart.Axis">
+        <item name="yAxisStartLineColor">?attr/colorOnBackground</item>
+        <item name="yAxisStartTextAppearance">@style/LineChart.Axis.TextAppearance</item>
+
+        <item name="yAxisEndLineColor">?attr/colorOnBackground</item>
+        <item name="yAxisEndTextAppearance">@style/LineChart.Axis.TextAppearance</item>
+
+        <item name="xAxisLineColor">?attr/colorOnBackground</item>
+        <item name="xAxisTextAppearance">@style/LineChart.Axis.TextAppearance</item>
     </style>
 
 </resources>

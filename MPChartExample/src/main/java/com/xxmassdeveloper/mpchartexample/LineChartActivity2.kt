@@ -78,7 +78,6 @@ class LineChartActivity2 : DemoBase(), OnSeekBarChangeListener, OnChartValueSele
 
     // modify the legend ...
     l.form = LegendForm.LINE
-    l.typeface = tfLight
     l.textSize = 11f
     l.textColor = Color.WHITE
     l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
@@ -87,20 +86,17 @@ class LineChartActivity2 : DemoBase(), OnSeekBarChangeListener, OnChartValueSele
     l.setDrawInside(false)
     //        l.setYOffset(11f);
     val xAxis = chart.xAxis
-    xAxis.typeface = tfLight
     xAxis.textSize = 11f
     xAxis.textColor = Color.WHITE
     xAxis.setDrawGridLines(false)
     xAxis.setDrawAxisLine(false)
     val leftAxis = chart.axisLeft
-    leftAxis.typeface = tfLight
     leftAxis.textColor = holoBlue
     leftAxis.axisMaximum = 200f
     leftAxis.axisMinimum = 0f
     leftAxis.setDrawGridLines(true)
     leftAxis.isGranularityEnabled = true
     val rightAxis = chart.axisRight
-    rightAxis.typeface = tfLight
     rightAxis.textColor = Color.RED
     rightAxis.axisMaximum = 900f
     rightAxis.axisMinimum = -200f

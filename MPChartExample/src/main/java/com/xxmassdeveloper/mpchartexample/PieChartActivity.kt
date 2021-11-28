@@ -58,7 +58,6 @@ class PieChartActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSelect
     chart.description.isEnabled = false
     chart.setExtraOffsets(5f, 10f, 5f, 5f)
     chart.dragDecelerationFrictionCoef = 0.95f
-    chart.setCenterTextTypeface(tfLight)
     chart.centerText = generateCenterSpannableText()
     chart.isDrawHoleEnabled = true
     chart.setHoleColor(Color.WHITE)
@@ -92,7 +91,6 @@ class PieChartActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSelect
 
     // entry label styling
     chart.setEntryLabelColor(Color.WHITE)
-    chart.setEntryLabelTypeface(tfRegular)
     chart.setEntryLabelTextSize(12f)
   }
 
@@ -129,7 +127,6 @@ class PieChartActivity : DemoBase(), OnSeekBarChangeListener, OnChartValueSelect
     data.setValueFormatter(PercentFormatter())
     data.setValueTextSize(11f)
     data.setValueTextColor(Color.WHITE)
-    data.setValueTypeface(tfLight)
     chart.data = data
 
     // undo all highlights

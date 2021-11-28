@@ -111,7 +111,6 @@ class LineChartActivity1 : DemoBase(), OnSeekBarChangeListener, OnChartValueSele
           enableDashedLine(10f, 10f, 0f)
           labelPosition = LimitLabelPosition.RIGHT_BOTTOM
           textSize = 10f
-          typeface = tfRegular
         }
     val ll1 =
         LimitLine(150f, "Upper Limit").apply {
@@ -119,7 +118,6 @@ class LineChartActivity1 : DemoBase(), OnSeekBarChangeListener, OnChartValueSele
           enableDashedLine(10f, 10f, 0f)
           labelPosition = LimitLabelPosition.RIGHT_TOP
           textSize = 10f
-          typeface = tfRegular
         }
     val ll2 =
         LimitLine(-30f, "Lower Limit").apply {
@@ -127,7 +125,6 @@ class LineChartActivity1 : DemoBase(), OnSeekBarChangeListener, OnChartValueSele
           enableDashedLine(10f, 10f, 0f)
           labelPosition = LimitLabelPosition.RIGHT_BOTTOM
           textSize = 10f
-          typeface = tfRegular
         }
 
     // draw limit lines behind data instead of on top

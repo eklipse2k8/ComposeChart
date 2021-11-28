@@ -68,17 +68,14 @@ class HorizontalBarNegativeChartActivity :
     chart.setDrawGridBackground(false)
     val xl = chart.xAxis
     xl.position = XAxisPosition.BOTTOM
-    xl.typeface = tfLight
     xl.setDrawAxisLine(true)
     xl.setDrawGridLines(false)
     xl.granularity = 10f
     val yl = chart.axisLeft
-    yl.typeface = tfLight
     yl.setDrawAxisLine(true)
     yl.setDrawGridLines(true)
     //        yl.setInverted(true);
     val yr = chart.axisRight
-    yr.typeface = tfLight
     yr.setDrawAxisLine(true)
     yr.setDrawGridLines(false)
     //        yr.setInverted(true);
@@ -125,7 +122,6 @@ class HorizontalBarNegativeChartActivity :
       dataSets.add(set1)
       val data = BarData(dataSets)
       data.setValueTextSize(10f)
-      data.setValueTypeface(tfLight)
       data.barWidth = barWidth
       chart.data = data
     }

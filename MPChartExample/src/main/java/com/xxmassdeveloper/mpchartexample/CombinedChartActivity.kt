@@ -67,7 +67,6 @@ class CombinedChartActivity : DemoBase() {
     //        data.setData(generateBubbleData());
     //        data.setData(generateScatterData());
     //        data.setData(generateCandleData());
-    data.setValueTypeface(tfLight)
     xAxis.axisMaximum = data.xMax + 0.25f
     chart.data = data
     chart.invalidate()

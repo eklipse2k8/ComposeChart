@@ -58,16 +58,13 @@ class RealtimeLineChartActivity : DemoBase(), OnChartValueSelectedListener {
 
     // modify the legend ...
     l.form = LegendForm.LINE
-    l.typeface = tfLight
     l.textColor = Color.WHITE
     val xl = chart.xAxis
-    xl.typeface = tfLight
     xl.textColor = Color.WHITE
     xl.setDrawGridLines(false)
     xl.setAvoidFirstLastClipping(true)
     xl.isEnabled = true
     val leftAxis = chart.axisLeft
-    leftAxis.typeface = tfLight
     leftAxis.textColor = Color.WHITE
     leftAxis.axisMaximum = 100f
     leftAxis.axisMinimum = 0f
