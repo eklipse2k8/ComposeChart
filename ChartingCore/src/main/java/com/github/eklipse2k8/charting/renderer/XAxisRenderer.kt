@@ -61,10 +61,10 @@ open class XAxisRenderer(
     val labelHeight = Utils.calcTextHeight(axisLabelPaint, "Q").toFloat()
     val labelRotatedSize =
         Utils.getSizeOfRotatedRectangleByDegrees(labelWidth, labelHeight, xAxis.labelRotationAngle)
-    xAxis.mLabelWidth = labelWidth.roundToInt()
-    xAxis.mLabelHeight = labelHeight.roundToInt()
-    xAxis.mLabelRotatedWidth = labelRotatedSize.width.roundToInt()
-    xAxis.mLabelRotatedHeight = labelRotatedSize.height.roundToInt()
+    xAxis.labelWidth = labelWidth.roundToInt()
+    xAxis.labelHeight = labelHeight.roundToInt()
+    xAxis.labelRotatedWidth = labelRotatedSize.width.roundToInt()
+    xAxis.labelRotatedHeight = labelRotatedSize.height.roundToInt()
     FSize.recycleInstance(labelRotatedSize)
     FSize.recycleInstance(labelSize)
   }
@@ -83,7 +83,7 @@ open class XAxisRenderer(
     } else if (xAxis.position === XAxisPosition.TOP_INSIDE) {
       pointF.x = 0.5f
       pointF.y = 1.0f
-      drawLabels(canvas, viewPortHandler.contentTop() + yoffset + xAxis.mLabelRotatedHeight, pointF)
+      drawLabels(canvas, viewPortHandler.contentTop() + yoffset + xAxis.labelRotatedHeight, pointF)
     } else if (xAxis.position === XAxisPosition.BOTTOM) {
       pointF.x = 0.5f
       pointF.y = 0.0f
@@ -92,7 +92,7 @@ open class XAxisRenderer(
       pointF.x = 0.5f
       pointF.y = 0.0f
       drawLabels(
-          canvas, viewPortHandler.contentBottom() - yoffset - xAxis.mLabelRotatedHeight, pointF)
+          canvas, viewPortHandler.contentBottom() - yoffset - xAxis.labelRotatedHeight, pointF)
     } else { // BOTH SIDED
       pointF.x = 0.5f
       pointF.y = 1.0f

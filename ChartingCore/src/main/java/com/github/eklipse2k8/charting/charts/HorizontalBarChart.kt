@@ -124,7 +124,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     if (axisRight.needsOffset()) {
       offsetBottom += axisRight.getRequiredHeightSpace(rendererRightYAxis.paintAxisLabels)
     }
-    val xlabelwidth = xAxis.mLabelRotatedWidth.toFloat()
+    val xlabelwidth = xAxis.labelRotatedWidth.toFloat()
 
     if (xAxis.isEnabled) {
       // offsets for x-labels

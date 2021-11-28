@@ -14,25 +14,25 @@ class XAxis : AxisBase() {
    * width of the x-axis labels in pixels - this is automatically calculated by the computeSize()
    * methods in the renderers
    */
-  @JvmField var mLabelWidth = 1
+  @JvmField var labelWidth = 1
 
   /**
    * height of the x-axis labels in pixels - this is automatically calculated by the computeSize()
    * methods in the renderers
    */
-  @JvmField var mLabelHeight = 1
+  @JvmField var labelHeight = 1
 
   /**
    * width of the (rotated) x-axis labels in pixels - this is automatically calculated by the
    * computeSize() methods in the renderers
    */
-  @JvmField var mLabelRotatedWidth = 1
+  @JvmField var labelRotatedWidth = 1
 
   /**
    * height of the (rotated) x-axis labels in pixels - this is automatically calculated by the
    * computeSize() methods in the renderers
    */
-  @JvmField var mLabelRotatedHeight = 1
+  @JvmField var labelRotatedHeight = 1
   /** returns the angle for drawing the X axis labels (in degrees) */
   /**
    * sets the angle for drawing the X axis labels (in degrees)
@@ -41,23 +41,14 @@ class XAxis : AxisBase() {
    */
   /** This is the angle for drawing the X axis labels (in degrees) */
   var labelRotationAngle = 0f
-  /**
-   * returns true if avoid-first-lastclipping is enabled, false if not
-   *
-   * @return
-   */
+
   /**
    * if set to true, the chart will avoid that the first and last label entry in the chart "clip"
    * off the edge of the chart
    */
   var isAvoidFirstLastClippingEnabled = false
     private set
-  /** returns the position of the x-labels */
-  /**
-   * sets the position of the x-labels
-   *
-   * @param pos
-   */
+
   /** the position of the x-labels relative to the chart */
   var position = XAxisPosition.TOP
 

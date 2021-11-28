@@ -229,7 +229,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   override val requiredBaseOffset: Float
     get() =
-        if (xAxis.isEnabled && xAxis.isDrawLabelsEnabled) xAxis.mLabelRotatedWidth.toFloat()
+        if (xAxis.isEnabled && xAxis.isDrawLabelsEnabled) xAxis.labelRotatedWidth.toFloat()
         else Utils.convertDpToPixel(10f)
 
   override val radius: Float

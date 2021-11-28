@@ -391,7 +391,7 @@ E : Entry {
         offsetRight += axisRight.getRequiredWidthSpace(rendererRightYAxis.paintAxisLabels)
       }
       if (xAxis.isEnabled && xAxis.isDrawLabelsEnabled) {
-        val xLabelHeight = xAxis.mLabelRotatedHeight + xAxis.yOffset
+        val xLabelHeight = xAxis.labelRotatedHeight + xAxis.yOffset
         // offsets for x-labels
         when {
           xAxis.position === XAxisPosition.BOTTOM -> offsetBottom += xLabelHeight

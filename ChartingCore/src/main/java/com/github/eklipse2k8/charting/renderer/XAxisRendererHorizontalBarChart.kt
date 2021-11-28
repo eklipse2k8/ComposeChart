@@ -51,10 +51,10 @@ class XAxisRendererHorizontalBarChart(
     val labelRotatedSize =
         Utils.getSizeOfRotatedRectangleByDegrees(
             labelSize.width, labelHeight, xAxis.labelRotationAngle)
-    xAxis.mLabelWidth = Math.round(labelWidth)
-    xAxis.mLabelHeight = Math.round(labelHeight)
-    xAxis.mLabelRotatedWidth = (labelRotatedSize.width + xAxis.xOffset * 3.5f).toInt()
-    xAxis.mLabelRotatedHeight = Math.round(labelRotatedSize.height)
+    xAxis.labelWidth = Math.round(labelWidth)
+    xAxis.labelHeight = Math.round(labelHeight)
+    xAxis.labelRotatedWidth = (labelRotatedSize.width + xAxis.xOffset * 3.5f).toInt()
+    xAxis.labelRotatedHeight = Math.round(labelRotatedSize.height)
     FSize.recycleInstance(labelRotatedSize)
   }
 

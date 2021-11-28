@@ -171,7 +171,7 @@ E : Entry {
     if (this is RadarChart) {
       val x = xAxis
       if (x.isEnabled && x.isDrawLabelsEnabled) {
-        minOffset = max(minOffset, x.mLabelRotatedWidth.toFloat())
+        minOffset = max(minOffset, x.labelRotatedWidth.toFloat())
       }
     }
     legendTop += extraTopOffset
