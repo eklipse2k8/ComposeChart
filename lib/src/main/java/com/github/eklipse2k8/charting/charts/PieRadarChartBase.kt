@@ -139,6 +139,7 @@ E : Entry {
                           min(
                               legend.mNeededHeight,
                               viewPortHandler.chartHeight * legend.maxSizePercent)
+                  else -> Unit
                 }
           }
         }
@@ -158,6 +159,7 @@ E : Entry {
             when (legend.verticalAlignment) {
               LegendVerticalAlignment.TOP -> legendTop = yLegendOffset
               LegendVerticalAlignment.BOTTOM -> legendBottom = yLegendOffset
+              else -> Unit
             }
           }
         }
