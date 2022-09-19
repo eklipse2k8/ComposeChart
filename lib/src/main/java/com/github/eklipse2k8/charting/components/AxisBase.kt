@@ -1,23 +1,159 @@
 package com.github.eklipse2k8.charting.components
 
 import android.content.Context
-import android.graphics.Color
+import android.graphics.Color as SysColor
 import android.graphics.DashPathEffect
 import android.graphics.Typeface
 import android.util.Log
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.core.content.res.getColorOrThrow
 import androidx.core.content.res.getDimensionPixelSizeOrThrow
 import androidx.core.content.res.getIntOrThrow
 import androidx.core.content.res.getStringOrThrow
 import androidx.core.content.withStyledAttributes
-import androidx.core.graphics.TypefaceCompatUtil
 import com.github.eklipse2k8.charting.R
+import com.github.eklipse2k8.charting.annotation.ExperimentalComponentApi
 import com.github.eklipse2k8.charting.formatter.DefaultAxisValueFormatter
 import com.github.eklipse2k8.charting.formatter.IAxisValueFormatter
 import com.github.eklipse2k8.charting.utils.Utils
 import kotlin.math.abs
 
-private val TAG = AxisBase::class.java.simpleName
+const val DEFAULT_AXIS_MIN_LABELS = 2
+const val DEFAULT_AXIS_MAX_LABELS = 25
+
+/**
+ * Base-class of all axes (previously called labels).
+ *
+ * @property gridLineWidth Sets the width of the grid lines that are drawn away from each axis
+ * label.
+ * @property gridColor Sets the color of the grid lines for this axis (the horizontal lines coming
+ * from each label).
+ * @property axisLineColor Sets the color of the border surrounding the chart.
+ * @property axisLineWidth Sets the width of the border surrounding the chart in [Dp].
+ * @property entries
+ * @property centeredEntries
+ * @property decimals
+ * @property granularity the minimum interval between axis values
+ * @property isGranularityEnabled When true, axis labels are controlled by the `granularity`
+ * property. When false, axis values could possibly be repeated. This could happen if two adjacent
+ * axis values are rounded to same value. If using granularity this could be avoided by having fewer
+ * axis values visible.
+ * @property isForceLabelsEnabled if true, the set number of y-labels will be forced
+ * @property isDrawGridLinesEnabled flag indicating if the grid lines for this axis should be drawn
+ * @property isDrawAxisLineEnabled flag that indicates if the line alongside the axis is drawn or
+ * not
+ * @property isDrawLabelsEnabled flag that indicates of the labels of this axis should be drawn or
+ * not
+ * @property centerAxisLabels
+ * @property axisLineDashPathEffect the path effect of the axis line that makes dashed lines
+ * possible
+ * @property gridDashPathEffect the path effect of the grid lines that makes dashed lines possible
+ * @property limitLines array of limit lines that can be set for the axis
+ * @property isDrawLimitLinesBehindDataEnabled flag indicating the limit lines layer depth
+ * @property isDrawGridLinesBehindDataEnabled flag indicating the grid lines layer depth
+ * @property spaceMin Extra spacing for `axisMinimum` to be added to automatically calculated
+ * `axisMinimum`
+ * @property spaceMax Extra spacing for `axisMaximum` to be added to automatically calculated
+ * `axisMaximum`
+ * @property isAxisMinCustom flag indicating that the axis-min value has been customized
+ * @property isAxisMaxCustom flag indicating that the axis-max value has been customized
+ *
+ * @author Philipp Jahoda
+ */
+@ExperimentalComponentApi
+data class AxisBaseConfig(
+    val gridLineWidth: Dp = 1f.dp,
+    val gridColor: Color = Color.Gray,
+    val axisLineColor: Color = Color.Gray,
+    val axisLineWidth: Dp = 1f.dp,
+    val entries: FloatArray = floatArrayOf(),
+    val centeredEntries: FloatArray = floatArrayOf(),
+    val decimals: Int = 0,
+    val granularity: Float = 1f,
+    val isGranularityEnabled: Boolean = false,
+    val isForceLabelsEnabled: Boolean = false,
+    val isDrawGridLinesEnabled: Boolean = true,
+    val isDrawAxisLineEnabled: Boolean = true,
+    val isDrawLabelsEnabled: Boolean = true,
+    val centerAxisLabels: Boolean = false,
+    val axisLineDashPathEffect: DashPathEffect? = null,
+    val gridDashPathEffect: DashPathEffect? = null,
+    val limitLines: List<LimitLine> = listOf(),
+    val isDrawLimitLinesBehindDataEnabled: Boolean = false,
+    val isDrawGridLinesBehindDataEnabled: Boolean = true,
+    val spaceMin: Float = 0f,
+    val spaceMax: Float = 0f,
+    val isAxisMinCustom: Boolean = false,
+    val isAxisMaxCustom: Boolean = false,
+    private val mAxisMinLabels: Int = DEFAULT_AXIS_MIN_LABELS,
+    private val mAxisMaxLabels: Int = DEFAULT_AXIS_MAX_LABELS,
+) {
+  @JvmField val axisMaximum: Float = 0f
+  @JvmField val axisMinimum: Float = 0f
+  @JvmField val mAxisRange: Float = 0f
+
+  init {}
+
+  val axisRange: Float
+    get() = abs(axisMaximum - axisMinimum)
+
+//  /**
+//   * Calculates the minimum / maximum and range values of the axis with the given minimum and
+//   * maximum values from the chart data.
+//   *
+//   * @param dataMin the min value according to chart data
+//   * @param dataMax the max value according to chart data
+//   */
+//  fun calculate(dataMin: Float, dataMax: Float) {
+//    // if custom, use value as is, else use data value
+//    var min = if (isAxisMinCustom) mAxisMinimum else dataMin - spaceMin
+//    var max = if (isAxisMaxCustom) mAxisMaximum else dataMax + spaceMax
+//
+//    // temporary range (before calculations)
+//    val range = abs(max - min)
+//
+//    // in case all values are equal
+//    if (range == 0f) {
+//      max += 1f
+//      min -= 1f
+//    }
+//    mAxisMinimum = min
+//    mAxisMaximum = max
+//
+//    // actual range
+//    mAxisRange = abs(max - min)
+//  }
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+
+    other as AxisBaseConfig
+
+    if (gridLineWidth != other.gridLineWidth) return false
+    if (gridColor != other.gridColor) return false
+    if (axisLineColor != other.axisLineColor) return false
+    if (axisLineWidth != other.axisLineWidth) return false
+    if (!entries.contentEquals(other.entries)) return false
+    if (!centeredEntries.contentEquals(other.centeredEntries)) return false
+    if (decimals != other.decimals) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = gridLineWidth.hashCode()
+    result = 31 * result + gridColor.hashCode()
+    result = 31 * result + axisLineColor.hashCode()
+    result = 31 * result + axisLineWidth.hashCode()
+    result = 31 * result + entries.contentHashCode()
+    result = 31 * result + centeredEntries.contentHashCode()
+    result = 31 * result + decimals.hashCode()
+    return result
+  }
+}
 
 /**
  * Base-class of all axes (previously called labels).
@@ -26,7 +162,7 @@ private val TAG = AxisBase::class.java.simpleName
  */
 abstract class AxisBase : ComponentBase() {
   /** custom formatter that is used instead of the auto-formatter if set */
-  protected var mAxisValueFormatter: IAxisValueFormatter? = null
+  protected var _AxisValueFormatter: IAxisValueFormatter? = null
 
   /** Sets the width of the grid lines that are drawn away from each axis label. */
   var gridLineWidth: Float = 1f
@@ -37,18 +173,10 @@ abstract class AxisBase : ComponentBase() {
   /**
    * Sets the color of the grid lines for this axis (the horizontal lines coming from each label).
    */
-  var gridColor = Color.GRAY
-    set(value) {
-      Log.i(TAG, "setGridColor value=$value")
-      field = value
-    }
+  var gridColor = SysColor.GRAY
 
   /** Sets the color of the border surrounding the chart. */
-  var axisLineColor = Color.GRAY
-    set(value) {
-      Log.i(TAG, "setAxisLineColor value=$value")
-      field = value
-    }
+  var axisLineColor = SysColor.GRAY
 
   /** Sets the width of the border surrounding the chart in dp. */
   var axisLineWidth: Float = 1f
@@ -322,14 +450,14 @@ abstract class AxisBase : ComponentBase() {
    */
   var valueFormatter: IAxisValueFormatter?
     get() {
-      if (mAxisValueFormatter == null ||
-          mAxisValueFormatter is DefaultAxisValueFormatter &&
-              (mAxisValueFormatter as DefaultAxisValueFormatter).decimalDigits != decimals)
-          mAxisValueFormatter = DefaultAxisValueFormatter(decimals)
-      return mAxisValueFormatter
+      if (_AxisValueFormatter == null ||
+          _AxisValueFormatter is DefaultAxisValueFormatter &&
+              (_AxisValueFormatter as DefaultAxisValueFormatter).decimalDigits != decimals)
+          _AxisValueFormatter = DefaultAxisValueFormatter(decimals)
+      return _AxisValueFormatter
     }
-    set(f) {
-      mAxisValueFormatter = f ?: DefaultAxisValueFormatter(decimals)
+    set(value) {
+      _AxisValueFormatter = value ?: DefaultAxisValueFormatter(decimals)
     }
 
   /**
@@ -510,5 +638,4 @@ abstract class AxisBase : ComponentBase() {
     // actual range
     mAxisRange = abs(max - min)
   }
-
 }

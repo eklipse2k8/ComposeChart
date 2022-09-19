@@ -15,6 +15,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import com.github.eklipse2k8.catalog.custom.MyMarkerView
+import com.github.eklipse2k8.catalog.notimportant.DemoBase
 import com.github.eklipse2k8.charting.animation.Easing.EaseInOutCubic
 import com.github.eklipse2k8.charting.charts.LineChart
 import com.github.eklipse2k8.charting.components.Legend.LegendForm
@@ -30,8 +32,6 @@ import com.github.eklipse2k8.charting.highlight.Highlight
 import com.github.eklipse2k8.charting.interfaces.dataprovider.LineDataProvider
 import com.github.eklipse2k8.charting.interfaces.datasets.ILineDataSet
 import com.github.eklipse2k8.charting.listener.OnChartValueSelectedListener
-import com.github.eklipse2k8.catalog.custom.MyMarkerView
-import com.github.eklipse2k8.catalog.notimportant.DemoBase
 
 /**
  * Example of a heavily customized [LineChart] with limit lines, custom line shapes, etc.
@@ -106,26 +106,39 @@ class LineChartActivity1 : DemoBase(), OnSeekBarChangeListener, OnChartValueSele
 
     // // Create Limit Lines // //
     val llXAxis =
-        LimitLine(9f, "Index 10").apply {
-          lineWidth = 4f
-          enableDashedLine(10f, 10f, 0f)
-          labelPosition = LimitLabelPosition.RIGHT_BOTTOM
-          textSize = 10f
-        }
+        LimitLine(
+                9f,
+                "Index 10",
+                labelPosition = LimitLabelPosition.RIGHT_BOTTOM,
+            )
+            .apply {
+              lineWidth = 4f
+              enableDashedLine(10f, 10f, 0f)
+              textSize = 10f
+            }
     val ll1 =
-        LimitLine(150f, "Upper Limit").apply {
-          lineWidth = 4f
-          enableDashedLine(10f, 10f, 0f)
-          labelPosition = LimitLabelPosition.RIGHT_TOP
-          textSize = 10f
-        }
+        LimitLine(
+                150f,
+                "Upper Limit",
+                labelPosition = LimitLabelPosition.RIGHT_TOP,
+            )
+            .apply {
+              lineWidth = 4f
+              enableDashedLine(10f, 10f, 0f)
+              textSize = 10f
+            }
     val ll2 =
-        LimitLine(-30f, "Lower Limit").apply {
-          lineWidth = 4f
-          enableDashedLine(10f, 10f, 0f)
-          labelPosition = LimitLabelPosition.RIGHT_BOTTOM
-          textSize = 10f
-        }
+        LimitLine(
+                -30f,
+                "Lower Limit",
+                labelPosition = LimitLabelPosition.RIGHT_BOTTOM,
+            )
+            .apply {
+              lineWidth = 4f
+              enableDashedLine(10f, 10f, 0f)
+
+              textSize = 10f
+            }
 
     // draw limit lines behind data instead of on top
     yAxis.setDrawLimitLinesBehindData(true)

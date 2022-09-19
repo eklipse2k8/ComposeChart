@@ -128,7 +128,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
   val factor: Float
     get() {
       val content = viewPortHandler.contentRect
-      return min(content.width() / 2f, content.height() / 2f) / (yAxis?.mAxisRange ?: 0f)
+      return min(content.width() / 2f, content.height() / 2f) / yAxis.mAxisRange
     }
 
   /** Returns the angle that each slice in the radar chart occupies. */

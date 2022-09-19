@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.os.Build
+import androidx.core.content.res.ResourcesCompat
 import com.github.eklipse2k8.charting.charts.Chart
 import com.github.eklipse2k8.charting.data.Entry
 import com.github.eklipse2k8.charting.highlight.Highlight
@@ -19,28 +19,20 @@ import java.lang.ref.WeakReference
  * @author Philipp Jahoda
  */
 class MarkerImage(mContext: Context, drawableResourceId: Int) : IMarker {
-  var mDrawable: Drawable =
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        mContext.resources.getDrawable(drawableResourceId, null)
-      } else {
-        mContext.resources.getDrawable(drawableResourceId)
-      }
-  private var mOffset: MPPointF = MPPointF()
+  private val drawable: Drawable =
+      ResourcesCompat.getDrawable(mContext.resources, drawableResourceId, mContext.theme)
+          ?: error("image not found")
   private val mOffset2 = MPPointF()
   private var mWeakChart: WeakReference<Chart<*, *, *>>? = null
   private var mSize: FSize? = FSize()
   private val mDrawableBoundsCache = Rect()
 
   fun setOffset(offsetX: Float, offsetY: Float) {
-    mOffset.x = offsetX
-    mOffset.y = offsetY
+    offset.x = offsetX
+    offset.y = offsetY
   }
 
-  override var offset: MPPointF
-    get() = mOffset
-    set(offset) {
-      mOffset = offset
-    }
+  override var offset: MPPointF = MPPointF()
 
   var size: FSize?
     get() = mSize
@@ -66,10 +58,10 @@ class MarkerImage(mContext: Context, drawableResourceId: Int) : IMarker {
     var width = mSize!!.width
     var height = mSize!!.height
     if (width == 0f) {
-      width = mDrawable.intrinsicWidth.toFloat()
+      width = drawable.intrinsicWidth.toFloat()
     }
     if (height == 0f) {
-      height = mDrawable.intrinsicWidth.toFloat()
+      height = drawable.intrinsicWidth.toFloat()
     }
     if (posX + mOffset2.x < 0) {
       mOffset2.x = -posX
@@ -91,13 +83,13 @@ class MarkerImage(mContext: Context, drawableResourceId: Int) : IMarker {
     var width = mSize!!.width
     var height = mSize!!.height
     if (width == 0f) {
-      width = mDrawable.intrinsicWidth.toFloat()
+      width = drawable.intrinsicWidth.toFloat()
     }
     if (height == 0f) {
-      height = mDrawable.intrinsicHeight.toFloat()
+      height = drawable.intrinsicHeight.toFloat()
     }
-    mDrawable.copyBounds(mDrawableBoundsCache)
-    mDrawable.setBounds(
+    drawable.copyBounds(mDrawableBoundsCache)
+    drawable.setBounds(
         mDrawableBoundsCache.left,
         mDrawableBoundsCache.top,
         mDrawableBoundsCache.left + width.toInt(),
@@ -105,8 +97,8 @@ class MarkerImage(mContext: Context, drawableResourceId: Int) : IMarker {
     val saveId = canvas!!.save()
     // translate to the correct position and draw
     canvas.translate(posX + offset.x, posY + offset.y)
-    mDrawable.draw(canvas)
+    drawable.draw(canvas)
     canvas.restoreToCount(saveId)
-    mDrawable.bounds = mDrawableBoundsCache
+    drawable.bounds = mDrawableBoundsCache
   }
 }

@@ -19,7 +19,10 @@ class LineChartRenderer(
     viewPortHandler: ViewPortHandler
 ) : LineRadarRenderer(animator, viewPortHandler) {
   /** paint for the inner circle of the value indicators */
-  protected var mCirclePaintInner: Paint
+  private var mCirclePaintInner: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    style = Paint.Style.FILL
+    color = Color.WHITE
+  }
 
   /**
    * Bitmap object used for drawing the paths (otherwise they are too long if rendered directly on
@@ -623,9 +626,4 @@ class LineChartRenderer(
     }
   }
 
-  init {
-    mCirclePaintInner = Paint(Paint.ANTI_ALIAS_FLAG)
-    mCirclePaintInner.style = Paint.Style.FILL
-    mCirclePaintInner.color = Color.WHITE
-  }
 }

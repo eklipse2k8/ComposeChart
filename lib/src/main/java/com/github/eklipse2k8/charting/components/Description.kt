@@ -1,20 +1,22 @@
 package com.github.eklipse2k8.charting.components
 
-import android.graphics.Paint
+import android.graphics.Paint.Align
+import android.graphics.Paint.Align.RIGHT
 import com.github.eklipse2k8.charting.utils.MPPointF
 import com.github.eklipse2k8.charting.utils.Utils
 
-/** Created by Philipp Jahoda on 17/09/16. */
-class Description : ComponentBase() {
-  /** the text used in the description */
-  var text = "Description Label"
-
-  /** the custom position of the description text */
-  var position: MPPointF? = null
-    private set
-
-  /** the alignment of the description text */
-  var textAlign = Paint.Align.RIGHT
+/**
+ * @property text the text used in the description
+ * @property position the custom position of the description text
+ * @property textAlign the alignment of the description text
+ *
+ * Created by Philipp Jahoda on 17/09/16.
+ */
+class Description(
+    var text: String = "Description Label",
+    var position: MPPointF? = null,
+    var textAlign: Align = RIGHT,
+) : ComponentBase() {
 
   init {
     textSize = Utils.convertDpToPixel(8f)
@@ -23,15 +25,15 @@ class Description : ComponentBase() {
   /**
    * Sets a custom position for the description text in pixels on the screen.
    *
-   * @param x: xcoordinate
-   * @param y: ycoordinate
+   * @param x x coordinate
+   * @param y y coordinate
    */
   fun setPosition(x: Float, y: Float) {
     if (position == null) {
       position = MPPointF.getInstance(x, y)
     } else {
-      position!!.x = x
-      position!!.y = y
+      position?.x = x
+      position?.y = y
     }
   }
 }
